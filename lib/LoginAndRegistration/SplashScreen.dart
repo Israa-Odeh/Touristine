@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:testing/adminProfile.dart';
+import 'package:touristine/onBoarding/Admin/adminProfile.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
