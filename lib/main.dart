@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:touristine/LoginAndRegistration/MainPages/landingPage.dart';
+import 'package:touristine/LoginAndRegistration/MainPages/TopOuterScreen.dart';
 
 
 void main() {
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return  MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LandingPage(),
+      home: TopOuterScreen(),
     );
 }
 }
