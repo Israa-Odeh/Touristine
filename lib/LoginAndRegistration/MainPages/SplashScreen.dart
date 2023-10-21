@@ -65,7 +65,7 @@ class _SplashScreenState extends State<SplashScreen> {
               const SizedBox(height: 110),
 
               Image.asset(
-                  'assets/Images/Interests/Picture2.png',
+                  'assets/Images/MainPages/Logo.png',
                   fit: BoxFit.contain),
               const SizedBox(height: 0),
               Stack(
@@ -74,7 +74,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   Padding(
                     padding: const EdgeInsets.only(top: 103.0),
                     child: Image.asset(
-                      'assets/Images/Interests/Picture1.png',
+                      'assets/Images/MainPages/OliveOilTree.png',
                       fit: BoxFit
                           .contain,
                     ),
@@ -82,7 +82,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   Padding(
                     padding: const EdgeInsets.only(top: 369, right: 330.0),
                     child: Image.asset(
-                      'assets/Images/Interests/Picture8.png',
+                      'assets/Images/MainPages/Camel.png',
                       fit: BoxFit
                           .contain,
                     ),

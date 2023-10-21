@@ -65,7 +65,7 @@ class _TopOuterScreenState extends State<TopOuterScreen> {
                 Container(
                   height: 820,
                   child: Image.asset(
-                    'assets/Images/Interests/Al-Aqsa.jpg',
+                    'assets/Images/MainPages/Al-Aqsa.jpg',
                     fit: BoxFit.fill,
                   ),
                 ),
