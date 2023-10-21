@@ -57,12 +57,23 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
             ),
             const SizedBox(height: 25),
             Image.asset(
-              'assets/Images/Interests/Launching.gif',
-              width: 410,
-              height: 410,
+              'assets/Images/SignupPage/Launching.gif',
+              width: 330,
+              height: 330,
             ),
-            const SizedBox(height: 40),
 
+            const SizedBox(height: 10),
+            const Text(
+                'Please check your email to \n     verify your account',
+                style: TextStyle(
+                  fontSize: 35,
+                  fontFamily: 'Gabriola',
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF455a64),
+                ),
+              ),
+            
+            const SizedBox(height: 10),
             // Get Started Button.
             ElevatedButton(
               onPressed: () {
@@ -109,7 +120,7 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 15),
 
             Padding(
               padding: const EdgeInsets.only(right: 320.0),

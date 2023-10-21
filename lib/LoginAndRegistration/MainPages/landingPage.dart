@@ -17,14 +17,17 @@ class LandingPage extends StatelessWidget {
               const Size.fromHeight(70), // To increase the AppBar height.
           child: AppBar(
               title: Padding(
-                padding: const EdgeInsets.only(top: 20.0),
+                padding: const EdgeInsets.only(top: 10.0),
                 child: Row(
                   children: [
                     // The Logo.
-                    Image.asset(
-                      "assets/Images/LandingPage/Logo.png",
-                      width: 80,
-                      height: 70,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 0.0),
+                      child: Image.asset(
+                        "assets/Images/LandingPage/Logo.png",
+                        width: 80,
+                        height: 60,
+                      ),
                     ),
                     // The title.
                     const Text(

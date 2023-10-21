@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:touristine/onBoarding/Admin/adminProfile.dart';
 
 class SplashScreen extends StatefulWidget {
+  final Widget profileType;
+
+  SplashScreen(this.profileType);
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -26,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
           Navigator.of(context).pushReplacement(
             PageRouteBuilder(
               pageBuilder: (context, animation, secondaryAnimation) {
-                return AdminProfile();
+                return widget.profileType;;
               },
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {
