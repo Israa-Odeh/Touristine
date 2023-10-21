@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:touristine/LoginAndRegistration/landingPage.dart';
+import 'package:touristine/LoginAndRegistration/MainPages/landingPage.dart';
 
 
 void main() {

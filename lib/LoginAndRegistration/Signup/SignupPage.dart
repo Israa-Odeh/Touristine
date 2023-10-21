@@ -3,7 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // Import the http package.
 import 'package:http/http.dart' as http;
-import 'package:touristine/LoginAndRegistration/landingPage.dart';
+import 'package:touristine/LoginAndRegistration/MainPages/landingPage.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/components/textField.dart';
 
