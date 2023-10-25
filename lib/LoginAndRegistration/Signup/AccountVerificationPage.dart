@@ -3,7 +3,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // Import the http package.
 import 'package:http/http.dart' as http;
+import 'package:touristine/LoginAndRegistration/MainPages/SplashScreen.dart';
 import 'package:touristine/LoginAndRegistration/Signup/SignupPage.dart';
+import 'package:touristine/onBoarding/Tourist/touristProfile.dart';
 
 class AccountVerificationPage extends StatefulWidget {
   @override
@@ -77,8 +79,8 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
             // Get Started Button.
             ElevatedButton(
               onPressed: () {
-                // Navigator.of(context).push(MaterialPageRoute(
-                //     builder: (context) => ForgotPasswordPage()));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => SplashScreen(const TouristProfile())));
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
