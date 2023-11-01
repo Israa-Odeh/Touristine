@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:jwt_decode/jwt_decode.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/profilePage.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/chatting.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/home.dart';
