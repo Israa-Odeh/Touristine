@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:touristine/LoginAndRegistration/MainPages/TopOuterScreen.dart';
-import 'package:touristine/LoginAndRegistration/Signup/AccountVerificationPage.dart';
 
 
 void main() {
@@ -15,7 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return  MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: AccountVerificationPage(email: "test.ko.deh@gmail.com"),
+      home: TopOuterScreen(),
     );
 }
 }
