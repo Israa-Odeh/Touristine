@@ -3,14 +3,16 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:touristine/Notifications/SnackBar.dart';
 
-class MainPage extends StatefulWidget {
-  MainPage({Key? key}) : super(key: key);
+class InterestsFillingPage extends StatefulWidget {
+  final String token;
+
+  const InterestsFillingPage({super.key, required this.token});
 
   @override
-  _MainPageState createState() => _MainPageState();
+  _InterestsFillingPageState createState() => _InterestsFillingPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _InterestsFillingPageState extends State<InterestsFillingPage> {
   int currentStep = 0;
   XFile? selectedImage;
   String? selectedCity;

@@ -1,39 +1,85 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:touristine/LoginAndRegistration/Signup/SignupPage.dart';
 
 // Import the http package.
 import 'package:http/http.dart' as http;
-import 'package:touristine/LoginAndRegistration/MainPages/SplashScreen.dart';
-import 'package:touristine/LoginAndRegistration/Signup/SignupPage.dart';
-import 'package:touristine/onBoarding/Tourist/touristProfile.dart';
 
 class AccountVerificationPage extends StatefulWidget {
+  final String email;
+
+  const AccountVerificationPage({super.key, required this.email});
   @override
   _AccountVerificationPageState createState() =>
       _AccountVerificationPageState();
 }
 
 class _AccountVerificationPageState extends State<AccountVerificationPage> {
-  Future<void> resendEmail() async {
-    final url = Uri.parse('http://your-nodejs-server-url/signin'); // Replace this with your Node.js server URL.
-   
+  late Timer _timer;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Set up a timer that runs the checkVerificationStatus function every 5 seconds.
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      checkVerificationStatus();
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    // Cancel the timer when the widget is disposed to prevent memory leaks.
+    _timer.cancel();
+  }
+
+  Future<void> checkVerificationStatus() async {
+    final url = Uri.parse(
+        'https://touristine.onrender.com/check-verification-status'); // Replace this with your Node.js server URL.
     try {
       final response = await http.post(
         url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
         body: {
-
+          'email': widget.email, // Use the email provided by the widget.
         },
       );
 
+      if (response.statusCode == 200) {
+        //Email is verified and user is stored
+        //You will receive a token. store it so you send it in all your next requests
+      }
+    } catch (e) {
+      // Handle network or other exceptions here.
+      print('Error: $e');
+    }
+  }
+
+  Future<void> resendEmail() async {
+    final url = Uri.parse('https://touristine.onrender.com/signup');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'email': widget.email,
+        },
+      );
 
       if (response.statusCode == 200) {
-
       } else {
         // Handle errors here.
         //showCustomSnackBar(context, 'Message');
       }
-    } 
-    catch (e) {
+    } catch (e) {
       // Handle network or other exceptions here.
       print('Error: $e');
     }
@@ -66,21 +112,21 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
 
             const SizedBox(height: 10),
             const Text(
-                'Please check your email to \n     verify your account',
-                style: TextStyle(
-                  fontSize: 35,
-                  fontFamily: 'Gabriola',
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF455a64),
-                ),
+              'Please check your email to \n     verify your account',
+              style: TextStyle(
+                fontSize: 35,
+                fontFamily: 'Gabriola',
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF455a64),
               ),
-            
+            ),
+
             const SizedBox(height: 10),
             // Get Started Button.
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => SplashScreen(const TouristProfile())));
+                // Navigator.of(context).pushReplacement(MaterialPageRoute(
+                //     builder: (context) => SplashScreen();
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(

@@ -1,9 +1,15 @@
+import 'dart:convert';
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:touristine/LoginAndRegistration/Login/ForgotPassword.dart';
+import 'package:touristine/LoginAndRegistration/MainPages/SplashScreen.dart';
 import 'package:touristine/LoginAndRegistration/MainPages/landingPage.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/tourist.dart';
 import 'package:touristine/components/textField.dart';
+import 'package:jwt_decode/jwt_decode.dart';
 
 // Import the http package.
 import 'package:http/http.dart' as http;
@@ -76,10 +82,13 @@ class _LoginPageState extends State<LoginPage>
 
   Future<void> sendData() async {
     final url = Uri.parse(
-        'http://your-nodejs-server-url/signin'); // Replace this with your Node.js server URL.
+        'https://touristine.onrender.com/login'); // Replace this with your Node.js server URL.
     try {
       final response = await http.post(
         url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
         body: {
           'email': emailController.text,
           'password': passwordController.text,
@@ -98,15 +107,52 @@ class _LoginPageState extends State<LoginPage>
       return an appropriate error message. If the entered credentials,
       including the email, do not exist in the system, return an appropriate
       error message in the response, which I'll display as notifications to the user */
-      
+
       // Note: After ensuring from user existence, check the "remember_me" flag, if it's true
       // then users login information should be stored locally, and they won't have to sign in
-      // on subsequent visits. Their info will be automatically retrieved when they enter the 
+      // on subsequent visits. Their info will be automatically retrieved when they enter the
       // login page. We'll use shared_preferences to implement this feature or use whatever
       // you need.
 
       // Successful response from the Node.js server.
       if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+
+        if (data.containsKey('status') && data.containsKey('type')) {
+          // It is a tourist user type in this case.
+          if (data['status'] == true && data['type'] == 100) {
+            final String token = data['token']; // Assuming 'token' is a String
+            Map<String, dynamic> decodedToken = Jwt.parseJwt(token);
+            String emailFromToken = decodedToken['email'];
+            String firstName = decodedToken['firstName'];
+            String lastName = decodedToken['lastName'];
+            String passsword = decodedToken['password'];
+
+            print("Email extracted from token: $emailFromToken");
+            print("first name from token: $firstName");
+            print("last name from token: $lastName");
+            print("Password from token: $passsword");
+
+            // ignore: use_build_context_synchronously
+            // Pass the token to the SplashScreen
+            // ignore: use_build_context_synchronously
+            Navigator.pushReplacement(
+              // This will be edited based on the profile type.
+              context,
+              MaterialPageRoute(
+                builder: (context) => SplashScreen(
+                  profileType: TouristProfile(token: token),
+                ), // Pass the token to the SplashScreen constructor
+              ),
+            );
+          }
+
+          // It is an Admin user type in this case.
+          // --------------------------------------
+          // It is a stuff user type in this case.
+          // --------------------------------------
+        }
+
         /* Here you can handle the response as needed.
         Jenan, the code's behavior depends on whether the user is signing in for the first time.
         To achieve this, we need to retrieve a flag that indicates if it's the user's initial sign-in.
@@ -116,11 +162,29 @@ class _LoginPageState extends State<LoginPage>
         will guide us in deciding which interfaces to present to the user. */
 
         // After completing this step, please stop. I will open the relevant interfaces based on the
-        // provided response values. It will be something like the following two lines, then I'll use 
+        // provided response values. It will be something like the following two lines, then I'll use
         // userType and isFirstSignIn as required. Change the variable types as you need and add what
         // is needed, it's just a dummy example.
         // final String userType = responseJson['userType'];
         // final bool isFirstSignIn = responseJson['isFirstSignIn'];
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> errorData = json.decode(response.body);
+        if (errorData.containsKey('error')) {
+          if (errorData['error'] == 'User does not exist') {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, errorData['error']);
+          } else if (errorData['error'] ==
+              'Username or Password does not match') {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, 'Password doesn\'t match the email');
+          } else if (errorData['error'] == 'All fields must be filled') {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, 'Please fill in all fields');
+          } else {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, 'Failed to sign in, please try again');
+          }
+        }
       } else {
         // Handle errors here.
         // ignore: use_build_context_synchronously
@@ -344,11 +408,7 @@ class _LoginPageState extends State<LoginPage>
                               size: 30,
                             ),
                             onPressed: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => LandingPage(),
-                                ),
-                              );
+                              Navigator.of(context).pop();
                             },
                           ),
                         ),

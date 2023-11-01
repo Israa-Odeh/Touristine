@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:touristine/LoginAndRegistration/Login/loginPage.dart';
+import 'package:touristine/LoginAndRegistration/MainPages/landingPage.dart';
 import 'package:touristine/Profiles/Tourist/Profile/Sections/MyAccount.dart';
 import 'package:touristine/Profiles/Tourist/Profile/Sections/interestsFilling.dart';
 import 'package:touristine/Profiles/Tourist/Profile/Sections/locationAccquisition.dart';
-
+import 'package:touristine/components/profilePicture.dart';
 
 class ProfilePage extends StatefulWidget {
+  final String token;
+
+  const ProfilePage({super.key, required this.token});
+
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-
   // A Function to build a profile tile with a title, image, and onTap action.
   Widget buildProfileTile(
       String title, String imagePath, VoidCallback onTapAction) {
@@ -67,7 +70,8 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/Images/Profiles/Tourist/ProfileBackground.jpg'),
+                image: AssetImage(
+                    'assets/Images/Profiles/Tourist/ProfileBackground.jpg'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -83,14 +87,16 @@ class _ProfilePageState extends State<ProfilePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const SizedBox(height: 80),
-                  const ProfilePicture(),
+                  ProfilePicture(token: widget.token),
                   const SizedBox(height: 40),
 
                   buildProfileTile(
-                      "My Account", "assets/Images/Profiles/Tourist/user.png", () {
+                      "My Account", "assets/Images/Profiles/Tourist/user.png",
+                      () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => AccountPage(firstName: '', lastName: '', password: '', profileImage: null),
+                        builder: (context) => AccountPage(
+                            token: widget.token, profileImage: null),
                       ),
                     );
                   }),
@@ -101,7 +107,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       "assets/Images/Profiles/Tourist/form.png", () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => MainPage(),
+                        builder: (context) => InterestsFillingPage(token: widget.token),
                       ),
                     );
                   }),
@@ -112,7 +118,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       "assets/Images/Profiles/Tourist/location.png", () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => LocationPage(),
+                        builder: (context) => LocationPage(token: widget.token),
                       ),
                     );
                   }),
@@ -127,56 +133,17 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 15),
 
                   buildProfileTile(
-                      "Log Out", "assets/Images/Profiles/Tourist/logOut.png", () {
+                      "Log Out", "assets/Images/Profiles/Tourist/logOut.png",
+                      () {
                     Navigator.of(context).popUntil((route) => route.isFirst);
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (context) => const LoginPage()));
+                    Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) => LandingPage()));
                   }),
                   // Add more tiles as needed...
                 ],
               ),
             ),
           ),
-        ),
-      ],
-    );
-  }
-}
-
-class ProfilePicture extends StatelessWidget {
-  const ProfilePicture({
-    super.key,
-  });
-
-  Widget build(BuildContext context) {
-    return const Column(
-      children: [
-        SizedBox(
-          height: 150,
-          width: 150,
-          child: CircleAvatar(
-            backgroundColor: Colors.white,
-            backgroundImage: AssetImage("assets/Images/Profiles/Tourist/DefaultProfileImage.png"),
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(height: 50),
-            Text(
-              "First Name",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            Text(
-              "  Last Name",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        SizedBox(height: 10),
-        Text(
-          "user@email.com",
-          style: TextStyle(fontSize: 17),
         ),
       ],
     );

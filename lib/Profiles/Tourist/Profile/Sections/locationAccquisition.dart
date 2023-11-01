@@ -8,7 +8,9 @@ import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:http/http.dart' as http;
 
 class LocationPage extends StatefulWidget {
-  const LocationPage({Key? key}) : super(key: key);
+  final String token;
+
+  const LocationPage({super.key, required this.token});
 
   @override
   _LocationPageState createState() => _LocationPageState();

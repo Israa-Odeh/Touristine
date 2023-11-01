@@ -1,53 +1,74 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:touristine/Profiles/Tourist/MainPages/ProfilePage.dart';
+import 'package:jwt_decode/jwt_decode.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/profilePage.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/chatting.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/home.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/imageUpload.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/planMaker.dart';
 
 class TouristProfile extends StatefulWidget {
+  final String token;
+
+  const TouristProfile({super.key, required this.token});
+
   @override
   _TouristAppState createState() => _TouristAppState();
 }
 
 class _TouristAppState extends State<TouristProfile> {
   int _currentIndex = 0;
+  late List<Widget> _children;
 
-  final List<Widget> _children = [
-    const HomePage(),
-    const PlanMakerPage(),
-    const ImagesUploadPage(),
-    const ChattingPage(),
-    ProfilePage(),
-  ];
+  @override
+  void initState() {
+    super.initState();
+
+    _children = [
+      HomePage(token: widget.token),
+      PlanMakerPage(token: widget.token),
+      ImagesUploadPage(token: widget.token),
+      ChattingPage(token: widget.token),
+      ProfilePage(token: widget.token),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: _children[_currentIndex],
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: onTabTapped,
-          items: [
-            _buildBottomNavigationBarItem(FontAwesomeIcons.house, 'Home Page', 0),
-            _buildBottomNavigationBarItem(FontAwesomeIcons.clock, 'Plan Maker', 1),
-            _buildBottomNavigationBarItem(FontAwesomeIcons.image, 'Images Upload', 2),
-            _buildBottomNavigationBarItem(FontAwesomeIcons.comment, 'Chatting', 3),
-            _buildBottomNavigationBarItem(FontAwesomeIcons.user, 'Profile', 4),
-          ],
-          selectedItemColor: const Color.fromARGB(255, 255, 255, 255),
-          unselectedItemColor: const Color.fromARGB(255, 255, 255, 255),
-          // selectedFontSize: 12,
-          // unselectedFontSize: 12,
-          selectedLabelStyle: const TextStyle(
-            fontWeight: FontWeight.bold,
+    return WillPopScope(
+        onWillPop: () async {
+          // To prevent going back, simply return false
+          return false;
+        },
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: Scaffold(
+            body: _children[_currentIndex],
+            bottomNavigationBar: BottomNavigationBar(
+              currentIndex: _currentIndex,
+              onTap: onTabTapped,
+              items: [
+                _buildBottomNavigationBarItem(
+                    FontAwesomeIcons.house, 'Home Page', 0),
+                _buildBottomNavigationBarItem(
+                    FontAwesomeIcons.clock, 'Plan Maker', 1),
+                _buildBottomNavigationBarItem(
+                    FontAwesomeIcons.image, 'Images Upload', 2),
+                _buildBottomNavigationBarItem(
+                    FontAwesomeIcons.comment, 'Chatting', 3),
+                _buildBottomNavigationBarItem(
+                    FontAwesomeIcons.user, 'Profile', 4),
+              ],
+              selectedItemColor: const Color.fromARGB(255, 255, 255, 255),
+              unselectedItemColor: const Color.fromARGB(255, 255, 255, 255),
+              // selectedFontSize: 12,
+              // unselectedFontSize: 12,
+              selectedLabelStyle: const TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   void onTabTapped(int index) {

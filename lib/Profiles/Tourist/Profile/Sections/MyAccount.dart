@@ -5,28 +5,25 @@ import 'dart:io';
 
 // Import the http package.
 import 'package:http/http.dart' as http;
+import 'package:jwt_decode/jwt_decode.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
-import 'package:touristine/components/CustomField.dart';
+import 'package:touristine/components/customField.dart';
 
 class AccountPage extends StatefulWidget {
-  final String? firstName;
-  final String? lastName;
-  final String? password;
+  final String token;
   final File? profileImage;
 
-  AccountPage({
-    Key? key,
-    required this.firstName,
-    required this.lastName,
-    required this.password,
-    this.profileImage,
-  }) : super(key: key);
+  const AccountPage({super.key, required this.token, this.profileImage});
 
   @override
   _AccountPageState createState() => _AccountPageState();
 }
 
 class _AccountPageState extends State<AccountPage> {
+  late String firstName;
+  late String lastName;
+  late String password;
+
   // Textfields Controllers.
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
@@ -38,9 +35,14 @@ class _AccountPageState extends State<AccountPage> {
   void initState() {
     super.initState();
     // Set received data to the corresponding text fields and profile image.
-    firstNameController.text = widget.firstName!;
-    lastNameController.text = widget.lastName!;
-    passwordController.text = widget.password!;
+    Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
+    firstName = decodedToken['firstName'];
+    lastName = decodedToken['lastName'];
+    password = decodedToken['password'];
+    
+    firstNameController.text = firstName;
+    lastNameController.text = lastName;
+    passwordController.text = password;
     setState(() {
       _image = widget.profileImage;
     });
@@ -90,6 +92,7 @@ class _AccountPageState extends State<AccountPage> {
       if (response.statusCode == 200) {
         // Handle a successful response.
       } else {
+        // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'Failed to update, please try again',
             bottomMargin: 457);
       }
@@ -100,9 +103,9 @@ class _AccountPageState extends State<AccountPage> {
 
   void editProfileInfo() {
     // Check if any data has changed
-    bool isDataChanged = widget.firstName != firstNameController.text ||
-        widget.lastName != lastNameController.text ||
-        widget.password != passwordController.text ||
+    bool isDataChanged = firstName != firstNameController.text ||
+        lastName != lastNameController.text ||
+        password != passwordController.text ||
         widget.profileImage != _image;
 
     if (isDataChanged) {
@@ -166,7 +169,7 @@ class _AccountPageState extends State<AccountPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const SizedBox(height: 80),
-                  ProfilePicture(
+                  ProfileImage(
                     image: _image,
                     onImageChanged: (File? newImage) {
                       setState(() {
@@ -245,21 +248,21 @@ class _AccountPageState extends State<AccountPage> {
   }
 }
 
-class ProfilePicture extends StatefulWidget {
+class ProfileImage extends StatefulWidget {
   final File? image;
   final void Function(File? newImage) onImageChanged;
 
-  const ProfilePicture({
+  const ProfileImage({
     Key? key,
     required this.image,
     required this.onImageChanged,
   }) : super(key: key);
 
   @override
-  _ProfilePictureState createState() => _ProfilePictureState();
+  _ProfileImageState createState() => _ProfileImageState();
 }
 
-class _ProfilePictureState extends State<ProfilePicture> {
+class _ProfileImageState extends State<ProfileImage> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(

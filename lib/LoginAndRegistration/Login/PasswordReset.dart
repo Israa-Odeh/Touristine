@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:touristine/LoginAndRegistration/Login/loginPage.dart';
 
@@ -20,11 +22,14 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
   _PasswordResetPageState({required this.email});
 
   Future<void> resendPassword() async {
-    final url = Uri.parse('http://your-backend-url/reset_password'); // Replace with your actual backend endpoint.
+    final url = Uri.parse('https://touristine.onrender.com/send-reset-email');
 
     try {
       final response = await http.post(
         url,
+         headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
         body: {
           'email': email, // Use the email provided by the widget.
         },
@@ -32,11 +37,38 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
 
       if (response.statusCode == 200) {
         // Password reset request was successful.
-        // You can display a success message or handle it as needed.
-
-        //showCustomSnackBar(context, 'Check your email for the password', bottomMargin: 355.0);
-        
-      } else {
+        final Map<String, dynamic> data = json.decode(response.body);
+        if (data.containsKey('message')) {
+          if (data['message'] == 'Check your email for the new password') {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, 'Check your email for the password', bottomMargin: 300.0);
+          }
+        }
+      } 
+      else if (response.statusCode == 500) {
+        final Map<String, dynamic> errorData = json.decode(response.body);
+        if (errorData.containsKey('error')) {
+          if (errorData['error'] == 'User does not exist') {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, errorData['error'],
+                bottomMargin: 300.0);
+          } else if (errorData['error'] == 'No email address was received') {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, errorData['error'],
+                bottomMargin: 300.0);
+          } else if (errorData['error'] ==
+              'An error occurred sending the new password') {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, 'Error sending a new password',
+                bottomMargin: 300.0);
+          } else {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, 'Reset Password Process Failed',
+                bottomMargin: 300.0);
+          }
+        }
+      }
+      else {
         // Password reset request failed.
         // You can display an error message or handle it as needed.
         showCustomSnackBar(context, 'Failed to send the reset email', bottomMargin: 355.0);

@@ -1,12 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // Import the http package.
 import 'package:http/http.dart' as http;
 import 'package:touristine/LoginAndRegistration/MainPages/landingPage.dart';
+import 'package:touristine/LoginAndRegistration/Signup/AccountVerificationPage.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/components/textField.dart';
-
 
 class SignupPage extends StatefulWidget {
   SignupPage({Key? key}) : super(key: key);
@@ -63,10 +65,13 @@ class _SignupPageState extends State<SignupPage> {
 
   Future<void> sendAndSaveData() async {
     final url = Uri.parse(
-        'http://your-nodejs-server-url/signup'); // Replace this with your Node.js server URL.
+        'https://touristine.onrender.com/signup'); // Replace this with your Node.js server URL.
     try {
       final response = await http.post(
         url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
         body: {
           'firstName': firstNameController.text,
           'lastName': lastNameController.text,
@@ -77,29 +82,76 @@ class _SignupPageState extends State<SignupPage> {
 
       // Successful response from the Node.js server.
       if (response.statusCode == 200) {
-        //  Here you can handle the response as needed.
+        //-------------------Jenan--Successful Response
+        //The Response: A verification email is sent to you
+        //The user is sent a verification email
+        //The user has a period of one hour to click the email
+        //If they did not click it through that period, it is depricated
+        //If they click within the valid period the user is registered
+        //Any further clicks on the verification email will be handeled
+        //from the back-end side to prevent duplications in registration
+        //-----------------------------------------------------------------
 
-        // Jenan, I need to check the response to see if the user 
-        // is registered and can proceed to the next sign-up step 
+        // Convert a JSON string into a Dart object.
+        final Map<String, dynamic> data = json.decode(response.body);
+
+        if (data.containsKey('message')) {
+          if (data['message'] == 'A verification email is sent to you') {
+            // ignore: use_build_context_synchronously
+            // showCustomSnackBar(context, 'Please wait for a moment', bottomMargin: 550.0);
+            // ignore: use_build_context_synchronously
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => AccountVerificationPage(email: emailController.text)),
+            );
+          }
+        }
+
+        // Jenan, I need to check the response to see if the user
+        // is registered and can proceed to the next sign-up step
         // (Interests Filling) or not:(Different Scenarios: The user
         // is already registered with this email...etc, in these cases
-        // a notification must be displayed from my side), so provide me 
+        // a notification must be displayed from my side), so provide me
         // with flag values for each case or any other suitable indicators.
-        
 
         // After obtainig the response from Jenan.....
-        
-        // Israa, after user registration, direct them to the interest filling pages.
-        // Israa, if registration fails due to the email's previous existence 
-        // or similar issues, display a notification accordingly.
 
+        // Israa, after user registration, direct them to the interest filling pages.
+        // Israa, if registration fails due to the email's previous existence
+        // or similar issues, display a notification accordingly.
+      } else if (response.statusCode == 409) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        if (data.containsKey('message')) {
+          if (data['message'] == 'User with this email already exists') {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, data['message'], bottomMargin: 550.0);
+          } else if (data['message'] == 'All mandatory fields must be filled') {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, 'Please fill in all the fields',
+                bottomMargin: 550.0);
+          }
+        }
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        if (data.containsKey('error')) {
+          if (data['error'] ==
+              'An error occurred sending the verification line') {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, 'Verification line sending error',
+                bottomMargin: 550.0);
+          } else {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, 'The verification process failed',
+                bottomMargin: 550.0);
+          }
+        }
       } else {
-        // Handle errors here.
         // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, 'Failed to sign up, please try again', bottomMargin: 550.0);
+        showCustomSnackBar(context, 'Failed to sign up, please try again',
+            bottomMargin: 550.0);
       }
-    } 
-    catch (e) {
+    } catch (e) {
       // Handle network or other exceptions here.
       print('Error: $e');
     }
@@ -108,21 +160,29 @@ class _SignupPageState extends State<SignupPage> {
   // A Function for user registration.
   void signUserUp() {
     if (isInputEmpty()) {
-      showCustomSnackBar(context, 'Please fill in all the fields', bottomMargin: 550.0);
+      showCustomSnackBar(context, 'Please fill in all the fields',
+          bottomMargin: 550.0);
     } else if (!isNameValid(firstNameController.text)) {
-      showCustomSnackBar(context, 'Invalid first name: 2-20 characters only', bottomMargin: 550.0);
+      showCustomSnackBar(context, 'Invalid first name: 2-20 characters only',
+          bottomMargin: 550.0);
     } else if (!isNameValid(lastNameController.text)) {
-      showCustomSnackBar(context, 'Invalid last name: 2-20 characters only', bottomMargin: 550.0);
+      showCustomSnackBar(context, 'Invalid last name: 2-20 characters only',
+          bottomMargin: 550.0);
     } else if (!isEmailValid(emailController.text)) {
-      showCustomSnackBar(context, 'Please enter a valid email address', bottomMargin: 550.0);
+      showCustomSnackBar(context, 'Please enter a valid email address',
+          bottomMargin: 550.0);
     } else if (!isPasswordValid(passwordController.text)) {
-      showCustomSnackBar(context, 'Password must contain 8-30 chars', bottomMargin: 550.0);
+      showCustomSnackBar(context, 'Password must contain 8-30 chars',
+          bottomMargin: 550.0);
     } else if (!isPasswordValid(passwordConfirmController.text)) {
-      showCustomSnackBar(context, 'Password must contain 8-30 chars', bottomMargin: 550.0);
-    } else if (!doPasswordsMatch(passwordController.text, passwordConfirmController.text)) {
-      showCustomSnackBar(context, 'Passwords do not match', bottomMargin: 550.0);
+      showCustomSnackBar(context, 'Password must contain 8-30 chars',
+          bottomMargin: 550.0);
+    } else if (!doPasswordsMatch(
+        passwordController.text, passwordConfirmController.text)) {
+      showCustomSnackBar(context, 'Passwords do not match',
+          bottomMargin: 550.0);
     } else {
-       // showCustomSnackBar(context, 'Alright');
+      // showCustomSnackBar(context, 'Alright');
       // Proceed with user registration logic here.
       sendAndSaveData(); // Send data to the server.
       // Proceed with any additional logic after data is sent.
@@ -233,11 +293,7 @@ class _SignupPageState extends State<SignupPage> {
                     size: 30,
                   ),
                   onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => LandingPage(),
-                      ),
-                    );
+                    Navigator.of(context).pop();
                   },
                 ),
               ),
