@@ -2,10 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:jwt_decode/jwt_decode.dart';
 import 'package:touristine/LoginAndRegistration/Login/PasswordReset.dart';
-// import 'package:touristine/LoginAndRegistration/Login/PasswordReset.dart';
-import 'package:touristine/LoginAndRegistration/Login/loginPage.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/components/textField.dart';
 

@@ -1,11 +1,8 @@
 import 'dart:convert';
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:touristine/LoginAndRegistration/Login/ForgotPassword.dart';
 import 'package:touristine/LoginAndRegistration/MainPages/SplashScreen.dart';
-import 'package:touristine/LoginAndRegistration/MainPages/landingPage.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/tourist.dart';
 import 'package:touristine/components/textField.dart';
