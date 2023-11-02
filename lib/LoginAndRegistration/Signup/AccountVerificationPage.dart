@@ -9,13 +9,13 @@ import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/onBoarding/Tourist/touristOnboardingPage.dart';
 
 class AccountVerificationPage extends StatefulWidget {
-  final String token;
+  String token;
   final String firstName;
   final String lastName;
   final String email;
   final String password;
-
-  const AccountVerificationPage(
+  
+  AccountVerificationPage(
       {super.key,
       required this.firstName,
       required this.lastName,
@@ -125,6 +125,10 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
           if (data['message'] == 'A verification email is sent to you') {
             // ignore: use_build_context_synchronously
             showCustomSnackBar(context, data['message'], bottomMargin: 250);
+            // Update the token after clicking reset to the new token.
+            setState(() {
+            widget.token = data['token'];
+          });
           }
         }
       } else if (response.statusCode == 409) {
