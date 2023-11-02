@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/onBoarding/Tourist/touristOnboardingPage.dart';
 
+// ignore: must_be_immutable
 class AccountVerificationPage extends StatefulWidget {
   String token;
   final String firstName;
