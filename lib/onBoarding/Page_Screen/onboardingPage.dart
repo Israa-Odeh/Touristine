@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:touristine/LoginAndRegistration/MainPages/SplashScreen.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/tourist.dart';
 import 'package:touristine/onBoarding/Admin/adminProfile.dart';
 import 'package:touristine/onBoarding/Page_Screen/onboardingScreen.dart';
@@ -125,7 +126,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                         onPressed: () {
                           Navigator.pushReplacement(context,
                               MaterialPageRoute(builder: (context) {
-                            return widget.profileType == 100? TouristProfile(token: widget.token,) : const AdminProfile();
+                            return widget.profileType == 100? SplashScreen(profileType: TouristProfile(token: widget.token)) : const AdminProfile();
                           }));
                         },
                         style: ElevatedButton.styleFrom(
