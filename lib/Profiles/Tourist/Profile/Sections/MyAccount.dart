@@ -39,7 +39,7 @@ class _AccountPageState extends State<AccountPage> {
     firstName = decodedToken['firstName'];
     lastName = decodedToken['lastName'];
     password = decodedToken['password'];
-    
+
     firstNameController.text = firstName;
     lastNameController.text = lastName;
     passwordController.text = password;
@@ -65,10 +65,14 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   Future<void> sendAndSaveData() async {
-    final url = Uri.parse('http://your-nodejs-server-url/edit-account');
+    final url = Uri.parse('https://touristine.onrender.com/edit-account');
     final request = http.MultipartRequest('POST', url);
-
-// Add the image to the request if it exists.
+    
+    // Add headers to the request.
+    request.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+    request.headers['Authorization'] = 'Bearer ${widget.token}';
+    
+    // Add the image to the request if it exists.
     if (_image != null) {
       List<int> imageBytes = _image!.readAsBytesSync(); // Read file as bytes.
       String fileName = _image!.path.split('/').last; // Extract file name

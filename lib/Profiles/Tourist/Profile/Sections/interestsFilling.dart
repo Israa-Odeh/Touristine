@@ -48,7 +48,7 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
   bool diabetes = false; // Default value of the checkbox20.
 
   Future<void> sendAndSaveData() async {
-    final url = Uri.parse('http://your-nodejs-server-url/interests-filling');
+    final url = Uri.parse('https://touristine.onrender.com/interests-filling');
 
     try {
       final Map<String, String> postBody = {
@@ -90,6 +90,10 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
 
       final response = await http.post(
         url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer ${widget.token}',
+        },
         body: postBody,
       );
 
@@ -167,8 +171,7 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor:
-            const Color.fromARGB(255, 215, 231, 235),
+        backgroundColor: const Color.fromARGB(255, 215, 231, 235),
         body: Padding(
           padding: const EdgeInsets.only(top: 24.0),
           child: Container(
@@ -206,7 +209,8 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
                       });
                     }
                   } else {
-                    showCustomSnackBar(context, "Please complete this step", bottomMargin: 0);
+                    showCustomSnackBar(context, "Please complete this step",
+                        bottomMargin: 0);
                   }
                 },
                 onStepCancel: () {
@@ -220,8 +224,7 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
                         currentStep -= 1;
                       });
                     }
-                  } 
-                  else {
+                  } else {
                     null;
                   }
                 },
@@ -229,7 +232,7 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
                   currentStep = step;
                 }),
                 controlsBuilder: (context, ControlsDetails controlsDetails) {
-                  final isLastStep = currentStep == getSteps().length - 1 ;
+                  final isLastStep = currentStep == getSteps().length - 1;
                   return Container(
                     margin: const EdgeInsets.only(top: 20),
                     child: Row(children: [
@@ -302,8 +305,7 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
                 'What is your travel budget?',
                 style: TextStyle(
                   fontSize: 33,
-                  fontWeight:
-                      FontWeight.bold,
+                  fontWeight: FontWeight.bold,
                   fontFamily: 'Gabriola',
                   color: Color.fromARGB(255, 39, 51, 57),
                 ),
@@ -357,8 +359,7 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
                 'Do you prefer to travel alone, with friends, or with family?',
                 style: TextStyle(
                   fontSize: 33,
-                  fontWeight:
-                      FontWeight.bold,
+                  fontWeight: FontWeight.bold,
                   fontFamily: 'Gabriola',
                   color: Color.fromARGB(255, 39, 51, 57),
                 ),
@@ -412,8 +413,7 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
                 'What regions of Palestine are you interested in exploring?',
                 style: TextStyle(
                   fontSize: 33,
-                  fontWeight:
-                      FontWeight.bold,
+                  fontWeight: FontWeight.bold,
                   fontFamily: 'Gabriola',
                   color: Color.fromARGB(255, 39, 51, 57),
                 ),
@@ -511,8 +511,7 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
                 'Do you or anyone in your travel group have disabilities?',
                 style: TextStyle(
                   fontSize: 33,
-                  fontWeight:
-                      FontWeight.bold,
+                  fontWeight: FontWeight.bold,
                   fontFamily: 'Gabriola',
                   color: Color.fromARGB(255, 39, 51, 57),
                 ),
@@ -563,8 +562,7 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
                 'Choose the disability type(s):',
                 style: TextStyle(
                   fontSize: 33,
-                  fontWeight:
-                      FontWeight.bold,
+                  fontWeight: FontWeight.bold,
                   fontFamily: 'Gabriola',
                   color: Color.fromARGB(255, 39, 51, 57),
                 ),
@@ -639,8 +637,7 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
                 'Are you sure about keeping the interests you\'ve selected?',
                 style: TextStyle(
                   fontSize: 33,
-                  fontWeight:
-                      FontWeight.bold,
+                  fontWeight: FontWeight.bold,
                   fontFamily: 'Gabriola',
                   color: Color.fromARGB(255, 39, 51, 57),
                 ),

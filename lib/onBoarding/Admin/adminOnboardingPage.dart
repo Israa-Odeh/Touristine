@@ -11,6 +11,7 @@ class _AdminOnBoardingPageState extends State<AdminOnBoardingPage> {
   @override
   Widget build(BuildContext context) {
     return const OnBoardingPage(
+      token: "", // To be edited later on.
       title: [
         'Managing destinations',
         'Content Approval',

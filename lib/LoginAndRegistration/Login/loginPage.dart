@@ -118,7 +118,7 @@ class _LoginPageState extends State<LoginPage>
         if (data.containsKey('status') && data.containsKey('type')) {
           // It is a tourist user type in this case.
           if (data['status'] == true && data['type'] == 100) {
-            final String token = data['token']; // Assuming 'token' is a String
+            final String token = data['token'];
             Map<String, dynamic> decodedToken = Jwt.parseJwt(token);
             String emailFromToken = decodedToken['email'];
             String firstName = decodedToken['firstName'];

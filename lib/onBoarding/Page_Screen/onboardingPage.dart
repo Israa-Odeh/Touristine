@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/tourist.dart';
 import 'package:touristine/onBoarding/Admin/adminProfile.dart';
 import 'package:touristine/onBoarding/Page_Screen/onboardingScreen.dart';
-import 'package:touristine/onBoarding/Tourist/touristProfile.dart';
-
 
 class OnBoardingPage extends StatefulWidget {
+  final String token;
   final List <String> title;
   final List <String> imageAsset;
   final List <String> firstText;
@@ -25,6 +25,7 @@ class OnBoardingPage extends StatefulWidget {
     required this.titleSize,
     required this.numOfPages,
     required this.profileType,
+    required this.token
   }) : super(key: key);
 
   @override
@@ -122,9 +123,9 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                     // The tourist is in the last page of the page view. 
                     ElevatedButton(
                         onPressed: () {
-                          Navigator.push(context,
+                          Navigator.pushReplacement(context,
                               MaterialPageRoute(builder: (context) {
-                            return widget.profileType == 0? const TouristProfile() : const AdminProfile();
+                            return widget.profileType == 100? TouristProfile(token: widget.token,) : const AdminProfile();
                           }));
                         },
                         style: ElevatedButton.styleFrom(

@@ -23,11 +23,15 @@ class _LocationPageState extends State<LocationPage> {
 
   Future<void> sendAndSaveLocation() async {
     final url = Uri.parse(
-        'http://your-nodejs-server-url/location-accquistion'); // Replace this with your Node.js server URL.
+        'https://touristine.onrender.com/location-accquistion'); // Replace this with your Node.js server URL.
 
     try {
       final response = await http.post(
         url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer ${widget.token}',
+        },
         body: {
           'latitude': _currentPosition!.latitude.toString(), // Double Value.
           'longitude': _currentPosition!.longitude.toString(), // Double Value.

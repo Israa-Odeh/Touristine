@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // Import the http package.
 import 'package:http/http.dart' as http;
+import 'package:jwt_decode/jwt_decode.dart';
 import 'package:touristine/LoginAndRegistration/Signup/AccountVerificationPage.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/components/textField.dart';
@@ -96,13 +97,12 @@ class _SignupPageState extends State<SignupPage> {
 
         if (data.containsKey('message')) {
           if (data['message'] == 'A verification email is sent to you') {
-            // ignore: use_build_context_synchronously
-            // showCustomSnackBar(context, 'Please wait for a moment', bottomMargin: 550.0);
+             final String token = data['token'];
             // ignore: use_build_context_synchronously
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (context) => AccountVerificationPage(email: emailController.text)),
+                  builder: (context) => AccountVerificationPage(firstName: firstNameController.text, lastName: lastNameController.text, email: emailController.text, password: passwordController.text, token: token,)),
             );
           }
         }
@@ -119,19 +119,21 @@ class _SignupPageState extends State<SignupPage> {
         // Israa, after user registration, direct them to the interest filling pages.
         // Israa, if registration fails due to the email's previous existence
         // or similar issues, display a notification accordingly.
-      } else if (response.statusCode == 409) {
+      } 
+      else if (response.statusCode == 409) {
         final Map<String, dynamic> data = json.decode(response.body);
         if (data.containsKey('message')) {
           if (data['message'] == 'User with this email already exists') {
             // ignore: use_build_context_synchronously
             showCustomSnackBar(context, data['message'], bottomMargin: 550.0);
-          } else if (data['message'] == 'All mandatory fields must be filled') {
+          } 
+          else if (data['message'] == 'All mandatory fields must be filled') {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, 'Please fill in all the fields',
-                bottomMargin: 550.0);
+            showCustomSnackBar(context, 'Please fill in all the fields', bottomMargin: 550.0);
           }
         }
-      } else if (response.statusCode == 500) {
+      } 
+      else if (response.statusCode == 500) {
         final Map<String, dynamic> data = json.decode(response.body);
         if (data.containsKey('error')) {
           if (data['error'] ==
@@ -145,7 +147,8 @@ class _SignupPageState extends State<SignupPage> {
                 bottomMargin: 550.0);
           }
         }
-      } else {
+      } 
+      else {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'Failed to sign up, please try again',
             bottomMargin: 550.0);
