@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:touristine/LoginAndRegistration/Login/ForgotPassword.dart';
 import 'package:touristine/LoginAndRegistration/MainPages/SplashScreen.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
@@ -37,9 +38,40 @@ class _LoginPageState extends State<LoginPage>
   // Animation for the google button.
   late Animation<double> _scaleAnimation;
 
+  // Define a function to store the login information using shared preferences.
+  Future<void> storeLoginInfoLocally() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Store the login information if "Remember Me" is checked.
+    if (rememberPassword) {
+      await prefs.setString('email', emailController.text);
+      await prefs.setString('password', passwordController.text);
+      // Store other necessary user information as needed.
+    } 
+    else {
+      // Clear stored login information if "Remember Me" is unchecked.
+      await prefs.remove('email');
+      await prefs.remove('password');
+    }
+  }
+
+  // Define a function to check and load stored login information.
+  Future<void> loadLoginInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (prefs.containsKey('email') && prefs.containsKey('password')) {
+      setState(() {
+        emailController.text = prefs.getString('email')!;
+        passwordController.text = prefs.getString('password')!;
+        rememberPassword = true; // Set the checkbox state as checked.
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    loadLoginInfo();
 
     // Initialize the animation controller.
     _animationController = AnimationController(
@@ -89,11 +121,6 @@ class _LoginPageState extends State<LoginPage>
         body: {
           'email': emailController.text,
           'password': passwordController.text,
-          'remember_me': rememberPassword.toString(), // Convert to string
-          // "Flag 'rememberPassword' stores the user's choice to remember
-          // their email and Password (True or False)."
-
-          // Include any additional information here.
         },
       );
 
@@ -113,6 +140,7 @@ class _LoginPageState extends State<LoginPage>
 
       // Successful response from the Node.js server.
       if (response.statusCode == 200) {
+        await storeLoginInfoLocally();
         final Map<String, dynamic> data = json.decode(response.body);
 
         if (data.containsKey('status') && data.containsKey('type')) {
