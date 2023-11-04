@@ -4,9 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:touristine/onBoarding/Page_Screen/onboardingPage.dart';
 
 class TouristOnBoardingPage extends StatefulWidget {
+  final String firstName;
+  final String lastName;
   final String token;
+  final String password;
 
-  const TouristOnBoardingPage({super.key, required this.token});
+  const TouristOnBoardingPage({super.key, required this.firstName, required this.lastName, required this.token, required this.password});
+
+
   @override
   _TouristOnBoardingPageState createState() => _TouristOnBoardingPageState();
 }
@@ -20,7 +25,10 @@ class _TouristOnBoardingPageState extends State<TouristOnBoardingPage> {
           return false;
         },
         child: OnBoardingPage(
+          firstName: widget.firstName,
+          lastName: widget.lastName,
           token: widget.token,
+          password: widget.password,
           title: const [
             'Destinations Discovery',
             'Destinations Rating',

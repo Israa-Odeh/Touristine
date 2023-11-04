@@ -15,7 +15,7 @@ class AccountVerificationPage extends StatefulWidget {
   final String lastName;
   final String email;
   final String password;
-  
+
   AccountVerificationPage(
       {super.key,
       required this.firstName,
@@ -64,35 +64,36 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
         },
       );
 
+      final Map<String, dynamic> responseData = json.decode(response.body);
+
       if (response.statusCode == 200) {
         // Email is verified and user is stored.
         // You will receive a token. store it so you send it in all your next requests.
-        final Map<String, dynamic> data = json.decode(response.body);
-        if (data.containsKey('message')) {
-          if (data['message'] == 'true') {
+        if (responseData.containsKey('message')) {
+          if (responseData['message'] == 'true') {
             setState(() {
               hideResendBTN = true;
             });
           }
         }
       } else if (response.statusCode == 204) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        if (data.containsKey('message')) {
-          if (data['message'] == 'false') {
+        if (responseData.containsKey('message')) {
+          if (responseData['message'] == 'false') {
             setState(() {
               hideResendBTN = false;
             });
           }
         }
       } else if (response.statusCode == 500) {
-        final Map<String, dynamic> errorData = json.decode(response.body);
-        if (errorData.containsKey('error')) {
-          if (errorData['error'] == 'No email was given') {
+        if (responseData.containsKey('error')) {
+          if (responseData['error'] == 'No email was given') {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, errorData['error'], bottomMargin: 250);
+            showCustomSnackBar(context, responseData['error'],
+                bottomMargin: 250);
           }
         }
-      } else {
+      } 
+      else {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, "The verification process failed",
             bottomMargin: 250);
@@ -118,36 +119,38 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
           'password': widget.password,
         },
       );
+      final Map<String, dynamic> responseData = json.decode(response.body);
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
-
-        if (data.containsKey('message')) {
-          if (data['message'] == 'A verification email is sent to you') {
+        if (responseData.containsKey('message')) {
+          if (responseData['message'] ==
+              'A verification email is sent to you') {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, data['message'], bottomMargin: 250);
+            showCustomSnackBar(context, responseData['message'],
+                bottomMargin: 250);
             // Update the token after clicking reset to the new token.
             setState(() {
-            widget.token = data['token'];
-          });
+              widget.token = responseData['token'];
+            });
           }
         }
       } else if (response.statusCode == 409) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        if (data.containsKey('message')) {
-          if (data['message'] == 'User with this email already exists') {
+        if (responseData.containsKey('message')) {
+          if (responseData['message'] ==
+              'User with this email already exists') {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, data['message'], bottomMargin: 250);
-          } else if (data['message'] == 'All mandatory fields must be filled') {
+            showCustomSnackBar(context, responseData['message'],
+                bottomMargin: 250);
+          } else if (responseData['message'] ==
+              'All mandatory fields must be filled') {
             // ignore: use_build_context_synchronously
             showCustomSnackBar(context, 'Please fill in all the fields',
                 bottomMargin: 250);
           }
         }
       } else if (response.statusCode == 500) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        if (data.containsKey('error')) {
-          if (data['error'] ==
+        if (responseData.containsKey('error')) {
+          if (responseData['error'] ==
               'An error occurred sending the verification line') {
             // ignore: use_build_context_synchronously
             showCustomSnackBar(context, 'Verification line sending error',
@@ -224,9 +227,12 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => TouristOnBoardingPage(
-                            token: widget.token,
-                            )),
+                            builder: (context) => TouristOnBoardingPage(
+                                  firstName: widget.firstName,
+                                  lastName: widget.lastName,
+                                  token: widget.token,
+                                  password: widget.password,
+                                )),
                       );
                     }
                   },

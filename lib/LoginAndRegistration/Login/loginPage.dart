@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,6 +10,8 @@ import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/tourist.dart';
 import 'package:touristine/components/textField.dart';
 import 'package:jwt_decode/jwt_decode.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 // Import the http package.
 import 'package:http/http.dart' as http;
@@ -47,8 +51,7 @@ class _LoginPageState extends State<LoginPage>
       await prefs.setString('email', emailController.text);
       await prefs.setString('password', passwordController.text);
       // Store other necessary user information as needed.
-    } 
-    else {
+    } else {
       // Clear stored login information if "Remember Me" is unchecked.
       await prefs.remove('email');
       await prefs.remove('password');
@@ -138,25 +141,26 @@ class _LoginPageState extends State<LoginPage>
       // login page. We'll use shared_preferences to implement this feature or use whatever
       // you need.
 
+      final Map<String, dynamic> responseData = json.decode(response.body);
+
       // Successful response from the Node.js server.
       if (response.statusCode == 200) {
         await storeLoginInfoLocally();
-        final Map<String, dynamic> data = json.decode(response.body);
-
-        if (data.containsKey('status') && data.containsKey('type')) {
+        if (responseData.containsKey('status') && responseData.containsKey('type')) {
           // It is a tourist user type in this case.
-          if (data['status'] == true && data['type'] == 100) {
-            final String token = data['token'];
-            Map<String, dynamic> decodedToken = Jwt.parseJwt(token);
-            String emailFromToken = decodedToken['email'];
-            String firstName = decodedToken['firstName'];
-            String lastName = decodedToken['lastName'];
-            String passsword = decodedToken['password'];
+          if (responseData['status'] == true && responseData['type'] == 100) {
+            String token = responseData['token'];
+            String firstName = responseData['firstName'];
+            String lastName = responseData['lastName'];
+            String password = responseData['password'];
+            String image = responseData['profileImage'] ?? '';
+            // The image will be forwareded later on........................
 
-            print("Email extracted from token: $emailFromToken");
-            print("first name from token: $firstName");
-            print("last name from token: $lastName");
-            print("Password from token: $passsword");
+            print("Email extracted from token: $token");
+            print("first name: $firstName");
+            print("last name: $lastName");
+            print("Password: $password");
+            print("Profile Image: $image");
 
             // ignore: use_build_context_synchronously
             // Pass the token to the SplashScreen
@@ -166,7 +170,7 @@ class _LoginPageState extends State<LoginPage>
               context,
               MaterialPageRoute(
                 builder: (context) => SplashScreen(
-                  profileType: TouristProfile(token: token),
+                  profileType: TouristProfile(firstName: firstName, lastName: lastName, token: token, password: password,),
                 ), // Pass the token to the SplashScreen constructor
               ),
             );
@@ -193,16 +197,15 @@ class _LoginPageState extends State<LoginPage>
         // final String userType = responseJson['userType'];
         // final bool isFirstSignIn = responseJson['isFirstSignIn'];
       } else if (response.statusCode == 500) {
-        final Map<String, dynamic> errorData = json.decode(response.body);
-        if (errorData.containsKey('error')) {
-          if (errorData['error'] == 'User does not exist') {
+        if (responseData.containsKey('error')) {
+          if (responseData['error'] == 'User does not exist') {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, errorData['error']);
-          } else if (errorData['error'] ==
+            showCustomSnackBar(context, responseData['error']);
+          } else if (responseData['error'] ==
               'Username or Password does not match') {
             // ignore: use_build_context_synchronously
             showCustomSnackBar(context, 'Password doesn\'t match the email');
-          } else if (errorData['error'] == 'All fields must be filled') {
+          } else if (responseData['error'] == 'All fields must be filled') {
             // ignore: use_build_context_synchronously
             showCustomSnackBar(context, 'Please fill in all fields');
           } else {
@@ -235,12 +238,55 @@ class _LoginPageState extends State<LoginPage>
     }
   }
 
-  // A function to handle Google sign-in.
-  void handleGoogleSignIn() {
-    // Implement Google sign-in logic here.
-    // Search about some mechansim to implement this
-    // If you don't find tell me, there is a specific
-    // package in dart to do it with firebase.
+  Future<void> signInWithGoogle() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    try {
+      await Firebase.initializeApp();
+    } catch (e) {
+      print('Error initializing Firebase: $e');
+      // Handle the error here as per your requirement
+    }
+
+    try {
+      // Trigger the authentication flow
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      if (googleUser == null) {
+        print('Google Sign-In was canceled.');
+        return; // Return if the Google Sign-In process was not successful
+      }
+
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser?.authentication;
+
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+
+      // Once signed in, return the UserCredential
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+
+      // Fetch the user information
+      User? user = userCredential.user;
+
+      // Print the user information
+      if (user != null) {
+        print('User Information:');
+        print('User ID: ${user.uid}');
+        print('Display Name: ${user.displayName}');
+        print('Email: ${user.email}');
+        print('Photo URL: ${user.photoURL}');
+        // You can print other user information as needed
+      } else {
+        print('User information not available.');
+      }
+    } catch (e) {
+      print('Error occurred: $e');
+    }
   }
 
   void forgotPassword() {
@@ -456,7 +502,7 @@ class _LoginPageState extends State<LoginPage>
                                 _animationController!.reverse();
 
                                 // Perform the Google sign-in action.
-                                handleGoogleSignIn();
+                                signInWithGoogle();
                               });
                             },
                             child: Transform.scale(

@@ -10,20 +10,25 @@ import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/components/customField.dart';
 
 class AccountPage extends StatefulWidget {
+  final String firstName;
+  final String lastName;
   final String token;
+  final String password;
   final File? profileImage;
 
-  const AccountPage({super.key, required this.token, this.profileImage});
+  const AccountPage(
+      {super.key,
+      required this.firstName,
+      required this.lastName,
+      required this.token,
+      required this.password,
+      this.profileImage});
 
   @override
   _AccountPageState createState() => _AccountPageState();
 }
 
 class _AccountPageState extends State<AccountPage> {
-  late String firstName;
-  late String lastName;
-  late String password;
-
   // Textfields Controllers.
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
@@ -34,15 +39,10 @@ class _AccountPageState extends State<AccountPage> {
   @override
   void initState() {
     super.initState();
-    // Set received data to the corresponding text fields and profile image.
-    Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
-    firstName = decodedToken['firstName'];
-    lastName = decodedToken['lastName'];
-    password = decodedToken['password'];
-
-    firstNameController.text = firstName;
-    lastNameController.text = lastName;
-    passwordController.text = password;
+    firstNameController.text = widget.firstName;
+    lastNameController.text = widget.lastName;
+    passwordController.text = widget.password;
+    
     setState(() {
       _image = widget.profileImage;
     });
@@ -67,11 +67,11 @@ class _AccountPageState extends State<AccountPage> {
   Future<void> sendAndSaveData() async {
     final url = Uri.parse('https://touristine.onrender.com/edit-account');
     final request = http.MultipartRequest('POST', url);
-    
+
     // Add headers to the request.
     request.headers['Content-Type'] = 'application/x-www-form-urlencoded';
     request.headers['Authorization'] = 'Bearer ${widget.token}';
-    
+
     // Add the image to the request if it exists.
     if (_image != null) {
       List<int> imageBytes = _image!.readAsBytesSync(); // Read file as bytes.
@@ -107,9 +107,9 @@ class _AccountPageState extends State<AccountPage> {
 
   void editProfileInfo() {
     // Check if any data has changed
-    bool isDataChanged = firstName != firstNameController.text ||
-        lastName != lastNameController.text ||
-        password != passwordController.text ||
+    bool isDataChanged = widget.firstName != firstNameController.text ||
+        widget.lastName != lastNameController.text ||
+        widget.password != passwordController.text ||
         widget.profileImage != _image;
 
     if (isDataChanged) {

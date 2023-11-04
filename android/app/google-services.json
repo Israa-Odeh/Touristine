@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "889464890314",
+    "project_id": "touristine-authentication",
+    "storage_bucket": "touristine-authentication.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:889464890314:android:d311959e5c86458206e533",
+        "android_client_info": {
+          "package_name": "com.example.touristine"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgiXKreTiEIrsuSYMxwzO6k4Uv6rc-Q1U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

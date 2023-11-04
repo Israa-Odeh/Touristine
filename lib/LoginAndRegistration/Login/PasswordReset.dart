@@ -35,28 +35,28 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
         },
       );
 
+      final Map<String, dynamic> responseData = json.decode(response.body);
+
       if (response.statusCode == 200) {
         // Password reset request was successful.
-        final Map<String, dynamic> data = json.decode(response.body);
-        if (data.containsKey('message')) {
-          if (data['message'] == 'Check your email for the new password') {
+        if (responseData.containsKey('message')) {
+          if (responseData['message'] == 'Check your email for the new password') {
             // ignore: use_build_context_synchronously
             showCustomSnackBar(context, 'Check your email for the password', bottomMargin: 300.0);
           }
         }
       } 
       else if (response.statusCode == 500) {
-        final Map<String, dynamic> errorData = json.decode(response.body);
-        if (errorData.containsKey('error')) {
-          if (errorData['error'] == 'User does not exist') {
+        if (responseData.containsKey('error')) {
+          if (responseData['error'] == 'User does not exist') {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, errorData['error'],
+            showCustomSnackBar(context, responseData['error'],
                 bottomMargin: 300.0);
-          } else if (errorData['error'] == 'No email address was received') {
+          } else if (responseData['error'] == 'No email address was received') {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, errorData['error'],
+            showCustomSnackBar(context, responseData['error'],
                 bottomMargin: 300.0);
-          } else if (errorData['error'] ==
+          } else if (responseData['error'] ==
               'An error occurred sending the new password') {
             // ignore: use_build_context_synchronously
             showCustomSnackBar(context, 'Error sending a new password',
@@ -71,7 +71,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
       else {
         // Password reset request failed.
         // You can display an error message or handle it as needed.
-        showCustomSnackBar(context, 'Failed to send the reset email', bottomMargin: 355.0);
+        showCustomSnackBar(context, 'Failed to send the reset email', bottomMargin: 300.0);
       }
     } catch (e) {
       // Handle network or other exceptions here.

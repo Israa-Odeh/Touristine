@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 
 class ProfilePicture extends StatefulWidget {
+  final String firstName;
+  final String lastName;
   final String token;
 
-  const ProfilePicture({super.key, required this.token});
+  const ProfilePicture({super.key, required this.firstName, required this.lastName, required this.token});
 
   @override
   _ProfilePictureState createState() => _ProfilePictureState();
@@ -20,8 +22,6 @@ class _ProfilePictureState extends State<ProfilePicture> {
     super.initState();
 
     Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
-    firstName = decodedToken['firstName'];
-    lastName = decodedToken['lastName'];
     email = decodedToken['email'];
   }
 
@@ -43,11 +43,11 @@ class _ProfilePictureState extends State<ProfilePicture> {
           children: [
             const SizedBox(height: 50),
             Text(
-              firstName,
+              widget.firstName,
               style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
             ),
             Text(
-              " $lastName",
+              " ${widget.lastName}",
               style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
             ),
           ],

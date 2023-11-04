@@ -7,27 +7,34 @@ import 'package:touristine/onBoarding/Admin/adminProfile.dart';
 import 'package:touristine/onBoarding/Page_Screen/onboardingScreen.dart';
 
 class OnBoardingPage extends StatefulWidget {
+  final String firstName;
+  final String lastName;
   final String token;
-  final List <String> title;
-  final List <String> imageAsset;
-  final List <String> firstText;
-  final List <String> secondText;
+  final String password;
+  final List<String> title;
+  final List<String> imageAsset;
+  final List<String> firstText;
+  final List<String> secondText;
   final double titleSize;
   final int numOfPages;
-  final int profileType; // 0: Indicates tourist Profile, 1: Indicates admin profile.
+  final int
+      profileType; // 0: Indicates tourist Profile, 1: Indicates admin profile.
   // There might be 2 for the stuff profiles, this will be decided later on.
 
-  const OnBoardingPage({
-    Key? key,
-    required this.title,
-    required this.imageAsset,
-    required this.firstText,
-    required this.secondText,
-    required this.titleSize,
-    required this.numOfPages,
-    required this.profileType,
-    required this.token
-  }) : super(key: key);
+  const OnBoardingPage(
+      {Key? key,
+      required this.title,
+      required this.imageAsset,
+      required this.firstText,
+      required this.secondText,
+      required this.titleSize,
+      required this.numOfPages,
+      required this.profileType,
+      required this.firstName,
+      required this.lastName,
+      required this.token,
+      required this.password})
+      : super(key: key);
 
   @override
   _OnBoardingPageState createState() => _OnBoardingPageState();
@@ -65,7 +72,8 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
         children: [
           // Page view to create a scrollable list of pages.
           PageView(
-            controller: _controller, // Keeps track of what page we are on right now.
+            controller:
+                _controller, // Keeps track of what page we are on right now.
             // PageIndex: This value tells what page we are currently on.
             onPageChanged: (pageIndex) {
               setState(() {
@@ -86,7 +94,8 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
               children: [
                 // A skip button.
                 Visibility(
-                  visible: !onLastPage, // Show the skip button as long as it isn't the last page.
+                  visible:
+                      !onLastPage, // Show the skip button as long as it isn't the last page.
                   child: ElevatedButton(
                     onPressed: () {
                       _controller.jumpToPage(widget.numOfPages - 1);
@@ -116,17 +125,25 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                   ),
                 ),
 
-                // Ternary conditional operator. 
+                // Ternary conditional operator.
                 // Next-ArrowIcon in the first pages, Done Button in the last page.
                 onLastPage
                     ?
                     // The code portion that will be executed if the condition is true.
-                    // The tourist is in the last page of the page view. 
+                    // The tourist is in the last page of the page view.
                     ElevatedButton(
                         onPressed: () {
                           Navigator.pushReplacement(context,
                               MaterialPageRoute(builder: (context) {
-                            return widget.profileType == 100? SplashScreen(profileType: TouristProfile(token: widget.token)) : const AdminProfile();
+                            return widget.profileType == 100
+                                ? SplashScreen(
+                                    profileType: TouristProfile(
+                                    firstName: widget.firstName,
+                                    lastName: widget.lastName,
+                                    token: widget.token,
+                                    password: widget.password,
+                                  ))
+                                : const AdminProfile();
                           }));
                         },
                         style: ElevatedButton.styleFrom(

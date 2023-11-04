@@ -79,6 +79,7 @@ class _SignupPageState extends State<SignupPage> {
         },
       );
 
+      final Map<String, dynamic> responseData = json.decode(response.body);
       // Successful response from the Node.js server.
       if (response.statusCode == 200) {
         //-------------------Jenan--Successful Response
@@ -92,16 +93,21 @@ class _SignupPageState extends State<SignupPage> {
         //-----------------------------------------------------------------
 
         // Convert a JSON string into a Dart object.
-        final Map<String, dynamic> data = json.decode(response.body);
 
-        if (data.containsKey('message')) {
-          if (data['message'] == 'A verification email is sent to you') {
-             final String token = data['token'];
+        if (responseData.containsKey('message')) {
+          if (responseData['message'] == 'A verification email is sent to you') {
+            final String token = responseData['token']; // Contains the email.
             // ignore: use_build_context_synchronously
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (context) => AccountVerificationPage(firstName: firstNameController.text, lastName: lastNameController.text, email: emailController.text, password: passwordController.text, token: token,)),
+                  builder: (context) => AccountVerificationPage(
+                        firstName: firstNameController.text,
+                        lastName: lastNameController.text,
+                        email: emailController.text,
+                        password: passwordController.text,
+                        token: token,
+                      )),
             );
           }
         }
@@ -118,24 +124,20 @@ class _SignupPageState extends State<SignupPage> {
         // Israa, after user registration, direct them to the interest filling pages.
         // Israa, if registration fails due to the email's previous existence
         // or similar issues, display a notification accordingly.
-      } 
-      else if (response.statusCode == 409) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        if (data.containsKey('message')) {
-          if (data['message'] == 'User with this email already exists') {
+      } else if (response.statusCode == 409) {
+        if (responseData.containsKey('message')) {
+          if (responseData['message'] == 'User with this email already exists') {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, data['message'], bottomMargin: 550.0);
-          } 
-          else if (data['message'] == 'All mandatory fields must be filled') {
+            showCustomSnackBar(context, responseData['message'], bottomMargin: 550.0);
+          } else if (responseData['message'] == 'All mandatory fields must be filled') {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, 'Please fill in all the fields', bottomMargin: 550.0);
+            showCustomSnackBar(context, 'Please fill in all the fields',
+                bottomMargin: 550.0);
           }
         }
-      } 
-      else if (response.statusCode == 500) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        if (data.containsKey('error')) {
-          if (data['error'] ==
+      } else if (response.statusCode == 500) {
+        if (responseData.containsKey('error')) {
+          if (responseData['error'] ==
               'An error occurred sending the verification line') {
             // ignore: use_build_context_synchronously
             showCustomSnackBar(context, 'Verification line sending error',
@@ -146,8 +148,7 @@ class _SignupPageState extends State<SignupPage> {
                 bottomMargin: 550.0);
           }
         }
-      } 
-      else {
+      } else {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'Failed to sign up, please try again',
             bottomMargin: 550.0);

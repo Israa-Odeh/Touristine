@@ -7,9 +7,17 @@ import 'package:touristine/Profiles/Tourist/MainPages/imageUpload.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/planMaker.dart';
 
 class TouristProfile extends StatefulWidget {
+  final String firstName;
+  final String lastName;
   final String token;
+  final String password;
 
-  const TouristProfile({super.key, required this.token});
+  const TouristProfile(
+      {super.key,
+      required this.firstName,
+      required this.lastName,
+      required this.token,
+      required this.password});
 
   @override
   _TouristAppState createState() => _TouristAppState();
@@ -28,7 +36,7 @@ class _TouristAppState extends State<TouristProfile> {
       PlanMakerPage(token: widget.token),
       ImagesUploadPage(token: widget.token),
       ChattingPage(token: widget.token),
-      ProfilePage(token: widget.token),
+      ProfilePage(firstName: widget.firstName, lastName: widget.lastName, token: widget.token, password: widget.password,)
     ];
   }
 

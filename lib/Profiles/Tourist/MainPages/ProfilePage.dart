@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:touristine/LoginAndRegistration/MainPages/landingPage.dart';
 import 'package:touristine/Profiles/Tourist/Profile/Sections/MyAccount.dart';
 import 'package:touristine/Profiles/Tourist/Profile/Sections/interestsFilling.dart';
@@ -6,9 +7,17 @@ import 'package:touristine/Profiles/Tourist/Profile/Sections/locationAccquisitio
 import 'package:touristine/components/profilePicture.dart';
 
 class ProfilePage extends StatefulWidget {
+  final String firstName;
+  final String lastName;
   final String token;
+  final String password;
 
-  const ProfilePage({super.key, required this.token});
+  const ProfilePage(
+      {super.key,
+      required this.firstName,
+      required this.lastName,
+      required this.token,
+      required this.password});
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -87,7 +96,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const SizedBox(height: 80),
-                  ProfilePicture(token: widget.token),
+                  ProfilePicture(firstName: widget.firstName, lastName: widget.lastName, token: widget.token,),
                   const SizedBox(height: 40),
 
                   buildProfileTile(
@@ -96,7 +105,11 @@ class _ProfilePageState extends State<ProfilePage> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => AccountPage(
-                            token: widget.token, profileImage: null),
+                            firstName: widget.firstName,
+                            lastName: widget.lastName,
+                            token: widget.token,
+                            password: widget.password,
+                            profileImage: null),
                       ),
                     );
                   }),
@@ -107,7 +120,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       "assets/Images/Profiles/Tourist/form.png", () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => InterestsFillingPage(token: widget.token),
+                        builder: (context) =>
+                            InterestsFillingPage(token: widget.token),
                       ),
                     );
                   }),
@@ -135,6 +149,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   buildProfileTile(
                       "Log Out", "assets/Images/Profiles/Tourist/logOut.png",
                       () {
+                    GoogleSignIn googleSignIn = GoogleSignIn();
+                    googleSignIn.disconnect();
                     Navigator.of(context).popUntil((route) => route.isFirst);
                     Navigator.of(context).pushReplacement(
                         MaterialPageRoute(builder: (context) => LandingPage()));
