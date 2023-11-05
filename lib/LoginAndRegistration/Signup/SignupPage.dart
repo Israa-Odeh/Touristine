@@ -63,8 +63,7 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   Future<void> sendAndSaveData() async {
-    final url = Uri.parse(
-        'https://touristine.onrender.com/signup'); // Replace this with your Node.js server URL.
+    final url = Uri.parse('https://touristine.onrender.com/signup'); // Replace this with your Node.js server URL.
     try {
       final response = await http.post(
         url,

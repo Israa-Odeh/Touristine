@@ -145,8 +145,9 @@ class _LoginPageState extends State<LoginPage>
 
       // Successful response from the Node.js server.
       if (response.statusCode == 200) {
-        await storeLoginInfoLocally();
-        if (responseData.containsKey('status') && responseData.containsKey('type')) {
+        storeLoginInfoLocally();
+        if (responseData.containsKey('status') &&
+            responseData.containsKey('type')) {
           // It is a tourist user type in this case.
           if (responseData['status'] == true && responseData['type'] == 100) {
             String token = responseData['token'];
@@ -170,7 +171,12 @@ class _LoginPageState extends State<LoginPage>
               context,
               MaterialPageRoute(
                 builder: (context) => SplashScreen(
-                  profileType: TouristProfile(firstName: firstName, lastName: lastName, token: token, password: password,),
+                  profileType: TouristProfile(
+                    firstName: firstName,
+                    lastName: lastName,
+                    token: token,
+                    password: password,
+                  ),
                 ), // Pass the token to the SplashScreen constructor
               ),
             );
@@ -224,7 +230,7 @@ class _LoginPageState extends State<LoginPage>
     }
   }
 
-// A function for user sign-in.
+  // A function for user sign-in.
   void signUserIn() {
     // Check if the textFields are filled.
     if (isInputEmpty()) {
@@ -238,53 +244,109 @@ class _LoginPageState extends State<LoginPage>
     }
   }
 
+  // A function for user sign-in with Google.
   Future<void> signInWithGoogle() async {
     WidgetsFlutterBinding.ensureInitialized();
     try {
       await Firebase.initializeApp();
     } catch (e) {
       print('Error initializing Firebase: $e');
-      // Handle the error here as per your requirement
     }
 
     try {
-      // Trigger the authentication flow
+      // Trigger the authentication flow.
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
       if (googleUser == null) {
-        print('Google Sign-In was canceled.');
-        return; // Return if the Google Sign-In process was not successful
+        return;
       }
 
-      // Obtain the auth details from the request
-      final GoogleSignInAuthentication? googleAuth =
-          await googleUser?.authentication;
+      // Obtain the auth details from the request.
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
-      // Create a new credential
+      // Create a new credential.
       final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
       );
 
-      // Once signed in, return the UserCredential
+      // Once signed in, return the UserCredential.
       UserCredential userCredential =
           await FirebaseAuth.instance.signInWithCredential(credential);
 
-      // Fetch the user information
+      // Fetch the user information.
       User? user = userCredential.user;
 
-      // Print the user information
+      // Print the user information.
       if (user != null) {
+        // Prepare the data to send to the backend.
+        List<String> nameParts = user.displayName!.split(' ');
+        String? firstName;
+        String? lastName;
+
+        if (nameParts.length >= 2) {
+          firstName = nameParts[0]; // Extracting the first part
+          lastName = nameParts
+              .sublist(1)
+              .join(' '); // Extracting the rest as the last name
+        }
+
         print('User Information:');
         print('User ID: ${user.uid}');
-        print('Display Name: ${user.displayName}');
+        print('First Name: $firstName');
+        print('Last Name: $lastName');
         print('Email: ${user.email}');
         print('Photo URL: ${user.photoURL}');
-        // You can print other user information as needed
-      } else {
-        print('User information not available.');
+
+        // Start: This will be deleted from here................
+        // However, at present, I'll close the connection
+        // as I'm not currently opening any interfaces.
+        GoogleSignIn googleSignIn = GoogleSignIn();
+        googleSignIn.disconnect();
+        //End////////////////////////////////////////////////
+
+        var userData = {
+          'userID': user.uid,
+          'firstName': firstName,
+          'lastName': lastName,
+          'email': user.email,
+          'photoURL': user.photoURL,
+        };
+
+        var url = 'https://touristine.onrender.com/signInWithGoogle';
+
+        try {
+          var response = await http.post(
+            Uri.parse(url),
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: userData,
+            // You may want to establish a distinct collection for users who log in using Google.
+            // You need to check if the userID exists and is stored; if it is, there's no need to store it.
+            // But if the sent ID doesn't exist, store all the user fields as mentioned above:
+            // userID (Unique ID from Google), firstName, lastName, email, and the photoURL.
+          );
+
+          if (response.statusCode == 200) {
+            // Jenan send me a flag to indicate whether it's the user 
+            // first time to sign in using google (true) or not (false),
+            // in order to display the suitable interfaces accordingly.
+          } 
+          else {
+            print('Failed to sign in with Google');
+          }
+        } 
+        catch (e) {
+          print('Error sending data to the server: $e');
+        }
+      } 
+      else {
+        print('User information are not available.');
       }
-    } catch (e) {
+    } 
+    catch (e) {
       print('Error occurred: $e');
     }
   }
