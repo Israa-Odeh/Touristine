@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -9,7 +8,6 @@ import 'package:touristine/LoginAndRegistration/MainPages/SplashScreen.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/tourist.dart';
 import 'package:touristine/components/textField.dart';
-import 'package:jwt_decode/jwt_decode.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_core/firebase_core.dart';
 

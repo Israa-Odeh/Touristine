@@ -5,7 +5,6 @@ import 'dart:io';
 
 // Import the http package.
 import 'package:http/http.dart' as http;
-import 'package:jwt_decode/jwt_decode.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/components/customField.dart';
 
