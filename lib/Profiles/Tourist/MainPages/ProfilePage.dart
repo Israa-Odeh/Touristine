@@ -104,7 +104,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     firstName: widget.firstName,
                     lastName: widget.lastName,
                     token: widget.token,
-                    imagePath: "https://lh3.googleusercontent.com/a/ACg8ocLnIHSIiXY4oHOzkStpxVtNpGIZuyxycC-BUTKwhqBgbbg=s96-c",
                   ),
                   const SizedBox(height: 40),
 
