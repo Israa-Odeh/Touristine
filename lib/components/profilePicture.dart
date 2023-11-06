@@ -35,16 +35,15 @@ class _ProfilePictureState extends State<ProfilePicture> {
     return Column(
       children: [
         SizedBox(
-          height: 150,
-          width: 150,
-          child: CircleAvatar(
-            backgroundColor: Colors.white,
-            backgroundImage: (widget.imagePath != null)
-                ? AssetImage(widget.imagePath!)
-                : const AssetImage(
-                    "assets/Images/Profiles/Tourist/DefaultProfileImage.png"),
-          ),
+        height: 150,
+        width: 150,
+        child: CircleAvatar(
+          backgroundColor: Colors.white,
+          backgroundImage: (widget.imagePath != null)
+              ? NetworkImage(widget.imagePath!) as ImageProvider<Object>
+              : const AssetImage("assets/Images/Profiles/Tourist/DefaultProfileImage.png"),
         ),
+      ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
