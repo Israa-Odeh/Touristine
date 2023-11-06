@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:touristine/LoginAndRegistration/MainPages/landingPage.dart';
+import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/Profiles/Tourist/Profile/Sections/MyAccount.dart';
 import 'package:touristine/Profiles/Tourist/Profile/Sections/interestsFilling.dart';
 import 'package:touristine/Profiles/Tourist/Profile/Sections/locationAccquisition.dart';
@@ -11,13 +12,16 @@ class ProfilePage extends StatefulWidget {
   final String lastName;
   final String token;
   final String password;
+  final bool googleAccount;
 
-  const ProfilePage(
-      {super.key,
-      required this.firstName,
-      required this.lastName,
-      required this.token,
-      required this.password});
+  const ProfilePage({
+    super.key,
+    required this.firstName,
+    required this.lastName,
+    required this.token,
+    required this.password,
+    this.googleAccount = false, // Set default value to false.
+  });
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -96,22 +100,30 @@ class _ProfilePageState extends State<ProfilePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const SizedBox(height: 80),
-                  ProfilePicture(firstName: widget.firstName, lastName: widget.lastName, token: widget.token,),
+                  ProfilePicture(
+                    firstName: widget.firstName,
+                    lastName: widget.lastName,
+                    token: widget.token,
+                  ),
                   const SizedBox(height: 40),
 
                   buildProfileTile(
                       "My Account", "assets/Images/Profiles/Tourist/user.png",
                       () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => AccountPage(
-                            firstName: widget.firstName,
-                            lastName: widget.lastName,
-                            token: widget.token,
-                            password: widget.password,
-                            profileImage: null),
-                      ),
-                    );
+                    !widget.googleAccount
+                        ? Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => AccountPage(
+                                firstName: widget.firstName,
+                                lastName: widget.lastName,
+                                token: widget.token,
+                                password: widget.password,
+                                profileImage: null,
+                              ),
+                            ),
+                          )
+                        : showCustomSnackBar(
+                            context, 'You\'re logged in with Google', bottomMargin: 450);
                   }),
 
                   const SizedBox(height: 15),

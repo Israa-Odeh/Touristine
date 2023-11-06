@@ -8,9 +8,16 @@ class TouristOnBoardingPage extends StatefulWidget {
   final String lastName;
   final String token;
   final String password;
+  final bool googleAccount;
 
-  const TouristOnBoardingPage({super.key, required this.firstName, required this.lastName, required this.token, required this.password});
-
+  const TouristOnBoardingPage(
+      {super.key,
+      required this.firstName,
+      required this.lastName,
+      required this.token,
+      required this.password,
+      this.googleAccount = false // Set default value to false.
+      });
 
   @override
   _TouristOnBoardingPageState createState() => _TouristOnBoardingPageState();
@@ -29,6 +36,7 @@ class _TouristOnBoardingPageState extends State<TouristOnBoardingPage> {
           lastName: widget.lastName,
           token: widget.token,
           password: widget.password,
+          googleAccount: widget.googleAccount,
           title: const [
             'Destinations Discovery',
             'Destinations Rating',

@@ -11,13 +11,16 @@ class TouristProfile extends StatefulWidget {
   final String lastName;
   final String token;
   final String password;
+  final bool googleAccount;
 
-  const TouristProfile(
-      {super.key,
-      required this.firstName,
-      required this.lastName,
-      required this.token,
-      required this.password});
+  const TouristProfile({
+    super.key,
+    required this.firstName,
+    required this.lastName,
+    required this.token,
+    required this.password,
+    this.googleAccount = false, // Set default value to false.
+  });
 
   @override
   _TouristAppState createState() => _TouristAppState();
@@ -36,7 +39,13 @@ class _TouristAppState extends State<TouristProfile> {
       PlanMakerPage(token: widget.token),
       ImagesUploadPage(token: widget.token),
       ChattingPage(token: widget.token),
-      ProfilePage(firstName: widget.firstName, lastName: widget.lastName, token: widget.token, password: widget.password,)
+      ProfilePage(
+        firstName: widget.firstName,
+        lastName: widget.lastName,
+        token: widget.token,
+        password: widget.password,
+        googleAccount: widget.googleAccount
+      )
     ];
   }
 

@@ -306,12 +306,15 @@ class _LoginPageState extends State<LoginPage>
         googleSignIn.disconnect();
         //End////////////////////////////////////////////////
 
+        bool hasPassword = false;
+        
+        //'userID': user.uid,
         var userData = {
-          'userID': user.uid,
           'firstName': firstName,
           'lastName': lastName,
           'email': user.email,
-          'photoURL': user.photoURL,
+          'password': hasPassword.toString(),
+          'photoURL': user.photoURL, // Store the url only.
         };
 
         var url = 'https://touristine.onrender.com/signInWithGoogle';

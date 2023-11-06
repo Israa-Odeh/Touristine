@@ -5,8 +5,14 @@ class ProfilePicture extends StatefulWidget {
   final String firstName;
   final String lastName;
   final String token;
+  final String? imagePath; // New variable for the image path
 
-  const ProfilePicture({super.key, required this.firstName, required this.lastName, required this.token});
+  const ProfilePicture(
+      {super.key,
+      required this.firstName,
+      required this.lastName,
+      required this.token, 
+      this.imagePath});
 
   @override
   _ProfilePictureState createState() => _ProfilePictureState();
@@ -16,7 +22,6 @@ class _ProfilePictureState extends State<ProfilePicture> {
   late String email;
   late String firstName;
   late String lastName;
-
   @override
   void initState() {
     super.initState();
@@ -29,13 +34,15 @@ class _ProfilePictureState extends State<ProfilePicture> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(
+        SizedBox(
           height: 150,
           width: 150,
           child: CircleAvatar(
             backgroundColor: Colors.white,
-            backgroundImage: AssetImage(
-                "assets/Images/Profiles/Tourist/DefaultProfileImage.png"),
+            backgroundImage: (widget.imagePath != null)
+                ? AssetImage(widget.imagePath!)
+                : const AssetImage(
+                    "assets/Images/Profiles/Tourist/DefaultProfileImage.png"),
           ),
         ),
         Row(

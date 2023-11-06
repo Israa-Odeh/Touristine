@@ -11,6 +11,7 @@ class OnBoardingPage extends StatefulWidget {
   final String lastName;
   final String token;
   final String password;
+  final bool googleAccount;
   final List<String> title;
   final List<String> imageAsset;
   final List<String> firstText;
@@ -21,20 +22,21 @@ class OnBoardingPage extends StatefulWidget {
       profileType; // 0: Indicates tourist Profile, 1: Indicates admin profile.
   // There might be 2 for the stuff profiles, this will be decided later on.
 
-  const OnBoardingPage(
-      {Key? key,
-      required this.title,
-      required this.imageAsset,
-      required this.firstText,
-      required this.secondText,
-      required this.titleSize,
-      required this.numOfPages,
-      required this.profileType,
-      required this.firstName,
-      required this.lastName,
-      required this.token,
-      required this.password})
-      : super(key: key);
+  const OnBoardingPage({
+    Key? key,
+    required this.title,
+    required this.imageAsset,
+    required this.firstText,
+    required this.secondText,
+    required this.titleSize,
+    required this.numOfPages,
+    required this.profileType,
+    required this.firstName,
+    required this.lastName,
+    required this.token,
+    required this.password,
+    this.googleAccount = false, // Set default value to false.
+  }) : super(key: key);
 
   @override
   _OnBoardingPageState createState() => _OnBoardingPageState();
@@ -142,6 +144,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                                     lastName: widget.lastName,
                                     token: widget.token,
                                     password: widget.password,
+                                    googleAccount: widget.googleAccount,
                                   ))
                                 : const AdminProfile();
                           }));
