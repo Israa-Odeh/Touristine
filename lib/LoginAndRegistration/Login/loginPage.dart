@@ -312,7 +312,9 @@ class _LoginPageState extends State<LoginPage>
           'lastName': lastName,
           'email': user.email,
           'password': hasPassword.toString(),
-          'photoURL': user.photoURL, // Store the url only.
+          'photoURL': user.photoURL, 
+          // See how to take the image from this URL which is provided
+          // by google and store the image as you did before.
         };
 
         var url = 'https://touristine.onrender.com/signInWithGoogle';
@@ -334,6 +336,7 @@ class _LoginPageState extends State<LoginPage>
             // Jenan send me a flag to indicate whether it's the user 
             // first time to sign in using google (true) or not (false),
             // in order to display the suitable interfaces accordingly.
+            
           } 
           else {
             print('Failed to sign in with Google');
