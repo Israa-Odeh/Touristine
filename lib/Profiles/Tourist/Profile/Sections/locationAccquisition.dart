@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoding/geocoding.dart';
@@ -35,21 +37,31 @@ class _LocationPageState extends State<LocationPage> {
         body: {
           'latitude': _currentPosition!.latitude.toString(), // Double Value.
           'longitude': _currentPosition!.longitude.toString(), // Double Value.
-          'address': _currentAddress!,  // String Value.
+          'address': _currentAddress!, // String Value.
         },
       );
-
       if (response.statusCode == 200) {
-        // Successful request.
-        print('Data sent and saved successfully');
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        if (responseData.containsKey('message') &&
+            responseData['message'] == 'updated') {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, "Your location has been updated",
+              bottomMargin: 310);
+        }
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        if (responseData.containsKey('error')) {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, "An error has occured",
+              bottomMargin: 310);
+        }
       } else {
-        // Request failed
-        // showCustomSnackBar(context, 'Failed to sign up, please try again');
-        print('Failed to send and save data. Error: ${response.reasonPhrase}');
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, "An error has occurred", bottomMargin: 310);
       }
     } catch (error) {
       // Catch block to handle any errors during the request.
-      print('Failed to send and save data. Error: $error');
+      print('Failed to save the location. Error: $error');
     }
   }
 
@@ -59,8 +71,8 @@ class _LocationPageState extends State<LocationPage> {
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      showCustomSnackBar(
-          context, "Location services are disabled. Please enable the services",
+      // ignore: use_build_context_synchronously
+      showCustomSnackBar(context, "Location services are disabled",
           bottomMargin: 310);
       return false;
     }
@@ -68,18 +80,21 @@ class _LocationPageState extends State<LocationPage> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
+        // ignore: use_build_context_synchronously
         showCustomSnackBar(context, "Location permissions are denied",
             bottomMargin: 310);
         return false;
       }
     }
     if (permission == LocationPermission.deniedForever) {
-      showCustomSnackBar(context,
-          "Location permissions are permanently denied, we cannot request permissions",
+      // Location permissions are permanently denied, we cannot request permissions,
+      // ignore: use_build_context_synchronously
+      showCustomSnackBar(context, "Location permissions permanently denied",
           bottomMargin: 310);
 
       return false;
     }
+    // ignore: use_build_context_synchronously
     showCustomSnackBar(context, "Please wait for a moment", bottomMargin: 310);
     return true;
   }
@@ -106,6 +121,8 @@ class _LocationPageState extends State<LocationPage> {
         _currentAddress = '${place.locality}';
         isLocDetermined = true;
       });
+      // Call sendAndSaveLocation once the address is determined.
+      sendAndSaveLocation();
     }).catchError((e) {
       debugPrint(e);
     });
@@ -190,7 +207,6 @@ class _LocationPageState extends State<LocationPage> {
                   ElevatedButton(
                     onPressed: () {
                       _getCurrentPosition(); // Trigger obtaining the current location.
-                      sendAndSaveLocation(); // Send and save data to the backend.
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(

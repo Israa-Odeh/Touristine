@@ -130,7 +130,7 @@ class _AccountPageState extends State<AccountPage> {
               bottomMargin: 457);
         } else {
           // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, "An error occured", bottomMargin: 457);
+          showCustomSnackBar(context, "An error has occurred", bottomMargin: 457);
         }
       } else {
         // ignore: use_build_context_synchronously
