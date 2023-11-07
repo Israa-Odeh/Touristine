@@ -163,7 +163,7 @@ class _LoginPageState extends State<LoginPage>
             print("Profile Image: $imageURL");
 
             if (imageURL != null) {
-              profileImageProvider = NetworkImage(imageURL!);
+              profileImageProvider = NetworkImage(imageURL);
               // ignore: use_build_context_synchronously
               precacheImage(profileImageProvider, context);
             }
