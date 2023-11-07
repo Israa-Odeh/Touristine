@@ -162,10 +162,13 @@ class _LoginPageState extends State<LoginPage>
             print("Password: $password");
             print("Profile Image: $imageURL");
 
-            if (imageURL != null) {
+            if (imageURL != null && imageURL!= "") {
               profileImageProvider = NetworkImage(imageURL);
               // ignore: use_build_context_synchronously
               precacheImage(profileImageProvider, context);
+            }
+            else {
+              imageURL = null;
             }
             // ignore: use_build_context_synchronously
             // Pass the token to the SplashScreen
