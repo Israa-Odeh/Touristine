@@ -142,11 +142,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                             return widget.profileType == 100
                                 ? SplashScreen(
                                     profileType: TouristProfile(
-                                    firstName: widget.firstName,
-                                    lastName: widget.lastName,
                                     token: widget.token,
-                                    password: widget.password,
-                                    profileImage: widget.profileImage,
                                     googleAccount: widget.googleAccount,
                                   ))
                                 : const AdminProfile();

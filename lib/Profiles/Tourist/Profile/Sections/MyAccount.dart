@@ -7,23 +7,21 @@ import 'dart:io';
 
 // Import the http package.
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/tourist.dart';
 import 'package:touristine/components/customField.dart';
+import 'package:touristine/UserData/userProvider.dart';
 
 class AccountPage extends StatefulWidget {
-  final String firstName;
-  final String lastName;
   final String token;
-  final String password;
-  final String? profileImageURL;
+  final bool googleAccount;
 
-  const AccountPage(
-      {super.key,
-      required this.firstName,
-      required this.lastName,
-      required this.token,
-      required this.password,
-      this.profileImageURL});
+  const AccountPage({
+    super.key,
+    required this.token,
+    this.googleAccount = false, // Set default value to false.
+  });
 
   @override
   _AccountPageState createState() => _AccountPageState();
@@ -42,9 +40,12 @@ class _AccountPageState extends State<AccountPage> {
   @override
   void initState() {
     super.initState();
-    firstNameController.text = widget.firstName;
-    lastNameController.text = widget.lastName;
-    passwordController.text = widget.password;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Move the context-dependent code here
+      firstNameController.text = context.read<UserProvider>().firstName;
+      lastNameController.text = context.read<UserProvider>().lastName;
+      passwordController.text = context.read<UserProvider>().password;
+    });
   }
 
   // Functions Section.
@@ -63,7 +64,6 @@ class _AccountPageState extends State<AccountPage> {
 
       if (response.statusCode == 200) {
         // First Name, Last Name, password, Image.
-
       } else {
         print('Failed to fetch user data: $response.statusCode');
       }
@@ -136,12 +136,22 @@ class _AccountPageState extends State<AccountPage> {
             setState(() {
               updateIsImageChanged(false);
             });
-            String imageUrl = parsedResponse['imageUrl'];
+            String? imageUrl = parsedResponse['imageUrl'];
             print("Image: $imageUrl");
+            // ignore: use_build_context_synchronously
+            context.read<UserProvider>().updateImage(
+                newImageURL: imageUrl,
+              );
           }
           // ignore: use_build_context_synchronously
           showCustomSnackBar(context, "Your information has been edited",
               bottomMargin: 457);
+          // ignore: use_build_context_synchronously
+          context.read<UserProvider>().updateData(
+                newFirstName: firstNameController.text,
+                newLastName: lastNameController.text,
+                newPassword: passwordController.text,
+              );
         }
       } else if (response.statusCode == 500) {
         final responseJson = await response.stream.bytesToString();
@@ -168,9 +178,10 @@ class _AccountPageState extends State<AccountPage> {
 
   void editProfileInfo() {
     // Check if any data has changed
-    bool isDataChanged = widget.firstName != firstNameController.text ||
-        widget.lastName != lastNameController.text ||
-        widget.password != passwordController.text ||
+    bool isDataChanged = context.read<UserProvider>().firstName !=
+            firstNameController.text ||
+        context.read<UserProvider>().lastName != lastNameController.text ||
+        context.read<UserProvider>().password != passwordController.text ||
         isImageChanged == true;
 
     if (isDataChanged) {
@@ -224,7 +235,6 @@ class _AccountPageState extends State<AccountPage> {
                 children: [
                   const SizedBox(height: 80),
                   ProfileImage(
-                    profileImagePath: widget.profileImageURL,
                     image: _image,
                     onImageChanged: (File? newImage) {
                       setState(() {
@@ -291,7 +301,15 @@ class _AccountPageState extends State<AccountPage> {
                         size: 30,
                       ),
                       onPressed: () {
-                        Navigator.of(context).pop();
+                        Navigator.pushReplacement(
+                          // This will be edited based on the profile type.
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => TouristProfile(
+                                    token: widget.token,
+                                    stepNum: 4,
+                                  )),
+                        );
                       },
                     ),
                   ),
@@ -307,14 +325,12 @@ class _AccountPageState extends State<AccountPage> {
 
 class ProfileImage extends StatefulWidget {
   final File? image;
-  final String? profileImagePath;
   final void Function(File? newImage) onImageChanged;
 
   const ProfileImage({
     Key? key,
     required this.image,
     required this.onImageChanged,
-    this.profileImagePath,
   }) : super(key: key);
 
   @override
@@ -351,9 +367,9 @@ class _ProfileImageState extends State<ProfileImage> {
             ),
             child: CircleAvatar(
               backgroundColor: Colors.white,
-              backgroundImage: (widget.profileImagePath != null &&
+              backgroundImage: (context.watch<UserProvider>().imageURL != null && context.watch<UserProvider>().imageURL != "" &&
                       widget.image == null)
-                  ? NetworkImage(widget.profileImagePath!)
+                  ? NetworkImage(context.watch<UserProvider>().imageURL!)
                   : widget.image != null
                       ? Image.file(widget.image!).image
                       : const AssetImage(

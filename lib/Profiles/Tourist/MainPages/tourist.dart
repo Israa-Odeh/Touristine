@@ -7,21 +7,15 @@ import 'package:touristine/Profiles/Tourist/MainPages/imageUpload.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/planMaker.dart';
 
 class TouristProfile extends StatefulWidget {
-  final String firstName;
-  final String lastName;
   final String token;
-  final String password;
-  final String? profileImage;
   final bool googleAccount;
+  final int stepNum;
 
   const TouristProfile({
     super.key,
-    required this.firstName,
-    required this.lastName,
     required this.token,
-    this.profileImage,
-    required this.password,
-    this.googleAccount = false, // Set default value to false.
+    this.googleAccount = false,
+    this.stepNum = 0, // Set default value to false.
   });
 
   @override
@@ -32,6 +26,12 @@ class _TouristAppState extends State<TouristProfile> {
   int _currentIndex = 0;
   late List<Widget> _children;
 
+  void moveToStep(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -41,14 +41,10 @@ class _TouristAppState extends State<TouristProfile> {
       PlanMakerPage(token: widget.token),
       ImagesUploadPage(token: widget.token),
       ChattingPage(token: widget.token),
-      ProfilePage(
-          firstName: widget.firstName,
-          lastName: widget.lastName,
-          token: widget.token,
-          password: widget.password,
-          profileImage: widget.profileImage,
-          googleAccount: widget.googleAccount)
+      ProfilePage(token: widget.token, googleAccount: widget.googleAccount)
     ];
+
+    moveToStep(widget.stepNum);
   }
 
   @override

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:touristine/LoginAndRegistration/Login/ForgotPassword.dart';
 import 'package:touristine/LoginAndRegistration/MainPages/SplashScreen.dart';
@@ -10,6 +11,7 @@ import 'package:touristine/Profiles/Tourist/MainPages/tourist.dart';
 import 'package:touristine/components/textField.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:touristine/UserData/userProvider.dart';
 
 // Import the http package.
 import 'package:http/http.dart' as http;
@@ -162,13 +164,22 @@ class _LoginPageState extends State<LoginPage>
             print("Password: $password");
             print("Profile Image: $imageURL");
 
-            if (imageURL != null && imageURL!= "") {
+            // ignore: use_build_context_synchronously
+            context.read<UserProvider>().updateData(
+                newFirstName: firstName,
+                newLastName: lastName,
+                newPassword: password,);
+
+            if (imageURL != null && imageURL != "") {
               profileImageProvider = NetworkImage(imageURL);
               // ignore: use_build_context_synchronously
               precacheImage(profileImageProvider, context);
+              // ignore: use_build_context_synchronously
+              context.read<UserProvider>().updateImage(newImageURL: imageURL);
             }
             else {
-              imageURL = null;
+              // ignore: use_build_context_synchronously
+              context.read<UserProvider>().updateImage(newImageURL: null);
             }
             // ignore: use_build_context_synchronously
             // Pass the token to the SplashScreen
@@ -179,11 +190,7 @@ class _LoginPageState extends State<LoginPage>
               MaterialPageRoute(
                 builder: (context) => SplashScreen(
                   profileType: TouristProfile(
-                    firstName: firstName,
-                    lastName: lastName,
                     token: token,
-                    profileImage: imageURL,
-                    password: password,
                   ),
                 ), // Pass the token to the SplashScreen constructor
               ),

@@ -8,20 +8,12 @@ import 'package:touristine/Profiles/Tourist/Profile/Sections/locationAccquisitio
 import 'package:touristine/components/profilePicture.dart';
 
 class ProfilePage extends StatefulWidget {
-  final String firstName;
-  final String lastName;
   final String token;
-  final String password;
-  final String? profileImage;
   final bool googleAccount;
 
   const ProfilePage({
     super.key,
-    required this.firstName,
-    required this.lastName,
     required this.token,
-    required this.password,
-    this.profileImage,
     this.googleAccount = false, // Set default value to false.
   });
 
@@ -103,10 +95,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   const SizedBox(height: 80),
                   ProfilePicture(
-                    firstName: widget.firstName,
-                    lastName: widget.lastName,
                     token: widget.token,
-                    imagePath: widget.profileImage,
                   ),
                   const SizedBox(height: 40),
 
@@ -117,11 +106,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         ? Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => AccountPage(
-                                firstName: widget.firstName,
-                                lastName: widget.lastName,
                                 token: widget.token,
-                                password: widget.password,
-                                profileImageURL: widget.profileImage,
+                                googleAccount: widget.googleAccount,
                               ),
                             ),
                           )

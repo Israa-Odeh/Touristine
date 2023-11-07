@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:jwt_decode/jwt_decode.dart';
+import 'package:provider/provider.dart';
+import 'package:touristine/UserData/userProvider.dart';
 
 class ProfilePicture extends StatefulWidget {
-  final String firstName;
-  final String lastName;
   final String token;
-  final String? imagePath;
 
-  const ProfilePicture(
-      {super.key,
-      required this.firstName,
-      required this.lastName,
-      required this.token, 
-      this.imagePath});
+  const ProfilePicture({
+    super.key,
+    required this.token,
+  });
 
   @override
   _ProfilePictureState createState() => _ProfilePictureState();
@@ -32,28 +29,32 @@ class _ProfilePictureState extends State<ProfilePicture> {
 
   @override
   Widget build(BuildContext context) {
+    // var touristProvider = context.read<UserProvider>();
+
     return Column(
       children: [
         SizedBox(
-        height: 150,
-        width: 150,
-        child: CircleAvatar(
-          backgroundColor: Colors.white,
-          backgroundImage: (widget.imagePath != null)
-              ? NetworkImage(widget.imagePath!)
-              : Image.asset("assets/Images/Profiles/Tourist/DefaultProfileImage.png").image,
+          height: 150,
+          width: 150,
+          child: CircleAvatar(
+            backgroundColor: Colors.white,
+            backgroundImage: (context.watch<UserProvider>().imageURL != null && context.watch<UserProvider>().imageURL != "")
+                ? NetworkImage(context.watch<UserProvider>().imageURL!)
+                : Image.asset(
+                        "assets/Images/Profiles/Tourist/DefaultProfileImage.png")
+                    .image,
+          ),
         ),
-      ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(height: 50),
             Text(
-              widget.firstName,
+              context.watch<UserProvider>().firstName,
               style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
             ),
             Text(
-              " ${widget.lastName}",
+              " ${context.watch<UserProvider>().lastName}",
               style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
             ),
           ],
