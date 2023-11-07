@@ -94,7 +94,6 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   Future<void> sendAndSaveData() async {
-    bool keepOldImage = false; // To be edited.
     final url = Uri.parse('https://touristine.onrender.com/edit-account');
     final request = http.MultipartRequest('POST', url);
 
@@ -104,7 +103,6 @@ class _AccountPageState extends State<AccountPage> {
 
     // Add the image to the request if it exists.
     if (_image != null) {
-      keepOldImage = false;
       List<int> imageBytes = _image!.readAsBytesSync(); // Read file as bytes.
       String fileName = _image!.path.split('/').last; // Extract file name
       final imageFile = http.MultipartFile.fromBytes(
@@ -113,11 +111,7 @@ class _AccountPageState extends State<AccountPage> {
         filename: fileName,
       );
       request.files.add(imageFile);
-    } else {
-      // If there is an old image keep it stored.
-      keepOldImage = true;
     }
-
     // Add other form data.
     request.fields['firstName'] = firstNameController.text;
     request.fields['lastName'] = lastNameController.text;
