@@ -71,7 +71,7 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   Future<void> sendAndSaveData() async {
-    bool keepOldImage = false;
+    bool keepOldImage = false; // To be edited.
     final url = Uri.parse('https://touristine.onrender.com/edit-account');
     final request = http.MultipartRequest('POST', url);
 
