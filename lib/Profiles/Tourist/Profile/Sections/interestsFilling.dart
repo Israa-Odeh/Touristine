@@ -52,15 +52,24 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
   @override
   void initState() {
     super.initState();
-    fetchSavedPreferences();
+    fetchSavedInterests();
+  }
+
+  bool convertToBool(dynamic value) {
+    if (value is bool) {
+      return value;
+    } else if (value is String) {
+      return value.toLowerCase() == 'true';
+    }
+    return false; // Default value if conversion fails..
   }
 
   // A function that sends a request to the server to retrieve the saved interests.
-  Future<void> fetchSavedPreferences() async {
+  Future<void> fetchSavedInterests() async {
     final url = Uri.parse('https://touristine.onrender.com/get-interests');
 
     try {
-      final response = await http.get(
+      final response = await http.post(
         url,
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -73,34 +82,41 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
 
         // Retrieve and set the values based on the response data.
         setState(() {
-          budgetFriendly = responseData['BudgetFriendly'] ?? false;
-          midRange = responseData['MidRange'] ?? false;
-          luxurious = responseData['Luxurious'] ?? false;
+          budgetFriendly = convertToBool(responseData['BudgetFriendly']);
+          midRange = convertToBool(responseData['MidRange']);
+          luxurious = convertToBool(responseData['Luxurious']);
 
-          family = responseData['family'] ?? false;
-          friends = responseData['friends'] ?? false;
-          solo = responseData['solo'] ?? false;
+          family = convertToBool(responseData['family']);
+          friends = convertToBool(responseData['friends']);
+          solo = convertToBool(responseData['solo']);
 
-          coastalAreas = responseData['coastalAreas'] ?? false;
-          mountains = responseData['mountains'] ?? false;
-          nationalParks = responseData['nationalParks'] ?? false;
-          majorCities = responseData['majorCities'] ?? false;
-          countrySide = responseData['countrySide'] ?? false;
-          historicalSites = responseData['historicalSites'] ?? false;
-          religiousLandmarks = responseData['religiousLandmarks'] ?? false;
+          coastalAreas = convertToBool(responseData['coastalAreas']);
+          mountains = convertToBool(responseData['mountains']);
+          nationalParks = convertToBool(responseData['nationalParks']);
+          majorCities = convertToBool(responseData['majorCities']);
+          countrySide = convertToBool(responseData['countrySide']);
+          historicalSites = convertToBool(responseData['historicalSites']);
+          religiousLandmarks = convertToBool(responseData['religiousLandmarks']);
 
-          yes = responseData['Yes'] ?? false;
-          no = responseData['No'] ?? false;
+          yes = convertToBool(responseData['Yes']);
+          no = convertToBool(responseData['No']);
 
-          mobility = responseData['mobility'] ?? false;
-          visual = responseData['visual'] ?? false;
-          hearing = responseData['hearing'] ?? false;
-          cognitive = responseData['cognitive'] ?? false;
-          diabetes = responseData['diabetes'] ?? false;
+          mobility = convertToBool(responseData['mobility']);
+          visual = convertToBool(responseData['visual']);
+          hearing = convertToBool(responseData['hearing']);
+          cognitive = convertToBool(responseData['cognitive']);
+          diabetes = convertToBool(responseData['diabetes']);
         });
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        if (responseData.containsKey('error')) {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+        }
       } else {
-        // Handle error response.
-        print('Failed to fetch interests: ${response.statusCode}');
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, "Failed to fetch your interests",
+            bottomMargin: 0);
       }
     } catch (error) {
       print('Failed to fetch interests: $error');
@@ -129,7 +145,7 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
         'majorCities': majorCities.toString(),
         'countrySide': countrySide.toString(),
         'historicalSites': historicalSites.toString(),
-        'religiousLandmarks ': religiousLandmarks.toString(),
+        'religiousLandmarks': religiousLandmarks.toString(),
 
         // Q4.
         'Yes': yes.toString(),

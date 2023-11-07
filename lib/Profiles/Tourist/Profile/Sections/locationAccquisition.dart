@@ -29,7 +29,7 @@ class _LocationPageState extends State<LocationPage> {
         'https://touristine.onrender.com/get-location'); // Replace with your API endpoint
 
     try {
-      final response = await http.get(
+      final response = await http.post(
         url,
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -38,18 +38,41 @@ class _LocationPageState extends State<LocationPage> {
       );
 
       if (response.statusCode == 200) {
-        // final Map<String, dynamic> responseData = json.decode(response.body);
+        final Map<String, dynamic> responseData = json.decode(response.body);
 
-        // setState(() {
-        //   _currentAddress = responseData['address'];
-        //   // Latitude value
-        //   // Longitude value
-        //   // isLocDetermined = true;
-        // });
-      } 
-      else {
-        // Handle error response
-        print('Failed to fetch location: ${response.statusCode}');
+        setState(() {
+          _currentAddress = responseData['address'];
+          double latitude = double.parse(responseData['latitude']);
+          double longitude = double.parse(responseData['longitude']);
+
+          _currentPosition = Position(
+            latitude: latitude,
+            longitude: longitude,
+            timestamp: DateTime.now(),
+            accuracy: 0.0,
+            altitude: 0.0,
+            altitudeAccuracy: 0.0,
+            heading: 0.0,
+            headingAccuracy: 0.0,
+            speed: 0.0,
+            speedAccuracy: 0.0,
+          );
+          isLocDetermined = true;
+        });
+        // print(_currentAddress);
+        // print(_currentPosition!.latitude);
+        // print(_currentPosition!.longitude);
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        if (responseData.containsKey('error')) {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+        }
+      } else {
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, "Failed to fetch your location",
+            bottomMargin: 0);
+        print(response.statusCode);
       }
     } catch (error) {
       print('Failed to fetch location: $error');
