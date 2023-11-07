@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
@@ -46,6 +48,64 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
   bool hearing = false; // Default value of the checkbox18.
   bool cognitive = false; // Default value of the checkbox19.
   bool diabetes = false; // Default value of the checkbox20.
+
+  @override
+  void initState() {
+    super.initState();
+    fetchSavedPreferences();
+  }
+
+  // A function that sends a request to the server to retrieve the saved interests.
+  Future<void> fetchSavedPreferences() async {
+    final url = Uri.parse('https://touristine.onrender.com/get-interests');
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer ${widget.token}',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+
+        // Retrieve and set the values based on the response data.
+        setState(() {
+          budgetFriendly = responseData['BudgetFriendly'] ?? false;
+          midRange = responseData['MidRange'] ?? false;
+          luxurious = responseData['Luxurious'] ?? false;
+
+          family = responseData['family'] ?? false;
+          friends = responseData['friends'] ?? false;
+          solo = responseData['solo'] ?? false;
+
+          coastalAreas = responseData['coastalAreas'] ?? false;
+          mountains = responseData['mountains'] ?? false;
+          nationalParks = responseData['nationalParks'] ?? false;
+          majorCities = responseData['majorCities'] ?? false;
+          countrySide = responseData['countrySide'] ?? false;
+          historicalSites = responseData['historicalSites'] ?? false;
+          religiousLandmarks = responseData['religiousLandmarks'] ?? false;
+
+          yes = responseData['Yes'] ?? false;
+          no = responseData['No'] ?? false;
+
+          mobility = responseData['mobility'] ?? false;
+          visual = responseData['visual'] ?? false;
+          hearing = responseData['hearing'] ?? false;
+          cognitive = responseData['cognitive'] ?? false;
+          diabetes = responseData['diabetes'] ?? false;
+        });
+      } else {
+        // Handle error response.
+        print('Failed to fetch interests: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Failed to fetch interests: $error');
+    }
+  }
 
   Future<void> sendAndSaveData() async {
     final url = Uri.parse('https://touristine.onrender.com/interests-filling');
@@ -98,12 +158,22 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
       );
 
       if (response.statusCode == 200) {
-        print('Data sent and saved successfully');
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        if (responseData.containsKey('message') &&
+            responseData['message'] == 'updated') {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, "Your interests have been updated",
+              bottomMargin: 0);
+          // ignore: use_build_context_synchronously
+          Navigator.of(context).pop();
+        }
       } else {
-        print('Failed to send and save data. Error: ${response.reasonPhrase}');
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, "Unable to update your interests",
+            bottomMargin: 0);
       }
     } catch (error) {
-      print('Failed to send and save data. Error: $error');
+      print('Failed to save your interests. Error: $error');
     }
   }
 

@@ -23,6 +23,39 @@ class _LocationPageState extends State<LocationPage> {
   Position? _currentPosition;
   bool isLocDetermined = false;
 
+  // A function that sends a request to the server to retrieve the saved location.
+  Future<void> fetchSavedLocation() async {
+    final url = Uri.parse(
+        'https://touristine.onrender.com/get-location'); // Replace with your API endpoint
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer ${widget.token}',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // final Map<String, dynamic> responseData = json.decode(response.body);
+
+        // setState(() {
+        //   _currentAddress = responseData['address'];
+        //   // Latitude value
+        //   // Longitude value
+        //   // isLocDetermined = true;
+        // });
+      } 
+      else {
+        // Handle error response
+        print('Failed to fetch location: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Failed to fetch location: $error');
+    }
+  }
+
   Future<void> sendAndSaveLocation() async {
     final url = Uri.parse(
         'https://touristine.onrender.com/location-accquistion'); // Replace this with your Node.js server URL.
@@ -131,6 +164,7 @@ class _LocationPageState extends State<LocationPage> {
   @override
   void initState() {
     super.initState();
+    fetchSavedLocation(); // Fetch location details when the page initializes.
   }
 
   @override
