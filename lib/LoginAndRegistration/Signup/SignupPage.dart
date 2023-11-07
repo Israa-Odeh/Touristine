@@ -5,8 +5,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // Import the http package.
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:touristine/LoginAndRegistration/Signup/AccountVerificationPage.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
+import 'package:touristine/UserData/userProvider.dart';
 import 'package:touristine/components/textField.dart';
 
 class SignupPage extends StatefulWidget {
@@ -63,7 +65,8 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   Future<void> sendAndSaveData() async {
-    final url = Uri.parse('https://touristine.onrender.com/signup'); // Replace this with your Node.js server URL.
+    final url = Uri.parse(
+        'https://touristine.onrender.com/signup'); // Replace this with your Node.js server URL.
     try {
       final response = await http.post(
         url,
@@ -94,20 +97,27 @@ class _SignupPageState extends State<SignupPage> {
         // Convert a JSON string into a Dart object.
 
         if (responseData.containsKey('message')) {
-          if (responseData['message'] == 'A verification email is sent to you') {
+          if (responseData['message'] ==
+              'A verification email is sent to you') {
             final String token = responseData['token']; // Contains the email.
             // ignore: use_build_context_synchronously
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                   builder: (context) => AccountVerificationPage(
-                        firstName: firstNameController.text,
-                        lastName: lastNameController.text,
                         email: emailController.text,
-                        password: passwordController.text,
                         token: token,
                       )),
             );
+            // ignore: use_build_context_synchronously
+            context.read<UserProvider>().updateData(
+                  newFirstName: firstNameController.text,
+                  newLastName: lastNameController.text,
+                  newPassword: passwordController.text,
+                );
+
+            // ignore: use_build_context_synchronously
+            context.read<UserProvider>().updateImage(newImageURL: null);
           }
         }
 
@@ -125,10 +135,13 @@ class _SignupPageState extends State<SignupPage> {
         // or similar issues, display a notification accordingly.
       } else if (response.statusCode == 409) {
         if (responseData.containsKey('message')) {
-          if (responseData['message'] == 'User with this email already exists') {
+          if (responseData['message'] ==
+              'User with this email already exists') {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, responseData['message'], bottomMargin: 550.0);
-          } else if (responseData['message'] == 'All mandatory fields must be filled') {
+            showCustomSnackBar(context, responseData['message'],
+                bottomMargin: 550.0);
+          } else if (responseData['message'] ==
+              'All mandatory fields must be filled') {
             // ignore: use_build_context_synchronously
             showCustomSnackBar(context, 'Please fill in all the fields',
                 bottomMargin: 550.0);

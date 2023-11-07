@@ -7,11 +7,7 @@ import 'package:touristine/onBoarding/Admin/adminProfile.dart';
 import 'package:touristine/onBoarding/Page_Screen/onboardingScreen.dart';
 
 class OnBoardingPage extends StatefulWidget {
-  final String firstName;
-  final String lastName;
   final String token;
-  final String password;
-  final String? profileImage;
   final bool googleAccount;
   final List<String> title;
   final List<String> imageAsset;
@@ -32,11 +28,7 @@ class OnBoardingPage extends StatefulWidget {
     required this.titleSize,
     required this.numOfPages,
     required this.profileType,
-    required this.firstName,
-    required this.lastName,
     required this.token,
-    required this.password,
-    this.profileImage,
     this.googleAccount = false, // Set default value to false.
   }) : super(key: key);
 

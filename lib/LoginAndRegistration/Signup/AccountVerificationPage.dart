@@ -5,23 +5,19 @@ import 'package:flutter/material.dart';
 
 // Import the http package.
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
+import 'package:touristine/UserData/userProvider.dart';
 import 'package:touristine/onBoarding/Tourist/touristOnboardingPage.dart';
 
 // ignore: must_be_immutable
 class AccountVerificationPage extends StatefulWidget {
   String token;
-  final String firstName;
-  final String lastName;
   final String email;
-  final String password;
 
   AccountVerificationPage(
       {super.key,
-      required this.firstName,
-      required this.lastName,
       required this.email,
-      required this.password,
       required this.token});
 
   @override
@@ -113,10 +109,10 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: {
-          'firstName': widget.firstName,
-          'lastName': widget.lastName,
+          'firstName': context.read<UserProvider>().firstName,
+          'lastName': context.read<UserProvider>().lastName,
           'email': widget.email,
-          'password': widget.password,
+          'password': context.read<UserProvider>().password,
         },
       );
       final Map<String, dynamic> responseData = json.decode(response.body);
@@ -228,10 +224,7 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => TouristOnBoardingPage(
-                                  firstName: widget.firstName,
-                                  lastName: widget.lastName,
                                   token: widget.token,
-                                  password: widget.password,
                                 )),
                       );
                     }

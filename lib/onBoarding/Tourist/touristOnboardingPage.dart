@@ -4,20 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:touristine/onBoarding/Page_Screen/onboardingPage.dart';
 
 class TouristOnBoardingPage extends StatefulWidget {
-  final String firstName;
-  final String lastName;
   final String token;
-  final String password;
-  final String? profileImage;
   final bool googleAccount;
 
   const TouristOnBoardingPage(
       {super.key,
-      required this.firstName,
-      required this.lastName,
       required this.token,
-      required this.password,
-      this.profileImage,
       this.googleAccount = false // Set default value to false.
       });
 
@@ -34,11 +26,7 @@ class _TouristOnBoardingPageState extends State<TouristOnBoardingPage> {
           return false;
         },
         child: OnBoardingPage(
-          firstName: widget.firstName,
-          lastName: widget.lastName,
           token: widget.token,
-          password: widget.password,
-          profileImage: widget.profileImage,
           googleAccount: widget.googleAccount,
           title: const [
             'Destinations Discovery',
