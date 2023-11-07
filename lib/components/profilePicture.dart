@@ -5,7 +5,7 @@ class ProfilePicture extends StatefulWidget {
   final String firstName;
   final String lastName;
   final String token;
-  final String? imagePath; // New variable for the image path
+  final String? imagePath;
 
   const ProfilePicture(
       {super.key,
@@ -40,8 +40,8 @@ class _ProfilePictureState extends State<ProfilePicture> {
         child: CircleAvatar(
           backgroundColor: Colors.white,
           backgroundImage: (widget.imagePath != null)
-              ? NetworkImage(widget.imagePath!) as ImageProvider<Object>
-              : const AssetImage("assets/Images/Profiles/Tourist/DefaultProfileImage.png"),
+              ? NetworkImage(widget.imagePath!)
+              : Image.asset("assets/Images/Profiles/Tourist/DefaultProfileImage.png").image,
         ),
       ),
         Row(

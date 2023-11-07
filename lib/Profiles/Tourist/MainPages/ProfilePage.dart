@@ -12,6 +12,7 @@ class ProfilePage extends StatefulWidget {
   final String lastName;
   final String token;
   final String password;
+  final String? profileImage;
   final bool googleAccount;
 
   const ProfilePage({
@@ -20,6 +21,7 @@ class ProfilePage extends StatefulWidget {
     required this.lastName,
     required this.token,
     required this.password,
+    this.profileImage,
     this.googleAccount = false, // Set default value to false.
   });
 
@@ -104,6 +106,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     firstName: widget.firstName,
                     lastName: widget.lastName,
                     token: widget.token,
+                    imagePath: widget.profileImage,
                   ),
                   const SizedBox(height: 40),
 
@@ -118,7 +121,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 lastName: widget.lastName,
                                 token: widget.token,
                                 password: widget.password,
-                                profileImage: null,
+                                profileImageURL: widget.profileImage,
                               ),
                             ),
                           )

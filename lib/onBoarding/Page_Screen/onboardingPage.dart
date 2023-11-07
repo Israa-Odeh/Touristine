@@ -11,6 +11,7 @@ class OnBoardingPage extends StatefulWidget {
   final String lastName;
   final String token;
   final String password;
+  final String? profileImage;
   final bool googleAccount;
   final List<String> title;
   final List<String> imageAsset;
@@ -35,6 +36,7 @@ class OnBoardingPage extends StatefulWidget {
     required this.lastName,
     required this.token,
     required this.password,
+    this.profileImage,
     this.googleAccount = false, // Set default value to false.
   }) : super(key: key);
 
@@ -144,6 +146,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                                     lastName: widget.lastName,
                                     token: widget.token,
                                     password: widget.password,
+                                    profileImage: widget.profileImage,
                                     googleAccount: widget.googleAccount,
                                   ))
                                 : const AdminProfile();

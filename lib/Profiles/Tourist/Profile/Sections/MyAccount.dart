@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,7 +15,7 @@ class AccountPage extends StatefulWidget {
   final String lastName;
   final String token;
   final String password;
-  final File? profileImage;
+  final String? profileImageURL;
 
   const AccountPage(
       {super.key,
@@ -21,7 +23,7 @@ class AccountPage extends StatefulWidget {
       required this.lastName,
       required this.token,
       required this.password,
-      this.profileImage});
+      this.profileImageURL});
 
   @override
   _AccountPageState createState() => _AccountPageState();
@@ -33,6 +35,8 @@ class _AccountPageState extends State<AccountPage> {
   final lastNameController = TextEditingController();
   final passwordController = TextEditingController();
 
+  bool isImageChanged = false;
+
   File? _image;
 
   @override
@@ -41,13 +45,16 @@ class _AccountPageState extends State<AccountPage> {
     firstNameController.text = widget.firstName;
     lastNameController.text = widget.lastName;
     passwordController.text = widget.password;
-    
-    setState(() {
-      _image = widget.profileImage;
-    });
   }
 
   // Functions Section.
+
+  void updateIsImageChanged(bool isChanged) {
+    setState(() {
+      isImageChanged = isChanged;
+    });
+  }
+
   bool isInputEmpty() {
     return firstNameController.text.isEmpty ||
         lastNameController.text.isEmpty ||
@@ -64,36 +71,67 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   Future<void> sendAndSaveData() async {
+    bool keepOldImage = false;
     final url = Uri.parse('https://touristine.onrender.com/edit-account');
     final request = http.MultipartRequest('POST', url);
 
     // Add headers to the request.
-    request.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+    request.headers['Content-Type'] = 'multipart/form-data';
     request.headers['Authorization'] = 'Bearer ${widget.token}';
 
     // Add the image to the request if it exists.
     if (_image != null) {
+      keepOldImage = false;
       List<int> imageBytes = _image!.readAsBytesSync(); // Read file as bytes.
       String fileName = _image!.path.split('/').last; // Extract file name
-
       final imageFile = http.MultipartFile.fromBytes(
         'profileImage', // Field name for the image on the server.
         imageBytes,
         filename: fileName,
       );
       request.files.add(imageFile);
+    } else {
+      // If there is an old image keep it stored.
+      keepOldImage = true;
     }
 
     // Add other form data.
     request.fields['firstName'] = firstNameController.text;
     request.fields['lastName'] = lastNameController.text;
     request.fields['password'] = passwordController.text;
+    // request.fields['UpdateImage'] = keepOldImage.toString();
 
     try {
       final response = await request.send();
 
       if (response.statusCode == 200) {
-        // Handle a successful response.
+        final responseJson = await response.stream.bytesToString();
+        final parsedResponse = json.decode(responseJson);
+        if (parsedResponse['message'] == 'updated') {
+          // Handle success, possibly update UI or show a success message
+          if (parsedResponse.containsKey('imageUrl')) {
+            setState(() {
+              updateIsImageChanged(false);
+            });
+            String imageUrl = parsedResponse['imageUrl'];
+            print("Image: $imageUrl");
+          }
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, "Your information has been edited",
+              bottomMargin: 457);
+        }
+      } else if (response.statusCode == 500) {
+        final responseJson = await response.stream.bytesToString();
+        final parsedResponse = json.decode(responseJson);
+        if (parsedResponse.containsKey('message') &&
+            parsedResponse['message'] == 'Unable to upload') {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, "Unable to upload the image",
+              bottomMargin: 457);
+        } else {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, "An error occured", bottomMargin: 457);
+        }
       } else {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'Failed to update, please try again',
@@ -109,7 +147,7 @@ class _AccountPageState extends State<AccountPage> {
     bool isDataChanged = widget.firstName != firstNameController.text ||
         widget.lastName != lastNameController.text ||
         widget.password != passwordController.text ||
-        widget.profileImage != _image;
+        isImageChanged == true;
 
     if (isDataChanged) {
       if (isInputEmpty()) {
@@ -130,17 +168,6 @@ class _AccountPageState extends State<AccountPage> {
     } else {
       showCustomSnackBar(context, 'No modifications detected',
           bottomMargin: 457);
-    }
-  }
-
-  Future<void> _getImage() async {
-    final imagePicker = ImagePicker();
-    final pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
     }
   }
 
@@ -173,10 +200,13 @@ class _AccountPageState extends State<AccountPage> {
                 children: [
                   const SizedBox(height: 80),
                   ProfileImage(
+                    profileImagePath: widget.profileImageURL,
                     image: _image,
                     onImageChanged: (File? newImage) {
                       setState(() {
                         _image = newImage;
+                        // Update the isImageChanged value when the image changes.
+                        updateIsImageChanged(true);
                       });
                     },
                   ),
@@ -253,12 +283,14 @@ class _AccountPageState extends State<AccountPage> {
 
 class ProfileImage extends StatefulWidget {
   final File? image;
+  final String? profileImagePath;
   final void Function(File? newImage) onImageChanged;
 
   const ProfileImage({
     Key? key,
     required this.image,
     required this.onImageChanged,
+    this.profileImagePath,
   }) : super(key: key);
 
   @override
@@ -266,6 +298,16 @@ class ProfileImage extends StatefulWidget {
 }
 
 class _ProfileImageState extends State<ProfileImage> {
+  Future<void> _getImage() async {
+    final imagePicker = ImagePicker();
+    final pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      final newImage = File(pickedFile.path);
+      widget.onImageChanged(newImage);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -285,10 +327,13 @@ class _ProfileImageState extends State<ProfileImage> {
             ),
             child: CircleAvatar(
               backgroundColor: Colors.white,
-              backgroundImage: widget.image != null
-                  ? Image.file(widget.image!).image
-                  : const AssetImage(
-                      "assets/Images/Profiles/Tourist/DefaultProfileImage.png"),
+              backgroundImage: (widget.profileImagePath != null &&
+                      widget.image == null)
+                  ? NetworkImage(widget.profileImagePath!)
+                  : widget.image != null
+                      ? Image.file(widget.image!).image
+                      : const AssetImage(
+                          "assets/Images/Profiles/Tourist/DefaultProfileImage.png"),
             ),
           ),
           Positioned(
@@ -304,7 +349,7 @@ class _ProfileImageState extends State<ProfileImage> {
                 ),
                 backgroundColor: const Color(0xFFF5F6F9),
                 onPressed: () {
-                  // When the camera icon is pressed, open the image picker
+                  // When the camera icon is pressed, open the image picker.
                   _getImage();
                 },
                 child: Image.asset(
@@ -318,15 +363,5 @@ class _ProfileImageState extends State<ProfileImage> {
         ],
       ),
     );
-  }
-
-  Future<void> _getImage() async {
-    final imagePicker = ImagePicker();
-    final pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      final newImage = File(pickedFile.path);
-      widget.onImageChanged(newImage);
-    }
   }
 }

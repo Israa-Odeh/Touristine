@@ -143,7 +143,7 @@ class _LoginPageState extends State<LoginPage>
 
       // Successful response from the Node.js server.
       if (response.statusCode == 200) {
-        storeLoginInfoLocally();
+        await storeLoginInfoLocally();
         if (responseData.containsKey('status') &&
             responseData.containsKey('type')) {
           // It is a tourist user type in this case.
@@ -152,14 +152,14 @@ class _LoginPageState extends State<LoginPage>
             String firstName = responseData['firstName'];
             String lastName = responseData['lastName'];
             String password = responseData['password'];
-            String image = responseData['profileImage'] ?? '';
+            String imageURL = responseData['profileImage'] ?? '';
             // The image will be forwareded later on........................
 
             print("Email extracted from token: $token");
             print("first name: $firstName");
             print("last name: $lastName");
             print("Password: $password");
-            print("Profile Image: $image");
+            print("Profile Image: $imageURL");
 
             // ignore: use_build_context_synchronously
             // Pass the token to the SplashScreen
@@ -173,6 +173,7 @@ class _LoginPageState extends State<LoginPage>
                     firstName: firstName,
                     lastName: lastName,
                     token: token,
+                    profileImage: imageURL,
                     password: password,
                   ),
                 ), // Pass the token to the SplashScreen constructor

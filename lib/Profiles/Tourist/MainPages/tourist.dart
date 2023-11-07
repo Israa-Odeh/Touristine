@@ -11,6 +11,7 @@ class TouristProfile extends StatefulWidget {
   final String lastName;
   final String token;
   final String password;
+  final String? profileImage;
   final bool googleAccount;
 
   const TouristProfile({
@@ -18,7 +19,9 @@ class TouristProfile extends StatefulWidget {
     required this.firstName,
     required this.lastName,
     required this.token,
+    this.profileImage,
     required this.password,
+
     this.googleAccount = false, // Set default value to false.
   });
 
@@ -44,6 +47,7 @@ class _TouristAppState extends State<TouristProfile> {
         lastName: widget.lastName,
         token: widget.token,
         password: widget.password,
+        profileImage: widget.profileImage,
         googleAccount: widget.googleAccount
       )
     ];
