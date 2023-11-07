@@ -27,6 +27,7 @@ class _LoginPageState extends State<LoginPage>
   // Text fields (username and password) controllers.
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  late ImageProvider profileImageProvider; // To uplaod the image early.
 
   // A boolean variable for the "Remember Me" checkbox state.
   bool rememberPassword = false; // Initially unchecked.
@@ -152,7 +153,7 @@ class _LoginPageState extends State<LoginPage>
             String firstName = responseData['firstName'];
             String lastName = responseData['lastName'];
             String password = responseData['password'];
-            String imageURL = responseData['profileImage'] ?? '';
+            String? imageURL = responseData['profileImage'];
             // The image will be forwareded later on........................
 
             print("Email extracted from token: $token");
@@ -161,6 +162,11 @@ class _LoginPageState extends State<LoginPage>
             print("Password: $password");
             print("Profile Image: $imageURL");
 
+            if (imageURL != null) {
+              profileImageProvider = NetworkImage(imageURL!);
+              // ignore: use_build_context_synchronously
+              precacheImage(profileImageProvider, context);
+            }
             // ignore: use_build_context_synchronously
             // Pass the token to the SplashScreen
             // ignore: use_build_context_synchronously
@@ -306,16 +312,16 @@ class _LoginPageState extends State<LoginPage>
         //End////////////////////////////////////////////////
 
         bool hasPassword = false;
-        
+
         //'userID': user.uid,
         var userData = {
           'firstName': firstName,
           'lastName': lastName,
           'email': user.email,
           'password': hasPassword.toString(),
-          'photoURL': user.photoURL, 
+          'photoURL': user.photoURL,
           // Jenan, here don't use firebase to store the image,
-          // Store the url only as a field of String and I can 
+          // Store the url only as a field of String and I can
           // easily retrive the image from the URL.
         };
 
@@ -335,23 +341,19 @@ class _LoginPageState extends State<LoginPage>
           );
 
           if (response.statusCode == 200) {
-            // Jenan send me a flag to indicate whether it's the user 
+            // Jenan send me a flag to indicate whether it's the user
             // first time to sign in using google (true) or not (false),
             // in order to display the suitable interfaces accordingly.
-          } 
-          else {
+          } else {
             print('Failed to sign in with Google');
           }
-        } 
-        catch (e) {
+        } catch (e) {
           print('Error sending data to the server: $e');
         }
-      } 
-      else {
+      } else {
         print('User information are not available.');
       }
-    } 
-    catch (e) {
+    } catch (e) {
       print('Error occurred: $e');
     }
   }

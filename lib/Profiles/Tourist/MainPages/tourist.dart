@@ -21,7 +21,6 @@ class TouristProfile extends StatefulWidget {
     required this.token,
     this.profileImage,
     required this.password,
-
     this.googleAccount = false, // Set default value to false.
   });
 
@@ -43,13 +42,12 @@ class _TouristAppState extends State<TouristProfile> {
       ImagesUploadPage(token: widget.token),
       ChattingPage(token: widget.token),
       ProfilePage(
-        firstName: widget.firstName,
-        lastName: widget.lastName,
-        token: widget.token,
-        password: widget.password,
-        profileImage: widget.profileImage,
-        googleAccount: widget.googleAccount
-      )
+          firstName: widget.firstName,
+          lastName: widget.lastName,
+          token: widget.token,
+          password: widget.password,
+          profileImage: widget.profileImage,
+          googleAccount: widget.googleAccount)
     ];
   }
 
