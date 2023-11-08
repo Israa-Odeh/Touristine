@@ -431,7 +431,7 @@ class _ProfileImageState extends State<ProfileImage> {
                     _getImage();
                   },
                   child: Image.asset(
-                    "assets/Images/Profiles/Tourist/camera.png", // Use your custom icon image here
+                    "assets/Images/Profiles/Tourist/camera.png",
                     width: 40,
                     height: 40,
                   ),
