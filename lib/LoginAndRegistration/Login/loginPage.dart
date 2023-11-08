@@ -315,13 +315,6 @@ class _LoginPageState extends State<LoginPage>
         print('Email: ${user.email}');
         print('Photo URL: ${user.photoURL}');
 
-        // Start: This will be deleted from here................
-        // However, at present, I'll close the connection
-        // as I'm not currently opening any interfaces.
-        GoogleSignIn googleSignIn = GoogleSignIn();
-        googleSignIn.disconnect();
-        //End////////////////////////////////////////////////
-
         bool hasPassword = false;
 
         //'userID': user.uid,

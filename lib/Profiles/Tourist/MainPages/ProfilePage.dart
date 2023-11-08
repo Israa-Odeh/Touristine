@@ -146,8 +146,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   buildProfileTile(
                       "Log Out", "assets/Images/Profiles/Tourist/logOut.png",
                       () {
-                    GoogleSignIn googleSignIn = GoogleSignIn();
-                    googleSignIn.disconnect();
+                    if (widget.googleAccount) {
+                      GoogleSignIn googleSignIn = GoogleSignIn();
+                      googleSignIn.disconnect();
+                    }
                     Navigator.of(context).popUntil((route) => route.isFirst);
                     Navigator.of(context).pushReplacement(
                         MaterialPageRoute(builder: (context) => LandingPage()));
