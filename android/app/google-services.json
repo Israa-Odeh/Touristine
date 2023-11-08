@@ -12,7 +12,20 @@
           "package_name": "com.example.touristine"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "889464890314-c231m8109t11spfpf7n96par3laru2nt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.touristine",
+            "certificate_hash": "2f31442b48c6d754d7d717d3b92ab0f2201e0a48"
+          }
+        },
+        {
+          "client_id": "889464890314-mjn65v49me76j3853vdputtkds7efkrd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDgiXKreTiEIrsuSYMxwzO6k4Uv6rc-Q1U"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "889464890314-09b9fbat7701ea5s46jju23qi46432cc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
