@@ -102,17 +102,14 @@ class _ProfilePageState extends State<ProfilePage> {
                   buildProfileTile(
                       "My Account", "assets/Images/Profiles/Tourist/user.png",
                       () {
-                    !widget.googleAccount
-                        ? Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => AccountPage(
-                                token: widget.token,
-                                googleAccount: widget.googleAccount,
-                              ),
-                            ),
-                          )
-                        : showCustomSnackBar(
-                            context, 'You\'re logged in with Google', bottomMargin: 450);
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => AccountPage(
+                          token: widget.token,
+                          googleAccount: widget.googleAccount,
+                        ),
+                      ),
+                    );
                   }),
 
                   const SizedBox(height: 15),

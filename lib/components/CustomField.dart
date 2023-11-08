@@ -6,7 +6,7 @@ class CustomField extends StatefulWidget {
   final String hintText;
   final bool obscureText;
   final FaIcon fieldPrefixIcon;
-  final bool isEditable;
+  final bool readOnly;
 
 
   const CustomField({
@@ -15,7 +15,7 @@ class CustomField extends StatefulWidget {
     required this.hintText,
     required this.obscureText,
     required this.fieldPrefixIcon,
-    this.isEditable = true,
+    this.readOnly = false,
 
   }) : super(key: key);
 
@@ -72,7 +72,7 @@ class _CustomFieldState extends State<CustomField> {
             fontWeight: FontWeight.w400,
           ),
           focusNode: focusNode,
-          enabled: widget.isEditable,
+          readOnly: widget.readOnly,
           decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(

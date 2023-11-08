@@ -15,6 +15,7 @@ import 'package:touristine/UserData/userProvider.dart';
 
 // Import the http package.
 import 'package:http/http.dart' as http;
+import 'package:touristine/onBoarding/Tourist/touristOnboardingPage.dart';
 
 class LoginPage extends StatefulWidget {
   // Constructor.
@@ -166,9 +167,10 @@ class _LoginPageState extends State<LoginPage>
 
             // ignore: use_build_context_synchronously
             context.read<UserProvider>().updateData(
-                newFirstName: firstName,
-                newLastName: lastName,
-                newPassword: password,);
+                  newFirstName: firstName,
+                  newLastName: lastName,
+                  newPassword: password,
+                );
 
             if (imageURL != null && imageURL != "") {
               profileImageProvider = NetworkImage(imageURL);
@@ -176,8 +178,7 @@ class _LoginPageState extends State<LoginPage>
               precacheImage(profileImageProvider, context);
               // ignore: use_build_context_synchronously
               context.read<UserProvider>().updateImage(newImageURL: imageURL);
-            }
-            else {
+            } else {
               // ignore: use_build_context_synchronously
               context.read<UserProvider>().updateImage(newImageURL: null);
             }
@@ -301,10 +302,10 @@ class _LoginPageState extends State<LoginPage>
         String? lastName;
 
         if (nameParts.length >= 2) {
-          firstName = nameParts[0]; // Extracting the first part
+          firstName = nameParts[0]; // Extracting the first part.
           lastName = nameParts
               .sublist(1)
-              .join(' '); // Extracting the rest as the last name
+              .join(' '); // Extracting the rest as the last name.
         }
 
         print('User Information:');
@@ -354,16 +355,87 @@ class _LoginPageState extends State<LoginPage>
             // Jenan send me a flag to indicate whether it's the user
             // first time to sign in using google (true) or not (false),
             // in order to display the suitable interfaces accordingly.
-          } else {
-            print('Failed to sign in with Google');
+            String isNewUser;
+            final Map<String, dynamic> responseData =
+                json.decode(response.body);
+            if (responseData.containsKey('type') &&
+                responseData['type'] == 100) {
+              // It is a tourist user type in this case.
+              isNewUser = responseData['newUser'];
+              if (isNewUser == "true") {
+                // A new user, open the tourist onboarding interfaces since it's their first time.
+                final String token =
+                    responseData['token']; // Contains the email.
+                // ignore: use_build_context_synchronously
+                context.read<UserProvider>().updateData(
+                      newFirstName: firstName ?? "",
+                      newLastName: lastName ?? "",
+                      newPassword: "",
+                    );
+
+                // ignore: use_build_context_synchronously
+                context.read<UserProvider>().updateImage(newImageURL: user.photoURL);
+                // ignore: use_build_context_synchronously
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => TouristOnBoardingPage(
+                            token: token,
+                            googleAccount: true,
+                          )),
+                );
+              } 
+              else {
+                final String token = responseData['token']; // Contains the email.
+
+                // ignore: use_build_context_synchronously
+                context.read<UserProvider>().updateData(
+                      newFirstName: firstName ?? "",
+                      newLastName: lastName ?? "",
+                      newPassword: "",
+                    );
+
+                // ignore: use_build_context_synchronously
+                context.read<UserProvider>().updateImage(newImageURL: user.photoURL);
+
+                // Open the tourist account.
+                // ignore: use_build_context_synchronously
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SplashScreen(
+                      profileType: TouristProfile(
+                        token: token,
+                        googleAccount: true,
+                      ),
+                    ),
+                  ),
+                );
+              }
+            }
+          } 
+          else if (response.statusCode == 500) {
+            final Map<String, dynamic> responseData = json.decode(response.body);
+            if (responseData.containsKey('error')) {
+              // ignore: use_build_context_synchronously
+              showCustomSnackBar(context, responseData['error']);
+            }
+          } 
+          else {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, 'Log In with Google Failed');
           }
-        } catch (e) {
+        } 
+        catch (e) {
           print('Error sending data to the server: $e');
         }
-      } else {
-        print('User information are not available.');
+      } 
+      else {
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'User information aren\'t available');
       }
-    } catch (e) {
+    } 
+    catch (e) {
       print('Error occurred: $e');
     }
   }

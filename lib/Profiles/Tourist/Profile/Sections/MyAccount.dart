@@ -7,6 +7,7 @@ import 'dart:io';
 
 // Import the http package.
 import 'package:http/http.dart' as http;
+import 'package:jwt_decode/jwt_decode.dart';
 import 'package:provider/provider.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/tourist.dart';
@@ -32,6 +33,7 @@ class _AccountPageState extends State<AccountPage> {
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
   final passwordController = TextEditingController();
+  final emailController = TextEditingController();
 
   bool isImageChanged = false;
 
@@ -46,6 +48,12 @@ class _AccountPageState extends State<AccountPage> {
       lastNameController.text = context.read<UserProvider>().lastName;
       passwordController.text = context.read<UserProvider>().password;
     });
+
+    if (widget.googleAccount == true) {
+      Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
+      String email = decodedToken['email'];
+      emailController.text = email;
+    }
   }
 
   // Functions Section.
@@ -134,8 +142,8 @@ class _AccountPageState extends State<AccountPage> {
             print("Image: $imageUrl");
             // ignore: use_build_context_synchronously
             context.read<UserProvider>().updateImage(
-                newImageURL: imageUrl,
-              );
+                  newImageURL: imageUrl,
+                );
           }
           // ignore: use_build_context_synchronously
           showCustomSnackBar(context, "Your information has been edited",
@@ -172,11 +180,11 @@ class _AccountPageState extends State<AccountPage> {
 
   void editProfileInfo() {
     // Check if any data has changed
-    bool isDataChanged = context.read<UserProvider>().firstName !=
-            firstNameController.text ||
-        context.read<UserProvider>().lastName != lastNameController.text ||
-        context.read<UserProvider>().password != passwordController.text ||
-        isImageChanged == true;
+    bool isDataChanged =
+        context.read<UserProvider>().firstName != firstNameController.text ||
+            context.read<UserProvider>().lastName != lastNameController.text ||
+            context.read<UserProvider>().password != passwordController.text ||
+            isImageChanged == true;
 
     if (isDataChanged) {
       if (isInputEmpty()) {
@@ -237,8 +245,25 @@ class _AccountPageState extends State<AccountPage> {
                         updateIsImageChanged(true);
                       });
                     },
+                    googleAccount: widget.googleAccount,
                   ),
                   const SizedBox(height: 65),
+                  Visibility(
+                    visible: widget.googleAccount,
+                    child: CustomField(
+                      controller: emailController,
+                      hintText: 'Email',
+                      obscureText: false,
+                      fieldPrefixIcon: const FaIcon(
+                        FontAwesomeIcons.envelope,
+                        size: 30,
+                      ),
+                      readOnly: true,
+                    ),
+                  ),
+                  Visibility(
+                      visible: widget.googleAccount,
+                      child: const SizedBox(height: 15)),
                   CustomField(
                     controller: firstNameController,
                     hintText: 'First Name',
@@ -247,6 +272,7 @@ class _AccountPageState extends State<AccountPage> {
                       FontAwesomeIcons.user,
                       size: 30,
                     ),
+                    readOnly: !widget.googleAccount ? false : true,
                   ),
                   const SizedBox(height: 15),
                   CustomField(
@@ -257,35 +283,46 @@ class _AccountPageState extends State<AccountPage> {
                       FontAwesomeIcons.user,
                       size: 30,
                     ),
+                    readOnly: !widget.googleAccount ? false : true,
                   ),
-                  const SizedBox(height: 15),
-                  CustomField(
-                    controller: passwordController,
-                    hintText: 'Password',
-                    obscureText: true,
-                    fieldPrefixIcon: const FaIcon(
-                      FontAwesomeIcons.lock,
-                      size: 30,
+                  Visibility(
+                      visible: !widget.googleAccount,
+                      child: const SizedBox(height: 15)),
+                  Visibility(
+                    visible: !widget.googleAccount,
+                    child: CustomField(
+                      controller: passwordController,
+                      hintText: 'Password',
+                      obscureText: true,
+                      fieldPrefixIcon: const FaIcon(
+                        FontAwesomeIcons.lock,
+                        size: 30,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 40),
-                  ElevatedButton(
-                    onPressed: editProfileInfo,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 40,
-                        vertical: 13,
+                  Visibility(
+                    visible: !widget.googleAccount,
+                    child: ElevatedButton(
+                      onPressed: editProfileInfo,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 40,
+                          vertical: 13,
+                        ),
+                        backgroundColor: const Color(0xFF1E889E),
+                        textStyle: const TextStyle(
+                          fontSize: 30,
+                          fontFamily: 'Zilla',
+                          fontWeight: FontWeight.w300,
+                        ),
                       ),
-                      backgroundColor: const Color(0xFF1E889E),
-                      textStyle: const TextStyle(
-                        fontSize: 30,
-                        fontFamily: 'Zilla',
-                        fontWeight: FontWeight.w300,
-                      ),
+                      child: const Text('Save Changes'),
                     ),
-                    child: const Text('Save Changes'),
                   ),
-                  const SizedBox(height: 50),
+                  widget.googleAccount == false
+                      ? const SizedBox(height: 50)
+                      : const SizedBox(height: 100),
                   Padding(
                     padding: const EdgeInsets.only(right: 320.0),
                     child: IconButton(
@@ -302,6 +339,7 @@ class _AccountPageState extends State<AccountPage> {
                               builder: (context) => TouristProfile(
                                     token: widget.token,
                                     stepNum: 4,
+                                    googleAccount: widget.googleAccount,
                                   )),
                         );
                       },
@@ -320,11 +358,13 @@ class _AccountPageState extends State<AccountPage> {
 class ProfileImage extends StatefulWidget {
   final File? image;
   final void Function(File? newImage) onImageChanged;
+  final bool googleAccount;
 
   const ProfileImage({
     Key? key,
     required this.image,
     required this.onImageChanged,
+    this.googleAccount = false, // Set default value to false.
   }) : super(key: key);
 
   @override
@@ -361,7 +401,9 @@ class _ProfileImageState extends State<ProfileImage> {
             ),
             child: CircleAvatar(
               backgroundColor: Colors.white,
-              backgroundImage: (context.watch<UserProvider>().imageURL != null && context.watch<UserProvider>().imageURL != "" &&
+              backgroundImage: (context.watch<UserProvider>().imageURL !=
+                          null &&
+                      context.watch<UserProvider>().imageURL != "" &&
                       widget.image == null)
                   ? NetworkImage(context.watch<UserProvider>().imageURL!)
                   : widget.image != null
@@ -370,26 +412,29 @@ class _ProfileImageState extends State<ProfileImage> {
                           "assets/Images/Profiles/Tourist/DefaultProfileImage.png"),
             ),
           ),
-          Positioned(
-            right: 20,
-            bottom: 0,
-            child: SizedBox(
-              height: 60,
-              width: 60,
-              child: FloatingActionButton(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50),
-                  side: const BorderSide(color: Colors.white),
-                ),
-                backgroundColor: const Color(0xFFF5F6F9),
-                onPressed: () {
-                  // When the camera icon is pressed, open the image picker.
-                  _getImage();
-                },
-                child: Image.asset(
-                  "assets/Images/Profiles/Tourist/camera.png", // Use your custom icon image here
-                  width: 40,
-                  height: 40,
+          Visibility(
+            visible: !widget.googleAccount,
+            child: Positioned(
+              right: 20,
+              bottom: 0,
+              child: SizedBox(
+                height: 60,
+                width: 60,
+                child: FloatingActionButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
+                    side: const BorderSide(color: Colors.white),
+                  ),
+                  backgroundColor: const Color(0xFFF5F6F9),
+                  onPressed: () {
+                    // When the camera icon is pressed, open the image picker.
+                    _getImage();
+                  },
+                  child: Image.asset(
+                    "assets/Images/Profiles/Tourist/camera.png", // Use your custom icon image here
+                    width: 40,
+                    height: 40,
+                  ),
                 ),
               ),
             ),
