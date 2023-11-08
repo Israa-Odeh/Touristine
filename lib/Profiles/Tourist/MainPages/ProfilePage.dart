@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:touristine/LoginAndRegistration/MainPages/landingPage.dart';
@@ -148,7 +149,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       () {
                     if (widget.googleAccount) {
                       GoogleSignIn googleSignIn = GoogleSignIn();
+                      googleSignIn.signOut();
                       googleSignIn.disconnect();
+                      FirebaseAuth.instance.signOut();
                     }
                     Navigator.of(context).popUntil((route) => route.isFirst);
                     Navigator.of(context).pushReplacement(
