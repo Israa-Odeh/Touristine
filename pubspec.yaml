@@ -78,6 +78,7 @@ flutter:
     - assets/Images/onBoardingPage/Tourist/
     - assets/Images/SignupPage/
     - assets/Images/Profiles/Tourist/
+    - assets/Images/Testing/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
