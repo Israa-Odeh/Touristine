@@ -80,7 +80,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
         url,
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          // 'Authorization': 'Bearer ${widget.token}',
+          'Authorization': 'Bearer ${widget.token}',
         },
       );
 
@@ -110,6 +110,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
         url,
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer ${widget.token}',
         },
       );
 
