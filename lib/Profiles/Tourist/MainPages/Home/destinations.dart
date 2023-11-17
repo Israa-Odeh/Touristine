@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/Home/destinationView.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/dotsBar.dart';
 
 class DestinationList extends StatefulWidget {
@@ -23,18 +24,7 @@ class _DestinationListState extends State<DestinationList> {
   void initState() {
     super.initState();
     // Set up a timer for automatic scrolling every 5 seconds.
-    _timer = Timer.periodic(const Duration(seconds: 5), (Timer timer) {
-      if (_currentPageIndex < widget.destinations.length - 1) {
-        _pageController.nextPage(
-          // The animation lasts for the given duration and follows the given curve.
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.ease,
-        );
-      } else {
-        // If we are at the last page, go back to the first page.
-        _pageController.jumpToPage(0);
-      }
-    });
+    startTimer();
   }
 
   @override
@@ -44,6 +34,43 @@ class _DestinationListState extends State<DestinationList> {
     super.dispose();
   }
 
+  void navigateToDetailsPage(int index) {
+    // Cancel the timer when the details page is opened.
+    _timer.cancel();
+    Future.delayed(const Duration(milliseconds: 300), () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DestinationDetails(
+            destination: widget.destinations[index],
+          ),
+        ),
+      ).then((value) {
+        setState(() {
+          if (value == null) {
+            _selectedTileIndex = -1;
+          } else {
+            _selectedTileIndex = value;
+          }
+        });
+        // Restart the timer when the details page is exited.
+        startTimer();
+      });
+    });
+  }
+
+  void startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 5), (Timer timer) {
+      if (_currentPageIndex < widget.destinations.length - 1) {
+        _pageController.nextPage(
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.ease,
+        );
+      } else {
+        _pageController.jumpToPage(0);
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -80,16 +107,11 @@ class _DestinationListState extends State<DestinationList> {
                 },
                 itemBuilder: (BuildContext context, int index) {
                   return InkWell(
-                    // Israa, open the appropriate interfaces here.
                     onTap: () {
                       setState(() {
-                        if (_selectedTileIndex == index) {
-                          _selectedTileIndex = -1; // Deselect if already selected.
-                        } 
-                        else {
-                          _selectedTileIndex = index; // Select if not selected.
-                        }
+                        _selectedTileIndex = index;
                       });
+                      navigateToDetailsPage(index);
                       print('Clicked on ${widget.destinations[index]['name']}');
                     },
                     child: Container(
@@ -107,7 +129,7 @@ class _DestinationListState extends State<DestinationList> {
                         child: Column(
                           children: [
                             Image.asset(
-                              widget.destinations[index]['image'],
+                              widget.destinations[index]['imagePath'],
                               width: 400,
                               height: 165,
                               fit: BoxFit.cover,
