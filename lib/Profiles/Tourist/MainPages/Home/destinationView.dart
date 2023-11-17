@@ -212,17 +212,31 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                         _buildServicesTab(),
                         _buildLocationsTab(),
                         _buildReviewsTab(),
-                      ],
-                    ),
+],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          // Floating Action Button
+          Positioned(
+            top: 26.0,
+            left: 5.0,
+            child: FloatingActionButton(
+              heroTag: 'BackHome',
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+               backgroundColor: Colors.transparent,
+               elevation: 0,
+              child: const Icon(FontAwesomeIcons.arrowLeft),
+            ),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildAboutTab() {
     return Padding(
@@ -736,6 +750,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                         ),
                       ),
                       FloatingActionButton(
+                        heroTag: 'Get Directions',
                         backgroundColor: const Color(0xFF1E889E),
                         onPressed: () {
                           // Add logic to get directions.
@@ -966,6 +981,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                         child: const Text('See All'),
                       ),
                       FloatingActionButton(
+                        heroTag: 'Add Review',
                         backgroundColor: const Color(0xFF1E889E),
                         onPressed: () {
                           Navigator.push(

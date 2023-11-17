@@ -41,6 +41,16 @@ class _AllReviewsPageState extends State<AllReviewsPage> {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+        backgroundColor: const Color.fromARGB(129, 30, 137, 158),
+        elevation: 0,
+        child: const Icon(
+            FontAwesomeIcons.arrowLeft),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
     );
   }
 
