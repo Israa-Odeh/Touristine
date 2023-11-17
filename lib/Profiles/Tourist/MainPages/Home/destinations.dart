@@ -6,9 +6,10 @@ import 'package:touristine/Profiles/Tourist/MainPages/Home/dotsBar.dart';
 class DestinationList extends StatefulWidget {
   final List<Map<String, dynamic>> destinations;
   final String listTitle;
+  final String token;
 
   const DestinationList(
-      {super.key, required this.destinations, required this.listTitle});
+      {super.key, required this.destinations, required this.listTitle, required this.token});
 
   @override
   _DestinationListState createState() => _DestinationListState();
@@ -42,7 +43,7 @@ class _DestinationListState extends State<DestinationList> {
         context,
         MaterialPageRoute(
           builder: (context) => DestinationDetails(
-            destination: widget.destinations[index],
+            destination: widget.destinations[index], token: widget.token,
           ),
         ),
       ).then((value) {

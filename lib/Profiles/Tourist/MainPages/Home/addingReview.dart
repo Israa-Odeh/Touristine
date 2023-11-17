@@ -4,6 +4,9 @@ import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:http/http.dart' as http;
 
 class AddingReviewPage extends StatefulWidget {
+  final String token;
+
+  const AddingReviewPage({super.key, required this.token});
   @override
   _AddingReviewPageState createState() => _AddingReviewPageState();
 }
@@ -62,7 +65,7 @@ class _AddingReviewPageState extends State<AddingReviewPage> {
         url,
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          // 'Authorization': 'Bearer ${widget.token}',
+          'Authorization': 'Bearer ${widget.token}',
         },
         body: {
           'stars': selectedStars.toString(),
@@ -75,8 +78,7 @@ class _AddingReviewPageState extends State<AddingReviewPage> {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'Thank you for adding your review',
             bottomMargin: 370);
-      } 
-      else {
+      } else {
         // Handle other status codes or errors
         print('Failed to submit review. Status code: ${response.statusCode}');
       }
@@ -95,7 +97,7 @@ class _AddingReviewPageState extends State<AddingReviewPage> {
         url,
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          // 'Authorization': 'Bearer ${widget.token}',
+          'Authorization': 'Bearer ${widget.token}',
         },
       );
 
@@ -160,8 +162,7 @@ class _AddingReviewPageState extends State<AddingReviewPage> {
                         setState(() {
                           if (index == 0 && selectedStars == 1) {
                             selectedStars = 0;
-                          } 
-                          else {
+                          } else {
                             selectedStars = index + 1;
                           }
                         });

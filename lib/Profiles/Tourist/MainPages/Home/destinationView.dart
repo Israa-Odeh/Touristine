@@ -6,9 +6,10 @@ import 'package:touristine/Profiles/Tourist/MainPages/Home/reviews.dart';
 import 'package:http/http.dart' as http;
 
 class DestinationDetails extends StatefulWidget {
+  final String token;
   final Map<String, dynamic> destination;
 
-  const DestinationDetails({Key? key, required this.destination})
+  const DestinationDetails({Key? key, required this.destination, required this.token})
       : super(key: key);
 
   @override
@@ -970,7 +971,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => AddingReviewPage()),
+                                builder: (context) => AddingReviewPage(token: widget.token,)),
                           );
                         },
                         child: const FaIcon(FontAwesomeIcons.plus),

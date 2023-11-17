@@ -314,13 +314,13 @@ class _HomePageState extends State<HomePage> {
                   DestinationList(
                     destinations:
                         recommended, // Israa, replace this with the list retreived from backend.
-                    listTitle: 'Special For You',
+                    listTitle: 'Special For You', token: widget.token,
                   ),
                   // Popular Places Section.
                   DestinationList(
                     destinations:
                         popular, // Israa, replace this with the list retreived from backend.
-                    listTitle: 'Popular Places',
+                    listTitle: 'Popular Places', token: widget.token,
                   ),
 
                   // Other Places Section.
@@ -352,7 +352,7 @@ class _HomePageState extends State<HomePage> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => DestinationDetails(
-                                  destination: place,
+                                  destination: place, token: widget.token,
                                 ),
                               ),
                             );
