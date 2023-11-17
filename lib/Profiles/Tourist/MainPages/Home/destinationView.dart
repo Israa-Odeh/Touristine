@@ -88,7 +88,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
         // Success.
         // Jenan, here I need to retrieve three list-maps about the destination info, like the
         // format of the ones in my code called "destinationImages", "destinationDetails" and "ratings",
-        // please refer to lines 21, 34, and 756 resoectively to see their format.
+        // please refer to lines 22, 35, and 772 resoectively to see their format.
       } else if (response.statusCode == 500) {
         // Failed.
       } else {
