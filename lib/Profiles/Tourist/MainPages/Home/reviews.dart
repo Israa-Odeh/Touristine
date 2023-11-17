@@ -42,6 +42,7 @@ class _AllReviewsPageState extends State<AllReviewsPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'GoBack',
         onPressed: () {
           Navigator.of(context).pop();
         },
