@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:touristine/Profiles/Tourist/MainPages/Home/destination.dart';
+import 'package:touristine/Notifications/SnackBar.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/Home/destinations.dart';
 import 'package:http/http.dart' as http;
+import 'package:touristine/Profiles/Tourist/MainPages/Home/destinationView.dart';
 
 class HomePage extends StatefulWidget {
   final String token;
@@ -16,19 +18,19 @@ class _HomePageState extends State<HomePage> {
   final List<Map<String, dynamic>> recommended = [
     {
       'name': 'Gaza',
-      'image': 'assets/Images/Testing/3T.jpg',
+      'imagePath': 'assets/Images/Profiles/Tourist/3T.jpg',
     },
     {
       'name': 'Jerusalem',
-      'image': 'assets/Images/Testing/1T.png',
+      'imagePath': 'assets/Images/Profiles/Tourist/1T.png',
     },
     {
       'name': 'Nablus',
-      'image': 'assets/Images/Testing/2T.jpg',
+      'imagePath': 'assets/Images/Profiles/Tourist/2T.jpg',
     },
     {
       'name': 'Ramallah',
-      'image': 'assets/Images/Testing/4T.jpg',
+      'imagePath': 'assets/Images/Profiles/Tourist/4T.jpg',
     },
     // Add more destinations as needed
   ];
@@ -37,19 +39,19 @@ class _HomePageState extends State<HomePage> {
   final List<Map<String, dynamic>> popular = [
     {
       'name': 'Jenin',
-      'image': 'assets/Images/Testing/5T.jpg',
+      'imagePath': 'assets/Images/Profiles/Tourist/5T.jpg',
     },
     {
       'name': 'Bethlehem',
-      'image': 'assets/Images/Testing/8T.jpg',
+      'imagePath': 'assets/Images/Profiles/Tourist/8T.jpg',
     },
     {
       'name': 'Jericho',
-      'image': 'assets/Images/Testing/7T.jpg',
+      'imagePath': 'assets/Images/Profiles/Tourist/7T.jpg',
     },
     {
       'name': 'Tulkarm',
-      'image': 'assets/Images/Testing/6T.jpg',
+      'imagePath': 'assets/Images/Profiles/Tourist/6T.jpg',
     },
     // Add more destinations as needed
   ];
@@ -58,19 +60,19 @@ class _HomePageState extends State<HomePage> {
   final List<Map<String, dynamic>> others = [
     {
       'name': 'Hebron',
-      'imagePath': 'assets/Images/Testing/9T.jpg',
+      'imagePath': 'assets/Images/Profiles/Tourist/9T.jpg',
     },
     {
       'name': 'Dead Sea',
-      'imagePath': 'assets/Images/Testing/10T.jpg',
+      'imagePath': 'assets/Images/Profiles/Tourist/10T.jpg',
     },
     {
       'name': 'Garden Cafe',
-      'imagePath': 'assets/Images/Testing/11T.jpg',
+      'imagePath': 'assets/Images/Profiles/Tourist/11T.jpg',
     },
     {
       'name': 'Sufi Cafe',
-      'imagePath': 'assets/Images/Testing/12T.jpg',
+      'imagePath': 'assets/Images/Profiles/Tourist/12T.jpg',
     },
   ];
 
@@ -291,7 +293,7 @@ class _HomePageState extends State<HomePage> {
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(
-                    'assets/Images/Testing/homeBackground.jpg'),
+                    'assets/Images/Profiles/Tourist/homeBackground.jpg'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -323,7 +325,7 @@ class _HomePageState extends State<HomePage> {
                   ),
 
                   // Other Places Section.
-                   const SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   const Padding(
@@ -339,13 +341,23 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   // Adding others section using a loop.
-                  for (var place in others) // Israa, replace this with the list retreived from backend.
+                  for (var place
+                      in others) // Israa, replace this with the list retreived from backend.
                     Column(
                       children: [
                         buildPlaceTile(
                           place['name'],
                           place['imagePath'],
-                          () {},
+                          () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DestinationDetails(
+                                  destination: place,
+                                ),
+                              ),
+                            );
+                          },
                         ),
                         const SizedBox(height: 10),
                       ],
