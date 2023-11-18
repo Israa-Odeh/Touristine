@@ -1,5 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/addingReview.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/imagesList.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/reviews.dart';
@@ -9,7 +14,8 @@ class DestinationDetails extends StatefulWidget {
   final String token;
   final Map<String, dynamic> destination;
 
-  const DestinationDetails({Key? key, required this.destination, required this.token})
+  const DestinationDetails(
+      {Key? key, required this.destination, required this.token})
       : super(key: key);
 
   @override
@@ -18,6 +24,13 @@ class DestinationDetails extends StatefulWidget {
 
 class _DestinationDetailsState extends State<DestinationDetails> {
   late String selectedImage;
+  double destLat = 32.2226667;
+  double destLng = 35.262145;
+  Position? _currentPosition;
+  double airDistance = 0;
+  bool isRouteFetched = false;
+  double distanceFromTo = 0;
+  double timeFromTo = 0;
 
   final List<Map<String, dynamic>> destinationImages = [
     {'name': 'Hebron', 'imagePath': 'assets/Images/Profiles/Tourist/9T.jpg'},
@@ -155,6 +168,155 @@ class _DestinationDetailsState extends State<DestinationDetails> {
         : days.join(', ');
   }
 
+  // Section of location accquistion functions.
+  Future<bool> _handleLocationPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // ignore: use_build_context_synchronously
+      showCustomSnackBar(context, "Location services are disabled",
+          bottomMargin: 310);
+      return false;
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, "Location permissions are denied",
+            bottomMargin: 310);
+        return false;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      // Location permissions are permanently denied, we cannot request permissions,
+      // ignore: use_build_context_synchronously
+      showCustomSnackBar(context, "Location permissions permanently denied",
+          bottomMargin: 310);
+
+      return false;
+    }
+    // ignore: use_build_context_synchronously
+    showCustomSnackBar(context, "Please wait for a moment", bottomMargin: 310);
+    return true;
+  }
+
+  Future<void> _getCurrentPosition() async {
+    final hasPermission = await _handleLocationPermission();
+
+    if (!hasPermission) return;
+    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+        .then((Position position) {
+      setState(() {
+        _currentPosition = position;
+      });
+      _getAddressFromLatLng(_currentPosition!);
+    }).catchError((e) {
+      debugPrint(e);
+    });
+  }
+
+  Future<void> _getAddressFromLatLng(Position position) async {
+    await placemarkFromCoordinates(
+            _currentPosition!.latitude, _currentPosition!.longitude)
+        .then((List<Placemark> placemarks) {
+      Placemark place = placemarks[0];
+      setState(() {
+        // print(_currentPosition!.latitude);
+        // print(_currentPosition!.longitude);
+        airDistance = Geolocator.distanceBetween(_currentPosition!.latitude,
+            _currentPosition!.longitude, destLat, destLng) / 1000;
+      });
+    }).catchError((e) {
+      print("An error occured $e");
+    });
+  }
+
+  Future<Map<String, dynamic>> getDirections(
+      double startLat, double startLng, double endLat, double endLng) async {
+    const apiKey = 'AIzaSyACRpyMRSxrAcO00IGbMzYI0N4zKxUPWg4';
+    final url =
+        'https://maps.googleapis.com/maps/api/directions/json?origin=$startLat,$startLng&destination=$endLat,$endLng&key=$apiKey';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final decoded = json.decode(response.body);
+      final routes = decoded['routes'] as List<dynamic>;
+      if (routes.isNotEmpty) {
+        final legs = routes[0]['legs'] as List<dynamic>;
+        if (legs.isNotEmpty) {
+          final distance = legs[0]['distance']['value'] as int;
+          final duration = legs[0]['duration']['value'] as int;
+          final startAddress = legs[0]['start_address'] as String;
+          final endAddress = legs[0]['end_address'] as String;
+
+          isRouteFetched = true;
+          return {
+            'distance': distance / 1000.0, // Convert meters to kilometers.
+            'duration': duration / 3600, // Duration in hours.
+            'startAddress': startAddress,
+            'endAddress': endAddress,
+            'airDistance': airDistance,
+          };
+        }
+      }
+    }
+
+    // Handle errors or no route found scenario.
+    return {
+      'distance': -1.0,
+      'duration': -1,
+      'startAddress': '',
+      'endAddress': '',
+      'airDistance': -1.0,
+    };
+  }
+
+  void fetchRouteClicked() async {
+    try {
+      await _getCurrentPosition();
+      // Ensure that _getCurrentPosition has successfully obtained the position.
+      if (_currentPosition != null) {
+        final directions = await getDirections(_currentPosition!.latitude,
+            _currentPosition!.longitude, destLat, destLng);
+
+        if (directions['distance'] != -1.0) {
+          distanceFromTo = directions['distance'];
+          timeFromTo = directions['duration'];
+          print('Real distance: ${directions['distance']} km');
+          print('Duration: ${directions['duration']} hours');
+          print('Start Address: ${directions['startAddress']}');
+          print('End Address: ${directions['endAddress']}');
+          print('Air Distance: ${directions['airDistance']} km');
+        } else {
+          print('Error calculating distance or no route found.');
+        }
+      } else {
+        print(
+            'Error getting current position. Please check location permissions.');
+      }
+    } catch (e) {
+      print('An error occurred: $e');
+    }
+  }
+
+  String formatDuration(int durationInSeconds) {
+    Duration duration = Duration(seconds: durationInSeconds);
+    int hours = duration.inHours;
+    int minutes = (duration.inMinutes % 60);
+
+    if (hours > 0 && minutes > 0) {
+      return '$hours hours and $minutes minutes';
+    } else if (hours > 0) {
+      return '$hours hours';
+    } else {
+      return '$minutes minutes';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -212,31 +374,31 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                         _buildServicesTab(),
                         _buildLocationsTab(),
                         _buildReviewsTab(),
-],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          // Floating Action Button
-          Positioned(
-            top: 26.0,
-            left: 5.0,
-            child: FloatingActionButton(
-              heroTag: 'BackHome',
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-               backgroundColor: Colors.transparent,
-               elevation: 0,
-              child: const Icon(FontAwesomeIcons.arrowLeft),
+            // Floating Action Button
+            Positioned(
+              top: 26.0,
+              left: 5.0,
+              child: FloatingActionButton(
+                heroTag: 'BackHome',
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                child: const Icon(FontAwesomeIcons.arrowLeft),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildAboutTab() {
     return Padding(
@@ -656,23 +818,25 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                           color: const Color(0xFF1E889E),
                         ),
                         width: 370.0,
-                        height: 60.0,
-                        child: const Row(
+                        height: 55.0,
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Padding(
+                            const Padding(
                               padding: EdgeInsets.only(left: 30.0),
                               child: FaIcon(
                                 FontAwesomeIcons.locationDot,
                                 color: Colors.white,
-                                size: 38,
+                                size: 35,
                               ),
                             ),
                             Padding(
                               padding: EdgeInsets.only(right: 30.0),
                               child: Text(
-                                '5 km away',
-                                style: TextStyle(
+                                isRouteFetched
+                                    ? '${distanceFromTo.toStringAsFixed(2)} km away'
+                                    : '_ _    km away',
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontFamily: 'Time New Roman',
                                   fontSize: 25,
@@ -690,23 +854,61 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                           color: const Color(0xFF1E889E),
                         ),
                         width: 370.0,
-                        height: 60.0,
-                        child: const Row(
+                        height: 55.0,
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Padding(
+                            const Padding(
                               padding: EdgeInsets.only(left: 30.0),
                               child: FaIcon(
                                 FontAwesomeIcons.clock,
                                 color: Colors.white,
-                                size: 38,
+                                size: 35,
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.only(right: 30.0),
+                              padding: const EdgeInsets.only(right: 30.0),
                               child: Text(
-                                '15 mins away',
-                                style: TextStyle(
+                                isRouteFetched
+                                    ? '0${timeFromTo.toStringAsFixed(2)} h away'
+                                    : '_ _       h away',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Time New Roman',
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                       const SizedBox(height: 8),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          color: const Color(0xFF1E889E),
+                        ),
+                        width: 370.0,
+                        height: 55.0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(left: 30.0),
+                              child: FaIcon(
+                                FontAwesomeIcons.leftRight,
+                                color: Colors.white,
+                                size: 35,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 30.0),
+                              child: Text(
+                                isRouteFetched
+                                    ? '${airDistance.toStringAsFixed(2)} km away'
+                                    : '_ _       h away',
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontFamily: 'Time New Roman',
                                   fontSize: 25,
@@ -719,13 +921,16 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 80),
+                  const SizedBox(height: 30),
                   // Buttons for getting distance and time, and getting directions
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          fetchRouteClicked();
+                          if (isRouteFetched) {}
+                        },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 20,
@@ -987,7 +1192,9 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => AddingReviewPage(token: widget.token,)),
+                                builder: (context) => AddingReviewPage(
+                                      token: widget.token,
+                                    )),
                           );
                         },
                         child: const FaIcon(FontAwesomeIcons.plus),
