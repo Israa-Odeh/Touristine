@@ -222,7 +222,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
     await placemarkFromCoordinates(
             _currentPosition!.latitude, _currentPosition!.longitude)
         .then((List<Placemark> placemarks) {
-      Placemark place = placemarks[0];
+      // Placemark place = placemarks[0];
       setState(() {
         // print(_currentPosition!.latitude);
         // print(_currentPosition!.longitude);
