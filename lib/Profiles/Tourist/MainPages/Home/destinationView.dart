@@ -7,6 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/addingReview.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/imagesList.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/Home/locationTracking.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/reviews.dart';
 import 'package:http/http.dart' as http;
 
@@ -83,6 +84,11 @@ class _DestinationDetailsState extends State<DestinationDetails> {
     selectedImage = widget.destination['imagePath'];
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   // A function to retrieve all of the destination details.
   Future<void> getDestinationDetails() async {
     final url =
@@ -153,6 +159,35 @@ class _DestinationDetailsState extends State<DestinationDetails> {
       }
     } catch (error) {
       print('Failed to fetch your review: $error');
+    }
+  }
+
+  // A function to retrieve the destination latitude and longitude.
+  Future<void> getDestinationLatLng() async {
+    final url =
+        Uri.parse('https://touristine.onrender.com/getDestinationLatLng');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer ${widget.token}',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Success.
+        // Jenan, I want to retrieve the latitude and longitude of the destination.
+      } else if (response.statusCode == 500) {
+        // Failed.
+      } else {
+        // ignore: use_build_context_synchronously
+        // showCustomSnackBar(context, "Failed to fetch recommendations",
+        //     bottomMargin: 0);
+      }
+    } catch (error) {
+      print('Failed to fetch the destination lat and lng: $error');
     }
   }
 
@@ -227,7 +262,11 @@ class _DestinationDetailsState extends State<DestinationDetails> {
         // print(_currentPosition!.latitude);
         // print(_currentPosition!.longitude);
         airDistance = Geolocator.distanceBetween(_currentPosition!.latitude,
-            _currentPosition!.longitude, destLat, destLng) / 1000;
+                _currentPosition!.longitude, destLat, destLng) /
+            1000;
+        // print("**************************************************");
+        // print(airDistance);
+        // print("**************************************************");
       });
     }).catchError((e) {
       print("An error occured $e");
@@ -883,7 +922,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                           ],
                         ),
                       ),
-                       const SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.0),
@@ -957,8 +996,27 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                       FloatingActionButton(
                         heroTag: 'Get Directions',
                         backgroundColor: const Color(0xFF1E889E),
-                        onPressed: () {
-                          // Add logic to get directions.
+                        onPressed: () async {
+                          try {
+                            await _getCurrentPosition();
+
+                            // ignore: use_build_context_synchronously
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LocationLiveTracking(
+                                  srcLat: _currentPosition!.latitude,
+                                  scrLng: _currentPosition!.longitude,
+                                  dstLat: 32.2226667,
+                                  dstLng: 35.262145,
+                                ),
+                              ),
+                            );
+                            // ignore: use_build_context_synchronously
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          } catch (e) {
+                            print('An error occurred: $e');
+                          }
                         },
                         child: const FaIcon(FontAwesomeIcons.diamondTurnRight),
                       ),
