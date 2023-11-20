@@ -64,6 +64,8 @@ class _DestinationDetailsState extends State<DestinationDetails> {
     'Weather': '23°C',
     'Rating': '4.5',
     'Cost Level': 'Budget Friendly',
+    'Sheltered': 'Yes', // No
+    'Estimated Time': '2',
     'Services': [
       'Public restrooms are available',
       'Convenient access to a paid parking garage',
@@ -538,185 +540,269 @@ class _DestinationDetailsState extends State<DestinationDetails> {
   }
 
   Widget _buildDescriptionTab() {
+    ScrollController scrollController = ScrollController();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 8),
-          Container(
-            height: 295,
-            width: 400,
-            decoration: BoxDecoration(
-              color: const Color.fromARGB(33, 20, 89, 121),
-              borderRadius: BorderRadius.circular(15.0),
+          ScrollbarTheme(
+            data: ScrollbarThemeData(
+              thumbColor: MaterialStateProperty.all(
+                  const Color.fromARGB(125, 23, 102, 118)),
+              radius: const Radius.circular(10),
             ),
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 13.0, vertical: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+            child: Scrollbar(
+              controller: scrollController,
+              trackVisibility: true,
+              thumbVisibility: true,
+              thickness: 10,
+              child: Container(
+                height: 295,
+                width: 400,
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(33, 20, 89, 121),
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 13.0, right: 20),
+                  child: ListView(
+                    controller: scrollController,
                     children: [
+                      Row(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0),
+                              color: const Color(0xFF1E889E),
+                            ),
+                            width: 174.0,
+                            height: 65.0,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const FaIcon(
+                                  FontAwesomeIcons.cloudSunRain,
+                                  color: Colors.white,
+                                  size: 38,
+                                ),
+                                const SizedBox(width: 25.0),
+                                Text(
+                                  '${destinationDetails['Weather']}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'Time New Roman',
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 10.0),
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0),
+                              color: const Color(0xFF1E889E),
+                            ),
+                            width: 174.0,
+                            height: 65.0,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const FaIcon(
+                                  FontAwesomeIcons.rankingStar,
+                                  color: Colors.white,
+                                  size: 38,
+                                ),
+                                const SizedBox(width: 25.0),
+                                Text(
+                                  '${destinationDetails['Rating']}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'Time New Roman',
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10.0),
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.0),
                           color: const Color(0xFF1E889E),
                         ),
-                        width: 177.0,
-                        height: 65.0,
+                        width: 370.0,
+                        height: 60.0,
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             const FaIcon(
-                              FontAwesomeIcons.cloudSunRain,
+                              FontAwesomeIcons.clock,
                               color: Colors.white,
                               size: 38,
                             ),
-                            const SizedBox(width: 25.0),
+                            const SizedBox(width: 0.0),
                             Text(
-                              '${destinationDetails['Weather']}',
+                              '${destinationDetails['Opening Time']} - ${destinationDetails['Closing Time']}',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontFamily: 'Time New Roman',
                                 fontSize: 25,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
                         ),
                       ),
-                      const SizedBox(width: 10.0),
+                      const SizedBox(height: 10.0),
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.0),
                           color: const Color(0xFF1E889E),
                         ),
-                        width: 177.0,
-                        height: 65.0,
+                        width: 370.0,
+                        height: 60.0,
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const FaIcon(
-                              FontAwesomeIcons.rankingStar,
-                              color: Colors.white,
-                              size: 38,
-                            ),
-                            const SizedBox(width: 25.0),
-                            Text(
-                              '${destinationDetails['Rating']}',
-                              style: const TextStyle(
+                            const Padding(
+                              padding: EdgeInsets.only(left: 30.0),
+                              child: FaIcon(
+                                FontAwesomeIcons.calendar,
                                 color: Colors.white,
-                                fontFamily: 'Time New Roman',
-                                fontSize: 25,
-                                fontWeight: FontWeight.bold,
+                                size: 38,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 30.0),
+                              child: Text(
+                                _getFormattedDays(
+                                    destinationDetails['Working Days']),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Time New Roman',
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
                           ],
                         ),
                       ),
+                      const SizedBox(height: 10.0),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          color: const Color(0xFF1E889E),
+                        ),
+                        width: 370.0,
+                        height: 60.0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(left: 30.0),
+                              child: FaIcon(
+                                FontAwesomeIcons.dollarSign,
+                                color: Colors.white,
+                                size: 38,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 30.0),
+                              child: Text(
+                                destinationDetails['Cost Level'],
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Time New Roman',
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10.0),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          color: const Color(0xFF1E889E),
+                        ),
+                        width: 370.0,
+                        height: 60.0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(left: 30.0),
+                              child: FaIcon(
+                                FontAwesomeIcons.personShelter,
+                                color: Colors.white,
+                                size: 38,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 30.0),
+                              child: Text(
+                                destinationDetails['Sheltered'] == ("Yes")
+                                    ? 'Sheltered'
+                                    : 'Unsheltered',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Time New Roman',
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10.0),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          color: const Color(0xFF1E889E),
+                        ),
+                        width: 370.0,
+                        height: 60.0,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(left: 30.0),
+                              child: FaIcon(
+                                FontAwesomeIcons.hourglass,
+                                color: Colors.white,
+                                size: 38,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 30.0),
+                              child: Text(
+                                '${destinationDetails['Estimated Time']} hours',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Time New Roman',
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20.0),
                     ],
                   ),
-                  const SizedBox(height: 10.0),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      color: const Color(0xFF1E889E),
-                    ),
-                    width: 370.0,
-                    height: 60.0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        const FaIcon(
-                          FontAwesomeIcons.clock,
-                          color: Colors.white,
-                          size: 38,
-                        ),
-                        const SizedBox(width: 0.0),
-                        Text(
-                          '${destinationDetails['Opening Time']} - ${destinationDetails['Closing Time']}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontFamily: 'Time New Roman',
-                            fontSize: 25,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10.0),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      color: const Color(0xFF1E889E),
-                    ),
-                    width: 370.0,
-                    height: 60.0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(left: 30.0),
-                          child: FaIcon(
-                            FontAwesomeIcons.calendar,
-                            color: Colors.white,
-                            size: 38,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 30.0),
-                          child: Text(
-                            _getFormattedDays(
-                                destinationDetails['Working Days']),
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontFamily: 'Time New Roman',
-                              fontSize: 25,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10.0),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      color: const Color(0xFF1E889E),
-                    ),
-                    width: 370.0,
-                    height: 60.0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(left: 30.0),
-                          child: FaIcon(
-                            FontAwesomeIcons.dollarSign,
-                            color: Colors.white,
-                            size: 38,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 30.0),
-                          child: Text(
-                            destinationDetails['Cost Level'],
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontFamily: 'Time New Roman',
-                              fontSize: 25,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
