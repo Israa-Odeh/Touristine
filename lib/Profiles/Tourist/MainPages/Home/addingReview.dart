@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:http/http.dart' as http;
 
@@ -60,6 +61,7 @@ class _AddingReviewPageState extends State<AddingReviewPage> {
 
   // Function to send the review data to the backend.
   Future<void> sendReviewData() async {
+    String currentDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
     final url = Uri.parse('https://touristine.onrender.com/sendReviewData');
 
     try {
@@ -74,6 +76,7 @@ class _AddingReviewPageState extends State<AddingReviewPage> {
           'stars': selectedStars.toString(),
           'title': titleController.text,
           'content': contentController.text,
+          'date': currentDate,
         },
       );
 

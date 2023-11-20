@@ -1058,6 +1058,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
         'commentTitle': 'Amazing Experience',
         'commentContent':
             'The place is breathtaking, and the staff is incredibly friendly. I highly recommend it!',
+        'date': '26/05/2001'
       },
       {
         'firstName': 'Fatima',
@@ -1066,6 +1067,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
         'commentTitle': 'Great Place',
         'commentContent':
             'A wonderful atmosphere and delicious food. I enjoyed every moment of my visit.',
+        'date': '07/07/2007'
       },
       {
         'firstName': 'Yousef',
@@ -1074,6 +1076,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
         'commentTitle': 'Excellent Experience',
         'commentContent':
             'The inspiration here is amazing, and I love it. Looking forward to coming back!',
+        'date': '15/05/2021'
       },
       {
         'firstName': 'Layla',
@@ -1082,6 +1085,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
         'commentTitle': 'Beautiful Place',
         'commentContent':
             'You\'ll find success everywhere you go. The ambiance is truly remarkable.',
+        'date': '12/08/2023'
       },
       {
         'firstName': 'Ali',
@@ -1090,6 +1094,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
         'commentTitle': 'Needs Improvement',
         'commentContent':
             'Service was slow, and the place needs some improvements. Hope to see changes.',
+        'date': '26/05/2023'
       },
       {
         'firstName': 'Nourhan',
@@ -1098,6 +1103,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
         'commentTitle': 'Unique Experience',
         'commentContent':
             "I'm very happy with my experience here. Thank you for providing such a unique experience!",
+        'date': '09/11/2022'
       },
       {
         'firstName': 'Hussein',
@@ -1106,6 +1112,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
         'commentTitle': 'Good Place',
         'commentContent':
             "Not bad, but there are some aspects that could be improved. Overall, it's a decent place.",
+        'date': '10/04/2011'
       },
       {
         'firstName': 'Sara',
@@ -1114,6 +1121,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
         'commentTitle': 'Great View',
         'commentContent':
             'I love the stunning view and the peaceful atmosphere. It was a refreshing experience.',
+        'date': '22/08/2021'
       },
       {
         'firstName': 'Omar',
@@ -1122,6 +1130,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
         'commentTitle': 'Fantastic Experience',
         'commentContent':
             'The best experience I ever had! The service, ambiance, and everything exceeded my expectations.',
+        'date': '16/05/2022'
       },
       {
         'firstName': 'Hala',
@@ -1130,6 +1139,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
         'commentTitle': 'Very Good',
         'commentContent':
             'A very good experience, I will definitely come back for another visit.',
+        'date': '26/10/2021'
       },
     ];
 
@@ -1261,7 +1271,8 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                             MaterialPageRoute(
                                 builder: (context) => AddingReviewPage(
                                       token: widget.token,
-                                      destinationName: widget.destination['name'],
+                                      destinationName:
+                                          widget.destination['name'],
                                     )),
                           );
                         },

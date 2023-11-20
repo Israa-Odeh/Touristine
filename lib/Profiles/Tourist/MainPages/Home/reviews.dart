@@ -48,8 +48,7 @@ class _AllReviewsPageState extends State<AllReviewsPage> {
         },
         backgroundColor: const Color.fromARGB(129, 30, 137, 158),
         elevation: 0,
-        child: const Icon(
-            FontAwesomeIcons.arrowLeft),
+        child: const Icon(FontAwesomeIcons.arrowLeft),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
     );
@@ -121,6 +120,19 @@ class _AllReviewsPageState extends State<AllReviewsPage> {
                   fontWeight: FontWeight.w100,
                   fontFamily: 'Zilla',
                   color: Color.fromARGB(255, 14, 63, 73)),
+            ),
+            const SizedBox(height: 10),
+            // Date
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Text(
+                '${review['date']}',
+                style: const TextStyle(
+                    fontSize: 19.5,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Time New Roman',
+                    color: Color.fromARGB(255, 14, 63, 73)),
+              ),
             ),
           ],
         ),
