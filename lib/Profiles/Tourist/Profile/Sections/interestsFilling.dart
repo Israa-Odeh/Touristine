@@ -37,6 +37,9 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
   bool countrySide = false; // Default value of the checkbox11.
   bool historicalSites = false; // Default value of the checkbox12.
   bool religiousLandmarks = false; // Default value of the checkbox13.
+  bool aquariums = false;
+  bool zoos = false;
+  bool others = false;
 
   // Q4 Choices.
   bool yes = false; // Default value of the checkbox14.
@@ -61,7 +64,7 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
     } else if (value is String) {
       return value.toLowerCase() == 'true';
     }
-    return false; // Default value if conversion fails..
+    return false; // Default value if conversion fails.
   }
 
   // A function that sends a request to the server to retrieve the saved interests.
@@ -97,6 +100,10 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
           countrySide = convertToBool(responseData['countrySide']);
           historicalSites = convertToBool(responseData['historicalSites']);
           religiousLandmarks = convertToBool(responseData['religiousLandmarks']);
+          // Newly added.
+          aquariums = convertToBool(responseData['aquariums']);
+          zoos = convertToBool(responseData['zoos']);
+          others = convertToBool(responseData['others']);
 
           yes = convertToBool(responseData['Yes']);
           no = convertToBool(responseData['No']);
@@ -146,6 +153,10 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
         'countrySide': countrySide.toString(),
         'historicalSites': historicalSites.toString(),
         'religiousLandmarks': religiousLandmarks.toString(),
+        // Newly added.
+        'aquariums': aquariums.toString(),
+        'zoos': zoos.toString(),
+        'others': others.toString(),
 
         // Q4.
         'Yes': yes.toString(),
@@ -207,7 +218,10 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
             majorCities ||
             countrySide ||
             historicalSites ||
-            religiousLandmarks;
+            religiousLandmarks ||
+            aquariums ||
+            zoos ||
+            others;
       case 3:
         return yes || no;
       case 4:
@@ -226,6 +240,7 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
   }
 
   void cancelChanges() {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
     Navigator.of(context).pop();
   }
 
@@ -579,6 +594,39 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
               onChanged: (value) {
                 setState(() {
                   religiousLandmarks = value!;
+                });
+              },
+            ),
+
+            // Create CheckboxListTile 8.
+            buildCheckboxListTile(
+              titleText: 'Aquariums',
+              value: aquariums,
+              onChanged: (value) {
+                setState(() {
+                  aquariums = value!;
+                });
+              },
+            ),
+
+            // Create CheckboxListTile 9.
+            buildCheckboxListTile(
+              titleText: 'Zoos',
+              value: zoos,
+              onChanged: (value) {
+                setState(() {
+                  zoos = value!;
+                });
+              },
+            ),
+
+            // Create CheckboxListTile 10.
+            buildCheckboxListTile(
+              titleText: 'Others',
+              value: others,
+              onChanged: (value) {
+                setState(() {
+                  others = value!;
                 });
               },
             ),
