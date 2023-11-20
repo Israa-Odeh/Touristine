@@ -101,6 +101,9 @@ class _DestinationDetailsState extends State<DestinationDetails> {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Authorization': 'Bearer ${widget.token}',
         },
+        body: {
+          'destinationName': widget.destination['name'],
+        },
       );
 
       if (response.statusCode == 200) {
@@ -130,6 +133,9 @@ class _DestinationDetailsState extends State<DestinationDetails> {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Authorization': 'Bearer ${widget.token}',
+        },
+        body: {
+          'destinationName': widget.destination['name'],
         },
       );
 
@@ -173,6 +179,9 @@ class _DestinationDetailsState extends State<DestinationDetails> {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Authorization': 'Bearer ${widget.token}',
+        },
+        body: {
+          'destinationName': widget.destination['name'],
         },
       );
 
@@ -1252,6 +1261,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                             MaterialPageRoute(
                                 builder: (context) => AddingReviewPage(
                                       token: widget.token,
+                                      destinationName: widget.destination['name'],
                                     )),
                           );
                         },

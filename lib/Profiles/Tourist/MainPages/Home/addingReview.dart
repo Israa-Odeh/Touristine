@@ -5,8 +5,10 @@ import 'package:http/http.dart' as http;
 
 class AddingReviewPage extends StatefulWidget {
   final String token;
+  final String destinationName;
 
-  const AddingReviewPage({super.key, required this.token});
+  const AddingReviewPage(
+      {super.key, required this.token, required this.destinationName});
   @override
   _AddingReviewPageState createState() => _AddingReviewPageState();
 }
@@ -68,6 +70,7 @@ class _AddingReviewPageState extends State<AddingReviewPage> {
           'Authorization': 'Bearer ${widget.token}',
         },
         body: {
+          'destinationName': widget.destinationName,
           'stars': selectedStars.toString(),
           'title': titleController.text,
           'content': contentController.text,
@@ -98,6 +101,9 @@ class _AddingReviewPageState extends State<AddingReviewPage> {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Authorization': 'Bearer ${widget.token}',
+        },
+        body: {
+          'destinationName': widget.destinationName,
         },
       );
 
