@@ -35,6 +35,8 @@ class _DestinationDetailsState extends State<DestinationDetails> {
   double distanceFromTo = 0;
   double timeFromTo = 0;
 
+  // List<Map<String, dynamic>> complaints = [];
+
   final List<Map<String, dynamic>> destinationImages = [
     {'name': 'Hebron', 'imagePath': 'assets/Images/Profiles/Tourist/9T.jpg'},
     {'name': 'Dead Sea', 'imagePath': 'assets/Images/Profiles/Tourist/10T.jpg'},
@@ -201,6 +203,89 @@ class _DestinationDetailsState extends State<DestinationDetails> {
       }
     } catch (error) {
       print('Failed to fetch the destination lat and lng: $error');
+    }
+  }
+
+    List<Map<String, dynamic>> complaints = [
+    {
+      'title': 'Slow Service',
+      'content': 'The service at the restaurant was incredibly slow.',
+      'date': '25/10/2019',
+      // There are images.
+      'images': [
+        {
+          'url':
+              'https://cdn.britannica.com/84/73184-050-05ED59CB/Sunflower-field-Fargo-North-Dakota.jpg'
+        },
+        {
+          'url':
+              'https://cdn.britannica.com/89/131089-050-A4773446/flowers-garden-petunia.jpg'
+        },
+        {
+          'url':
+              'https://cdn.britannica.com/89/131089-050-A4773446/flowers-garden-petunia.jpg'
+        },
+      ],
+    },
+    {
+      'title': 'Dirty Room',
+      'content': 'The hotel room was not clean upon arrival.',
+      'date': '15/05/2020',
+      // There are images.
+      'images': [
+        {
+          'url':
+              'https://www.petalrepublic.com/wp-content/uploads/2023/07/Heather.jpeg.webp'
+        },
+      ],
+    },
+    {
+      'title': 'Dirty Room',
+      'content': 'The hotel room was not clean upon arrival.',
+      'date': '20/11/2022',
+      // There are no images attached to this complaint.
+    },
+    {
+      'title': 'Noisy Environment',
+      'content': 'The neighborhood was too noisy during the night.',
+      'date': '17/09/2023',
+      // There are no images attached to this complaint.
+    },
+  ];
+
+  // A Function to fetch user complaints from the backend.
+  Future<void> fetchUserComplaints() async {
+    final url = Uri.parse('https://touristine.onrender.com/get-complaints');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer ${widget.token}',
+        },
+        body: {
+          'destinationName': widget.destination['name'],
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Jenan, I need to retrieve a list of complaints - if there is any,
+        // the retrieved list<map> will be of the same format as the one
+        // given at line 209.
+        // Retrieve the necessary elements for a complaint, including the required title,
+        // content, and date, along with any accompanying images (if provided).
+
+        // setState(() {
+        //   complaints =
+        //       List<Map<String, dynamic>>.from(json.decode(response.body));
+        // });
+      } else {
+        print(
+            'Failed to fetch complaints. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error fetching complaints: $error');
     }
   }
 
@@ -1429,6 +1514,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                             children: [
                               ElevatedButton(
                                 onPressed: () {
+                                  fetchUserComplaints();
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -1436,7 +1522,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                                             ComplaintsListPage(
                                               token: widget.token,
                                               destinationName:
-                                                  widget.destination['name'],
+                                                  widget.destination['name'], complaints: complaints,
                                             )),
                                   );
                                 },

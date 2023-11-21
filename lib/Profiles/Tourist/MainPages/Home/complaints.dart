@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -7,128 +6,90 @@ import 'package:http/http.dart' as http;
 class ComplaintsListPage extends StatefulWidget {
   final String token;
   final String destinationName;
+  final List<Map<String, dynamic>> complaints;
 
   const ComplaintsListPage(
-      {Key? key, required this.token, required this.destinationName})
-      : super(key: key);
+      {super.key,
+      required this.token,
+      required this.destinationName,
+      required this.complaints});
 
   @override
   _ComplaintsListPageState createState() => _ComplaintsListPageState();
 }
 
 class _ComplaintsListPageState extends State<ComplaintsListPage> {
-  // List<Map<String, dynamic>> complaints = [];
-  List<Map<String, dynamic>> complaints = [
-    {
-      'title': 'Slow Service',
-      'content': 'The service at the restaurant was incredibly slow.',
-      'date': '25/10/2019',
-      'images': [
-        {
-          'url':
-              'https://cdn.britannica.com/84/73184-050-05ED59CB/Sunflower-field-Fargo-North-Dakota.jpg'
-        },
-        {
-          'url':
-              'https://cdn.britannica.com/89/131089-050-A4773446/flowers-garden-petunia.jpg'
-        },
-        {
-          'url':
-              'https://cdn.britannica.com/89/131089-050-A4773446/flowers-garden-petunia.jpg'
-        },
-      ],
-    },
-    {
-      'title': 'Dirty Room',
-      'content': 'The hotel room was not clean upon arrival.',
-      'date': '15/05/2020',
-      'images': [
-        {
-          'url':
-              'https://www.petalrepublic.com/wp-content/uploads/2023/07/Heather.jpeg.webp'
-        },
-      ],
-    },
-    {
-      'title': 'Dirty Room',
-      'content': 'The hotel room was not clean upon arrival.',
-      'date': '20/11/2022',
-    },
-    {
-      'title': 'Noisy Environment',
-      'content': 'The neighborhood was too noisy during the night.',
-      'date': '17/09/2023',
-    },
-    // Add more complaint entries as needed for testing
-  ];
-
-  // Function to fetch user complaints from the backend.
-  Future<void> fetchUserComplaints() async {
-    final url = Uri.parse('https://touristine.onrender.com/get-complaints');
-
-    try {
-      final response = await http.get(
-        url,
-        headers: {'Authorization': 'Bearer ${widget.token}'},
-      );
-
-      if (response.statusCode == 200) {
-        // Parse the response JSON and update the complaints list.
-        setState(() {
-          complaints =
-              List<Map<String, dynamic>>.from(json.decode(response.body));
-        });
-      } else {
-        // Handle error
-        print(
-            'Failed to fetch complaints. Status code: ${response.statusCode}');
-      }
-    } catch (error) {
-      print('Error fetching complaints: $error');
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    fetchUserComplaints();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image:
-                AssetImage("assets/Images/Profiles/Tourist/homeBackground.jpg"),
-            fit: BoxFit.cover,
+      body: Padding(
+        padding: EdgeInsets.only(top: widget.complaints.isNotEmpty? 0.0: 24),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            image: widget.complaints.isNotEmpty
+                ? const DecorationImage(
+                    image: AssetImage(
+                        "assets/Images/Profiles/Tourist/homeBackground.jpg"),
+                    fit: BoxFit.cover,
+                  )
+                : const DecorationImage(
+                    image: AssetImage(
+                        "assets/Images/Profiles/Tourist/ComplaintsBackground.png"),
+                    fit: BoxFit.cover,
+                  ),
+          ),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Expanded(
+                child: widget.complaints.isEmpty
+                    ? Center(
+                        child: Column(
+                        children: [
+                          const SizedBox(height: 150),
+                          Image.asset(
+                            'assets/Images/Profiles/Tourist/NoComplaints.gif',
+                            fit: BoxFit.cover,
+                          ),
+                          const Text(
+                            'No complaints found',
+                            style: TextStyle(
+                                fontSize: 40,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'Gabriola',
+                                color: Color.fromARGB(255, 23, 99, 114)),
+                          ),
+                        ],
+                      ))
+                    : ListView.builder(
+                        itemCount: widget.complaints.length,
+                        itemBuilder: (context, index) {
+                          return ComplaintCard(
+                              complaint: widget.complaints[index]);
+                        },
+                      ),
+              ),
+            ],
           ),
         ),
-        child: Column(
-          children: [
-            const SizedBox(height: 20),
-            Expanded(
-              child: complaints.isEmpty
-                  ? const Center(child: Text('No complaints found.'))
-                  : ListView.builder(
-                      itemCount: complaints.length,
-                      itemBuilder: (context, index) {
-                        return ComplaintCard(complaint: complaints[index]);
-                      },
-                    ),
-            ),
-          ],
-        ),
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'GoBack',
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
-        backgroundColor: const Color.fromARGB(129, 30, 137, 158),
-        elevation: 0,
-        child: const Icon(FontAwesomeIcons.arrowLeft),
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(bottom: widget.complaints.isNotEmpty? 0.0: 10.0),
+        child: FloatingActionButton(
+          heroTag: 'GoBack',
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          backgroundColor: widget.complaints.isNotEmpty? const Color.fromARGB(129, 30, 137, 158): const Color(0xFF1E889E),
+          elevation: 0,
+          child: const Icon(FontAwesomeIcons.arrowLeft),
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
     );
@@ -138,7 +99,7 @@ class _ComplaintsListPageState extends State<ComplaintsListPage> {
 class ComplaintCard extends StatelessWidget {
   final Map<String, dynamic> complaint;
 
-  const ComplaintCard({Key? key, required this.complaint}) : super(key: key);
+  const ComplaintCard({super.key, required this.complaint});
 
   @override
   Widget build(BuildContext context) {
@@ -154,7 +115,6 @@ class ComplaintCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title and Content
             ListTile(
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -196,10 +156,10 @@ class ComplaintCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-            // Display images if available
+            // Display images if available.
             if (complaint['images'] != null &&
                 (complaint['images'] as List).isNotEmpty)
-              Container(
+              SizedBox(
                 height: 150,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
@@ -211,9 +171,8 @@ class ComplaintCard extends StatelessWidget {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.0),
                           border: Border.all(
-                            color: Color.fromARGB(
-                                121, 30, 137, 158), // Set border color
-                            width: 3.0, // Set border width
+                            color: const Color.fromARGB(121, 30, 137, 158),
+                            width: 3.0,
                           ),
                         ),
                         child: ClipRRect(
