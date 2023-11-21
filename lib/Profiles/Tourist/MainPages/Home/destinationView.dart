@@ -7,6 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/addingReview.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/addingComplaint.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/Home/complaints.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/imagesList.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/locationTracking.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/reviews.dart';
@@ -1422,34 +1423,55 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                               color: Color.fromARGB(255, 23, 103, 120),
                             ),
                           ),
-                          const SizedBox(height: 25),
-                          Center(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ComplaintsPage(
-                                            token: widget.token,
-                                            destinationName:
-                                                widget.destination['name'],
-                                          )),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 40,
-                                  vertical: 10,
+                          const SizedBox(height: 40),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ComplaintsListPage(
+                                              token: widget.token,
+                                              destinationName:
+                                                  widget.destination['name'],
+                                            )),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 50,
+                                    vertical: 10,
+                                  ),
+                                  backgroundColor: const Color(0xFF1E889E),
+                                  textStyle: const TextStyle(
+                                    fontSize: 30,
+                                    fontFamily: 'Zilla',
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                                backgroundColor: const Color(0xFF1E889E),
-                                textStyle: const TextStyle(
-                                  fontSize: 30,
-                                  fontFamily: 'Zilla',
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                child: const Text('View All'),
                               ),
-                              child: const Text('Add One'),
-                            ),
+                              FloatingActionButton(
+                                heroTag: 'Add Complaint',
+                                backgroundColor: const Color(0xFF1E889E),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            AddingComplaintsPage(
+                                              token: widget.token,
+                                              destinationName:
+                                                  widget.destination['name'],
+                                            )),
+                                  );
+                                },
+                                child: const FaIcon(FontAwesomeIcons.plus),
+                              ),
+                            ],
                           ),
                         ],
                       ),

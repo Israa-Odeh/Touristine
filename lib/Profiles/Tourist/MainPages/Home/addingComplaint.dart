@@ -2,24 +2,25 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart'; // Import image_picker package
+import 'package:intl/intl.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:http/http.dart' as http;
 
-class ComplaintsPage extends StatefulWidget {
+class AddingComplaintsPage extends StatefulWidget {
   final String token;
   final String destinationName;
 
-  const ComplaintsPage({
+  const AddingComplaintsPage({
     super.key,
     required this.token,
     required this.destinationName,
   });
 
   @override
-  _ComplaintsPageState createState() => _ComplaintsPageState();
+  _AddingComplaintsPageState createState() => _AddingComplaintsPageState();
 }
 
-class _ComplaintsPageState extends State<ComplaintsPage> {
+class _AddingComplaintsPageState extends State<AddingComplaintsPage> {
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
   List<File> selectedImages = []; // List to store selected images
@@ -59,6 +60,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
 
   // A function to send complaint data to the backend.
   Future<void> sendComplaint() async {
+    String currentDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
     final url = Uri.parse('https://touristine.onrender.com/send-complaint');
 
     // Create a multi-part request.
@@ -71,6 +73,7 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
     // Add complaint data to the request.
     request.fields['title'] = titleController.text;
     request.fields['content'] = contentController.text;
+    request.fields['date'] = currentDate;
     request.fields['destinationName'] = widget.destinationName;
 
     // Add images to the request.
@@ -281,9 +284,9 @@ class _ComplaintsPageState extends State<ComplaintsPage> {
             ElevatedButton(
               onPressed: () {
                 if (validateForm()) {
-                  print('Title: ${titleController.text}');
-                  print('Content: ${contentController.text}');
-                  print('Selected Images: $selectedImages');
+                  // print('Title: ${titleController.text}');
+                  // print('Content: ${contentController.text}');
+                  // print('Selected Images: $selectedImages');
                   sendComplaint();
                 }
               },
