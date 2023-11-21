@@ -6,6 +6,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/addingReview.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/Home/addingComplaint.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/imagesList.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/locationTracking.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/reviews.dart';
@@ -370,7 +371,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 5,
+      length: 6,
       child: Scaffold(
         body: Stack(
           children: [
@@ -413,6 +414,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                       Tab(text: 'Services'),
                       Tab(text: 'Location'),
                       Tab(text: 'Reviews'),
+                      Tab(text: 'Complaints'),
                     ],
                   ),
                   SizedBox(
@@ -424,6 +426,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                         _buildServicesTab(),
                         _buildLocationsTab(),
                         _buildReviewsTab(),
+                        _buildComplaintsTab(),
                       ],
                     ),
                   ),
@@ -965,7 +968,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.only(right: 30.0),
+                              padding: const EdgeInsets.only(right: 30.0),
                               child: Text(
                                 isRouteFetched
                                     ? '${distanceFromTo.toStringAsFixed(2)} km away'
@@ -1063,7 +1066,11 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                       ElevatedButton(
                         onPressed: () {
                           fetchRouteClicked();
-                          if (isRouteFetched) {}
+                          if (isRouteFetched) {
+                            setState(() {
+                              /////////////////////////////////////////////////////////////////////////
+                            });
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
@@ -1371,6 +1378,88 @@ class _DestinationDetailsState extends State<DestinationDetails> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildComplaintsTab() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 8),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                double additionalMargin = 0;
+                if (constraints.maxHeight > 295) {
+                  additionalMargin = 10.0;
+                }
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 5.0 + additionalMargin),
+                  child: Container(
+                    constraints: const BoxConstraints(
+                      minHeight: 295,
+                    ),
+                    width: 400,
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(33, 20, 89, 121),
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 13.0, vertical: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Do you have any complaints? Feel free to inform us, and we will follow the necessary procedures.',
+                            style: TextStyle(
+                              fontSize: 35,
+                              fontFamily: 'Gabriola',
+                              fontWeight: FontWeight.w500,
+                              color: Color.fromARGB(255, 23, 103, 120),
+                            ),
+                          ),
+                          const SizedBox(height: 25),
+                          Center(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ComplaintsPage(
+                                            token: widget.token,
+                                            destinationName:
+                                                widget.destination['name'],
+                                          )),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 40,
+                                  vertical: 10,
+                                ),
+                                backgroundColor: const Color(0xFF1E889E),
+                                textStyle: const TextStyle(
+                                  fontSize: 30,
+                                  fontFamily: 'Zilla',
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              child: const Text('Add One'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
