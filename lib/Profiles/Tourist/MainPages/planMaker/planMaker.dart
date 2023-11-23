@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:touristine/Profiles/Tourist/PlanMaker/myplansList.dart';
 import 'package:http/http.dart' as http;
+import 'package:touristine/Profiles/Tourist/MainPages/planMaker/myplansList.dart';
 
 class PlanMakerPage extends StatefulWidget {
   final String token;
