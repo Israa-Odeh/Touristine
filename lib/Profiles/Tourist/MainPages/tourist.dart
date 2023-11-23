@@ -4,7 +4,7 @@ import 'package:touristine/Profiles/Tourist/MainPages/profilePage.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/chatting.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/home.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/imageUpload.dart';
-import 'package:touristine/Profiles/Tourist/MainPages/planMaker.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/planMaker/planMaker.dart';
 
 class TouristProfile extends StatefulWidget {
   final String token;
