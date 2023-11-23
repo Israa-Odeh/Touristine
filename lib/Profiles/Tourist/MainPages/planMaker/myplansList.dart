@@ -13,6 +13,7 @@ class MyPlansTab extends StatefulWidget {
 }
 
 class _MyPlansTabState extends State<MyPlansTab> {
+  
   Future<void> deletePlan(int planId) async {
     final url = Uri.parse('https://touristine.onrender.com/plans/$planId');
 
@@ -66,7 +67,6 @@ class _MyPlansTabState extends State<MyPlansTab> {
           return PlanCard(
             plan: plan,
             onTap: () {
-              print(plan['places']);
               // Handle the card click event.......................
               print('Card clicked: ${plan['destName']}');
             },
@@ -160,7 +160,7 @@ class PlanCard extends StatelessWidget {
                             plan['imagePath'],
                             height: 195,
                             width: 160,
-                            fit: BoxFit.fill,
+                            fit: BoxFit.cover,
                           ),
                         ),
                       ),

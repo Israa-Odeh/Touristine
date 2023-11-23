@@ -172,7 +172,7 @@ class MakePlanTab extends StatelessWidget {
           Icon(FontAwesomeIcons.circlePlus,
               size: 100, color: Color(0xFF1E889E)),
           SizedBox(height: 16),
-          Text('Make Your Plan Here', style: TextStyle(fontSize: 20)),
+          Text('Adding a plan', style: TextStyle(fontSize: 20)),
         ],
       ),
     );
