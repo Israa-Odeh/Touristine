@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:touristine/Profiles/Tourist/MainPages/PlanMaker/planPlaces.dart';
 
 class MyPlansTab extends StatefulWidget {
   final String token;
@@ -13,9 +14,66 @@ class MyPlansTab extends StatefulWidget {
 }
 
 class _MyPlansTabState extends State<MyPlansTab> {
-  
+  final List<Map<String, dynamic>> planContents = [
+    {
+      'placeName': 'Al-Aqsa Mosque',
+      'startTime': '06:00',
+      'endTime': '08:00',
+      'activityList': [
+        {
+          'title': 'Praying at Al-Aqsa',
+          'description':
+              'Praying at Al-Aqsa Mosque and making a tour at the museum.'
+        },
+      ],
+      'imagePath': 'assets/Images/Profiles/Tourist/1T.png'
+    },
+    {
+      'placeName': 'The old Town',
+      'startTime': '08:30',
+      'endTime': '10:30',
+      'activityList': [
+        {
+          'title': 'Falafel Restaurant',
+          'description':
+              'Eating breakfast at Al-Quds traditional falafel Restaurant.'
+        },
+        {
+          'title': 'Tour in the Souq',
+          'description':
+              'Making a tour and buying from the traditional souq of Al-Qudsss.'
+        },
+      ],
+      'imagePath': 'assets/Images/Profiles/Tourist/2T.jpg'
+    },
+    {
+      'placeName': 'Sepulchre Church',
+      'startTime': '11:00',
+      'endTime': '13:00',
+      'activityList': [
+        {
+          'title': 'Explore the Chapels',
+          'description':
+              'Explore these chapels, each with its unique details and history.'
+        },
+        {
+          'title': 'Learn about the History',
+          'description':
+              'Take the time to learn about the rich history of the church.'
+        },
+        {
+          'title': 'Learn about the History',
+          'description':
+              'Take the time to learn about the rich history of the church.'
+        },
+      ],
+      'imagePath': 'assets/Images/Profiles/Tourist/3T.jpg'
+    },
+  ];
+
+  // A function to delete a specific plan.
   Future<void> deletePlan(int planId) async {
-    final url = Uri.parse('https://touristine.onrender.com/plans/$planId');
+    final url = Uri.parse('https://touristine.onrender.com/deleteplan/$planId');
 
     try {
       final response = await http.delete(
@@ -34,6 +92,38 @@ class _MyPlansTabState extends State<MyPlansTab> {
       }
     } catch (error) {
       print('Error deleting the plan: $error');
+    }
+  }
+
+  // A function to fetch a specific plan.
+  Future<void> fetchPlanContents(int planId) async {
+    final url =
+        Uri.parse('https://touristine.onrender.com/fetch-plan-contents');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer ${widget.token}',
+        },
+        body: {
+          'planID': planId.toString(),
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Success.
+        // Jenan, return back to me the contents of the plan as List<Map<String, dynamic>>
+        // similar to the format shown at line 18 for the planContents list.
+        // Note: other data such as lat and long of the places included in the plan 
+        // might be added later, I will keep you updated if I will add them.
+      } else {
+        // Handle other cases....
+        print('Failed to fetch the plan. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error fetching the plan: $error');
     }
   }
 
@@ -67,8 +157,19 @@ class _MyPlansTabState extends State<MyPlansTab> {
           return PlanCard(
             plan: plan,
             onTap: () {
+              // print(plan['places']);
               // Handle the card click event.......................
+              print(plan['planID']);
+
               print('Card clicked: ${plan['destName']}');
+              fetchPlanContents(plan['planID']);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => PlanPlacesPage(
+                    planContents: planContents,
+                  ),
+                ),
+              );
             },
             onDelete: () async {
               print(plan['planID']);
@@ -160,7 +261,7 @@ class PlanCard extends StatelessWidget {
                             plan['imagePath'],
                             height: 195,
                             width: 160,
-                            fit: BoxFit.cover,
+                            fit: BoxFit.fill,
                           ),
                         ),
                       ),

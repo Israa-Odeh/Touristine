@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'package:touristine/Profiles/Tourist/MainPages/planMaker/myplansList.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/PlanMaker/myplansList.dart';
 
 class PlanMakerPage extends StatefulWidget {
   final String token;
@@ -172,7 +172,7 @@ class MakePlanTab extends StatelessWidget {
           Icon(FontAwesomeIcons.circlePlus,
               size: 100, color: Color(0xFF1E889E)),
           SizedBox(height: 16),
-          Text('Adding a plan', style: TextStyle(fontSize: 20)),
+          Text('Make Your Plan Here', style: TextStyle(fontSize: 20)),
         ],
       ),
     );
