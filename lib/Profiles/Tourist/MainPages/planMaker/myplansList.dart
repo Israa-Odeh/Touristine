@@ -116,7 +116,7 @@ class _MyPlansTabState extends State<MyPlansTab> {
         // Success.
         // Jenan, return back to me the contents of the plan as List<Map<String, dynamic>>
         // similar to the format shown at line 18 for the planContents list.
-        // Note: other data such as lat and long of the places included in the plan 
+        // Note: other data such as lat and long for the places included in the plan 
         // might be added later, I will keep you updated if I will add them.
       } else {
         // Handle other cases....
