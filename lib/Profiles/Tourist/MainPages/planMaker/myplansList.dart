@@ -41,7 +41,7 @@ class _MyPlansTabState extends State<MyPlansTab> {
         {
           'title': 'Tour in the Souq',
           'description':
-              'Making a tour and buying from the traditional souq of Al-Qudsss.'
+              'Making a tour and buying from the traditional souq of Al-Quds.'
         },
       ],
       'imagePath': 'assets/Images/Profiles/Tourist/2T.jpg'
