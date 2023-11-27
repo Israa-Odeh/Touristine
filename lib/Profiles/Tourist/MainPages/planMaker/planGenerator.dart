@@ -83,7 +83,8 @@ class _MakePlanTabState extends State<MakePlanTab> {
 
     String groupCount =
         groupSizeController.text.isEmpty ? "1" : groupSizeController.text;
-
+    
+    // Israa, print statements will be deleted after finishing this code completely.
     print(selectedDest.toString());
     print(dateController.text.toString());
     print(startTimeController.text.toString());
@@ -114,9 +115,10 @@ class _MakePlanTabState extends State<MakePlanTab> {
 
       if (response.statusCode == 200) {
         // Success.
-        // Jenan I need to retreive a map and a list similar to the format for the ones
-        // at the end of the file, at lines ####################################.
-      } else {
+        // Jenan I need to retreive two things: a map and a list similar to the
+        // format for the ones at the end of the file, at lines 1037 and 1052.
+      } 
+      else {
         // Handle other cases....
         print('Failed to store the plan. Status code: ${response.statusCode}');
       }
@@ -155,7 +157,8 @@ class _MakePlanTabState extends State<MakePlanTab> {
           'Destination 9',
         ];
         */
-      } else {
+      } 
+      else {
         // Handle other cases....
         print(
             'Failed to get the destinations list. Status code: ${response.statusCode}');
