@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:touristine/Profiles/Tourist/MainPages/PlanMaker/myplansList.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/PlanMaker/planGenerator.dart';
 
 class PlanMakerPage extends StatefulWidget {
   final String token;
@@ -84,12 +85,12 @@ class _PlanMakerPageState extends State<PlanMakerPage> {
     fetchUserPlans();
   }
 
-  @override
+   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent, // Set the scaffold background color to transparent
         appBar: PreferredSize(
           preferredSize:
               const Size.fromHeight(30), // Set height to 0 to hide the app bar
@@ -98,82 +99,78 @@ class _PlanMakerPageState extends State<PlanMakerPage> {
             elevation: 0, // Set elevation to 0 to remove shadow
           ),
         ),
-        body: Column(
+        body: Stack(
           children: [
+            // Background Image
             Container(
-              color: Color.fromARGB(31, 30, 137, 158),
-              child: const TabBar(
-                unselectedLabelColor: Color(0xFF1E889E),
-                // labelPadding: EdgeInsets.all(5),
-                tabs: [
-                  Tab(
-                    height: 60,
-                    icon: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(FontAwesomeIcons.plus),
-                        SizedBox(width: 15),
-                        Text(
-                          'Make Plan',
-                        ),
-                      ],
-                    ),
-                  ),
-                  Tab(
-                    height: 60,
-                    icon: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          FontAwesomeIcons.list,
-                        ),
-                        SizedBox(width: 15),
-                        Text(
-                          'My Plans',
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-                indicator: BoxDecoration(
-                  color: Color(0xFF1E889E),
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/Images/Profiles/Tourist/homeBackground.jpg'), // Replace with your actual image path
+                  fit: BoxFit.cover,
                 ),
-                labelStyle: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.w500,
-                    fontFamily: 'Times New Roman'),
               ),
             ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  MakePlanTab(),
-                  MyPlansTab(
-                    token: widget.token,
-                    userPlans: plans,
+            Column(
+              children: [
+                Container(
+                  color: const Color.fromARGB(31, 30, 137, 158),
+                  child: const TabBar(
+                    unselectedLabelColor: Color(0xFF1E889E),
+                    tabs: [
+                      Tab(
+                        height: 60,
+                        icon: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(FontAwesomeIcons.plus),
+                            SizedBox(width: 15),
+                            Text(
+                              'Make Plan',
+                            ),
+                          ],
+                        ),
+                      ),
+                      Tab(
+                        height: 60,
+                        icon: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              FontAwesomeIcons.list,
+                            ),
+                            SizedBox(width: 15),
+                            Text(
+                              'My Plans',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                    indicator: BoxDecoration(
+                      color: Color(0xFF1E889E),
+                    ),
+                    labelStyle: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'Times New Roman',
+                    ),
                   ),
-                ],
-              ),
+                ),
+                Expanded(
+                  child: TabBarView(
+                    children: [
+                      MakePlanTab(token: widget.token,),
+                      MyPlansTab(
+                        token: widget.token,
+                        userPlans: plans,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class MakePlanTab extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(FontAwesomeIcons.circlePlus,
-              size: 100, color: Color(0xFF1E889E)),
-          SizedBox(height: 16),
-          Text('Make Your Plan Here', style: TextStyle(fontSize: 20)),
-        ],
       ),
     );
   }
