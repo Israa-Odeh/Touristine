@@ -83,7 +83,7 @@ class _MakePlanTabState extends State<MakePlanTab> {
 
     String groupCount =
         groupSizeController.text.isEmpty ? "1" : groupSizeController.text;
-    
+
     // Israa, print statements will be deleted after finishing this code completely.
     print(selectedDest.toString());
     print(dateController.text.toString());
@@ -117,8 +117,7 @@ class _MakePlanTabState extends State<MakePlanTab> {
         // Success.
         // Jenan I need to retreive two things: a map and a list similar to the
         // format for the ones at the end of the file, at lines 1037 and 1052.
-      } 
-      else {
+      } else {
         // Handle other cases....
         print('Failed to store the plan. Status code: ${response.statusCode}');
       }
@@ -157,8 +156,7 @@ class _MakePlanTabState extends State<MakePlanTab> {
           'Destination 9',
         ];
         */
-      } 
-      else {
+      } else {
         // Handle other cases....
         print(
             'Failed to get the destinations list. Status code: ${response.statusCode}');
@@ -536,17 +534,14 @@ class _MakePlanTabState extends State<MakePlanTab> {
                             showCustomSnackBar(
                                 context, 'Please select a destination',
                                 bottomMargin: 0);
-                          } 
-                          else {
+                          } else {
                             nextPage();
                           }
-                        } 
-                        else if (currentPage == 2) {
+                        } else if (currentPage == 2) {
                           if (validateForm()) {
                             nextPage();
                           }
-                        } 
-                        else if (currentPage == 3) {
+                        } else if (currentPage == 3) {
                           int groupCount = int.parse(
                               groupSizeController.text.isEmpty
                                   ? "1"
@@ -558,30 +553,25 @@ class _MakePlanTabState extends State<MakePlanTab> {
                               showCustomSnackBar(context,
                                   'Please select a single age category',
                                   bottomMargin: 0);
-                            } 
-                            else if (groupCount == 2 &&
+                            } else if (groupCount == 2 &&
                                 selectedAgeCats.length > 2) {
                               showCustomSnackBar(context,
                                   'Please select 1 to 2 age categories',
                                   bottomMargin: 0);
-                            } 
-                            else if (groupCount == 3 &&
+                            } else if (groupCount == 3 &&
                                 selectedAgeCats.length > 3) {
                               showCustomSnackBar(context,
                                   'Please select 1 to 3 age categories',
                                   bottomMargin: 0);
-                            }
-                            else {
+                            } else {
                               nextPage();
                             }
-                          }
-                          else {
+                          } else {
                             showCustomSnackBar(
                                 context, 'Please select an age category',
                                 bottomMargin: 0);
                           }
-                        } 
-                        else {
+                        } else {
                           nextPage();
                         }
                       },
@@ -1061,7 +1051,9 @@ class _MakePlanTabState extends State<MakePlanTab> {
               'Praying at Al-Aqsa Mosque and making a tour at the museum.'
         },
       ],
-      'imagePath': 'assets/Images/Profiles/Tourist/1T.png'
+      'imagePath': 'assets/Images/Profiles/Tourist/1T.png',
+      'latitude': 32.0846676,
+      'longitude': 35.3296158,
     },
     {
       'placeName': 'The old Town',
@@ -1079,7 +1071,9 @@ class _MakePlanTabState extends State<MakePlanTab> {
               'Making a tour and buying from the traditional souq of Al-Quds.'
         },
       ],
-      'imagePath': 'assets/Images/Profiles/Tourist/2T.jpg'
+      'imagePath': 'assets/Images/Profiles/Tourist/2T.jpg',
+      'latitude': 32.0846676,
+      'longitude': 35.3296158,
     },
     {
       'placeName': 'Sepulchre Church',
@@ -1102,7 +1096,9 @@ class _MakePlanTabState extends State<MakePlanTab> {
               'Take the time to learn about the rich history of the church.'
         },
       ],
-      'imagePath': 'assets/Images/Profiles/Tourist/3T.jpg'
+      'imagePath': 'assets/Images/Profiles/Tourist/3T.jpg',
+      'latitude': 32.0846676,
+      'longitude': 35.3296158,
     },
   ];
 }

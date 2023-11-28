@@ -201,12 +201,14 @@ class _LocationLiveTrackingState extends State<LocationLiveTracking> {
       markerId: const MarkerId("SourceLocation"),
       position: sourceLatLng,
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+      infoWindow: const InfoWindow(title: "Start Point"),
     ));
 
     markers.add(Marker(
       markerId: const MarkerId("DestinationLocation"),
       position: destinationLatLng,
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+      infoWindow: const InfoWindow(title: "End Point"),
     ));
 
     return Scaffold(
@@ -235,9 +237,8 @@ class _LocationLiveTrackingState extends State<LocationLiveTracking> {
               },
               backgroundColor: Colors.transparent,
               elevation: 0,
-              child: const Icon(
-                FontAwesomeIcons.arrowLeft,
-                color: Color.fromARGB(255, 158, 62, 30)),
+              child: const Icon(FontAwesomeIcons.arrowLeft,
+                  color: Color.fromARGB(255, 158, 62, 30)),
             ),
           ),
         ],

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:timeline_tile/timeline_tile.dart';
+import 'package:touristine/Notifications/SnackBar.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/PlanMaker/planPaths.dart';
 
 class PlanPlacesPage extends StatefulWidget {
   final List<Map<String, dynamic>> planContents;
@@ -11,23 +15,131 @@ class PlanPlacesPage extends StatefulWidget {
 }
 
 class _PlanPlacesPageState extends State<PlanPlacesPage> {
+  Position? _currentPosition;
+  bool isLocDetermined = false;
+  // Section of location accquistion functions.
+  Future<bool> _handleLocationPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // ignore: use_build_context_synchronously
+      showCustomSnackBar(context, "Location services are disabled",
+          bottomMargin: 310);
+      return false;
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, "Location permissions are denied",
+            bottomMargin: 310);
+        return false;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      // Location permissions are permanently denied, we cannot request permissions,
+      // ignore: use_build_context_synchronously
+      showCustomSnackBar(context, "Location permissions permanently denied",
+          bottomMargin: 310);
+
+      return false;
+    }
+    // ignore: use_build_context_synchronously
+    if (!isLocDetermined) {
+      // ignore: use_build_context_synchronously
+      showCustomSnackBar(context, "Please wait for a moment",
+          bottomMargin: 310);
+    }
+    return true;
+  }
+
+  Future<void> getCurrentPosition() async {
+    final hasPermission = await _handleLocationPermission();
+
+    if (!hasPermission) return;
+    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+        .then((Position position) {
+      setState(() {
+        _currentPosition = position;
+        isLocDetermined = true;
+        // print(_currentPosition);
+      });
+    }).catchError((e) {
+      debugPrint(e);
+    });
+  }
+
+  @override
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: Container(
-          // margin: const EdgeInsets.only(top: 24),
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(
-                  'assets/Images/Profiles/Tourist/homeBackground.jpg'),
-              fit: BoxFit.cover,
+        body: Stack(
+          children: [
+            Container(
+              // margin: const EdgeInsets.only(top: 24),
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                      'assets/Images/Profiles/Tourist/homeBackground.jpg'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Center(
+                child: PlanPlacesCards(places: widget.planContents),
+              ),
             ),
-          ),
-          child: Center(
-            child: PlanPlacesCards(places: widget.planContents),
-          ),
+            Positioned(
+              bottom: 26.0,
+              left: 230.0,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(100),
+                child: ElevatedButton(
+                  onPressed: () {
+                    getCurrentPosition();
+                    if (isLocDetermined) {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => PlanPaths(
+                            sourceLat: _currentPosition!.latitude,
+                            sourceLng: _currentPosition!.longitude,
+                            destinationsLatsLngs: const [
+                              // These will be passed dynamically.
+                              LatLng(32.0846676, 35.3296158), // Qusra
+                              LatLng(32.3194102, 35.0239948), // Tulkarem
+                              LatLng(32.0494, 34.7584), // Yaffa
+                              LatLng(31.8611, 35.4618), // Jericoh
+                              LatLng(32.2227, 35.2621), // Nablus
+                              LatLng(32.3211, 35.3700), // Tubas
+                              LatLng(31.7054, 35.2024), // Bethlehem
+                              LatLng(31.5799, 35.0999), // Hebron
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 13,
+                    ),
+                    backgroundColor: const Color.fromARGB(203, 30, 137, 158),
+                    textStyle: const TextStyle(
+                      fontSize: 25,
+                      fontFamily: 'Zilla',
+                      fontWeight: FontWeight.w300,
+                    ),
+                  ),
+                  child: const Text('Show Paths'),
+                ),
+              ),
+            ),
+          ],
         ),
         floatingActionButton: Padding(
           padding: const EdgeInsets.all(10.0),
@@ -100,8 +212,9 @@ class _PlanPlacesCardsState extends State<PlanPlacesCards> {
         if (widget.places.length > 1)
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 100),
+              const SizedBox(height: 150),
               ClipRRect(
                 borderRadius: BorderRadius.circular(30),
                 child: ElevatedButton(
