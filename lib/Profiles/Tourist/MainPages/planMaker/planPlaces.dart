@@ -15,6 +15,10 @@ class PlanPlacesPage extends StatefulWidget {
 }
 
 class _PlanPlacesPageState extends State<PlanPlacesPage> {
+  @override
+  void initState() {
+    super.initState();
+  }
   Position? _currentPosition;
   bool isLocDetermined = false;
   // Section of location accquistion functions.
@@ -48,11 +52,9 @@ class _PlanPlacesPageState extends State<PlanPlacesPage> {
       return false;
     }
     // ignore: use_build_context_synchronously
-    if (!isLocDetermined) {
       // ignore: use_build_context_synchronously
-      showCustomSnackBar(context, "Please wait for a moment",
-          bottomMargin: 310);
-    }
+      // showCustomSnackBar(context, "Please wait for a moment",
+      //     bottomMargin: 310);
     return true;
   }
 

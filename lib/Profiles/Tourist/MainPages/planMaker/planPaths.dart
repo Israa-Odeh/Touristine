@@ -22,6 +22,8 @@ class PlanPaths extends StatefulWidget {
 }
 
 class _PlanPathsState extends State<PlanPaths> {
+  bool _isMounted = false;
+
   List<Color> polyLineColors = [
     const Color.fromARGB(255, 233, 128, 128),
     const Color.fromARGB(255, 220, 113, 149),
@@ -142,21 +144,27 @@ class _PlanPathsState extends State<PlanPaths> {
 
   @override
   void initState() {
+    _isMounted = true;
+
     sourceLatLng = LatLng(widget.sourceLat, widget.sourceLng);
     cameraPosition = CameraPosition(target: sourceLatLng, zoom: 9.2);
 
-    for (int i = 0; i < widget.destinationsLatsLngs.length; i++) {
-      getDirections(sourceLatLng, widget.destinationsLatsLngs[i])
-          .then((List<LatLng> coordinates) {
+    Future.forEach(widget.destinationsLatsLngs, (LatLng destination) async {
+      if (_isMounted) {
+        List<LatLng> coordinates =
+            await getDirections(sourceLatLng, destination);
         setState(() {
-          addPolyline(
-            coordinates,
-            polyLineColors[i],
-          );
+          addPolyline(coordinates, polyLineColors[polylines.length]);
         });
-      });
-    }
+      }
+    });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _isMounted = false;
+    super.dispose();
   }
 
   @override
