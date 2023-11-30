@@ -8,9 +8,7 @@ class ComplaintsListPage extends StatefulWidget {
   final List<Map<String, dynamic>> complaints;
 
   const ComplaintsListPage(
-      {super.key,
-      required this.token,
-      required this.complaints});
+      {super.key, required this.token, required this.complaints});
 
   @override
   _ComplaintsListPageState createState() => _ComplaintsListPageState();
@@ -26,7 +24,7 @@ class _ComplaintsListPageState extends State<ComplaintsListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.only(top: widget.complaints.isNotEmpty? 0.0: 24),
+        padding: EdgeInsets.only(top: widget.complaints.isNotEmpty ? 0.0 : 24),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -78,13 +76,16 @@ class _ComplaintsListPageState extends State<ComplaintsListPage> {
         ),
       ),
       floatingActionButton: Padding(
-        padding: EdgeInsets.only(bottom: widget.complaints.isNotEmpty? 0.0: 10.0),
+        padding:
+            EdgeInsets.only(bottom: widget.complaints.isNotEmpty ? 0.0 : 10.0),
         child: FloatingActionButton(
           heroTag: 'GoBack',
           onPressed: () {
             Navigator.of(context).pop();
           },
-          backgroundColor: widget.complaints.isNotEmpty? const Color.fromARGB(129, 30, 137, 158): const Color(0xFF1E889E),
+          backgroundColor: widget.complaints.isNotEmpty
+              ? const Color.fromARGB(129, 30, 137, 158)
+              : const Color(0xFF1E889E),
           elevation: 0,
           child: const Icon(FontAwesomeIcons.arrowLeft),
         ),
@@ -187,6 +188,23 @@ class ComplaintCard extends StatelessWidget {
                   },
                 ),
               ),
+            const SizedBox(height: 10,),
+            Padding(
+              padding: const EdgeInsets.only(right: 12.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    complaint['status'],
+                    style: const TextStyle(
+                        fontSize: 19.5,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Time New Roman',
+                        color: Color.fromARGB(255, 14, 63, 73)),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

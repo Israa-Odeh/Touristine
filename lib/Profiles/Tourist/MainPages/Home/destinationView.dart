@@ -228,6 +228,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
               'https://cdn.britannica.com/89/131089-050-A4773446/flowers-garden-petunia.jpg'
         },
       ],
+      'status': 'Seen'
     },
     {
       'title': 'Dirty Room',
@@ -240,18 +241,21 @@ class _DestinationDetailsState extends State<DestinationDetails> {
               'https://www.petalrepublic.com/wp-content/uploads/2023/07/Heather.jpeg.webp'
         },
       ],
+      'status': 'Unseen'
     },
     {
       'title': 'Dirty Room',
       'content': 'The hotel room was not clean upon arrival.',
       'date': '20/11/2022',
       // There are no images attached to this complaint.
+      'status': 'Unseen'
     },
     {
       'title': 'Noisy Environment',
       'content': 'The neighborhood was too noisy during the night.',
       'date': '17/09/2023',
       // There are no images attached to this complaint.
+      'status': 'Seen'
     },
   ];
 
@@ -274,7 +278,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
       if (response.statusCode == 200) {
         // Jenan, I need to retrieve a list of complaints - if there is any,
         // the retrieved list<map> will be of the same format as the one
-        // given at line 209.
+        // given at line 211.
         // Retrieve the necessary elements for a complaint, including the required title,
         // content, and date, along with any accompanying images (if provided).
 
@@ -322,6 +326,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
               'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Switzerland-Landscapes-1170x780.jpg',
               'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Zermatt-at-night.jpeg',
             ],
+            'status': 'Approved'
           },
           {
             'uploadID': 2,
@@ -333,6 +338,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
               'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Chillion-Castle.jpeg',
               'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Murren-landscapes.jpeg',
             ],
+            'status': 'Rejected'
           },
           {
             'uploadID': 3,
@@ -345,6 +351,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
               'https://www.petalrepublic.com/wp-content/uploads/2023/07/Heather.jpeg.webp',
               'https://www.petalrepublic.com/wp-content/uploads/2023/07/Heather.jpeg.webp',
             ],
+            'status': 'Pending'
           },
           // Add more uploads as needed....
         ];
