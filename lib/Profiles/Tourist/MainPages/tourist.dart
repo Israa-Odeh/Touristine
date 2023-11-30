@@ -67,7 +67,7 @@ class _TouristAppState extends State<TouristProfile> {
                 _buildBottomNavigationBarItem(
                     FontAwesomeIcons.clock, 'Plan Maker', 1),
                 _buildBottomNavigationBarItem(
-                    FontAwesomeIcons.image, 'Images Upload', 2),
+                    FontAwesomeIcons.mapLocationDot, 'Places Upload', 2),
                 _buildBottomNavigationBarItem(
                     FontAwesomeIcons.comment, 'Chatting', 3),
                 _buildBottomNavigationBarItem(
