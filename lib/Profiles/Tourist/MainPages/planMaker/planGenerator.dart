@@ -20,7 +20,7 @@ class _MakePlanTabState extends State<MakePlanTab> {
   bool children = false;
   bool teenagers = false;
   bool adults = false;
-  bool seniors = false;
+  bool elders = false;
 
   List<String> destinationsList = [
     'Destination 1',
@@ -179,8 +179,8 @@ class _MakePlanTabState extends State<MakePlanTab> {
     if (adults) {
       selectedageCats.add('Adults');
     }
-    if (seniors) {
-      selectedageCats.add('Seniors');
+    if (elders) {
+      selectedageCats.add('Elders');
     }
     return selectedageCats;
   }
@@ -911,11 +911,11 @@ class _MakePlanTabState extends State<MakePlanTab> {
           ),
           Expanded(
             child: buildCheckboxListTile(
-              titleText: 'Seniors (60+ years)',
-              value: seniors,
+              titleText: 'Elders (60+ years)',
+              value: elders,
               onChanged: (newValue) {
                 setState(() {
-                  seniors = newValue!;
+                  elders = newValue!;
                 });
               },
               assetImagePath:
