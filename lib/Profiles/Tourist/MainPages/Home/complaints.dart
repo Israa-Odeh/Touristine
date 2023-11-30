@@ -5,13 +5,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ComplaintsListPage extends StatefulWidget {
   final String token;
-  final String destinationName;
   final List<Map<String, dynamic>> complaints;
 
   const ComplaintsListPage(
       {super.key,
       required this.token,
-      required this.destinationName,
       required this.complaints});
 
   @override

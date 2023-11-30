@@ -12,6 +12,8 @@ import 'package:touristine/Profiles/Tourist/MainPages/Home/imagesList.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/locationTracking.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/reviews.dart';
 import 'package:http/http.dart' as http;
+import 'package:touristine/Profiles/Tourist/MainPages/Home/uploadedImages.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/Home/uploadingImages.dart';
 
 class DestinationDetails extends StatefulWidget {
   final String token;
@@ -206,7 +208,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
     }
   }
 
-    List<Map<String, dynamic>> complaints = [
+  List<Map<String, dynamic>> complaints = [
     {
       'title': 'Slow Service',
       'content': 'The service at the restaurant was incredibly slow.',
@@ -286,6 +288,72 @@ class _DestinationDetailsState extends State<DestinationDetails> {
       }
     } catch (error) {
       print('Error fetching complaints: $error');
+    }
+  }
+
+  // A Function to fetch user images-uploads from the backend.
+  Future<void> fetchUploadedImages() async {
+    final url =
+        Uri.parse('https://touristine.onrender.com/get-uploaded-images');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer ${widget.token}',
+        },
+        body: {
+          'destinationName': widget.destination['name'],
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Jenan, I need to retrieve a list of uplaoded images by this user for this dest.
+        // with the keywords added when images are uplaoded from the upload interface.
+        // The format of the retreived data is as follows:
+        /*
+        List<Map<String, dynamic>> uploadedImages = [
+          {
+            'uploadID': 1,
+            'keywords': 'General, Services',
+            'date': '29/11/2023',
+            'imageUrls': [
+              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Switzerland-Landscapes-1170x780.jpg',
+              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Zermatt-at-night.jpeg',
+            ],
+          },
+          {
+            'uploadID': 2,
+            'keywords': 'Buildings, Cracks',
+            'date': '28/11/2023',
+            'imageUrls': [
+              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Colorful-summer-view-of-Lauterbrunnen-village.jpeg',
+              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Lucerne-skyline.jpeg',
+              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Chillion-Castle.jpeg',
+              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Murren-landscapes.jpeg',
+            ],
+          },
+          {
+            'uploadID': 3,
+            'keywords': 'General',
+            'date': '07/10/2023',
+            'imageUrls': [
+              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Gruyeres.jpeg',
+              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Geneva-fountain.jpeg',
+              'https://www.travelanddestinations.com/wp-content/uploads/2018/04/Views-from-Grossmu%CC%88nster-Zurich.jpg',
+              'https://www.petalrepublic.com/wp-content/uploads/2023/07/Heather.jpeg.webp',
+              'https://www.petalrepublic.com/wp-content/uploads/2023/07/Heather.jpeg.webp',
+            ],
+          },
+          // Add more uploads as needed....
+        ];
+        */
+      } else {
+        print('Failed to fetch uploads. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error fetching uploads: $error');
     }
   }
 
@@ -457,7 +525,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 6,
+      length: 7,
       child: Scaffold(
         body: Stack(
           children: [
@@ -501,6 +569,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                       Tab(text: 'Location'),
                       Tab(text: 'Reviews'),
                       Tab(text: 'Complaints'),
+                      Tab(text: 'Images'),
                     ],
                   ),
                   SizedBox(
@@ -513,6 +582,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                         _buildLocationsTab(),
                         _buildReviewsTab(),
                         _buildComplaintsTab(),
+                        _buildImagesUplaodTab(),
                       ],
                     ),
                   ),
@@ -1521,8 +1591,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                                         builder: (context) =>
                                             ComplaintsListPage(
                                               token: widget.token,
-                                              destinationName:
-                                                  widget.destination['name'], complaints: complaints,
+                                              complaints: complaints,
                                             )),
                                   );
                                 },
@@ -1549,6 +1618,146 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                                     MaterialPageRoute(
                                         builder: (context) =>
                                             AddingComplaintsPage(
+                                              token: widget.token,
+                                              destinationName:
+                                                  widget.destination['name'],
+                                            )),
+                                  );
+                                },
+                                child: const FaIcon(FontAwesomeIcons.plus),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImagesUplaodTab() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 8),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                double additionalMargin = 0;
+                if (constraints.maxHeight > 295) {
+                  additionalMargin = 10.0;
+                }
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 5.0 + additionalMargin),
+                  child: Container(
+                    constraints: const BoxConstraints(
+                      minHeight: 295,
+                    ),
+                    width: 400,
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(33, 20, 89, 121),
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 13.0, vertical: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Capture the beauty of  ${widget.destination['name']} through your lens and share it with us!',
+                            style: const TextStyle(
+                              fontSize: 35,
+                              fontFamily: 'Gabriola',
+                              fontWeight: FontWeight.w500,
+                              color: Color.fromARGB(255, 23, 103, 120),
+                            ),
+                          ),
+                          const SizedBox(height: 40),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  fetchUploadedImages();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => UploadedImagesPage(
+                                        token: widget.token,
+                                        destinationName:
+                                            widget.destination['name'],
+                                        // Dummy list of uploaded images (replace it with your actual data)
+                                        uploadedImages: const [
+                                          {
+                                            'uploadID': 1,
+                                            'keywords': 'General, Services',
+                                            'date': '29/11/2023',
+                                            'imageUrls': [
+                                              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Switzerland-Landscapes-1170x780.jpg',
+                                              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Zermatt-at-night.jpeg',
+                                            ],
+                                          },
+                                          {
+                                            'uploadID': 2,
+                                            'keywords': 'Buildings, Cracks',
+                                            'date': '28/11/2023',
+                                            'imageUrls': [
+                                              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Colorful-summer-view-of-Lauterbrunnen-village.jpeg',
+                                              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Lucerne-skyline.jpeg',
+                                              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Chillion-Castle.jpeg',
+                                              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Murren-landscapes.jpeg',
+                                            ],
+                                          },
+                                          {
+                                            'uploadID': 3,
+                                            'keywords': 'General',
+                                            'date': '07/10/2023',
+                                            'imageUrls': [
+                                              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Gruyeres.jpeg',
+                                              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Geneva-fountain.jpeg',
+                                              'https://www.travelanddestinations.com/wp-content/uploads/2018/04/Views-from-Grossmu%CC%88nster-Zurich.jpg',
+                                              'https://www.petalrepublic.com/wp-content/uploads/2023/07/Heather.jpeg.webp',
+                                              'https://www.petalrepublic.com/wp-content/uploads/2023/07/Heather.jpeg.webp',
+                                            ],
+                                          },
+                                          // Add more entries as needed
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 30,
+                                    vertical: 10,
+                                  ),
+                                  backgroundColor: const Color(0xFF1E889E),
+                                  textStyle: const TextStyle(
+                                    fontSize: 28,
+                                    fontFamily: 'Zilla',
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                child: const Text('My Uplaods'),
+                              ),
+                              FloatingActionButton(
+                                heroTag: 'Upload Images',
+                                backgroundColor: const Color(0xFF1E889E),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            UploadingImagesPage(
                                               token: widget.token,
                                               destinationName:
                                                   widget.destination['name'],
