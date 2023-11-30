@@ -9,17 +9,20 @@ class UploadedImagesPage extends StatefulWidget {
   final int minImagesToShowScrollbar = 3;
 
   const UploadedImagesPage(
-      {super.key, required this.token, required this.destinationName, required this.uploadedImages});
+      {super.key,
+      required this.token,
+      required this.destinationName,
+      required this.uploadedImages});
 
   @override
   _UploadedImagesPageState createState() => _UploadedImagesPageState();
 }
 
 class _UploadedImagesPageState extends State<UploadedImagesPage> {
-
   // A function to delete a specific upload.
   Future<void> deleteUploadedImages(int uploadID) async {
-    final url = Uri.parse('https://touristine.onrender.com/deleteuploads/$uploadID');
+    final url =
+        Uri.parse('https://touristine.onrender.com/deleteuploads/$uploadID');
 
     try {
       final response = await http.delete(
@@ -37,7 +40,8 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
         // Success.
         // Perform handling stuff later on....
       } else {
-        print('Failed to delete the uplaod. Status code: ${response.statusCode}');
+        print(
+            'Failed to delete the uplaod. Status code: ${response.statusCode}');
       }
     } catch (error) {
       print('Error deleting the upload: $error');
@@ -107,7 +111,8 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
                         ),
                         SizedBox(
                           height: 200,
-                          child: imageUrls.length >= widget.minImagesToShowScrollbar
+                          child: imageUrls.length >=
+                                  widget.minImagesToShowScrollbar
                               ? Scrollbar(
                                   trackVisibility: true,
                                   thumbVisibility: true,
@@ -172,15 +177,39 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
                                   fontFamily: 'Time New Roman',
                                   color: Color.fromARGB(255, 14, 63, 73)),
                             ),
-                            IconButton(
-                              color: const Color(0xFF1E889E),
-                              icon: const FaIcon(FontAwesomeIcons.trash),
-                              onPressed: () {
-                                print(widget.uploadedImages[index]['uploadID']);
-                                deleteUploadedImages(widget.uploadedImages[index]['uploadID']);
-                              },
+                            Text(
+                              imageInfo['status'],
+                              style: const TextStyle(
+                                  fontSize: 19.5,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Time New Roman',
+                                  color: Color.fromARGB(255, 14, 63, 73)),
                             ),
                           ],
+                        ),
+                        Visibility(
+                          visible: imageInfo['status'] == 'Approved'? false: true,
+                          child: const Divider(
+                            color: Color.fromARGB(126, 14, 63, 73),
+                            thickness: 2,
+                          ),
+                        ),
+                        Visibility(
+                          visible: imageInfo['status'] == 'Approved'? false: true,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              IconButton(
+                                color: const Color(0xFF1E889E),
+                                icon: const FaIcon(FontAwesomeIcons.trash),
+                                onPressed: () {
+                                  print(widget.uploadedImages[index]['uploadID']);
+                                  deleteUploadedImages(
+                                      widget.uploadedImages[index]['uploadID']);
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),

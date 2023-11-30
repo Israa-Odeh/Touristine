@@ -1705,6 +1705,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                                               'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Switzerland-Landscapes-1170x780.jpg',
                                               'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Zermatt-at-night.jpeg',
                                             ],
+                                            'status': 'Pending'
                                           },
                                           {
                                             'uploadID': 2,
@@ -1716,6 +1717,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                                               'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Chillion-Castle.jpeg',
                                               'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Murren-landscapes.jpeg',
                                             ],
+                                            'status': 'Approved'
                                           },
                                           {
                                             'uploadID': 3,
@@ -1728,6 +1730,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                                               'https://www.petalrepublic.com/wp-content/uploads/2023/07/Heather.jpeg.webp',
                                               'https://www.petalrepublic.com/wp-content/uploads/2023/07/Heather.jpeg.webp',
                                             ],
+                                            'status': 'Rejected'
                                           },
                                           // Add more entries as needed
                                         ],
