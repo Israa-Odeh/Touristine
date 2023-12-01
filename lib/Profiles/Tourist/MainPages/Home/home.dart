@@ -374,15 +374,16 @@ class _HomePageState extends State<HomePage> {
 class CustomSearchDelegate extends SearchDelegate {
   // A list of search terms.
   List<String> searchTerms = [
-    'Gaza',
-    'Jenin',
-    'Nablus',
-    'Ramallah',
-    'Tulkarm',
-    'Hebron',
-    'Jericho',
-    'Bethlehem',
-    'Jerusalem',
+    'Coastal Areas',
+    'Mountains',
+    'National Parks',
+    'Major Cities',
+    'Countryside',
+    'Historical Sites',
+    'Religious Landmarks',
+    'Aquariums',
+    'Zoos',
+    'Others'
   ];
 
   @override
