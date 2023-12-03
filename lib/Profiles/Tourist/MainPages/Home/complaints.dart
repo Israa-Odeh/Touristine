@@ -102,6 +102,8 @@ class ComplaintCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ScrollController scrollController = ScrollController();
+
     return Card(
       margin: const EdgeInsets.only(right: 10, left: 10, bottom: 10),
       color: const Color.fromARGB(68, 30, 137, 158),
@@ -160,35 +162,77 @@ class ComplaintCard extends StatelessWidget {
                 (complaint['images'] as List).isNotEmpty)
               SizedBox(
                 height: 150,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: (complaint['images'] as List).length,
-                  itemBuilder: (context, imgIndex) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          border: Border.all(
-                            color: const Color.fromARGB(121, 30, 137, 158),
-                            width: 3.0,
-                          ),
+                child: (complaint['images'] as List).length >= 4
+                    ? Scrollbar(
+                        trackVisibility: true,
+                        thumbVisibility: true,
+                        controller: scrollController,
+                        child: ListView.builder(
+                          controller: scrollController,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: (complaint['images'] as List).length,
+                          itemBuilder: (context, imgIndex) {
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                  right: 8.0,
+                                  left: 8.0,
+                                  top: 8.0,
+                                  bottom: 15.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  border: Border.all(
+                                    color:
+                                        const Color.fromARGB(121, 30, 137, 158),
+                                    width: 3.0,
+                                  ),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  child: Image.network(
+                                    (complaint['images'] as List)[imgIndex]
+                                        ['url'],
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: Image.network(
-                            (complaint['images'] as List)[imgIndex]['url'],
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                      )
+                    : ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: (complaint['images'] as List).length,
+                        itemBuilder: (context, imgIndex) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                border: Border.all(
+                                  color:
+                                      const Color.fromARGB(121, 30, 137, 158),
+                                  width: 3.0,
+                                ),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10.0),
+                                child: Image.network(
+                                  (complaint['images'] as List)[imgIndex]
+                                      ['url'],
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
               ),
-            const SizedBox(height: 10,),
+            const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.only(right: 12.0),
               child: Row(

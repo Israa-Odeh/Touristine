@@ -3,8 +3,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class CustomBottomSheet extends StatefulWidget {
   final List<String> itemsList;
+  final double height;
 
-  const CustomBottomSheet({super.key, required this.itemsList});
+  const CustomBottomSheet({super.key, required this.itemsList, this.height = 400});
 
   @override
   _CustomBottomSheetState createState() => _CustomBottomSheetState();
@@ -38,7 +39,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 400,
+      height: widget.height,
       color: Colors.white,
       child: Column(
         children: [

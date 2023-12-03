@@ -186,7 +186,7 @@ class _MakePlanTabState extends State<MakePlanTab> {
   }
 
   void nextPage() {
-    if (currentPage < 5) {
+    if (currentPage < 4) {
       pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,

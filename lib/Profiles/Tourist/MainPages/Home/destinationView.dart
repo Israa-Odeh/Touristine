@@ -227,6 +227,10 @@ class _DestinationDetailsState extends State<DestinationDetails> {
           'url':
               'https://cdn.britannica.com/89/131089-050-A4773446/flowers-garden-petunia.jpg'
         },
+        {
+          'url':
+              'https://cdn.britannica.com/89/131089-050-A4773446/flowers-garden-petunia.jpg'
+        },
       ],
       'status': 'Seen'
     },
@@ -239,6 +243,10 @@ class _DestinationDetailsState extends State<DestinationDetails> {
         {
           'url':
               'https://www.petalrepublic.com/wp-content/uploads/2023/07/Heather.jpeg.webp'
+        },
+        {
+          'url':
+              'https://cdn.britannica.com/89/131089-050-A4773446/flowers-garden-petunia.jpg'
         },
       ],
       'status': 'Unseen'

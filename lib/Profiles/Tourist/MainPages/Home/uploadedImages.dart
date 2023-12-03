@@ -188,14 +188,14 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
                           ],
                         ),
                         Visibility(
-                          visible: imageInfo['status'] == 'Approved'? false: true,
+                          visible: imageInfo['status'].toLowerCase() == 'approved'? false: true,
                           child: const Divider(
                             color: Color.fromARGB(126, 14, 63, 73),
                             thickness: 2,
                           ),
                         ),
                         Visibility(
-                          visible: imageInfo['status'] == 'Approved'? false: true,
+                          visible: imageInfo['status'].toLowerCase() == 'approved'? false: true,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [

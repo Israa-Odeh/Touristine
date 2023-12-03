@@ -116,6 +116,8 @@ class _UploadingImagesPageState extends State<UploadingImagesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final ScrollController scrollController = ScrollController();
+
     const List<String> availableKeywords = [
       'General',
       'Services',
@@ -148,8 +150,8 @@ class _UploadingImagesPageState extends State<UploadingImagesPage> {
                       child: FilterChip(
                         label: Text(
                           keyword,
-                          style:
-                              const TextStyle(color: Colors.black, fontSize: 15),
+                          style: const TextStyle(
+                              color: Colors.black, fontSize: 15),
                         ),
                         selected: selectedKeywords.contains(keyword),
                         onSelected: (_) => onChipSelected(keyword),
@@ -168,52 +170,110 @@ class _UploadingImagesPageState extends State<UploadingImagesPage> {
               if (selectedImages.isNotEmpty)
                 SizedBox(
                   height: 200,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: selectedImages.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Stack(
-                          children: [
-                            Image.file(
-                              selectedImages[index],
-                              width: 174,
-                              height: 174,
-                              fit: BoxFit.cover,
-                            ),
-                            Positioned(
-                              top: -5,
-                              right: -5,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: const Color.fromARGB(255, 20, 94, 108)
-                                          .withOpacity(1),
-                                      blurRadius: 1,
-                                      spreadRadius: -10,
-                                      offset: const Offset(0, 0),
+                  child: selectedImages.length >= 3
+                      ? Scrollbar(
+                          trackVisibility: true,
+                          thumbVisibility: true,
+                          thickness: 5,
+                          controller: scrollController,
+                          child: ListView.builder(
+                            controller: scrollController,
+                            scrollDirection: Axis.horizontal,
+                            itemCount: selectedImages.length,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Stack(
+                                  children: [
+                                    Image.file(
+                                      selectedImages[index],
+                                      width: 174,
+                                      height: 174,
+                                      fit: BoxFit.cover,
                                     ),
+                                    Positioned(
+                                      top: -5,
+                                      right: -5,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: const Color.fromARGB(
+                                                      255, 20, 94, 108)
+                                                  .withOpacity(1),
+                                              blurRadius: 1,
+                                              spreadRadius: -10,
+                                              offset: const Offset(0, 0),
+                                            ),
+                                          ],
+                                        ),
+                                        child: IconButton(
+                                          icon: const FaIcon(
+                                            FontAwesomeIcons.xmark,
+                                            color: Color.fromARGB(
+                                                255, 255, 255, 255),
+                                            size: 20.0,
+                                          ),
+                                          onPressed: () => deleteImage(index),
+                                        ),
+                                      ),
+                                    )
                                   ],
                                 ),
-                                child: IconButton(
-                                  icon: const FaIcon(
-                                    FontAwesomeIcons.xmark,
-                                    color: Color.fromARGB(255, 255, 255, 255),
-                                    size: 20.0,
+                              );
+                            },
+                          ),
+                        )
+                      : ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: selectedImages.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Stack(
+                                children: [
+                                  Image.file(
+                                    selectedImages[index],
+                                    width: 174,
+                                    height: 174,
+                                    fit: BoxFit.cover,
                                   ),
-                                  onPressed: () => deleteImage(index),
-                                ),
+                                  Positioned(
+                                    top: -5,
+                                    right: -5,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: const Color.fromARGB(
+                                                    255, 20, 94, 108)
+                                                .withOpacity(1),
+                                            blurRadius: 1,
+                                            spreadRadius: -10,
+                                            offset: const Offset(0, 0),
+                                          ),
+                                        ],
+                                      ),
+                                      child: IconButton(
+                                        icon: const FaIcon(
+                                          FontAwesomeIcons.xmark,
+                                          color: Color.fromARGB(
+                                              255, 255, 255, 255),
+                                          size: 20.0,
+                                        ),
+                                        onPressed: () => deleteImage(index),
+                                      ),
+                                    ),
+                                  )
+                                ],
                               ),
-                            )
-                          ],
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
                 ),
+              const SizedBox(height: 10),
               Center(
                 child: ElevatedButton(
                   onPressed: pickImage,

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/DestinationUpload/DestUploadHome.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/profilePage.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/chatting.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/home.dart';
-import 'package:touristine/Profiles/Tourist/MainPages/imageUpload.dart';
-import 'package:touristine/Profiles/Tourist/MainPages/PlanMaker/planMaker.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/PlanMaker/planMakerHome.dart';
 
 class TouristProfile extends StatefulWidget {
   final String token;
@@ -39,7 +39,7 @@ class _TouristAppState extends State<TouristProfile> {
     _children = [
       HomePage(token: widget.token),
       PlanMakerPage(token: widget.token),
-      ImagesUploadPage(token: widget.token),
+      DestsUploadHomePage(token: widget.token),
       ChattingPage(token: widget.token),
       ProfilePage(token: widget.token, googleAccount: widget.googleAccount)
     ];

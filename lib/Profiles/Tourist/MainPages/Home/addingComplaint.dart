@@ -28,28 +28,24 @@ class _AddingComplaintsPageState extends State<AddingComplaintsPage> {
   // Function to validate the form.
   bool validateForm() {
     if (titleController.text.isEmpty) {
-      // Review title or content not filled.
       showCustomSnackBar(context, 'Please enter the complaint title',
           bottomMargin: 410);
       return false;
     }
 
     if (contentController.text.isEmpty) {
-      // Review title or content not filled.
       showCustomSnackBar(context, 'Please enter the complaint content',
           bottomMargin: 410);
       return false;
     }
 
     if (titleController.text.length < 5) {
-      // Review title or content not filled.
       showCustomSnackBar(context, 'Title must have at least 5 characters',
           bottomMargin: 410);
       return false;
     }
 
     if (contentController.text.length < 20) {
-      // Review title or content not filled.
       showCustomSnackBar(context, 'Content must have at least 20 chars',
           bottomMargin: 410);
       return false;
@@ -125,6 +121,8 @@ class _AddingComplaintsPageState extends State<AddingComplaintsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final ScrollController scrollController = ScrollController();
+
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
@@ -182,54 +180,116 @@ class _AddingComplaintsPageState extends State<AddingComplaintsPage> {
               const SizedBox(height: 20),
               // Display selected images.
               if (selectedImages.isNotEmpty)
-                Container(
+                SizedBox(
                   height: 200,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: selectedImages.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Stack(
-                          children: [
-                            Image.file(
-                              selectedImages[index],
-                              width: 174,
-                              height: 174,
-                              fit: BoxFit.cover,
-                            ),
-                            Positioned(
-                              top: -5,
-                              right: -5,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Color.fromARGB(255, 20, 94, 108)
-                                          .withOpacity(1), // Shadow color
-                                      blurRadius: 1,
-                                      spreadRadius: -10,
-                                      offset: Offset(0, 0),
+                  child: selectedImages.length >= 3
+                      ? Scrollbar(
+                          trackVisibility: true,
+                          thumbVisibility: true,
+                          thickness: 5,
+                          controller: scrollController,
+                          child: ListView.builder(
+                            controller: scrollController,
+                            scrollDirection: Axis.horizontal,
+                            itemCount: selectedImages.length,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Stack(
+                                  children: [
+                                    Image.file(
+                                      selectedImages[index],
+                                      width: 174,
+                                      height: 174,
+                                      fit: BoxFit.cover,
                                     ),
+                                    Positioned(
+                                      top: -5,
+                                      right: -5,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: const Color.fromARGB(
+                                                      255, 20, 94, 108)
+                                                  .withOpacity(1),
+                                              blurRadius: 1,
+                                              spreadRadius: -10,
+                                              offset: const Offset(0, 0),
+                                            ),
+                                          ],
+                                        ),
+                                        child: IconButton(
+                                          icon: const FaIcon(
+                                            FontAwesomeIcons.xmark,
+                                            color: Color.fromARGB(
+                                                255, 255, 255, 255),
+                                            size: 20.0,
+                                          ),
+                                          onPressed: () => _deleteImage(index),
+                                        ),
+                                      ),
+                                    )
                                   ],
                                 ),
-                                child: IconButton(
-                                  icon: const FaIcon(
-                                    FontAwesomeIcons.xmark,
-                                    color: Color.fromARGB(255, 255, 255, 255),
-                                    size: 20.0,
+                              );
+                            },
+                          ),
+                        )
+                      : ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: selectedImages.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Stack(
+                                children: [
+                                  Image.file(
+                                    selectedImages[index],
+                                    width: 174,
+                                    height: 174,
+                                    fit: BoxFit.cover,
                                   ),
-                                  onPressed: () => _deleteImage(index),
-                                ),
+                                  Positioned(
+                                    top: -5,
+                                    right: -5,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: const Color.fromARGB(
+                                                    255, 20, 94, 108)
+                                                .withOpacity(1),
+                                            blurRadius: 1,
+                                            spreadRadius: -10,
+                                            offset: const Offset(0, 0),
+                                          ),
+                                        ],
+                                      ),
+                                      child: IconButton(
+                                        icon: const FaIcon(
+                                          FontAwesomeIcons.xmark,
+                                          color: Color.fromARGB(
+                                              255, 255, 255, 255),
+                                          size: 20.0,
+                                        ),
+                                        onPressed: () => _deleteImage(index),
+                                      ),
+                                    ),
+                                  )
+                                ],
                               ),
-                            )
-                          ],
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
                 ),
+              Visibility(
+                  visible: selectedImages.length >= 3,
+                  child: const SizedBox(
+                    height: 10,
+                  )),
               Center(
                   child: ElevatedButton(
                 onPressed: _pickImage,
@@ -249,13 +309,10 @@ class _AddingComplaintsPageState extends State<AddingComplaintsPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     FaIcon(
-                      FontAwesomeIcons
-                          .photoFilm, // Replace with the desired icon
+                      FontAwesomeIcons.photoFilm,
                       size: 30,
                     ),
-                    SizedBox(
-                        width:
-                            20), // Adjust the spacing between the icon and text
+                    SizedBox(width: 20),
                     Text('Add Image'),
                   ],
                 ),
