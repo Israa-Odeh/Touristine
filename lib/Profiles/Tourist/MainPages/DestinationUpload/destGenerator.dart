@@ -324,7 +324,7 @@ class _AddDestTabState extends State<AddDestTab> {
                                         ? 'Select Budget'
                                         : selectedBudget,
                                     style: const TextStyle(
-                                        color: Color.fromARGB(100, 0, 0, 0),
+                                        color: Color.fromARGB(163, 0, 0, 0),
                                         fontSize: 22),
                                   ),
                                 ),
@@ -364,7 +364,7 @@ class _AddDestTabState extends State<AddDestTab> {
                                           FaIcon(
                                             FontAwesomeIcons.clock,
                                             color:
-                                                Color.fromARGB(225, 82, 82, 82),
+                                                Color.fromARGB(163, 0, 0, 0),
                                             size: 24,
                                           ),
                                           SizedBox(width: 8),
@@ -372,8 +372,7 @@ class _AddDestTabState extends State<AddDestTab> {
                                             'Time to spend',
                                             style: TextStyle(
                                                 fontSize: 22,
-                                                color: Color.fromARGB(
-                                                    225, 82, 82, 82),
+                                                color: Color.fromARGB(163, 0, 0, 0),
                                                 fontWeight: FontWeight.bold,
                                                 fontFamily: 'Times New Roman'),
                                           ),
@@ -387,6 +386,8 @@ class _AddDestTabState extends State<AddDestTab> {
                             const SizedBox(width: 10),
                             Expanded(
                                 child: TimeWheelPicker(
+                                    initialHours: selectedHours,
+                                    initialMins: selectedMinutes,
                                     onTimeChanged: handleTimeChanged)),
                           ],
                         ),
@@ -478,6 +479,15 @@ class _AddDestTabState extends State<AddDestTab> {
                           if (destController.text.isEmpty) {
                             showCustomSnackBar(
                                 context, 'Please enter a destination name',
+                                bottomMargin: 0);
+                          } else if (destController.text.length > 30) {
+                            showCustomSnackBar(
+                                context, 'Destination Name: 30 characters max',
+                                bottomMargin: 0);
+                          } else if (!RegExp(r'^[a-zA-Z0-9_-\s]+$')
+                              .hasMatch(destController.text)) {
+                            showCustomSnackBar(context,
+                                'Invalid characters in destination name',
                                 bottomMargin: 0);
                           } else if (selectedCategory.isEmpty) {
                             showCustomSnackBar(
@@ -654,7 +664,7 @@ class _AddDestTabState extends State<AddDestTab> {
                           ? 'Select Category'
                           : selectedCategory,
                       style: const TextStyle(
-                          color: Color.fromARGB(100, 0, 0, 0), fontSize: 22),
+                          color: Color.fromARGB(163, 0, 0, 0), fontSize: 22),
                     ),
                   ),
                   const FaIcon(
@@ -678,7 +688,7 @@ class _AddDestTabState extends State<AddDestTab> {
     IconData icon,
   ) {
     return SizedBox(
-      height: 55,
+      height: 60,
       child: InkWell(
         child: TextFormField(
           controller: controller,

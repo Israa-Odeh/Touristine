@@ -8,7 +8,6 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  // Calculate the font size based on screen height
   const MyApp({super.key});
 
   @override

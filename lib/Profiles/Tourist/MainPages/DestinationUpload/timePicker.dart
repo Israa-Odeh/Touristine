@@ -3,27 +3,40 @@ import 'package:wheel_picker/wheel_picker.dart';
 
 class TimeWheelPicker extends StatefulWidget {
   final Function(int, int) onTimeChanged;
+  final int initialHours;
+  final int initialMins;
 
-  const TimeWheelPicker({super.key, required this.onTimeChanged});
+  const TimeWheelPicker(
+      {super.key,
+      required this.onTimeChanged,
+      required this.initialHours,
+      required this.initialMins});
 
   @override
   State<TimeWheelPicker> createState() => _TimeWheelPickerState();
 }
 
 class _TimeWheelPickerState extends State<TimeWheelPicker> {
-  int selectedHours = 0;
-  int selectedMinutes = 0;
+  late int selectedHours;
+  late int selectedMinutes;
 
   final now = TimeOfDay.now();
   late final hoursWheel = WheelPickerController(
     itemCount: 16,
-    initialIndex: 0,
+    initialIndex: widget.initialHours,
   );
   late final minutesWheel = WheelPickerController(
     itemCount: 60,
-    initialIndex: 0,
+    initialIndex: widget.initialMins,
     mounts: [hoursWheel],
   );
+
+  @override
+  void initState() {
+    super.initState();
+    selectedHours = widget.initialHours;
+    selectedMinutes = widget.initialMins;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +88,7 @@ class _TimeWheelPickerState extends State<TimeWheelPicker> {
                 style: wheelStyle,
                 enableTap: true,
                 selectedIndexColor: const Color.fromARGB(255, 0, 0, 0),
-                 onIndexChanged: (index) {
+                onIndexChanged: (index) {
                   setState(() {
                     selectedMinutes = index;
                     widget.onTimeChanged(selectedHours, selectedMinutes);
