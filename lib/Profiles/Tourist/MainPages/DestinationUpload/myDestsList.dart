@@ -185,7 +185,7 @@ class _DestinationCardState extends State<DestinationCard> {
             // Status icon and button row
             Container(
               height: 55,
-              color: const Color(0xFFd4e5f4),
+              color: Color.fromARGB(142, 212, 229, 244),
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10.0),
@@ -381,7 +381,7 @@ class _DestinationCardState extends State<DestinationCard> {
             Visibility(
               visible: widget.destination['status'].toLowerCase() == "seen",
               child: Container(
-                color: const Color(0xFFd4e5f4),
+              color: Color.fromARGB(142, 212, 229, 244),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
