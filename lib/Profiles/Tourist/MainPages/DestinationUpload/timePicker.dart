@@ -20,7 +20,6 @@ class _TimeWheelPickerState extends State<TimeWheelPicker> {
   late int selectedHours;
   late int selectedMinutes;
 
-  final now = TimeOfDay.now();
   late final hoursWheel = WheelPickerController(
     itemCount: 16,
     initialIndex: widget.initialHours,

@@ -19,31 +19,32 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
     {
       'destID': 1,
       'date': '07/10/2023',
-      'destinationName': 'Alf Liela W liela',
-      'category': 'Historical Site',
-      'budget': 'Moderate',
+      'destinationName': 'Al-Aqsa Mosque',
+      'category': 'Religious Landmarks',
+      'budget': 'Budget-Friendly',
       'timeToSpend': '12h and 30 min',
       'sheltered': true,
       'status': 'Seen',
       'about':
-          'Nablus is a city located in the northern part of the West Bank, which is a territory',
+          'It is situated in the heart of the Old City of Jerusalem, is one of the holiest sites in Islam.',
       'imagesURLs': [
         'assets/Images/Profiles/Tourist/1T.png',
         'assets/Images/Profiles/Tourist/11T.jpg',
         'assets/Images/Profiles/Tourist/10T.jpg'
       ],
+      'adminComment': "This destination already exists."
     },
     {
       'destID': 2,
       'date': '07/10/2023',
-      'destinationName': 'Alf Liela W liela',
-      'category': 'Historical Site',
-      'budget': 'Moderate',
+      'destinationName': 'Al-Aqsa Mosque',
+      'category': 'Religious Landmarks',
+      'budget': 'Mid-Range',
       'timeToSpend': '12h and 30 min',
       'sheltered': true,
       'status': 'Unseen',
       'about':
-          'Nablus is a city located in the northern part of the West Bank, which is a territory',
+          'It is situated in the heart of the Old City of Jerusalem, is one of the holiest sites in Islam.',
       'imagesURLs': [
         'assets/Images/Profiles/Tourist/1T.png',
         'assets/Images/Profiles/Tourist/11T.jpg',
@@ -53,23 +54,24 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
     {
       'destID': 3,
       'date': '07/10/2023',
-      'destinationName': 'Alf Liela W liela',
-      'category': 'Historical Site',
-      'budget': 'Moderate',
+      'destinationName': 'Al-Aqsa Mosque',
+      'category': 'Religious Landmarks',
+      'budget': 'Mid-Range',
       'timeToSpend': '12h and 30 min',
       'sheltered': true,
       'status': 'Seen',
       'about':
-          'Nablus is a city located in the northern part of the West Bank, which is a territory',
+          'It is situated in the heart of the Old City of Jerusalem, is one of the holiest sites in Islam.',
       'imagesURLs': [
         'assets/Images/Profiles/Tourist/1T.png',
         'assets/Images/Profiles/Tourist/11T.jpg',
         'assets/Images/Profiles/Tourist/10T.jpg'
       ],
+      'adminComment': "This destination already exists."
     },
   ];
 
-   @override
+  @override
   Widget build(BuildContext context) {
     ScrollController pageScrollController = ScrollController();
 
@@ -77,7 +79,7 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
         ? ScrollbarTheme(
             data: ScrollbarThemeData(
               thumbColor: MaterialStateProperty.all(const Color(0xFF1E889E)),
-              radius: const Radius.circular(10),
+              radius: const Radius.circular(0),
             ),
             child: Scrollbar(
               thumbVisibility: true,
@@ -101,19 +103,22 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
               ),
             ),
           )
-        : ListView.builder(
-            itemCount: destinations.length,
-            itemBuilder: (context, index) {
-              return DestinationCard(
-                token: widget.token,
-                destination: destinations[index],
-                onDelete: () {
-                  setState(() {
-                    destinations.removeAt(index);
-                  });
-                },
-              );
-            },
+        : Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20.0),
+            child: ListView.builder(
+              itemCount: destinations.length,
+              itemBuilder: (context, index) {
+                return DestinationCard(
+                  token: widget.token,
+                  destination: destinations[index],
+                  onDelete: () {
+                    setState(() {
+                      destinations.removeAt(index);
+                    });
+                  },
+                );
+              },
+            ),
           );
   }
 }
@@ -155,7 +160,9 @@ class _DestinationCardState extends State<DestinationCard> {
       if (response.statusCode == 200) {
         // Success.
         // Israa, show a message.
+        // Israa, here the card should be deleted from the whole widget.
       } else {
+        // Israa, Handle other possible cases....
         print(
             'Failed to delete the destination. Status code: ${response.statusCode}');
       }
@@ -169,9 +176,7 @@ class _DestinationCardState extends State<DestinationCard> {
     return Card(
       margin: const EdgeInsets.all(16.0),
       shape: RoundedRectangleBorder(
-        // Apply border directly to the Card
         borderRadius: BorderRadius.circular(15.0),
-
         side: const BorderSide(
           color: Color.fromARGB(80, 0, 0, 0),
           width: 2.0,
@@ -182,10 +187,10 @@ class _DestinationCardState extends State<DestinationCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Status icon and button row
+            // Status icon and button row.
             Container(
               height: 55,
-              color: Color.fromARGB(142, 212, 229, 244),
+              color: const Color.fromARGB(94, 195, 195, 195),
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10.0),
@@ -219,15 +224,22 @@ class _DestinationCardState extends State<DestinationCard> {
                         color: Colors.transparent,
                         child: InkWell(
                           onTap: () {
-                            // Add your button functionality here
+                            showCommentDialog(
+                                widget.destination['adminComment']);
                           },
                           borderRadius: BorderRadius.circular(100.0),
                           child: Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 0.0),
-                            child: Image.asset(
-                                'assets/Images/Profiles/Tourist/DestUpload/adminIcon.png',
-                                fit: BoxFit.cover),
+                            child: Visibility(
+                              visible: widget.destination['adminComment'] != "",
+                              child: Image.asset(
+                                  'assets/Images/Profiles/Tourist/DestUpload/adminIcon.png',
+                                  color: Colors.black,
+                                  width: 32,
+                                  height: 32,
+                                  fit: BoxFit.cover),
+                            ),
                           ),
                         ),
                       ),
@@ -236,8 +248,7 @@ class _DestinationCardState extends State<DestinationCard> {
                 ),
               ),
             ),
-
-            // Horizontal ListView of images
+            // Horizontal ListView of images.
             SizedBox(
               height: 220,
               child: Scrollbar(
@@ -264,8 +275,7 @@ class _DestinationCardState extends State<DestinationCard> {
                 ),
               ),
             ),
-
-            // Destination name and category row
+            // Destination name and category row.
             Padding(
               padding:
                   const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
@@ -275,7 +285,7 @@ class _DestinationCardState extends State<DestinationCard> {
                   Text(
                     widget.destination['destinationName'] ?? '',
                     style: const TextStyle(
-                        color: Color.fromARGB(255, 19, 83, 96),
+                        color: Color.fromARGB(255, 12, 53, 61),
                         fontFamily: 'Zilla Slab Light',
                         fontWeight: FontWeight.bold,
                         fontSize: 24),
@@ -283,7 +293,7 @@ class _DestinationCardState extends State<DestinationCard> {
                   Text(
                     widget.destination['category'] ?? '',
                     style: const TextStyle(
-                        color: Color.fromARGB(255, 19, 83, 96),
+                        color: Color.fromARGB(255, 12, 53, 61),
                         fontFamily: 'Zilla Slab Light',
                         fontWeight: FontWeight.bold,
                         fontSize: 20),
@@ -291,15 +301,13 @@ class _DestinationCardState extends State<DestinationCard> {
                 ],
               ),
             ),
-
-            // Divider
+            // Divider.
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 10.0),
               child:
-                  Divider(thickness: 3, color: Color.fromARGB(139, 19, 83, 96)),
+                  Divider(thickness: 3, color: Color.fromARGB(80, 19, 83, 96)),
             ),
-
-            // About destination text
+            // About destination text.
             Scrollbar(
               thickness: 5.0,
               thumbVisibility: true,
@@ -324,14 +332,12 @@ class _DestinationCardState extends State<DestinationCard> {
                 ),
               ),
             ),
-
-            // Divider
+            // Divider.
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 10.0),
               child: Divider(thickness: 2.0, color: Color(0xFFbfbfbf)),
             ),
-
-            // Budget and sheltered status row
+            // Budget and sheltered status row.
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 15, vertical: 8.0),
@@ -345,20 +351,18 @@ class _DestinationCardState extends State<DestinationCard> {
                   Text(
                       widget.destination['sheltered'] == true
                           ? 'Sheltered'
-                          : 'Not Sheltered',
+                          : 'Unsheltered',
                       style:
                           const TextStyle(fontFamily: 'Calibri', fontSize: 20)),
                 ],
               ),
             ),
-
-            // Divider
+            // Divider.
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 10.0),
               child: Divider(thickness: 2.0, color: Color(0xFFbfbfbf)),
             ),
-
-            // Time to spend and date row
+            // Time to spend and date row.
             Padding(
               padding: widget.destination['status'].toLowerCase() == "seen"
                   ? const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10)
@@ -376,12 +380,11 @@ class _DestinationCardState extends State<DestinationCard> {
                 ],
               ),
             ),
-
-            // Container with baby blue color and icon button row
+            // Container with icon button.
             Visibility(
               visible: widget.destination['status'].toLowerCase() == "seen",
               child: Container(
-              color: Color.fromARGB(142, 212, 229, 244),
+                color: const Color.fromARGB(94, 195, 195, 195),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
@@ -391,7 +394,7 @@ class _DestinationCardState extends State<DestinationCard> {
                         color: Colors.transparent,
                         child: InkWell(
                           onTap: () async {
-                            // print(widget.destination['destID']);
+                            print(widget.destination['destID']);
                             await deleteDestination(
                                 widget.destination['destID']);
                             // This will be called only if the deletion process succeeded.
@@ -416,6 +419,71 @@ class _DestinationCardState extends State<DestinationCard> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> showCommentDialog(String comment) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          elevation: 0.0,
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16.0),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Admin Comment',
+                  style: TextStyle(
+                    fontSize: 30.0,
+                    fontFamily: 'Gabriola',
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 18, 84, 97),
+                  ),
+                ),
+                const Divider(
+                    thickness: 1, color: Color.fromARGB(255, 16, 73, 85)),
+                const SizedBox(height: 10.0),
+                Text(
+                  comment,
+                  style: const TextStyle(
+                    fontSize: 22.0,
+                    fontFamily: 'Zilla Slab Light',
+                    color: Color.fromARGB(255, 18, 84, 97),
+                  ),
+                ),
+                const SizedBox(height: 20.0),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text(
+                      'Close',
+                      style: TextStyle(
+                        fontSize: 22.0,
+                        fontFamily: 'Zilla',
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 214, 61, 27),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

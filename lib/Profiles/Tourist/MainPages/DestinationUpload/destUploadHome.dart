@@ -14,9 +14,8 @@ class DestsUploadHomePage extends StatefulWidget {
 }
 
 class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
-  
-    // A Function to fetch user plans from the backend.
-  Future<void> fetchUserDests() async {
+  // A Function to fetch user uploaded destinations.
+  Future<void> fetchUploadedDests() async {
     final url = Uri.parse('https://touristine.onrender.com/get-uploaded-dests');
 
     try {
@@ -29,7 +28,32 @@ class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
       );
 
       if (response.statusCode == 200) {
-        // Jenan, I need to retrieve a list of..........to be added later on.
+        // Jenan, I need to retrieve a list of uploaded destinations in the following format:
+        /*
+        final List<Map<String, dynamic>> destinations = [
+          {
+            'destID': 1,
+            'date': '07/10/2023',
+            'destinationName': 'Al-Aqsa Mosque',
+            'category': 'Religious Landmarks',
+            'budget': 'Mid-Range',
+            'timeToSpend': '12h and 30 min',
+            'sheltered': true, // or false
+            'status': 'Seen', // or Unseen
+            'about':
+                'It is situated in the heart of the Old City of Jerusalem, is one of the holiest sites in Islam.',
+            'imagesURLs': [
+              'assets/Images/Profiles/Tourist/1T.png',
+              'assets/Images/Profiles/Tourist/11T.jpg',
+              'assets/Images/Profiles/Tourist/10T.jpg'
+            ],
+            // If the status of the uploaded dest is unseen, by default there
+            // won't be an admin comment, so don't send this field in such cases.
+            'adminComment': "This destination already exists."
+          },
+          ///////////////Other destinations.
+        ]; 
+        */
       } else {
         // Handle other possible cases.
       }
@@ -37,11 +61,11 @@ class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
       print('Error fetching uploaded dests: $error');
     }
   }
-  
+
   @override
   void initState() {
     super.initState();
-    fetchUserDests();
+    fetchUploadedDests();
   }
 
   @override
@@ -49,11 +73,9 @@ class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: Colors
-            .transparent,
+        backgroundColor: Colors.transparent,
         appBar: PreferredSize(
-          preferredSize:
-              const Size.fromHeight(30),
+          preferredSize: const Size.fromHeight(30),
           child: AppBar(
             backgroundColor: const Color.fromARGB(255, 25, 113, 130),
             elevation: 0,
@@ -123,7 +145,8 @@ class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
                       AddDestTab(
                         token: widget.token,
                       ),
-                      DestinationCardGenerator(token: widget.token, uploadedDestinations: []),
+                      DestinationCardGenerator(
+                          token: widget.token, uploadedDestinations: []),
                       // The list of uplaoded destinations must be passed.
                     ],
                   ),

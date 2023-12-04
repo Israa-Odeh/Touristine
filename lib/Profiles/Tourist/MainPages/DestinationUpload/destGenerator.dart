@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -22,9 +21,17 @@ class _AddDestTabState extends State<AddDestTab> {
   bool yes = false;
   bool no = false;
 
+  TextEditingController destNameController = TextEditingController();
   TextEditingController aboutController = TextEditingController();
-  Color destBorderIconColor = Colors.grey;
   List<File> selectedImages = []; // List to store selected images.
+
+  Color destBorderIconColor = Colors.grey;
+
+  late PageController pageController;
+  int currentPage = 0;
+
+  int selectedHours = 0;
+  int selectedMinutes = 0;
 
   List<String> categoriesList = [
     'Coastal Areas',
@@ -45,11 +52,6 @@ class _AddDestTabState extends State<AddDestTab> {
     'Luxurious',
   ];
 
-  TextEditingController destController = TextEditingController();
-
-  late PageController pageController;
-  int currentPage = 0;
-
   // A function to store the created destination details.
   Future<void> storeDestination() async {
     String currentDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
@@ -69,7 +71,7 @@ class _AddDestTabState extends State<AddDestTab> {
 
     // Add destination data to the request.
     request.fields['date'] = currentDate;
-    request.fields['destinationName'] = destController.text;
+    request.fields['destinationName'] = destNameController.text;
     request.fields['category'] = selectedCategory;
     request.fields['budget'] = selectedBudget;
     request.fields['timeToSpend'] = "$formattedHours:$formattedMinutes";
@@ -78,7 +80,7 @@ class _AddDestTabState extends State<AddDestTab> {
 
     // Israa, these print statements will be deleted after finishing this code.
     print(currentDate);
-    print(destController.text);
+    print(destNameController.text);
     print(selectedCategory);
     print(selectedBudget);
     print("$formattedHours:$formattedMinutes");
@@ -191,7 +193,7 @@ class _AddDestTabState extends State<AddDestTab> {
     });
   }
 
-  // Function to open image picker
+  // Function to open image picker.
   Future<void> pickImage() async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -203,15 +205,12 @@ class _AddDestTabState extends State<AddDestTab> {
     }
   }
 
-  // Function to delete selected image
+  // Function to delete a selected image.
   void deleteImage(int index) {
     setState(() {
       selectedImages.removeAt(index);
     });
   }
-
-  int selectedHours = 0;
-  int selectedMinutes = 0;
 
   void handleTimeChanged(int hours, int minutes) {
     setState(() {
@@ -219,11 +218,10 @@ class _AddDestTabState extends State<AddDestTab> {
       selectedMinutes = minutes;
     });
 
-    // Format the selected hours and minutes with left padding
+    // Format the selected hours and minutes with left padding.
     String formattedHours = selectedHours.toString().padLeft(2, '0');
     String formattedMinutes = selectedMinutes.toString().padLeft(2, '0');
 
-    // Do something with the formatted time
     print('Selected Time: $formattedHours:$formattedMinutes');
   }
 
@@ -300,9 +298,7 @@ class _AddDestTabState extends State<AddDestTab> {
                         Image.asset(
                             'assets/Images/Profiles/Tourist/DestUpload/Timer.gif',
                             height: 260,
-                            width: 260
-                            // fit: BoxFit.cover
-                            ),
+                            width: 260),
                         ElevatedButton(
                           onPressed: showBudgetBottomSheet,
                           style: ElevatedButton.styleFrom(
@@ -363,8 +359,7 @@ class _AddDestTabState extends State<AddDestTab> {
                                         children: [
                                           FaIcon(
                                             FontAwesomeIcons.clock,
-                                            color:
-                                                Color.fromARGB(163, 0, 0, 0),
+                                            color: Color.fromARGB(163, 0, 0, 0),
                                             size: 24,
                                           ),
                                           SizedBox(width: 8),
@@ -372,7 +367,8 @@ class _AddDestTabState extends State<AddDestTab> {
                                             'Time to spend',
                                             style: TextStyle(
                                                 fontSize: 22,
-                                                color: Color.fromARGB(163, 0, 0, 0),
+                                                color: Color.fromARGB(
+                                                    163, 0, 0, 0),
                                                 fontWeight: FontWeight.bold,
                                                 fontFamily: 'Times New Roman'),
                                           ),
@@ -448,7 +444,7 @@ class _AddDestTabState extends State<AddDestTab> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Visibility(
-                    visible: currentPage > 0 ? true : false,
+                    visible: currentPage > 0,
                     child: ElevatedButton(
                       onPressed: () {
                         previousPage();
@@ -476,16 +472,16 @@ class _AddDestTabState extends State<AddDestTab> {
                     child: ElevatedButton(
                       onPressed: () {
                         if (currentPage == 1) {
-                          if (destController.text.isEmpty) {
+                          if (destNameController.text.isEmpty) {
                             showCustomSnackBar(
                                 context, 'Please enter a destination name',
                                 bottomMargin: 0);
-                          } else if (destController.text.length > 30) {
+                          } else if (destNameController.text.length > 30) {
                             showCustomSnackBar(
                                 context, 'Destination Name: 30 characters max',
                                 bottomMargin: 0);
                           } else if (!RegExp(r'^[a-zA-Z0-9_-\s]+$')
-                              .hasMatch(destController.text)) {
+                              .hasMatch(destNameController.text)) {
                             showCustomSnackBar(context,
                                 'Invalid characters in destination name',
                                 bottomMargin: 0);
@@ -639,7 +635,7 @@ class _AddDestTabState extends State<AddDestTab> {
               fit: BoxFit.cover),
           buildDestInput(
             'Destination Name',
-            destController,
+            destNameController,
             destBorderIconColor,
             FontAwesomeIcons.locationDot,
           ),
@@ -805,7 +801,7 @@ class _AddDestTabState extends State<AddDestTab> {
               visible: selectedImages.isEmpty,
               child: const SizedBox(height: 50)),
           Image.asset(
-              'assets/Images/Profiles/Tourist/DestUpload/ezgif.com-crop.gif',
+              'assets/Images/Profiles/Tourist/DestUpload/ImagesSection.gif',
               fit: BoxFit.cover),
           if (selectedImages.isNotEmpty)
             SizedBox(
@@ -1009,7 +1005,6 @@ class _AddDestTabState extends State<AddDestTab> {
     required String titleText,
     required bool value,
     required Function(bool?) onChanged,
-    String? assetImagePath,
   }) {
     return ListTileTheme(
       horizontalTitleGap: 0,
@@ -1029,12 +1024,6 @@ class _AddDestTabState extends State<AddDestTab> {
                 ),
               ),
             ),
-            if (assetImagePath != null)
-              Image.asset(
-                assetImagePath,
-                width: 45,
-                height: 45,
-              ),
           ],
         ),
         value: value,
