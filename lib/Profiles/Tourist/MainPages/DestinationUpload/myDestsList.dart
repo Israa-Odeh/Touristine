@@ -288,7 +288,7 @@ class _DestinationCardState extends State<DestinationCard> {
                         color: Color.fromARGB(255, 12, 53, 61),
                         fontFamily: 'Zilla Slab Light',
                         fontWeight: FontWeight.bold,
-                        fontSize: 24),
+                        fontSize: 23),
                   ),
                   Text(
                     widget.destination['category'] ?? '',
@@ -296,7 +296,7 @@ class _DestinationCardState extends State<DestinationCard> {
                         color: Color.fromARGB(255, 12, 53, 61),
                         fontFamily: 'Zilla Slab Light',
                         fontWeight: FontWeight.bold,
-                        fontSize: 20),
+                        fontSize: 18),
                   ),
                 ],
               ),
