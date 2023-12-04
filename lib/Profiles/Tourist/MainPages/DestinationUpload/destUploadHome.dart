@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/DestinationUpload/destGenerator.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/DestinationUpload/myDestsList.dart';
 
 class DestsUploadHomePage extends StatefulWidget {
   final String token;
@@ -122,11 +123,8 @@ class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
                       AddDestTab(
                         token: widget.token,
                       ),
-                      Container(height: 100,) // To be deleted........
-                      // MyPlansTab(
-                      //   token: widget.token,
-                      //   userPlans: plans,
-                      // ),
+                      DestinationCardGenerator(token: widget.token, uploadedDestinations: []),
+                      // The list of uplaoded destinations must be passed.
                     ],
                   ),
                 ),

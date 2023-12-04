@@ -119,6 +119,12 @@ flutter:
     - family: Times New Roman
       fonts:
         - asset: Fonts/timesNewRoman.ttf
+    - family: Zilla Slab Light
+      fonts:
+        - asset: Fonts/ZillaSlab-Light.ttf
+    - family: Andalus
+      fonts:
+        - asset: Fonts/Andalus.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
   #
