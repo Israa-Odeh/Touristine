@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/Home/CustomSearchBar.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/destinations.dart';
 import 'package:http/http.dart' as http;
 import 'package:touristine/Profiles/Tourist/MainPages/Home/destinationView.dart';
@@ -179,6 +180,37 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  // A function to retrieve all of the destination details.
+  Future<void> getDestinationDetails(String destName) async {
+    final url =
+        Uri.parse('https://touristine.onrender.com/getDestinationDetails');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer ${widget.token}',
+        },
+        body: {
+          'destinationName': destName,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Success.
+      } else if (response.statusCode == 500) {
+        // Failed.
+      } else {
+        // ignore: use_build_context_synchronously
+        // showCustomSnackBar(context, "Failed to fetch recommendations",
+        //     bottomMargin: 0);
+      }
+    } catch (error) {
+      print('Failed to fetch destination details: $error');
+    }
+  }
+
   // A Function to build a search box.
   Widget buildSearchBox() {
     return Padding(
@@ -192,7 +224,10 @@ class _HomePageState extends State<HomePage> {
           tileColor: Colors.transparent,
           contentPadding: EdgeInsets.zero,
           onTap: () {
-            showSearch(context: context, delegate: CustomSearchDelegate());
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => CustomSearchBar(token: widget.token)),
+            );
           },
           title: Container(
             padding:
@@ -352,7 +387,8 @@ class _HomePageState extends State<HomePage> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => DestinationDetails(
-                                  destination: place, token: widget.token,
+                                  destination: place,
+                                  token: widget.token,
                                 ),
                               ),
                             );
@@ -367,82 +403,6 @@ class _HomePageState extends State<HomePage> {
           )
         ],
       ),
-    );
-  }
-}
-
-class CustomSearchDelegate extends SearchDelegate {
-  // A list of search terms.
-  List<String> searchTerms = [
-    'Coastal Areas',
-    'Mountains',
-    'National Parks',
-    'Major Cities',
-    'Countryside',
-    'Historical Sites',
-    'Religious Landmarks',
-    'Aquariums',
-    'Zoos',
-    'Others'
-  ];
-
-  @override
-  List<Widget>? buildActions(BuildContext context) {
-    return [
-      IconButton(
-        icon: const FaIcon(FontAwesomeIcons.xmark),
-        onPressed: () {
-          query = '';
-        },
-      ),
-    ];
-  }
-
-  @override
-  Widget? buildLeading(BuildContext context) {
-    return IconButton(
-      icon: const FaIcon(FontAwesomeIcons.arrowLeft),
-      onPressed: () {
-        close(context, null);
-      },
-    );
-  }
-
-  @override
-  Widget buildResults(BuildContext context) {
-    List<String> matchQuery = [];
-    for (var location in searchTerms) {
-      if (location.toLowerCase().contains(query.toLowerCase())) {
-        matchQuery.add(location);
-      }
-    }
-    return ListView.builder(
-      itemCount: matchQuery.length,
-      itemBuilder: (context, index) {
-        var result = matchQuery[index];
-        return ListTile(
-          title: Text(result),
-        );
-      },
-    );
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    List<String> matchQuery = [];
-    for (var location in searchTerms) {
-      if (location.toLowerCase().contains(query.toLowerCase())) {
-        matchQuery.add(location);
-      }
-    }
-    return ListView.builder(
-      itemCount: matchQuery.length,
-      itemBuilder: (context, index) {
-        var result = matchQuery[index];
-        return ListTile(
-          title: Text(result),
-        );
-      },
     );
   }
 }

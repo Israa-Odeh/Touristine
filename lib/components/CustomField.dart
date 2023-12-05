@@ -84,7 +84,7 @@ class _CustomFieldState extends State<CustomField> {
               borderSide: const BorderSide(color: Color(0xFF1E889E)),
               borderRadius: BorderRadius.circular(10.0),
             ),
-            fillColor: Color.fromARGB(255, 255, 255, 255),
+            fillColor: const Color.fromARGB(255, 255, 255, 255),
             filled: true,
             hintText: '',
             hintStyle: const TextStyle(

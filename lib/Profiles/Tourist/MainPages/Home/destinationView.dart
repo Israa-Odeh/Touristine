@@ -18,6 +18,7 @@ import 'package:touristine/Profiles/Tourist/MainPages/Home/uploadingImages.dart'
 class DestinationDetails extends StatefulWidget {
   final String token;
   final Map<String, dynamic> destination;
+  // a list of destination images.
 
   const DestinationDetails(
       {Key? key, required this.destination, required this.token})
@@ -40,16 +41,10 @@ class _DestinationDetailsState extends State<DestinationDetails> {
   // List<Map<String, dynamic>> complaints = [];
 
   final List<Map<String, dynamic>> destinationImages = [
-    {'name': 'Hebron', 'imagePath': 'assets/Images/Profiles/Tourist/9T.jpg'},
-    {'name': 'Dead Sea', 'imagePath': 'assets/Images/Profiles/Tourist/10T.jpg'},
-    {
-      'name': 'Garden Cafe',
-      'imagePath': 'assets/Images/Profiles/Tourist/11T.jpg'
-    },
-    {
-      'name': 'Sufi Cafe',
-      'imagePath': 'assets/Images/Profiles/Tourist/12T.jpg'
-    },
+    {'imagePath': 'assets/Images/Profiles/Tourist/9T.jpg'},
+    {'imagePath': 'assets/Images/Profiles/Tourist/10T.jpg'},
+    {'imagePath': 'assets/Images/Profiles/Tourist/11T.jpg'},
+    {'imagePath': 'assets/Images/Profiles/Tourist/12T.jpg'},
   ];
 
   final Map<String, dynamic> destinationDetails = {
@@ -127,7 +122,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
         //     bottomMargin: 0);
       }
     } catch (error) {
-      print('Failed to fetch recommendations: $error');
+      print('Failed to fetch destination details: $error');
     }
   }
 
