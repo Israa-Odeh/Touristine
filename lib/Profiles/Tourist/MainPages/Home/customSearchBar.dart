@@ -50,15 +50,6 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
 
   // A function to send a search request to the backend.
   Future<void> sendSearchRequest(String query) async {
-      Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const SearchedDestinations(
-          token: '',
-          destinationsList: {},
-        ),
-      ),
-    );
     // print(query);
     final url = Uri.parse('https://touristine.onrender.com/search-destination');
 
