@@ -6,7 +6,8 @@ class ImagesList extends StatefulWidget {
   final List<Map<String, dynamic>> listOfImages;
   final Function(String) onImageSelected;
 
-  const ImagesList({super.key, required this.listOfImages, required this.onImageSelected});
+  const ImagesList(
+      {super.key, required this.listOfImages, required this.onImageSelected});
 
   @override
   _OtherPlacesState createState() => _OtherPlacesState();
@@ -17,11 +18,13 @@ class _OtherPlacesState extends State<ImagesList> {
   late Timer _timer;
 
   @override
-  void initState() {
-    super.initState();
-    
-    // Set up a timer for automatic scrolling every 5 seconds.
-    _timer = Timer.periodic(const Duration(seconds: 5), (Timer timer) {
+void initState() {
+  super.initState();
+  print(widget.listOfImages);
+
+  // Set up a timer for automatic scrolling every 5 seconds.
+  _timer = Timer.periodic(const Duration(seconds: 5), (Timer timer) {
+    if (mounted) {
       if (_currentPageIndex < widget.listOfImages.length - 1) {
         setState(() {
           _currentPageIndex++;
@@ -33,9 +36,11 @@ class _OtherPlacesState extends State<ImagesList> {
         });
       }
       // Call the callback function to change the image.
-      widget.onImageSelected(widget.listOfImages[_currentPageIndex]['imagePath']);
-    });
-  }
+      widget.onImageSelected(widget.listOfImages[_currentPageIndex]['image']);
+    }
+  });
+}
+
 
   @override
   void dispose() {
@@ -46,11 +51,12 @@ class _OtherPlacesState extends State<ImagesList> {
   @override
   Widget build(BuildContext context) {
     Future.delayed(Duration.zero, () {
-    widget.onImageSelected(widget.listOfImages[_currentPageIndex]['imagePath']);
-  });
+      widget.onImageSelected(widget.listOfImages[_currentPageIndex]['image']);
+    });
     return Padding(
       padding: const EdgeInsets.only(top: 10.0),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
@@ -62,8 +68,7 @@ class _OtherPlacesState extends State<ImagesList> {
               itemBuilder: (BuildContext context, int index) {
                 return InkWell(
                   onTap: () {
-                    widget.onImageSelected(
-                        widget.listOfImages[index]['imagePath']);
+                    widget.onImageSelected(widget.listOfImages[index]['image']);
                     setState(() {
                       _currentPageIndex = index;
                     });
@@ -81,8 +86,8 @@ class _OtherPlacesState extends State<ImagesList> {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(20),
-                        child: Image.asset(
-                          widget.listOfImages[index]['imagePath'],
+                        child: Image.network(
+                          widget.listOfImages[index]['image'],
                           width: 83,
                           height: 83,
                           fit: BoxFit.cover,

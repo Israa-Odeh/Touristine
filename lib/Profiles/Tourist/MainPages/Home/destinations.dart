@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/destinationView.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/dotsBar.dart';
+import 'package:http/http.dart' as http;
 
 class DestinationList extends StatefulWidget {
   final List<Map<String, dynamic>> destinations;
@@ -9,7 +12,10 @@ class DestinationList extends StatefulWidget {
   final String token;
 
   const DestinationList(
-      {super.key, required this.destinations, required this.listTitle, required this.token});
+      {super.key,
+      required this.destinations,
+      required this.listTitle,
+      required this.token});
 
   @override
   _DestinationListState createState() => _DestinationListState();
@@ -20,6 +26,67 @@ class _DestinationListState extends State<DestinationList> {
   int _selectedTileIndex = -1;
   int _currentPageIndex = 0;
   late Timer _timer;
+
+  Map<String, dynamic> destinationDetails = {};
+  List<Map<String, dynamic>> destinationImages = [];
+  Map<String, int> ratings = {};
+
+  // A function to retrieve all of the destination details.
+  Future<void> getDestinationDetails(String destName) async {
+    final url =
+        Uri.parse('https://touristine.onrender.com/get-destination-details');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer ${widget.token}',
+        },
+        body: {
+          'destinationName': destName,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Success.
+        // Parse the response body.
+        final Map<String, dynamic> responseData = json.decode(response.body);
+
+        // Extract destinationImages as List<Map<String, dynamic>>
+        destinationImages =
+            List<Map<String, dynamic>>.from(responseData['destinationImages']);
+
+        // Access destination details and other data.
+        destinationDetails = responseData['destinationDetails'];
+        ratings = Map<String, int>.from(responseData['rating']);
+
+        // Now you can use the data as needed
+        print('Destination Images: $destinationImages');
+        print('Destination Details: $destinationDetails');
+        print('Rating: $ratings');
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        if (responseData.containsKey('error')) {
+          if (responseData['error'] ==
+              'Details for this destination are not available') {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, 'Place details aren\'t available',
+                bottomMargin: 0);
+          } else {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+          }
+        }
+      } else {
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'Error retrieving place details',
+            bottomMargin: 0);
+      }
+    } catch (error) {
+      print('Failed to fetch place details: $error');
+    }
+  }
 
   @override
   void initState() {
@@ -35,28 +102,33 @@ class _DestinationListState extends State<DestinationList> {
     super.dispose();
   }
 
-  void navigateToDetailsPage(int index) {
+  Future<void> navigateToDetailsPage(int index) async {
     // Cancel the timer when the details page is opened.
     _timer.cancel();
-    Future.delayed(const Duration(milliseconds: 300), () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => DestinationDetails(
-            destination: widget.destinations[index], token: widget.token,
-          ),
+    await getDestinationDetails(widget.destinations[index]['name']);
+
+    // ignore: use_build_context_synchronously
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DestinationDetails(
+          destination: widget.destinations[index],
+          token: widget.token,
+          destinationDetails: destinationDetails,
+          destinationImages: destinationImages,
+          ratings: ratings,
         ),
-      ).then((value) {
-        setState(() {
-          if (value == null) {
-            _selectedTileIndex = -1;
-          } else {
-            _selectedTileIndex = value;
-          }
-        });
-        // Restart the timer when the details page is exited.
-        startTimer();
+      ),
+    ).then((value) {
+      setState(() {
+        if (value == null) {
+          _selectedTileIndex = -1;
+        } else {
+          _selectedTileIndex = value;
+        }
       });
+      // Restart the timer when the details page is exited.
+      startTimer();
     });
   }
 
@@ -72,6 +144,7 @@ class _DestinationListState extends State<DestinationList> {
       }
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -129,23 +202,27 @@ class _DestinationListState extends State<DestinationList> {
                         clipBehavior: Clip.antiAlias,
                         child: Column(
                           children: [
-                            Image.asset(
-                              widget.destinations[index]['imagePath'],
+                            Image.network(
+                              widget.destinations[index]['image'],
                               width: 400,
                               height: 165,
-                              fit: BoxFit.cover,
+                              fit: BoxFit.fill,
                             ),
                             Padding(
                               padding: const EdgeInsets.all(8),
-                              child: Text(
-                                widget.destinations[index]['name'],
-                                style: TextStyle(
-                                  color: _selectedTileIndex == index
-                                      ? Colors.white
-                                      : const Color(0xFF1E889E),
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'Zilla',
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  widget.destinations[index]['name'],
+                                  style: TextStyle(
+                                    color: _selectedTileIndex == index
+                                        ? Colors.white
+                                        : const Color(0xFF1E889E),
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Zilla',
+                                  ),
+                                  maxLines: 1,
                                 ),
                               ),
                             ),

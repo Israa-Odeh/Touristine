@@ -18,11 +18,17 @@ import 'package:touristine/Profiles/Tourist/MainPages/Home/uploadingImages.dart'
 class DestinationDetails extends StatefulWidget {
   final String token;
   final Map<String, dynamic> destination;
-  // a list of destination images.
+  final Map<String, dynamic> destinationDetails;
+  final List<Map<String, dynamic>> destinationImages;
+  final Map<String, int> ratings;
 
   const DestinationDetails(
-      {Key? key, required this.destination, required this.token})
-      : super(key: key);
+      {super.key,
+      required this.token,
+      required this.destination,
+      required this.destinationDetails,
+      required this.destinationImages,
+      required this.ratings});
 
   @override
   _DestinationDetailsState createState() => _DestinationDetailsState();
@@ -40,51 +46,44 @@ class _DestinationDetailsState extends State<DestinationDetails> {
 
   // List<Map<String, dynamic>> complaints = [];
 
-  final List<Map<String, dynamic>> destinationImages = [
-    {'imagePath': 'assets/Images/Profiles/Tourist/9T.jpg'},
-    {'imagePath': 'assets/Images/Profiles/Tourist/10T.jpg'},
-    {'imagePath': 'assets/Images/Profiles/Tourist/11T.jpg'},
-    {'imagePath': 'assets/Images/Profiles/Tourist/12T.jpg'},
-  ];
+  // final Map<String, dynamic> destinationDetails = {
+  //   'About':
+  //       'Nablus, a Palestinian enclave, breathes history through its ancient streets and vibrant markets, embodying resilience and rich heritage.',
+  //   'Category': 'Historical Site',
+  //   'Opening Time': '09:00',
+  //   'Closing Time': '23:00',
+  //   'Working Days': [
+  //     'Saturday',
+  //     'Sunday',
+  //     'Monday',
+  //     'Tuesday',
+  //     'Wednesday',
+  //     'Thursday',
+  //     'Friday'
+  //   ],
+  //   'Weather': '23°C',
+  //   'Rating': '4.5',
+  //   'Cost Level': 'Budget Friendly',
+  //   'Sheltered': 'Yes', // No
+  //   'Estimated Time': '2',
+  //   'Services': [
+  //     'Public restrooms are available',
+  //     'Convenient access to a paid parking garage',
+  //     'There are nearby gas stations',
+  //     'Wheelchair ramps for enhanced accessibility',
+  //     'Play areas for children are available',
+  //     'Nearby restaurants for dining options',
+  //     'Accessible health care centers are available',
+  //     'Additional services are also provided'
 
-  final Map<String, dynamic> destinationDetails = {
-    'About':
-        'Nablus, a Palestinian enclave, breathes history through its ancient streets and vibrant markets, embodying resilience and rich heritage.',
-    'Category': 'Historical Site',
-    'Opening Time': '09:00',
-    'Closing Time': '23:00',
-    'Working Days': [
-      'Saturday',
-      'Sunday',
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday'
-    ],
-    'Weather': '23°C',
-    'Rating': '4.5',
-    'Cost Level': 'Budget Friendly',
-    'Sheltered': 'Yes', // No
-    'Estimated Time': '2',
-    'Services': [
-      'Public restrooms are available',
-      'Convenient access to a paid parking garage',
-      'There are nearby gas stations',
-      'Wheelchair ramps for enhanced accessibility',
-      'Play areas for children are available',
-      'Nearby restaurants for dining options',
-      'Accessible health care centers are available',
-      'Additional services are also provided'
-
-      /// Additional services as needed
-    ],
-  };
+  //     /// Additional services as needed
+  //   ],
+  // };
 
   @override
   void initState() {
     super.initState();
-    selectedImage = widget.destination['imagePath'];
+    selectedImage = widget.destination['image'];
   }
 
   @override
@@ -373,7 +372,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
     });
   }
 
-  String _getFormattedDays(List<String> days) {
+  String _getFormattedDays(List<dynamic> days) {
     return days.length >= 3 && days.length <= 7
         ? '${days.first} - ${days.last}'
         : days.join(', ');
@@ -550,17 +549,20 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: MediaQuery.of(context).padding.top),
-                  Image.asset(
+                  Image.network(
                     selectedImage,
                     width: 500,
                     height: 300,
                     fit: BoxFit.cover,
                   ),
                   const SizedBox(height: 8),
-                  ImagesList(
-                    listOfImages: destinationImages,
-                    onImageSelected: updateSelectedImage,
-                  ),
+                  if (widget.destinationImages.isNotEmpty)
+                    ImagesList(
+                      listOfImages: widget.destinationImages,
+                      onImageSelected: updateSelectedImage,
+                    ),
+                  if (widget.destinationImages.isEmpty)
+                    const SizedBox(height: 130),
                   const SizedBox(height: 8),
                   const TabBar(
                     isScrollable: true,
@@ -676,9 +678,9 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                                   borderRadius: BorderRadius.circular(15.0),
                                 ),
                                 child: Text(
-                                  '${destinationDetails['Category']}',
+                                  '${widget.destinationDetails['Category']}',
                                   style: const TextStyle(
-                                    fontSize: 30,
+                                    fontSize: 22,
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Gabriola',
                                     color: Color.fromARGB(195, 18, 83, 96),
@@ -688,7 +690,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                             ],
                           ),
                           Text(
-                            '${destinationDetails['About']}',
+                            '${widget.destinationDetails['About']}',
                             style: const TextStyle(
                               fontSize: 31,
                               fontFamily: 'Gabriola',
@@ -758,7 +760,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                                 ),
                                 const SizedBox(width: 25.0),
                                 Text(
-                                  '${destinationDetails['Weather']}',
+                                  '${widget.destinationDetails['Weather'][0]}°C',
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontFamily: 'Time New Roman',
@@ -787,7 +789,9 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                                 ),
                                 const SizedBox(width: 25.0),
                                 Text(
-                                  '${destinationDetails['Rating']}',
+                                  widget.destinationDetails['Rating'] != null
+                                      ? '${widget.destinationDetails['Rating']}'
+                                      : '0.0',
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontFamily: 'Time New Roman',
@@ -818,7 +822,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                             ),
                             const SizedBox(width: 0.0),
                             Text(
-                              '${destinationDetails['Opening Time']} - ${destinationDetails['Closing Time']}',
+                              '${widget.destinationDetails['OpeningTime']} - ${widget.destinationDetails['ClosingTime']}',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontFamily: 'Time New Roman',
@@ -852,7 +856,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                               padding: const EdgeInsets.only(right: 30.0),
                               child: Text(
                                 _getFormattedDays(
-                                    destinationDetails['Working Days']),
+                                    widget.destinationDetails['WorkingDays']),
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontFamily: 'Time New Roman',
@@ -886,7 +890,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                             Padding(
                               padding: const EdgeInsets.only(right: 30.0),
                               child: Text(
-                                destinationDetails['Cost Level'],
+                                widget.destinationDetails['CostLevel'],
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontFamily: 'Time New Roman',
@@ -920,7 +924,9 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                             Padding(
                               padding: const EdgeInsets.only(right: 30.0),
                               child: Text(
-                                destinationDetails['Sheltered'] == ("Yes")
+                                widget.destinationDetails['sheltered']
+                                            .toLowerCase() ==
+                                        ("yes")
                                     ? 'Sheltered'
                                     : 'Unsheltered',
                                 style: const TextStyle(
@@ -956,7 +962,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                             Padding(
                               padding: const EdgeInsets.only(right: 30.0),
                               child: Text(
-                                '${destinationDetails['Estimated Time']} hours',
+                                '${widget.destinationDetails['EstimatedTime']} hours',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontFamily: 'Time New Roman',
@@ -980,22 +986,38 @@ class _DestinationDetailsState extends State<DestinationDetails> {
     );
   }
 
+  ServiceDescription getServiceDescription(String serviceName) {
+    if (serviceName.toLowerCase() == "restrooms") {
+      return ServiceDescription(
+          "Public restrooms are available", FontAwesomeIcons.restroom);
+    } else if (serviceName.toLowerCase() == "wheelchairramps") {
+      return ServiceDescription("Wheelchair ramps for enhanced accessibility",
+          FontAwesomeIcons.wheelchair);
+    } else if (serviceName.toLowerCase() == "photographers") {
+      return ServiceDescription(
+          "Photographic services are accessible", FontAwesomeIcons.cameraRetro);
+    } else if (serviceName.toLowerCase() == "healthcenters") {
+      return ServiceDescription("Accessible health care centers are available",
+          FontAwesomeIcons.suitcaseMedical);
+    } else if (serviceName.toLowerCase() == "parking") {
+      return ServiceDescription("Convenient access to a parking garage",
+          FontAwesomeIcons.squareParking);
+    } else if (serviceName.toLowerCase() == "kidsarea") {
+      return ServiceDescription(
+          "Play areas for children are available", FontAwesomeIcons.child);
+    } else if (serviceName.toLowerCase() == "gasstation") {
+      return ServiceDescription(
+          "There are nearby gas stations", FontAwesomeIcons.gasPump);
+    } else if (serviceName.toLowerCase() == "restaurants") {
+      return ServiceDescription(
+          "Nearby restaurants for dining options", FontAwesomeIcons.utensils);
+    } else {
+      return ServiceDescription(serviceName, FontAwesomeIcons.circleCheck);
+    }
+  }
+
   Widget _buildServicesTab() {
     ScrollController scrollController = ScrollController();
-
-    // Define a list of icons for each service.
-    List<IconData> serviceIcons = [
-      FontAwesomeIcons.restroom,
-      FontAwesomeIcons.squareParking,
-      FontAwesomeIcons.gasPump,
-      FontAwesomeIcons.wheelchair,
-      FontAwesomeIcons.child,
-      FontAwesomeIcons.utensils,
-      // FontAwesomeIcons.paw,
-      // FontAwesomeIcons.handHoldingHeart,
-      FontAwesomeIcons.suitcaseMedical,
-      FontAwesomeIcons.circleCheck
-    ];
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -1032,11 +1054,19 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                         child: ListView.builder(
                           controller: scrollController,
                           scrollDirection: Axis.vertical,
-                          itemCount: destinationDetails['Services'].length,
+                          itemCount:
+                              widget.destinationDetails['Services'].length,
                           itemBuilder: (context, index) {
+                            String serviceName = widget
+                                .destinationDetails['Services'][index]['name'];
+                            ServiceDescription serviceDescription =
+                                getServiceDescription(serviceName);
+
                             return Container(
                               margin: (index ==
-                                      destinationDetails['Services'].length - 1)
+                                      widget.destinationDetails['Services']
+                                              .length -
+                                          1)
                                   ? const EdgeInsets.only(bottom: 20)
                                   : const EdgeInsets.only(bottom: 10),
                               decoration: BoxDecoration(
@@ -1053,9 +1083,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                                   children: [
                                     // Icon for the service, using the corresponding icon from the list
                                     Icon(
-                                      index >= 8
-                                          ? serviceIcons[7]
-                                          : serviceIcons[index],
+                                      serviceDescription.icon,
                                       color: const Color.fromARGB(
                                           255, 255, 255, 255),
                                       size: 35,
@@ -1066,7 +1094,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                                     ),
                                     Expanded(
                                       child: Text(
-                                        '${destinationDetails['Services'][index]}',
+                                        serviceDescription.description,
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontFamily: 'Times New Roman',
@@ -1299,15 +1327,32 @@ class _DestinationDetailsState extends State<DestinationDetails> {
     );
   }
 
+  int getStarCount(String ratingKey) {
+    switch (ratingKey) {
+      case 'oneStar':
+        return 1;
+      case 'twoStars':
+        return 2;
+      case 'threeStars':
+        return 3;
+      case 'fourStars':
+        return 4;
+      case 'fiveStars':
+        return 5;
+      default:
+        return 0;
+    }
+  }
+
   Widget _buildReviewsTab() {
     // Sample data for reviews.
-    final List<Map<String, dynamic>> ratings = [
-      {'stars': 5, 'count': 120},
-      {'stars': 4, 'count': 80},
-      {'stars': 3, 'count': 40},
-      {'stars': 2, 'count': 20},
-      {'stars': 1, 'count': 10},
-    ];
+    // final Map<String, int> ratings = {
+    //   'oneStar': 120,
+    //   'twoStars': 80,
+    //   'threeStars': 40,
+    //   'fourStars': 20,
+    //   'fiveStars': 10,
+    // };
 
     final List<Map<String, dynamic>> reviews = [
       {
@@ -1401,7 +1446,8 @@ class _DestinationDetailsState extends State<DestinationDetails> {
         'date': '26/10/2021'
       },
     ];
-
+    int reviewsCount =
+        widget.ratings.values.fold<int>(0, (sum, value) => sum + value);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
@@ -1420,70 +1466,82 @@ class _DestinationDetailsState extends State<DestinationDetails> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    height: 150,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: ratings.map((rating) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              // Star icons.
-                              Row(
-                                children: List.generate(
-                                  rating['stars'],
-                                  (index) => const Row(
-                                    children: [
-                                      Icon(
-                                        FontAwesomeIcons.solidStar,
-                                        color:
-                                            Color.fromARGB(255, 211, 171, 12),
-                                        size: 18,
-                                      ),
-                                      SizedBox(width: 5),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              // Dynamic filled bars.
-                              Container(
-                                width: 200,
-                                height: 20,
-                                decoration: BoxDecoration(
-                                  color: const Color.fromARGB(59, 30, 137, 158),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                child: FractionallySizedBox(
-                                  alignment: Alignment.centerLeft,
-                                  widthFactor: rating['count'] /
-                                      ratings.fold<int>(
-                                          0,
-                                          (int sum, review) =>
-                                              sum + (review['count'] as int)),
-
-                                  // rating['count'] / ratings[0]['count'],
-                                  child: Container(
-                                    height: 20,
-                                    decoration: BoxDecoration(
-                                      color: const Color.fromARGB(
-                                          167, 30, 137, 158),
-                                      borderRadius: BorderRadius.circular(10.0),
+                  if (reviewsCount == 0)
+                    const Text(
+                      'Share and be the first to write a review about this destination!',
+                      style: TextStyle(
+                        fontSize: 35,
+                        fontFamily: 'Gabriola',
+                        fontWeight: FontWeight.w500,
+                        color: Color.fromARGB(255, 23, 103, 120),
+                      ),
+                    ),
+                  if (reviewsCount == 0) const SizedBox(height: 30),
+                  if (reviewsCount > 0)
+                    SizedBox(
+                      height: 150,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: widget.ratings.entries.map((entry) {
+                          final String ratingKey = entry.key;
+                          final int count = entry.value;
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                // Star icons.
+                                Row(
+                                  children: List.generate(
+                                    getStarCount(ratingKey),
+                                    (index) => const Row(
+                                      children: [
+                                        Icon(
+                                          FontAwesomeIcons.solidStar,
+                                          color:
+                                              Color.fromARGB(255, 211, 171, 12),
+                                          size: 18,
+                                        ),
+                                        SizedBox(width: 5),
+                                      ],
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
+                                // Dynamic filled bars.
+                                Container(
+                                  width: 200,
+                                  height: 20,
+                                  decoration: BoxDecoration(
+                                    color:
+                                        const Color.fromARGB(59, 30, 137, 158),
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  child: FractionallySizedBox(
+                                    alignment: Alignment.centerLeft,
+                                    widthFactor: count /
+                                        widget.ratings.values.fold<int>(
+                                            0, (sum, value) => sum + value),
+                                    child: Container(
+                                      height: 20,
+                                      decoration: BoxDecoration(
+                                        color: const Color.fromARGB(
+                                            167, 30, 137, 158),
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
                     ),
-                  ),
                   // Number of ratings.
                   const SizedBox(height: 8),
                   Text(
-                    'Total Ratings: ${ratings.fold<int>(0, (int sum, review) => sum + (review['count'] as int))}',
+                    'Total Ratings: ${widget.ratings.values.fold<int>(0, (sum, value) => sum + value)}',
                     style: const TextStyle(
                       color: Color(0xFF1E889E),
                       fontFamily: 'Gabriola',
@@ -1793,4 +1851,11 @@ class _DestinationDetailsState extends State<DestinationDetails> {
       ),
     );
   }
+}
+
+class ServiceDescription {
+  final String description;
+  final IconData icon;
+
+  ServiceDescription(this.description, this.icon);
 }

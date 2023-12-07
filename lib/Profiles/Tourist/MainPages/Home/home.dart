@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/CustomSearchBar.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/destinations.dart';
 import 'package:http/http.dart' as http;
@@ -14,86 +17,28 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // A list of recommended destinations. (Testing Sample)
-  final List<Map<String, dynamic>> recommended = [
-    {
-      'name': 'Gaza',
-      'imagePath': 'assets/Images/Profiles/Tourist/3T.jpg',
-    },
-    {
-      'name': 'Jerusalem',
-      'imagePath': 'assets/Images/Profiles/Tourist/1T.png',
-    },
-    {
-      'name': 'Nablus',
-      'imagePath': 'assets/Images/Profiles/Tourist/2T.jpg',
-    },
-    {
-      'name': 'Ramallah',
-      'imagePath': 'assets/Images/Profiles/Tourist/4T.jpg',
-    },
-    // Add more destinations as needed
-  ];
-
-  // A list of popular destinations. (Testing Sample)
-  final List<Map<String, dynamic>> popular = [
-    {
-      'name': 'Jenin',
-      'imagePath': 'assets/Images/Profiles/Tourist/5T.jpg',
-    },
-    {
-      'name': 'Bethlehem',
-      'imagePath': 'assets/Images/Profiles/Tourist/8T.jpg',
-    },
-    {
-      'name': 'Jericho',
-      'imagePath': 'assets/Images/Profiles/Tourist/7T.jpg',
-    },
-    {
-      'name': 'Tulkarm',
-      'imagePath': 'assets/Images/Profiles/Tourist/6T.jpg',
-    },
-    // Add more destinations as needed
-  ];
-
-  // A list of other destinations. (Testing Smaple)
-  final List<Map<String, dynamic>> others = [
-    {
-      'name': 'Hebron',
-      'imagePath': 'assets/Images/Profiles/Tourist/9T.jpg',
-    },
-    {
-      'name': 'Dead Sea',
-      'imagePath': 'assets/Images/Profiles/Tourist/10T.jpg',
-    },
-    {
-      'name': 'Garden Cafe',
-      'imagePath': 'assets/Images/Profiles/Tourist/11T.jpg',
-    },
-    {
-      'name': 'Sufi Cafe',
-      'imagePath': 'assets/Images/Profiles/Tourist/12T.jpg',
-    },
-  ];
-
   // Lists containing destinations retrieved from the DB: recommended, popular, and others.
   List<Map<String, dynamic>> recommendedDestinations = [];
   List<Map<String, dynamic>> popularDestinations = [];
   List<Map<String, dynamic>> otherDestinations = [];
 
+  Map<String, dynamic> destinationDetails = {};
+  List<Map<String, dynamic>> destinationImages = [];
+  Map<String, int> ratings = {};
+
   @override
   void initState() {
     super.initState();
     // Uncomment these when functions are complete.
-    // getRecommendedDestinations();
-    // getPopularDestinations();
-    // getOtherDestinations();
+    getRecommendedDestinations();
+    getPopularDestinations();
+    getOtherDestinations();
   }
 
   // A function to retrieve a list of recommended destinations.
   Future<void> getRecommendedDestinations() async {
-    final url =
-        Uri.parse('https://touristine.onrender.com/getRecommendedDestinations');
+    final url = Uri.parse(
+        'https://touristine.onrender.com/get-recommended-destinations');
 
     try {
       final response = await http.post(
@@ -108,22 +53,44 @@ class _HomePageState extends State<HomePage> {
         // Success.
         // I need the "names" of the destinations along with their
         // corresponding "image paths" --> List<Map<String, dynamic>>.
+        // Update the recommendedDestinations list with the received data.
+        setState(() {
+          recommendedDestinations =
+              List<Map<String, dynamic>>.from(json.decode(response.body));
+        });
+
+        // Print the contents of recommendedDestinations to the console.
+        print('Recommended Destinations:');
+        for (var destination in recommendedDestinations) {
+          print('Name: ${destination['name']}, Image: ${destination['image']}');
+        }
       } else if (response.statusCode == 500) {
-        // Failed.
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        if (responseData.containsKey('error')) {
+          if (responseData['error'] == 'User does not exist') {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+          } else if (responseData['error'] ==
+              'Failed to retrieve recommended destinations') {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, 'Failed to retrieve recommended places',
+                bottomMargin: 0);
+          }
+        }
       } else {
         // ignore: use_build_context_synchronously
-        // showCustomSnackBar(context, "Failed to fetch recommendations",
-        //     bottomMargin: 0);
+        showCustomSnackBar(context, 'Error retrieving recommended places',
+            bottomMargin: 0);
       }
     } catch (error) {
-      print('Failed to fetch recommendations: $error');
+      print('Failed to fetch recommended places: $error');
     }
   }
 
   // A function to fetch popular destinations from the database.
   Future<void> getPopularDestinations() async {
     final url =
-        Uri.parse('https://touristine.onrender.com/getPopularDestinations');
+        Uri.parse('https://touristine.onrender.com/get-popular-destinations');
 
     try {
       final response = await http.post(
@@ -138,22 +105,46 @@ class _HomePageState extends State<HomePage> {
         // Success.
         // I need the "names" of the destinations along with their
         // corresponding "image paths" --> List<Map<String, dynamic>>.
+        setState(() {
+          popularDestinations =
+              List<Map<String, dynamic>>.from(json.decode(response.body));
+        });
+
+        // Print the contents of popularDestinations to the console.
+        print("-----------------------------------------------------");
+        print("-----------------------------------------------------");
+
+        print('Popular Destinations:');
+        for (var destination in popularDestinations) {
+          print('Name: ${destination['name']}, Image: ${destination['image']}');
+        }
       } else if (response.statusCode == 500) {
-        // Failed.
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        if (responseData.containsKey('error')) {
+          if (responseData['error'] == 'User does not exist') {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+          } else if (responseData['error'] ==
+              'Failed to retrieve popular destinations') {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, 'Failed to retrieve popular places',
+                bottomMargin: 0);
+          }
+        }
       } else {
         // ignore: use_build_context_synchronously
-        // showCustomSnackBar(context, "Failed to fetch data",
-        //     bottomMargin: 0);
+        showCustomSnackBar(context, 'Error retrieving popular places',
+            bottomMargin: 0);
       }
     } catch (error) {
-      print('Failed to fetch data: $error');
+      print('Failed to fetch popular places: $error');
     }
   }
 
   // A function to fetch other destinations from the database.
   Future<void> getOtherDestinations() async {
     final url =
-        Uri.parse('https://touristine.onrender.com/getOtherDestinations');
+        Uri.parse('https://touristine.onrender.com/get-other-destinations');
 
     try {
       final response = await http.post(
@@ -168,22 +159,46 @@ class _HomePageState extends State<HomePage> {
         // Success.
         // I need the "names" of the destinations along with their
         // corresponding "image paths" --> List<Map<String, dynamic>>.
+
+        setState(() {
+          otherDestinations =
+              List<Map<String, dynamic>>.from(json.decode(response.body));
+        });
+
+        // Print the contents of popularDestinations to the console.
+        print("-----------------------------------------------------");
+        print("-----------------------------------------------------");
+
+        print('Other Destinations:');
+        for (var destination in otherDestinations) {
+          print('Name: ${destination['name']}, Image: ${destination['image']}');
+        }
       } else if (response.statusCode == 500) {
-        // Failed.
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        if (responseData.containsKey('error')) {
+          if (responseData['error'] == 'User does not exist') {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+          } else if (responseData['error'] == 'Failed to other destinations') {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, 'Failed to retrieve other places',
+                bottomMargin: 0);
+          }
+        }
       } else {
         // ignore: use_build_context_synchronously
-        // showCustomSnackBar(context, "Failed to fetch data",
-        //     bottomMargin: 0);
+        showCustomSnackBar(context, 'Error retrieving other places',
+            bottomMargin: 0);
       }
     } catch (error) {
-      print('Failed to fetch data: $error');
+      print('Failed to fetch other places: $error');
     }
   }
 
   // A function to retrieve all of the destination details.
   Future<void> getDestinationDetails(String destName) async {
     final url =
-        Uri.parse('https://touristine.onrender.com/getDestinationDetails');
+        Uri.parse('https://touristine.onrender.com/get-destination-details');
 
     try {
       final response = await http.post(
@@ -199,15 +214,41 @@ class _HomePageState extends State<HomePage> {
 
       if (response.statusCode == 200) {
         // Success.
+        // Parse the response body.
+        final Map<String, dynamic> responseData = json.decode(response.body);
+
+        // Extract destinationImages as List<Map<String, dynamic>>
+        destinationImages =
+            List<Map<String, dynamic>>.from(responseData['destinationImages']);
+
+        // Access destination details and other data.
+        destinationDetails = responseData['destinationDetails'];
+        ratings = Map<String, int>.from(responseData['rating']);
+
+        // Now you can use the data as needed
+        print('Destination Images: $destinationImages');
+        print('Destination Details: $destinationDetails');
+        print('Rating: $ratings');
       } else if (response.statusCode == 500) {
-        // Failed.
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        if (responseData.containsKey('error')) {
+          if (responseData['error'] ==
+              'Details for this destination are not available') {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, 'Place details aren\'t available',
+                bottomMargin: 0);
+          } else {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+          }
+        }
       } else {
         // ignore: use_build_context_synchronously
-        // showCustomSnackBar(context, "Failed to fetch recommendations",
-        //     bottomMargin: 0);
+        showCustomSnackBar(context, 'Error retrieving place details',
+            bottomMargin: 0);
       }
     } catch (error) {
-      print('Failed to fetch destination details: $error');
+      print('Failed to fetch place details: $error');
     }
   }
 
@@ -226,7 +267,8 @@ class _HomePageState extends State<HomePage> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => CustomSearchBar(token: widget.token)),
+              MaterialPageRoute(
+                  builder: (context) => CustomSearchBar(token: widget.token)),
             );
           },
           title: Container(
@@ -287,11 +329,11 @@ class _HomePageState extends State<HomePage> {
                   padding: const EdgeInsets.only(right: 20),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
-                    child: Image.asset(
+                    child: Image.network(
                       imagePath,
-                      width: 190,
-                      height: 150,
-                      fit: BoxFit.cover,
+                      width: 160,
+                      height: 140,
+                      fit: BoxFit.fill,
                     ),
                   ),
                 ),
@@ -300,9 +342,9 @@ class _HomePageState extends State<HomePage> {
                     child: Text(
                       title,
                       style: const TextStyle(
-                        fontSize: 30,
+                        fontSize: 26,
                         fontFamily: 'Zilla',
-                        color: Color.fromARGB(255, 245, 243, 243),
+                        color: Color.fromARGB(227, 245, 243, 243),
                         fontWeight: FontWeight.bold,
                       ),
                       textAlign: TextAlign.center,
@@ -347,15 +389,15 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   // Special For You Section.
                   DestinationList(
-                    destinations:
-                        recommended, // Israa, replace this with the list retreived from backend.
-                    listTitle: 'Special For You', token: widget.token,
+                    destinations: recommendedDestinations,
+                    listTitle: 'Special For You',
+                    token: widget.token,
                   ),
                   // Popular Places Section.
                   DestinationList(
-                    destinations:
-                        popular, // Israa, replace this with the list retreived from backend.
-                    listTitle: 'Popular Places', token: widget.token,
+                    destinations: popularDestinations,
+                    listTitle: 'Popular Places',
+                    token: widget.token,
                   ),
 
                   // Other Places Section.
@@ -375,20 +417,26 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   // Adding others section using a loop.
-                  for (var place
-                      in others) // Israa, replace this with the list retreived from backend.
+                  for (var place in otherDestinations)
                     Column(
                       children: [
                         buildPlaceTile(
                           place['name'],
-                          place['imagePath'],
-                          () {
+                          place['image'],
+                          () async {
+                            print(place['name']);
+                            await getDestinationDetails(place['name']);
+
+                            // ignore: use_build_context_synchronously
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => DestinationDetails(
                                   destination: place,
                                   token: widget.token,
+                                  destinationDetails: destinationDetails,
+                                  destinationImages: destinationImages,
+                                  ratings: ratings,
                                 ),
                               ),
                             );
