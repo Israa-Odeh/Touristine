@@ -621,6 +621,30 @@ class _DestinationDetailsState extends State<DestinationDetails> {
     );
   }
 
+  String getPlaceCategory(String placeCategory) {
+    if (placeCategory.toLowerCase() == "coastalareas") {
+      return "Coastal Area";
+    } else if (placeCategory.toLowerCase() == "mountains") {
+      return "Mountain";
+    } else if (placeCategory.toLowerCase() == "nationalparks") {
+      return "National Park";
+    } else if (placeCategory.toLowerCase() == "majorcities") {
+      return "Major City";
+    } else if (placeCategory.toLowerCase() == "countryside") {
+      return "Countryside";
+    } else if (placeCategory.toLowerCase() == "historicalsites") {
+      return "Historical Site";
+    } else if (placeCategory.toLowerCase() == "religiouslandmarks") {
+      return "Religious Landmark";
+    } else if (placeCategory.toLowerCase() == "aquariums") {
+      return "Aquarium";
+    } else if (placeCategory.toLowerCase() == "zoos") {
+      return "Zoo";
+    } else {
+      return "Others";
+    }
+  }
+
   Widget _buildAboutTab() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -635,6 +659,14 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                 if (constraints.maxHeight > 295) {
                   additionalMargin = 10.0;
                 }
+
+                String destinationName = widget.destination['name'];
+                String category =
+                    getPlaceCategory(widget.destinationDetails['Category']);
+
+                int totalLength = destinationName.length + category.length;
+
+                bool displayInSameRow = totalLength <= 32;
 
                 return Padding(
                   padding: EdgeInsets.only(bottom: 5.0 + additionalMargin),
@@ -653,49 +685,167 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 2.0),
+                          if (displayInSameRow)
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 2.0),
+                                    child: Text(
+                                      destinationName,
+                                      style: const TextStyle(
+                                        fontSize: 35,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'Gabriola',
+                                        color: Color.fromARGB(195, 18, 83, 96),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
+                                  decoration: BoxDecoration(
+                                    color: const Color.fromARGB(
+                                        125, 255, 255, 255),
+                                    borderRadius: BorderRadius.circular(15.0),
+                                  ),
                                   child: Text(
-                                    '${widget.destination['name']}',
+                                    category,
                                     style: const TextStyle(
-                                      fontSize: 35,
+                                      fontSize: 23,
                                       fontWeight: FontWeight.bold,
                                       fontFamily: 'Gabriola',
                                       color: Color.fromARGB(195, 18, 83, 96),
                                     ),
                                   ),
                                 ),
-                              ),
-                              Container(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 10),
-                                decoration: BoxDecoration(
-                                  color:
-                                      const Color.fromARGB(125, 255, 255, 255),
-                                  borderRadius: BorderRadius.circular(15.0),
-                                ),
-                                child: Text(
-                                  '${widget.destinationDetails['Category']}',
-                                  style: const TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Gabriola',
-                                    color: Color.fromARGB(195, 18, 83, 96),
-                                  ),
+                              ],
+                            ),
+                          if (!displayInSameRow)
+                            Padding(
+                              padding: const EdgeInsets.only(left: 2.0),
+                              child: Text(
+                                destinationName,
+                                style: const TextStyle(
+                                  fontSize: 35,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Gabriola',
+                                  color: Color.fromARGB(195, 18, 83, 96),
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          if (!displayInSameRow)
+                            Container(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              decoration: BoxDecoration(
+                                color: const Color.fromARGB(125, 255, 255, 255),
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              child: Text(
+                                category,
+                                style: const TextStyle(
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Gabriola',
+                                  color: Color.fromARGB(195, 18, 83, 96),
+                                ),
+                              ),
+                            ),
+                          SizedBox(height: totalLength <= 32 ? 10 : 20),
                           Text(
-                            '${widget.destinationDetails['About']}',
+                            displayInSameRow
+                                ? widget.destinationDetails['About']
+                                    .split('\n')
+                                    .take(2)
+                                    .join('\n')
+                                : widget.destinationDetails['About']
+                                    .split('\n')
+                                    .take(3)
+                                    .join('\n'),
+                            maxLines: displayInSameRow ? 3 : 2,
+                            overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                               fontSize: 31,
                               fontFamily: 'Gabriola',
                               color: Color.fromARGB(255, 23, 103, 120),
                             ),
+                          ),
+                          // Button to show the full text in a dialog.
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 10,
+                                  ),
+                                  backgroundColor: const Color(0xFF1E889E),
+                                  textStyle: const TextStyle(
+                                    fontSize: 22,
+                                    fontFamily: 'Zilla',
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: Text('About $destinationName',
+                                            style: const TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 11, 57, 66))),
+                                        content: Scrollbar(
+                                          thickness: 5,
+                                          trackVisibility: true,
+                                          thumbVisibility: true,
+                                          child: SizedBox(
+                                            height: 350,
+                                            child: SingleChildScrollView(
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    right: 10.0),
+                                                child: Text(
+                                                  widget.destinationDetails[
+                                                      'About'],
+                                                  style: const TextStyle(
+                                                    fontSize: 27,
+                                                    fontFamily: 'Gabriola',
+                                                    color: Color.fromARGB(
+                                                        255, 23, 103, 120),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text(
+                                              'Close',
+                                              style: TextStyle(
+                                                fontSize: 22.0,
+                                                fontFamily: 'Zilla',
+                                                fontWeight: FontWeight.bold,
+                                                color: Color.fromARGB(
+                                                    255, 200, 50, 27),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                child: const Text('Read More'),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -708,6 +858,16 @@ class _DestinationDetailsState extends State<DestinationDetails> {
         ),
       ),
     );
+  }
+
+  String getBudgetLevel(String budgetLevel) {
+    if (budgetLevel.toLowerCase() == "midrange") {
+      return "Mid-Range";
+    } else if (budgetLevel.toLowerCase() == "budgetfriendly") {
+      return "Budget-Friendly";
+    } else {
+      return "Luxurious";
+    }
   }
 
   Widget _buildDescriptionTab() {
@@ -813,6 +973,40 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                         width: 370.0,
                         height: 60.0,
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(left: 30.0),
+                              child: FaIcon(
+                                FontAwesomeIcons.cloudSun,
+                                color: Colors.white,
+                                size: 38,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 30.0),
+                              child: Text(
+                                widget.destinationDetails['WeatherDescription'][0],
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Time New Roman',
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10.0),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          color: const Color(0xFF1E889E),
+                        ),
+                        width: 370.0,
+                        height: 60.0,
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             const FaIcon(
@@ -890,7 +1084,8 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                             Padding(
                               padding: const EdgeInsets.only(right: 30.0),
                               child: Text(
-                                widget.destinationDetails['CostLevel'],
+                                getBudgetLevel(
+                                    widget.destinationDetails['CostLevel']),
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontFamily: 'Time New Roman',
