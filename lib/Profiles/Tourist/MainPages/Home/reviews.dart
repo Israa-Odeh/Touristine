@@ -19,36 +19,70 @@ class _AllReviewsPageState extends State<AllReviewsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image:
-                AssetImage("assets/Images/Profiles/Tourist/homeBackground.jpg"),
-            fit: BoxFit.cover,
+      body: Padding(
+        padding: EdgeInsets.only(top: widget.reviews.isNotEmpty ? 0.0 : 24),
+        child: Container(
+          decoration: BoxDecoration(
+            image: widget.reviews.isNotEmpty
+                ? const DecorationImage(
+                    image: AssetImage(
+                        "assets/Images/Profiles/Tourist/homeBackground.jpg"),
+                    fit: BoxFit.cover,
+                  )
+                : const DecorationImage(
+                    image: AssetImage(
+                        "assets/Images/Profiles/Tourist/emptyListBackground.png"),
+                    fit: BoxFit.cover,
+                  ),
+          ),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Expanded(
+                child: widget.reviews.isEmpty
+                    ? Center(
+                        child: Column(
+                        children: [
+                          const SizedBox(height: 150),
+                          Image.asset(
+                            'assets/Images/Profiles/Tourist/emptyList.gif',
+                            fit: BoxFit.cover,
+                          ),
+                          const Text(
+                            'No reviews found',
+                            style: TextStyle(
+                                fontSize: 40,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'Gabriola',
+                                color: Color.fromARGB(255, 23, 99, 114)),
+                          ),
+                        ],
+                      ))
+                    : ListView.builder(
+                        itemCount: widget.reviews.length,
+                        itemBuilder: (context, index) {
+                          return _buildReviewCard(widget.reviews[index]);
+                        },
+                      ),
+              ),
+            ],
           ),
         ),
-        child: Column(
-          children: [
-            const SizedBox(height: 20),
-            Expanded(
-              child: ListView.builder(
-                itemCount: widget.reviews.length,
-                itemBuilder: (context, index) {
-                  return _buildReviewCard(widget.reviews[index]);
-                },
-              ),
-            ),
-          ],
-        ),
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'GoBack',
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
-        backgroundColor: const Color.fromARGB(129, 30, 137, 158),
-        elevation: 0,
-        child: const Icon(FontAwesomeIcons.arrowLeft),
+      floatingActionButton: Padding(
+        padding:
+            EdgeInsets.only(bottom: widget.reviews.isNotEmpty ? 0.0 : 10.0),
+        child: FloatingActionButton(
+          heroTag: 'GoBack',
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          backgroundColor: widget.reviews.isNotEmpty
+              ? const Color.fromARGB(129, 30, 137, 158)
+              : const Color(0xFF1E889E),
+          elevation: 0,
+          child: const Icon(FontAwesomeIcons.arrowLeft),
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
     );

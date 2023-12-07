@@ -36,54 +36,23 @@ class DestinationDetails extends StatefulWidget {
 
 class _DestinationDetailsState extends State<DestinationDetails> {
   late String selectedImage;
-  double destLat = 32.2226667;
-  double destLng = 35.262145;
+  double destLat = 0;
+  double destLng = 0;
   Position? _currentPosition;
   double airDistance = 0;
   bool isRouteFetched = false;
   double distanceFromTo = 0;
-  double timeFromTo = 0;
+  int timeFromToH = 0;
+  int timeFromToMin = 0;
 
+  List<Map<String, dynamic>> reviews = [];
   // List<Map<String, dynamic>> complaints = [];
-
-  // final Map<String, dynamic> destinationDetails = {
-  //   'About':
-  //       'Nablus, a Palestinian enclave, breathes history through its ancient streets and vibrant markets, embodying resilience and rich heritage.',
-  //   'Category': 'Historical Site',
-  //   'Opening Time': '09:00',
-  //   'Closing Time': '23:00',
-  //   'Working Days': [
-  //     'Saturday',
-  //     'Sunday',
-  //     'Monday',
-  //     'Tuesday',
-  //     'Wednesday',
-  //     'Thursday',
-  //     'Friday'
-  //   ],
-  //   'Weather': '23°C',
-  //   'Rating': '4.5',
-  //   'Cost Level': 'Budget Friendly',
-  //   'Sheltered': 'Yes', // No
-  //   'Estimated Time': '2',
-  //   'Services': [
-  //     'Public restrooms are available',
-  //     'Convenient access to a paid parking garage',
-  //     'There are nearby gas stations',
-  //     'Wheelchair ramps for enhanced accessibility',
-  //     'Play areas for children are available',
-  //     'Nearby restaurants for dining options',
-  //     'Accessible health care centers are available',
-  //     'Additional services are also provided'
-
-  //     /// Additional services as needed
-  //   ],
-  // };
 
   @override
   void initState() {
     super.initState();
     selectedImage = widget.destination['image'];
+    getDestinationLatLng();
   }
 
   @override
@@ -91,43 +60,9 @@ class _DestinationDetailsState extends State<DestinationDetails> {
     super.dispose();
   }
 
-  // A function to retrieve all of the destination details.
-  Future<void> getDestinationDetails() async {
-    final url =
-        Uri.parse('https://touristine.onrender.com/getDestinationDetails');
-
-    try {
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': 'Bearer ${widget.token}',
-        },
-        body: {
-          'destinationName': widget.destination['name'],
-        },
-      );
-
-      if (response.statusCode == 200) {
-        // Success.
-        // Jenan, here I need to retrieve three list-maps about the destination info, like the
-        // format of the ones in my code called "destinationImages", "destinationDetails" and "ratings",
-        // please refer to lines 22, 35, and 772 resoectively to see their format.
-      } else if (response.statusCode == 500) {
-        // Failed.
-      } else {
-        // ignore: use_build_context_synchronously
-        // showCustomSnackBar(context, "Failed to fetch recommendations",
-        //     bottomMargin: 0);
-      }
-    } catch (error) {
-      print('Failed to fetch destination details: $error');
-    }
-  }
-
   // A function to retrieve the users review data.
   Future<void> getAllReviews() async {
-    final url = Uri.parse('https://touristine.onrender.com/getAllReviews');
+    final url = Uri.parse('https://touristine.onrender.com/get-all-reviews');
 
     try {
       final response = await http.post(
@@ -143,37 +78,54 @@ class _DestinationDetailsState extends State<DestinationDetails> {
 
       if (response.statusCode == 200) {
         // Success.
-        // Jenan, I want to retrieve a list (map) in this format from your side - containing these info.
-        /* final List<Map<String, dynamic>> reviews = [
-          {
-            'firstName': 'Israa',
-            'lastName': 'Odeh',
-            'stars': 5,
-            'commentTitle': 'Amazing Experience',
-            'commentContent':
-                'The place is breathtaking, and the staff is incredibly friendly. I highly recommend it!',
-          },
-          {
-            ///second user........
-          },
-          ////............................... other users' reviews in a similar way.
-        ]; */
-      } else if (response.statusCode == 500) {
-        // Failed.
+        final Map<String, dynamic> responseData = json.decode(response.body);
+
+        if (responseData.containsKey('reviews')) {
+          // Retrieve the list of reviews.
+          final List<dynamic> reviewsData = responseData['reviews'];
+
+          reviews = reviewsData.map((reviewData) {
+            return {
+              'firstName': reviewData['firstName'],
+              'lastName': reviewData['lastName'],
+              'date': reviewData['date'],
+              'stars': reviewData['stars'],
+              'commentTitle': reviewData['commentTitle'],
+              'commentContent': reviewData['commentContent'],
+            };
+          }).toList();
+          print(reviews);
+        } 
+        else {
+          print('Error: Reviews key not found in the response');
+        }
+      } 
+      else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+
+        if (responseData['error'] ==
+            'Reviews are not available for this destination') {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, 'Reviews are not available',
+              bottomMargin: 310);
+        } else {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, responseData['error'], bottomMargin: 310);
+        }
       } else {
         // ignore: use_build_context_synchronously
-        // showCustomSnackBar(context, "Failed to fetch recommendations",
-        //     bottomMargin: 0);
+        showCustomSnackBar(context, 'Error retrieving destination reviews',
+            bottomMargin: 310);
       }
     } catch (error) {
-      print('Failed to fetch your review: $error');
+      print('Failed to fetch destination reviews: $error');
     }
   }
 
   // A function to retrieve the destination latitude and longitude.
   Future<void> getDestinationLatLng() async {
     final url =
-        Uri.parse('https://touristine.onrender.com/getDestinationLatLng');
+        Uri.parse('https://touristine.onrender.com/get-destination-lat-lng');
 
     try {
       final response = await http.post(
@@ -190,12 +142,21 @@ class _DestinationDetailsState extends State<DestinationDetails> {
       if (response.statusCode == 200) {
         // Success.
         // Jenan, I want to retrieve the latitude and longitude of the destination.
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        destLat = double.parse(responseData['latitude']);
+        destLng = double.parse(responseData['longitude']);
+        print(destLat);
+        print(destLng);
       } else if (response.statusCode == 500) {
-        // Failed.
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        if (responseData.containsKey('error')) {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+        }
       } else {
         // ignore: use_build_context_synchronously
-        // showCustomSnackBar(context, "Failed to fetch recommendations",
-        //     bottomMargin: 0);
+        showCustomSnackBar(context, 'Error retrieving place location',
+            bottomMargin: 0);
       }
     } catch (error) {
       print('Failed to fetch the destination lat and lng: $error');
@@ -468,9 +429,14 @@ class _DestinationDetailsState extends State<DestinationDetails> {
           final endAddress = legs[0]['end_address'] as String;
 
           isRouteFetched = true;
+          // Convert duration to hours and minutes
+          final int hours = duration ~/ 3600;
+          final int remainingSeconds = duration % 3600;
+          final int minutes = remainingSeconds ~/ 60;
+
           return {
             'distance': distance / 1000.0, // Convert meters to kilometers.
-            'duration': duration / 3600, // Duration in hours.
+            'duration': {'hours': hours, 'minutes': minutes},
             'startAddress': startAddress,
             'endAddress': endAddress,
             'airDistance': airDistance,
@@ -499,7 +465,9 @@ class _DestinationDetailsState extends State<DestinationDetails> {
 
         if (directions['distance'] != -1.0) {
           distanceFromTo = directions['distance'];
-          timeFromTo = directions['duration'];
+          timeFromToH = directions['duration']['hours'];
+          timeFromToMin = directions['duration']['minutes'];
+
           print('Real distance: ${directions['distance']} km');
           print('Duration: ${directions['duration']} hours');
           print('Start Address: ${directions['startAddress']}');
@@ -514,20 +482,6 @@ class _DestinationDetailsState extends State<DestinationDetails> {
       }
     } catch (e) {
       print('An error occurred: $e');
-    }
-  }
-
-  String formatDuration(int durationInSeconds) {
-    Duration duration = Duration(seconds: durationInSeconds);
-    int hours = duration.inHours;
-    int minutes = (duration.inMinutes % 60);
-
-    if (hours > 0 && minutes > 0) {
-      return '$hours hours and $minutes minutes';
-    } else if (hours > 0) {
-      return '$hours hours';
-    } else {
-      return '$minutes minutes';
     }
   }
 
@@ -986,7 +940,8 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                             Padding(
                               padding: const EdgeInsets.only(right: 30.0),
                               child: Text(
-                                widget.destinationDetails['WeatherDescription'][0],
+                                widget.destinationDetails['WeatherDescription']
+                                    [0],
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontFamily: 'Time New Roman',
@@ -1396,7 +1351,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                               padding: const EdgeInsets.only(right: 30.0),
                               child: Text(
                                 isRouteFetched
-                                    ? '0${timeFromTo.toStringAsFixed(2)} h away'
+                                    ? '${timeFromToH > 0 ? '$timeFromToH h' : ''}${timeFromToH > 0 && timeFromToMin > 0 ? ', ' : ''}${timeFromToMin > 0 ? '$timeFromToMin min' : ''}${timeFromToH == 0 && timeFromToMin == 0 ? 'Less than a minute' : ''} away'
                                     : '_ _       h away',
                                 style: const TextStyle(
                                   color: Colors.white,
@@ -1490,7 +1445,6 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                         onPressed: () async {
                           try {
                             await _getCurrentPosition();
-
                             // ignore: use_build_context_synchronously
                             Navigator.push(
                               context,
@@ -1498,8 +1452,8 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                                 builder: (context) => LocationLiveTracking(
                                   srcLat: _currentPosition!.latitude,
                                   scrLng: _currentPosition!.longitude,
-                                  dstLat: 32.2226667,
-                                  dstLng: 35.262145,
+                                  dstLat: destLat,
+                                  dstLng: destLng,
                                 ),
                               ),
                             );
@@ -1549,98 +1503,98 @@ class _DestinationDetailsState extends State<DestinationDetails> {
     //   'fiveStars': 10,
     // };
 
-    final List<Map<String, dynamic>> reviews = [
-      {
-        'firstName': 'Mohamed',
-        'lastName': 'Ali',
-        'stars': 5,
-        'commentTitle': 'Amazing Experience',
-        'commentContent':
-            'The place is breathtaking, and the staff is incredibly friendly. I highly recommend it!',
-        'date': '26/05/2001'
-      },
-      {
-        'firstName': 'Fatima',
-        'lastName': 'Khaled',
-        'stars': 4,
-        'commentTitle': 'Great Place',
-        'commentContent':
-            'A wonderful atmosphere and delicious food. I enjoyed every moment of my visit.',
-        'date': '07/07/2007'
-      },
-      {
-        'firstName': 'Yousef',
-        'lastName': 'Saleh',
-        'stars': 3,
-        'commentTitle': 'Excellent Experience',
-        'commentContent':
-            'The inspiration here is amazing, and I love it. Looking forward to coming back!',
-        'date': '15/05/2021'
-      },
-      {
-        'firstName': 'Layla',
-        'lastName': 'Mohamed',
-        'stars': 4,
-        'commentTitle': 'Beautiful Place',
-        'commentContent':
-            'You\'ll find success everywhere you go. The ambiance is truly remarkable.',
-        'date': '12/08/2023'
-      },
-      {
-        'firstName': 'Ali',
-        'lastName': 'Noor',
-        'stars': 2,
-        'commentTitle': 'Needs Improvement',
-        'commentContent':
-            'Service was slow, and the place needs some improvements. Hope to see changes.',
-        'date': '26/05/2023'
-      },
-      {
-        'firstName': 'Nourhan',
-        'lastName': 'Mustafa',
-        'stars': 5,
-        'commentTitle': 'Unique Experience',
-        'commentContent':
-            "I'm very happy with my experience here. Thank you for providing such a unique experience!",
-        'date': '09/11/2022'
-      },
-      {
-        'firstName': 'Hussein',
-        'lastName': 'Ali',
-        'stars': 3,
-        'commentTitle': 'Good Place',
-        'commentContent':
-            "Not bad, but there are some aspects that could be improved. Overall, it's a decent place.",
-        'date': '10/04/2011'
-      },
-      {
-        'firstName': 'Sara',
-        'lastName': 'Ahmed',
-        'stars': 4,
-        'commentTitle': 'Great View',
-        'commentContent':
-            'I love the stunning view and the peaceful atmosphere. It was a refreshing experience.',
-        'date': '22/08/2021'
-      },
-      {
-        'firstName': 'Omar',
-        'lastName': 'Salah',
-        'stars': 5,
-        'commentTitle': 'Fantastic Experience',
-        'commentContent':
-            'The best experience I ever had! The service, ambiance, and everything exceeded my expectations.',
-        'date': '16/05/2022'
-      },
-      {
-        'firstName': 'Hala',
-        'lastName': 'Hassan',
-        'stars': 4,
-        'commentTitle': 'Very Good',
-        'commentContent':
-            'A very good experience, I will definitely come back for another visit.',
-        'date': '26/10/2021'
-      },
-    ];
+    // final List<Map<String, dynamic>> reviews = [
+    //   {
+    //     'firstName': 'Mohamed',
+    //     'lastName': 'Ali',
+    //     'stars': 5,
+    //     'commentTitle': 'Amazing Experience',
+    //     'commentContent':
+    //         'The place is breathtaking, and the staff is incredibly friendly. I highly recommend it!',
+    //     'date': '26/05/2001'
+    //   },
+    //   {
+    //     'firstName': 'Fatima',
+    //     'lastName': 'Khaled',
+    //     'stars': 4,
+    //     'commentTitle': 'Great Place',
+    //     'commentContent':
+    //         'A wonderful atmosphere and delicious food. I enjoyed every moment of my visit.',
+    //     'date': '07/07/2007'
+    //   },
+    //   {
+    //     'firstName': 'Yousef',
+    //     'lastName': 'Saleh',
+    //     'stars': 3,
+    //     'commentTitle': 'Excellent Experience',
+    //     'commentContent':
+    //         'The inspiration here is amazing, and I love it. Looking forward to coming back!',
+    //     'date': '15/05/2021'
+    //   },
+    //   {
+    //     'firstName': 'Layla',
+    //     'lastName': 'Mohamed',
+    //     'stars': 4,
+    //     'commentTitle': 'Beautiful Place',
+    //     'commentContent':
+    //         'You\'ll find success everywhere you go. The ambiance is truly remarkable.',
+    //     'date': '12/08/2023'
+    //   },
+    //   {
+    //     'firstName': 'Ali',
+    //     'lastName': 'Noor',
+    //     'stars': 2,
+    //     'commentTitle': 'Needs Improvement',
+    //     'commentContent':
+    //         'Service was slow, and the place needs some improvements. Hope to see changes.',
+    //     'date': '26/05/2023'
+    //   },
+    //   {
+    //     'firstName': 'Nourhan',
+    //     'lastName': 'Mustafa',
+    //     'stars': 5,
+    //     'commentTitle': 'Unique Experience',
+    //     'commentContent':
+    //         "I'm very happy with my experience here. Thank you for providing such a unique experience!",
+    //     'date': '09/11/2022'
+    //   },
+    //   {
+    //     'firstName': 'Hussein',
+    //     'lastName': 'Ali',
+    //     'stars': 3,
+    //     'commentTitle': 'Good Place',
+    //     'commentContent':
+    //         "Not bad, but there are some aspects that could be improved. Overall, it's a decent place.",
+    //     'date': '10/04/2011'
+    //   },
+    //   {
+    //     'firstName': 'Sara',
+    //     'lastName': 'Ahmed',
+    //     'stars': 4,
+    //     'commentTitle': 'Great View',
+    //     'commentContent':
+    //         'I love the stunning view and the peaceful atmosphere. It was a refreshing experience.',
+    //     'date': '22/08/2021'
+    //   },
+    //   {
+    //     'firstName': 'Omar',
+    //     'lastName': 'Salah',
+    //     'stars': 5,
+    //     'commentTitle': 'Fantastic Experience',
+    //     'commentContent':
+    //         'The best experience I ever had! The service, ambiance, and everything exceeded my expectations.',
+    //     'date': '16/05/2022'
+    //   },
+    //   {
+    //     'firstName': 'Hala',
+    //     'lastName': 'Hassan',
+    //     'stars': 4,
+    //     'commentTitle': 'Very Good',
+    //     'commentContent':
+    //         'A very good experience, I will definitely come back for another visit.',
+    //     'date': '26/10/2021'
+    //   },
+    // ];
     int reviewsCount =
         widget.ratings.values.fold<int>(0, (sum, value) => sum + value);
     return Padding(
@@ -1750,8 +1704,9 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       ElevatedButton(
-                        onPressed: () {
-                          getAllReviews();
+                        onPressed: () async {
+                          await getAllReviews();
+                          // ignore: use_build_context_synchronously
                           Navigator.push(
                             context,
                             MaterialPageRoute(

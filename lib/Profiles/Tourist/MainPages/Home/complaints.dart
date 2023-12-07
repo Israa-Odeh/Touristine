@@ -36,7 +36,7 @@ class _ComplaintsListPageState extends State<ComplaintsListPage> {
                   )
                 : const DecorationImage(
                     image: AssetImage(
-                        "assets/Images/Profiles/Tourist/ComplaintsBackground.png"),
+                        "assets/Images/Profiles/Tourist/emptyListBackground.png"),
                     fit: BoxFit.cover,
                   ),
           ),
@@ -50,7 +50,7 @@ class _ComplaintsListPageState extends State<ComplaintsListPage> {
                         children: [
                           const SizedBox(height: 150),
                           Image.asset(
-                            'assets/Images/Profiles/Tourist/NoComplaints.gif',
+                            'assets/Images/Profiles/Tourist/emptyList.gif',
                             fit: BoxFit.cover,
                           ),
                           const Text(
