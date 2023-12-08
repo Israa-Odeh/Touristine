@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -63,7 +64,6 @@ class _AddingComplaintsPageState extends State<AddingComplaintsPage> {
     final request = http.MultipartRequest('POST', url);
 
     // Add headers to the request.
-    request.headers['Content-Type'] = 'multipart/form-data';
     request.headers['Authorization'] = 'Bearer ${widget.token}';
 
     // Add complaint data to the request.
@@ -73,16 +73,20 @@ class _AddingComplaintsPageState extends State<AddingComplaintsPage> {
     request.fields['destinationName'] = widget.destinationName;
 
     // Add images to the request.
-    for (int i = 0; i < selectedImages.length; i++) {
-      List<int> imageBytes = selectedImages[i].readAsBytesSync();
-      String fileName = selectedImages[i].path.split('/').last;
-
-      final image = http.MultipartFile.fromBytes(
-        'images',
-        imageBytes,
-        filename: fileName,
-      );
-      request.files.add(image);
+    if (selectedImages.isNotEmpty) {
+      for (int i = 0; i < selectedImages.length; i++) {
+        List<int> imageBytes = selectedImages[i].readAsBytesSync();
+        String fileName = selectedImages[i].path.split('/').last;
+        final image = http.MultipartFile.fromBytes(
+          'images',
+          imageBytes,
+          filename: fileName,
+        );
+        request.files.add(image);
+      }
+    } else {
+      // If no images, add an empty list.
+      request.fields['images'] = '[]';
     }
 
     // Send the request.
@@ -93,8 +97,16 @@ class _AddingComplaintsPageState extends State<AddingComplaintsPage> {
         // Success.
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'Thanks for sharing your complaint',
-            bottomMargin: 370);
-      } else {}
+            bottomMargin: 0);
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+      } else {
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'Error storing your complaint',
+            bottomMargin: 0);
+      }
     } catch (error) {
       print('Error sending complaint: $error');
     }
@@ -339,12 +351,12 @@ class _AddingComplaintsPageState extends State<AddingComplaintsPage> {
               ),
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 if (validateForm()) {
                   // print('Title: ${titleController.text}');
                   // print('Content: ${contentController.text}');
                   // print('Selected Images: $selectedImages');
-                  sendComplaint();
+                  await sendComplaint();
                 }
               },
               style: ElevatedButton.styleFrom(

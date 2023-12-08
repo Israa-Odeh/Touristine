@@ -117,26 +117,13 @@ class ComplaintCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ListTile(
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    complaint['title'],
-                    style: const TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Times New Roman',
-                        color: Color.fromARGB(255, 21, 98, 113)),
-                  ),
-                  Text(
-                    complaint['date'],
-                    style: const TextStyle(
-                        fontSize: 19.5,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'Time New Roman',
-                        color: Color.fromARGB(255, 14, 63, 73)),
-                  ),
-                ],
+              title: Text(
+                complaint['title'],
+                style: const TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Times New Roman',
+                    color: Color.fromARGB(255, 21, 98, 113)),
               ),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -146,7 +133,7 @@ class ComplaintCard extends StatelessWidget {
                     thickness: 2,
                   ),
                   Text(
-                    complaint['content'],
+                    complaint['complaint'],
                     style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w100,
@@ -220,8 +207,7 @@ class ComplaintCard extends StatelessWidget {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(10.0),
                                 child: Image.network(
-                                  (complaint['images'] as List)[imgIndex]
-                                      ['url'],
+                                  complaint['images'][imgIndex] as String,
                                   width: 100,
                                   height: 100,
                                   fit: BoxFit.cover,
@@ -236,8 +222,16 @@ class ComplaintCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(right: 12.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  Text(
+                    complaint['date'],
+                    style: const TextStyle(
+                        fontSize: 19.5,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Time New Roman',
+                        color: Color.fromARGB(255, 14, 63, 73)),
+                  ),
                   Text(
                     complaint['status'],
                     style: const TextStyle(

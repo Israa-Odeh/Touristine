@@ -46,7 +46,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
   int timeFromToMin = 0;
 
   List<Map<String, dynamic>> reviews = [];
-  // List<Map<String, dynamic>> complaints = [];
+  List<Map<String, dynamic>> complaints = [];
 
   @override
   void initState() {
@@ -207,19 +207,19 @@ class _DestinationDetailsState extends State<DestinationDetails> {
         final Map<String, dynamic> responseData = json.decode(response.body);
         if (responseData.containsKey('error')) {
           // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+          showCustomSnackBar(context, responseData['error'], bottomMargin: 310);
         }
       } else {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'Error retrieving place location',
-            bottomMargin: 0);
+            bottomMargin: 310);
       }
     } catch (error) {
       print('Failed to fetch the destination lat and lng: $error');
     }
   }
 
-  List<Map<String, dynamic>> complaints = [
+  List<Map<String, dynamic>> complaintsSample = [
     {
       'title': 'Slow Service',
       'content': 'The service at the restaurant was incredibly slow.',
@@ -298,16 +298,24 @@ class _DestinationDetailsState extends State<DestinationDetails> {
         // Jenan, I need to retrieve a list of complaints - if there is any,
         // the retrieved list<map> will be of the same format as the one
         // given at line 211.
-        // Retrieve the necessary elements for a complaint, including the required title,
-        // content, and date, along with any accompanying images (if provided).
+        final Map<String, dynamic> responseData = json.decode(response.body);
 
-        // setState(() {
-        //   complaints =
-        //       List<Map<String, dynamic>>.from(json.decode(response.body));
-        // });
+        if (responseData.containsKey('complaints')) {
+          complaints =
+              List<Map<String, dynamic>>.from(responseData['complaints']);
+          print(complaints);
+        } else {
+          // Handle the case when 'complaints' key is not present in the response
+          print('No complaints keyword found in the response');
+        }
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 310);
       } else {
-        print(
-            'Failed to fetch complaints. Status code: ${response.statusCode}');
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'Error retrieving your complaints',
+            bottomMargin: 310);
       }
     } catch (error) {
       print('Error fetching complaints: $error');
@@ -1849,8 +1857,9 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               ElevatedButton(
-                                onPressed: () {
-                                  fetchUserComplaints();
+                                onPressed: () async {
+                                  await fetchUserComplaints();
+                                  // ignore: use_build_context_synchronously
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
