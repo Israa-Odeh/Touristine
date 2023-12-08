@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -7,9 +9,17 @@ import 'package:http/http.dart' as http;
 class AddingReviewPage extends StatefulWidget {
   final String token;
   final String destinationName;
+  final int reviewStars;
+  final String reviewTitle;
+  final String reviewContent;
 
   const AddingReviewPage(
-      {super.key, required this.token, required this.destinationName});
+      {super.key,
+      required this.token,
+      required this.destinationName,
+      this.reviewStars = 0,
+      this.reviewTitle = "",
+      this.reviewContent = ""});
   @override
   _AddingReviewPageState createState() => _AddingReviewPageState();
 }
@@ -62,7 +72,7 @@ class _AddingReviewPageState extends State<AddingReviewPage> {
   // Function to send the review data to the backend.
   Future<void> sendReviewData() async {
     String currentDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
-    final url = Uri.parse('https://touristine.onrender.com/sendReviewData');
+    final url = Uri.parse('https://touristine.onrender.com/send-review-data');
 
     try {
       final response = await http.post(
@@ -81,12 +91,17 @@ class _AddingReviewPageState extends State<AddingReviewPage> {
       );
 
       if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
         // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, 'Thank you for adding your review',
-            bottomMargin: 370);
+        showCustomSnackBar(context, responseData['message'], bottomMargin: 370);
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 370);
       } else {
-        // Handle other status codes or errors
-        print('Failed to submit review. Status code: ${response.statusCode}');
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'Error storing your review',
+            bottomMargin: 370);
       }
     } catch (error) {
       // Handle network or other errors
@@ -94,46 +109,12 @@ class _AddingReviewPageState extends State<AddingReviewPage> {
     }
   }
 
-  // A function to retrieve the user's review data.
-  Future<void> getReviewData() async {
-    final url = Uri.parse('https://touristine.onrender.com/getReviewData');
-
-    try {
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': 'Bearer ${widget.token}',
-        },
-        body: {
-          'destinationName': widget.destinationName,
-        },
-      );
-
-      if (response.statusCode == 200) {
-        /* final Map<String, dynamic> responseData = json.decode(response.body);
-        setState(() {
-          selectedStars = int.parse(responseData['stars']);
-          titleController.text = responseData['title'];
-          contentController.text = responseData['content'];
-        });
-        */
-      } else if (response.statusCode == 500) {
-        // Failed.
-      } else {
-        // ignore: use_build_context_synchronously
-        // showCustomSnackBar(context, "Failed to fetch recommendations",
-        //     bottomMargin: 0);
-      }
-    } catch (error) {
-      print('Failed to fetch your review: $error');
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    getReviewData();
+    selectedStars = widget.reviewStars;
+    titleController.text = widget.reviewTitle;
+    contentController.text = widget.reviewContent;
   }
 
   @override
@@ -238,9 +219,9 @@ class _AddingReviewPageState extends State<AddingReviewPage> {
               ),
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 if (validateForm()) {
-                  sendReviewData();
+                  await sendReviewData();
                   print('Stars: $selectedStars');
                   print('Title: ${titleController.text}');
                   print('Content: ${contentController.text}');

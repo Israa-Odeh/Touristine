@@ -95,12 +95,10 @@ class _DestinationDetailsState extends State<DestinationDetails> {
             };
           }).toList();
           print(reviews);
-        } 
-        else {
+        } else {
           print('Error: Reviews key not found in the response');
         }
-      } 
-      else if (response.statusCode == 500) {
+      } else if (response.statusCode == 500) {
         final Map<String, dynamic> responseData = json.decode(response.body);
 
         if (responseData['error'] ==
@@ -119,6 +117,64 @@ class _DestinationDetailsState extends State<DestinationDetails> {
       }
     } catch (error) {
       print('Failed to fetch destination reviews: $error');
+    }
+  }
+
+  // A function to retrieve the user's review data.
+  Future<void> getReviewData() async {
+    final url = Uri.parse('https://touristine.onrender.com/get-review-data');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer ${widget.token}',
+        },
+        body: {
+          'destinationName': widget.destination['name'],
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        // ignore: use_build_context_synchronously
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => AddingReviewPage(
+                    token: widget.token,
+                    destinationName: widget.destination['name'],
+                    reviewStars: responseData['stars'],
+                    reviewTitle: responseData['title'],
+                    reviewContent: responseData['content'],
+                  )),
+        );
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 310);
+      } else if (response.statusCode == 404) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        // ignore: use_build_context_synchronously
+        // showCustomSnackBar(context, responseData['message'], bottomMargin: 310);
+        print(responseData['message']);
+        // ignore: use_build_context_synchronously
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => AddingReviewPage(
+                    token: widget.token,
+                    destinationName: widget.destination['name'],
+                  )),
+        );
+      } else {
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'Error fetching your review',
+            bottomMargin: 310);
+      }
+    } catch (error) {
+      print('Failed to fetch your review: $error');
     }
   }
 
@@ -1155,7 +1211,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
     } else if (serviceName.toLowerCase() == "kidsarea") {
       return ServiceDescription(
           "Play areas for children are available", FontAwesomeIcons.child);
-    } else if (serviceName.toLowerCase() == "gasstation") {
+    } else if (serviceName.toLowerCase() == "gasstations") {
       return ServiceDescription(
           "There are nearby gas stations", FontAwesomeIcons.gasPump);
     } else if (serviceName.toLowerCase() == "restaurants") {
@@ -1732,16 +1788,8 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                       FloatingActionButton(
                         heroTag: 'Add Review',
                         backgroundColor: const Color(0xFF1E889E),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => AddingReviewPage(
-                                      token: widget.token,
-                                      destinationName:
-                                          widget.destination['name'],
-                                    )),
-                          );
+                        onPressed: () async {
+                          await getReviewData();
                         },
                         child: const FaIcon(FontAwesomeIcons.plus),
                       ),
