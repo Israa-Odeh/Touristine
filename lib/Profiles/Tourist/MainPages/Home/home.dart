@@ -179,7 +179,7 @@ class _HomePageState extends State<HomePage> {
           if (responseData['error'] == 'User does not exist') {
             // ignore: use_build_context_synchronously
             showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
-          } else if (responseData['error'] == 'Failed to other destinations') {
+          } else if (responseData['error'] == 'Failed to get other destinations') {
             // ignore: use_build_context_synchronously
             showCustomSnackBar(context, 'Failed to retrieve other places',
                 bottomMargin: 0);

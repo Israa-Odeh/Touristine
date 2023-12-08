@@ -92,12 +92,25 @@ class _AddingReviewPageState extends State<AddingReviewPage> {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = json.decode(response.body);
-        // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, responseData['message'], bottomMargin: 370);
+        if (responseData['message'] == "Your review was saved") {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, 'Thanks for sharing your review',
+              bottomMargin: 370);
+        } else {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, 'Your review has been updated',
+              bottomMargin: 370);
+        }
       } else if (response.statusCode == 500) {
         final Map<String, dynamic> responseData = json.decode(response.body);
-        // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, responseData['error'], bottomMargin: 370);
+        if (responseData.containsKey('error')) {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, responseData['error'], bottomMargin: 370);
+        } else {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, responseData['message'],
+              bottomMargin: 370);
+        }
       } else {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'Error storing your review',
