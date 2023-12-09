@@ -1,15 +1,21 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/Home/destinationView.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/PlanMaker/planPaths.dart';
+import 'package:http/http.dart' as http;
 
 class PlanPlacesPage extends StatefulWidget {
+  final String token;
   final List<Map<String, dynamic>> planContents;
 
-  const PlanPlacesPage({super.key, required this.planContents});
+  const PlanPlacesPage(
+      {super.key, required this.token, required this.planContents});
   @override
   _PlanPlacesPageState createState() => _PlanPlacesPageState();
 }
@@ -19,6 +25,7 @@ class _PlanPlacesPageState extends State<PlanPlacesPage> {
   void initState() {
     super.initState();
   }
+
   Position? _currentPosition;
   bool isLocDetermined = false;
   // Section of location accquistion functions.
@@ -52,9 +59,9 @@ class _PlanPlacesPageState extends State<PlanPlacesPage> {
       return false;
     }
     // ignore: use_build_context_synchronously
-      // ignore: use_build_context_synchronously
-      // showCustomSnackBar(context, "Please wait for a moment",
-      //     bottomMargin: 310);
+    // ignore: use_build_context_synchronously
+    // showCustomSnackBar(context, "Please wait for a moment",
+    //     bottomMargin: 310);
     return true;
   }
 
@@ -92,7 +99,10 @@ class _PlanPlacesPageState extends State<PlanPlacesPage> {
                 ),
               ),
               child: Center(
-                child: PlanPlacesCards(places: widget.planContents),
+                child: PlanPlacesCards(
+                  places: widget.planContents,
+                  token: widget.token,
+                ),
               ),
             ),
             Positioned(
@@ -104,23 +114,19 @@ class _PlanPlacesPageState extends State<PlanPlacesPage> {
                   onPressed: () {
                     getCurrentPosition();
                     if (isLocDetermined) {
+                      List<LatLng> destinationsLatLng = [];
+
+                      for (var place in widget.planContents) {
+                        double latitude = double.parse(place['latitude']);
+                        double longitude = double.parse(place['longitude']);
+                        destinationsLatLng.add(LatLng(latitude, longitude));
+                      }
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => PlanPaths(
-                            sourceLat: _currentPosition!.latitude,
-                            sourceLng: _currentPosition!.longitude,
-                            destinationsLatsLngs: const [
-                              // These will be passed dynamically.
-                              LatLng(32.0846676, 35.3296158), // Qusra
-                              LatLng(32.3194102, 35.0239948), // Tulkarem
-                              LatLng(32.0494, 34.7584), // Yaffa
-                              LatLng(31.8611, 35.4618), // Jericoh
-                              LatLng(32.2227, 35.2621), // Nablus
-                              LatLng(32.3211, 35.3700), // Tubas
-                              LatLng(31.7054, 35.2024), // Bethlehem
-                              LatLng(31.5799, 35.0999), // Hebron
-                            ],
-                          ),
+                              sourceLat: _currentPosition!.latitude,
+                              sourceLng: _currentPosition!.longitude,
+                              destinationsLatsLngs: destinationsLatLng),
                         ),
                       );
                     }
@@ -162,9 +168,10 @@ class _PlanPlacesPageState extends State<PlanPlacesPage> {
 }
 
 class PlanPlacesCards extends StatefulWidget {
+  final String token;
   final List<Map<String, dynamic>> places;
 
-  const PlanPlacesCards({super.key, required this.places});
+  const PlanPlacesCards({super.key, required this.token, required this.places});
 
   @override
   _PlanPlacesCardsState createState() => _PlanPlacesCardsState();
@@ -207,7 +214,8 @@ class _PlanPlacesCardsState extends State<PlanPlacesCards> {
               });
             },
             itemBuilder: (context, index) {
-              return PlaceCard(details: widget.places[index]);
+              return PlaceCard(
+                  details: widget.places[index], token: widget.token);
             },
           ),
         ),
@@ -277,48 +285,145 @@ class _PlanPlacesCardsState extends State<PlanPlacesCards> {
   }
 }
 
-class PlaceCard extends StatelessWidget {
+class PlaceCard extends StatefulWidget {
+  final String token;
   final Map<String, dynamic> details;
 
-  const PlaceCard({super.key, required this.details});
+  const PlaceCard({super.key, required this.token, required this.details});
+
+  @override
+  _PlaceCardState createState() => _PlaceCardState();
+}
+
+class _PlaceCardState extends State<PlaceCard> {
+  Map<String, dynamic> destinationDetails = {};
+  List<Map<String, dynamic>> destinationImages = [];
+  Map<String, int> ratings = {};
+
+  // A function to retrieve all of the destination details.
+  Future<void> getDestinationDetails(String destName) async {
+    final url =
+        Uri.parse('https://touristine.onrender.com/get-destination-details');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer ${widget.token}',
+        },
+        body: {
+          'destinationName': destName,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Success.
+        // Parse the response body.
+        final Map<String, dynamic> responseData = json.decode(response.body);
+
+        // Extract destinationImages as List<Map<String, dynamic>>
+        destinationImages =
+            List<Map<String, dynamic>>.from(responseData['destinationImages']);
+
+        // Access destination details and other data.
+        destinationDetails = responseData['destinationDetails'];
+        ratings = Map<String, int>.from(responseData['rating']);
+
+        // Now you can use the data as needed
+        print('Destination Images: $destinationImages');
+        print('Destination Details: $destinationDetails');
+        print('Rating: $ratings');
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        if (responseData.containsKey('error')) {
+          if (responseData['error'] ==
+              'Details for this destination are not available') {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, 'Place details aren\'t available',
+                bottomMargin: 0);
+          } else {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+          }
+        }
+      } else {
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'Error retrieving place details',
+            bottomMargin: 0);
+      }
+    } catch (error) {
+      print('Failed to fetch place details: $error');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     ScrollController scrollController = ScrollController();
 
-    List<Map<String, dynamic>> activityList = details['activityList'];
+    List<Map<String, dynamic>> activityList =
+        List<Map<String, dynamic>>.from(widget.details['activityList']);
 
     return Card(
       margin: const EdgeInsets.all(12.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Container(
-            color: const Color(0xFF1E889E),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    details['placeName'],
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 23.0,
-                      color: Colors.white,
+          if (widget.details['placeName'].length <= 20)
+            Container(
+              color: const Color(0xFF1E889E),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      widget.details['placeName'],
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 23.0,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                  Text(
-                    '${details['startTime']} - ${details['endTime']}',
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 255, 255, 255),
-                      fontSize: 19,
+                    Text(
+                      '${widget.details['startTime']} - ${widget.details['endTime']}',
+                      style: const TextStyle(
+                        color: Color.fromARGB(255, 255, 255, 255),
+                        fontSize: 19,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
+          if (widget.details['placeName'].length > 20)
+            Container(
+              color: const Color(0xFF1E889E),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.details['placeName'],
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 23.0,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 8.0),
+                    Text(
+                      '${widget.details['startTime']} - ${widget.details['endTime']}',
+                      style: const TextStyle(
+                        color: Color.fromARGB(255, 255, 255, 255),
+                        fontSize: 19,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
@@ -349,7 +454,13 @@ class PlaceCard extends StatelessWidget {
                                 bottom: index == activityList.length - 1 &&
                                         activityList.length >= 3
                                     ? 50.0
-                                    : 0,
+                                    : (activityList.length == 2 &&
+                                                widget.details['placeName']
+                                                        .length >
+                                                    20) &&
+                                            index == activityList.length - 1
+                                        ? 50
+                                        : 0,
                               ),
                               child: TimelineTile(
                                 alignment: TimelineAlign.manual,
@@ -428,16 +539,38 @@ class PlaceCard extends StatelessWidget {
                     width: 130.0,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: Image.asset(
-                        details['imagePath'],
-                        fit: BoxFit.cover,
+                      child: Image.network(
+                        widget.details['imagePath'],
+                        fit: BoxFit.fill,
                       ),
                     ),
                   ),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(100),
                     child: ElevatedButton.icon(
-                      onPressed: () {},
+                      onPressed: () async {
+                        await getDestinationDetails(
+                            widget.details['placeName']);
+
+                        Map<String, dynamic> destination = {
+                          'name': widget.details['placeName'],
+                          'image': widget.details['imagePath']
+                        };
+
+                        // ignore: use_build_context_synchronously
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DestinationDetails(
+                              destination: destination,
+                              token: widget.token,
+                              destinationDetails: destinationDetails,
+                              destinationImages: destinationImages,
+                              ratings: ratings,
+                            ),
+                          ),
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 20,

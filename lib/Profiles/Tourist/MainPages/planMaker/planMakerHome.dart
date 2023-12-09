@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'package:touristine/Profiles/Tourist/MainPages/PlanMaker/myplansList.dart';
+import 'package:touristine/Notifications/SnackBar.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/PlanMaker/myPlansList.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/PlanMaker/planGenerator.dart';
 
 class PlanMakerPage extends StatefulWidget {
@@ -14,7 +17,8 @@ class PlanMakerPage extends StatefulWidget {
 }
 
 class _PlanMakerPageState extends State<PlanMakerPage> {
-  List<Map<String, dynamic>> plans = [
+  List<Map<String, dynamic>> plans = [];
+  List<Map<String, dynamic>> plansSample = [
     {
       'planID': 1, // Plan ID
       'destName': 'Jerusalem', // Dest. Name.
@@ -71,8 +75,19 @@ class _PlanMakerPageState extends State<PlanMakerPage> {
         // (start time and end time), the creation date of the plan. You can
         // see the format of the list called plans at line 16.
         // Note: other data will be added later on.
+        setState(() {
+          // Update state only if the widget is still mounted.
+          plans = List<Map<String, dynamic>>.from(json.decode(response.body));
+          print(plans);
+        });
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
       } else {
-        // Handle other possible cases.
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'Error fetching your plans',
+            bottomMargin: 0);
       }
     } catch (error) {
       print('Error fetching plans: $error');
@@ -85,12 +100,18 @@ class _PlanMakerPageState extends State<PlanMakerPage> {
     fetchUserPlans();
   }
 
-   @override
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: Colors.transparent, // Set the scaffold background color to transparent.
+        backgroundColor: Colors
+            .transparent, // Set the scaffold background color to transparent.
         appBar: PreferredSize(
           preferredSize:
               const Size.fromHeight(30), // Set height to 0 to hide the app bar.
@@ -105,7 +126,8 @@ class _PlanMakerPageState extends State<PlanMakerPage> {
             Container(
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/Images/Profiles/Tourist/homeBackground.jpg'),
+                  image: AssetImage(
+                      'assets/Images/Profiles/Tourist/homeBackground.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -159,7 +181,9 @@ class _PlanMakerPageState extends State<PlanMakerPage> {
                 Expanded(
                   child: TabBarView(
                     children: [
-                      MakePlanTab(token: widget.token,),
+                      MakePlanTab(
+                        token: widget.token,
+                      ),
                       MyPlansTab(
                         token: widget.token,
                         userPlans: plans,

@@ -1,20 +1,24 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/PlanMaker/planPlaces.dart';
 
 class MyPlansTab extends StatefulWidget {
   final String token;
-  final List<Map<String, dynamic>> userPlans;
+  List<Map<String, dynamic>> userPlans;
 
-  const MyPlansTab({super.key, required this.token, required this.userPlans});
+  MyPlansTab({super.key, required this.token, required this.userPlans});
 
   @override
   _MyPlansTabState createState() => _MyPlansTabState();
 }
 
 class _MyPlansTabState extends State<MyPlansTab> {
-  final List<Map<String, dynamic>> planContents = [
+  List<Map<String, dynamic>> planContents = [];
+  final List<Map<String, dynamic>> planContentsSample = [
     {
       'placeName': 'Al-Aqsa Mosque',
       'startTime': '06:00',
@@ -72,11 +76,12 @@ class _MyPlansTabState extends State<MyPlansTab> {
   ];
 
   // A function to delete a specific plan.
-  Future<void> deletePlan(int planId) async {
-    final url = Uri.parse('https://touristine.onrender.com/deleteplan/$planId');
+  Future<void> deletePlan(String planId, int index) async {
+    final url =
+        Uri.parse('https://touristine.onrender.com/delete-plan/$planId');
 
     try {
-      final response = await http.delete(
+      final response = await http.post(
         url,
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -86,9 +91,30 @@ class _MyPlansTabState extends State<MyPlansTab> {
 
       if (response.statusCode == 200) {
         // Success.
-        // Israa, show a message.
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        if (responseData.containsKey('message')) {
+          setState(() {
+            widget.userPlans.removeAt(index);
+          });
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, 'Your plan has been deleted',
+              bottomMargin: 0);
+        } else {
+          print('No message keyword found in the response');
+        }
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+      } else if (response.statusCode == 404) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        print("Plan was not found");
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
       } else {
-        print('Failed to delete the plan. Status code: ${response.statusCode}');
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'Failed to delete this plan',
+            bottomMargin: 0);
       }
     } catch (error) {
       print('Error deleting the plan: $error');
@@ -96,7 +122,7 @@ class _MyPlansTabState extends State<MyPlansTab> {
   }
 
   // A function to fetch a specific plan.
-  Future<void> fetchPlanContents(int planId) async {
+  Future<void> fetchPlanContents(String planID) async {
     final url =
         Uri.parse('https://touristine.onrender.com/fetch-plan-contents');
 
@@ -108,7 +134,7 @@ class _MyPlansTabState extends State<MyPlansTab> {
           'Authorization': 'Bearer ${widget.token}',
         },
         body: {
-          'planID': planId.toString(),
+          'planId': planID,
         },
       );
 
@@ -116,15 +142,72 @@ class _MyPlansTabState extends State<MyPlansTab> {
         // Success.
         // Jenan, return back to me the contents of the plan as List<Map<String, dynamic>>
         // similar to the format shown at line 18 for the planContents list.
-        // Note: other data such as lat and long for the places included in the plan 
+        // Note: other data such as lat and long for the places included in the plan
         // might be added later, I will keep you updated if I will add them.
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        planContents =
+            List<Map<String, dynamic>>.from(responseData['planData']);
+        print(planContents);
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
       } else {
-        // Handle other cases....
-        print('Failed to fetch the plan. Status code: ${response.statusCode}');
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'Error fetching the plan contents',
+            bottomMargin: 0);
       }
     } catch (error) {
       print('Error fetching the plan: $error');
     }
+  }
+
+  // A Function to fetch user plans from the backend.
+  Future<void> fetchUserPlans() async {
+    final url = Uri.parse('https://touristine.onrender.com/get-plans');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer ${widget.token}',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Jenan, I need to retrieve a list of plans - if there is any,
+        // the retrieved list of plans will contain the following info:
+        // the plan ID, Dest. Name, # Of suggested places in the dest.,
+        // total estimated time to spend at the destination, the time
+        // interval (from - to) which will be spent at the dest in general
+        // (start time and end time), the creation date of the plan. You can
+        // see the format of the list called plans at line 16.
+        // Note: other data will be added later on.
+        setState(() {
+          // Update state only if the widget is still mounted.
+          widget.userPlans =
+              List<Map<String, dynamic>>.from(json.decode(response.body));
+          print(widget.userPlans);
+        });
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+      } else {
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'Error fetching your plans',
+            bottomMargin: 0);
+      }
+    } catch (error) {
+      print('Error fetching plans: $error');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserPlans();
   }
 
   @override
@@ -135,7 +218,7 @@ class _MyPlansTabState extends State<MyPlansTab> {
           children: [
             const SizedBox(height: 80),
             Image.asset(
-              'assets/Images/Profiles/Tourist/NoComplaints.gif',
+              'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
               fit: BoxFit.cover,
             ),
             const Text(
@@ -156,27 +239,26 @@ class _MyPlansTabState extends State<MyPlansTab> {
           final plan = widget.userPlans[index];
           return PlanCard(
             plan: plan,
-            onTap: () {
+            onTap: () async {
               // print(plan['places']);
               // Handle the card click event.......................
-              print(plan['planID']);
+              print(plan['planId']);
 
-              print('Card clicked: ${plan['destName']}');
-              fetchPlanContents(plan['planID']);
+              print('Card clicked: ${plan['destination']}');
+              await fetchPlanContents(plan['planId']);
+              // ignore: use_build_context_synchronously
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => PlanPlacesPage(
+                    token: widget.token,
                     planContents: planContents,
                   ),
                 ),
               );
             },
             onDelete: () async {
-              print(plan['planID']);
-              await deletePlan(plan['planID']);
-              setState(() {
-                widget.userPlans.removeAt(index);
-              });
+              print(plan['planId']);
+              await deletePlan(plan['planId'], index);
             },
           );
         },
@@ -218,7 +300,7 @@ class PlanCard extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0, left: 140),
                       child: Text(
-                        plan['destName'],
+                        plan['destination'],
                         style: const TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
@@ -257,7 +339,7 @@ class PlanCard extends StatelessWidget {
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(15.0),
-                          child: Image.asset(
+                          child: Image.network(
                             plan['imagePath'],
                             height: 195,
                             width: 160,

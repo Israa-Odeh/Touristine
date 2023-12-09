@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -5,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/PlanMaker/customBottomSheet.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/PlanMaker/numericStepper.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/PlanMaker/planPlaces.dart';
 import 'package:touristine/Profiles/Tourist/Profile/Sections/interestsFilling.dart';
 
 class MakePlanTab extends StatefulWidget {
@@ -23,15 +26,10 @@ class _MakePlanTabState extends State<MakePlanTab> {
   bool elders = false;
 
   List<String> destinationsList = [
-    'Destination 1',
-    'Destination 2',
-    'Destination 3',
-    'Destination 4',
-    'Destination 5',
-    'Destination 6',
-    'Destination 7',
-    'Destination 8',
-    'Destination 9',
+    'Jerusalem',
+    'Nablus',
+    'Ramallah',
+    'Bethlehem'
   ];
 
   TextEditingController dateController = TextEditingController();
@@ -53,6 +51,9 @@ class _MakePlanTabState extends State<MakePlanTab> {
 
   late PageController pageController;
   int currentPage = 0;
+
+  Map<String, dynamic> planDescription = {};
+  List<Map<String, dynamic>> planContents = [];
 
   @override
   void initState() {
@@ -117,9 +118,28 @@ class _MakePlanTabState extends State<MakePlanTab> {
         // Success.
         // Jenan I need to retreive two things: a map and a list similar to the
         // format for the ones at the end of the file, at lines 1037 and 1052.
+        // Parse the JSON response.
+        final Map<String, dynamic> responseData = json.decode(response.body);
+
+        // Extract plan description and contents.
+        planDescription = responseData['planDescription'];
+        final List<dynamic> rawPlanContents = responseData['planContents'];
+
+        // Convert rawPlanContents to List<Map<String, dynamic>>.
+        planContents = List<Map<String, dynamic>>.from(rawPlanContents);
+
+        print("Plan Description & Plan Contents");
+        print(planDescription);
+        print("\n");
+        print(planContents);
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
       } else {
-        // Handle other cases....
-        print('Failed to store the plan. Status code: ${response.statusCode}');
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'Error storing the plan contents',
+            bottomMargin: 370);
       }
     } catch (error) {
       print('Error storing the plan: $error');
@@ -985,8 +1005,17 @@ class _MakePlanTabState extends State<MakePlanTab> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 50.0),
             child: ElevatedButton(
-              onPressed: () {
-                storePlan();
+              onPressed: () async {
+                await storePlan();
+                // ignore: use_build_context_synchronously
+                Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => PlanPlacesPage(
+                    token: widget.token,
+                    planContents: planContents,
+                  ),
+                ),
+              );
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
@@ -1024,81 +1053,81 @@ class _MakePlanTabState extends State<MakePlanTab> {
 
   ////////////////////////////////// Israa Delete these once finished //////////////////////////////////////
   // The first list..............
-  Map<String, dynamic> planDescription = {
-    'planID': 1, // Plan ID --> required.
-    'destName': 'Jerusalem', // I already have it --> no need.
-    'numOfPlaces': 5, // # Of suggested places in the dest --> required.
-    'totalTime':
-        5, // total estimated time to spend at the destination --> I already have it --> no need.
-    'startTime': '10:00', // I already have it --> no need.
-    'endTime': '15:00', // I already have it --> no need.
-    'imagePath':
-        'assets/Images/Profiles/Tourist/1T.png', // An image indicating the destination --> required.
-    'date':
-        '26/05/2023', // The creation date of the plan --> I already have it --> no need.
-  };
+  // Map<String, dynamic> planDescription = {
+  //   'planID': 1, // Plan ID --> required.
+  //   'destName': 'Jerusalem', // I already have it --> no need.
+  //   'numOfPlaces': 5, // # Of suggested places in the dest --> required.
+  //   'totalTime':
+  //       5, // total estimated time to spend at the destination --> I already have it --> no need.
+  //   'startTime': '10:00', // I already have it --> no need.
+  //   'endTime': '15:00', // I already have it --> no need.
+  //   'imagePath':
+  //       'assets/Images/Profiles/Tourist/1T.png', // An image indicating the destination --> required.
+  //   'date':
+  //       '26/05/2023', // The creation date of the plan --> I already have it --> no need.
+  // };
 
   // The second list............
-  final List<Map<String, dynamic>> planContents = [
-    {
-      'placeName': 'Al-Aqsa Mosque',
-      'startTime': '06:00',
-      'endTime': '08:00',
-      'activityList': [
-        {
-          'title': 'Praying at Al-Aqsa',
-          'description':
-              'Praying at Al-Aqsa Mosque and making a tour at the museum.'
-        },
-      ],
-      'imagePath': 'assets/Images/Profiles/Tourist/1T.png',
-      'latitude': 32.0846676,
-      'longitude': 35.3296158,
-    },
-    {
-      'placeName': 'The old Town',
-      'startTime': '08:30',
-      'endTime': '10:30',
-      'activityList': [
-        {
-          'title': 'Falafel Restaurant',
-          'description':
-              'Eating breakfast at Al-Quds traditional falafel Restaurant.'
-        },
-        {
-          'title': 'Tour in the Souq',
-          'description':
-              'Making a tour and buying from the traditional souq of Al-Quds.'
-        },
-      ],
-      'imagePath': 'assets/Images/Profiles/Tourist/2T.jpg',
-      'latitude': 32.0846676,
-      'longitude': 35.3296158,
-    },
-    {
-      'placeName': 'Sepulchre Church',
-      'startTime': '11:00',
-      'endTime': '13:00',
-      'activityList': [
-        {
-          'title': 'Explore the Chapels',
-          'description':
-              'Explore these chapels, each with its unique details and history.'
-        },
-        {
-          'title': 'Learn about the History',
-          'description':
-              'Take the time to learn about the rich history of the church.'
-        },
-        {
-          'title': 'Learn about the History',
-          'description':
-              'Take the time to learn about the rich history of the church.'
-        },
-      ],
-      'imagePath': 'assets/Images/Profiles/Tourist/3T.jpg',
-      'latitude': 32.0846676,
-      'longitude': 35.3296158,
-    },
-  ];
+//   final List<Map<String, dynamic>> planContents = [
+//     {
+//       'placeName': 'Al-Aqsa Mosque',
+//       'startTime': '06:00',
+//       'endTime': '08:00',
+//       'activityList': [
+//         {
+//           'title': 'Praying at Al-Aqsa',
+//           'description':
+//               'Praying at Al-Aqsa Mosque and making a tour at the museum.'
+//         },
+//       ],
+//       'imagePath': 'assets/Images/Profiles/Tourist/1T.png',
+//       'latitude': 32.0846676,
+//       'longitude': 35.3296158,
+//     },
+//     {
+//       'placeName': 'The old Town',
+//       'startTime': '08:30',
+//       'endTime': '10:30',
+//       'activityList': [
+//         {
+//           'title': 'Falafel Restaurant',
+//           'description':
+//               'Eating breakfast at Al-Quds traditional falafel Restaurant.'
+//         },
+//         {
+//           'title': 'Tour in the Souq',
+//           'description':
+//               'Making a tour and buying from the traditional souq of Al-Quds.'
+//         },
+//       ],
+//       'imagePath': 'assets/Images/Profiles/Tourist/2T.jpg',
+//       'latitude': 32.0846676,
+//       'longitude': 35.3296158,
+//     },
+//     {
+//       'placeName': 'Sepulchre Church',
+//       'startTime': '11:00',
+//       'endTime': '13:00',
+//       'activityList': [
+//         {
+//           'title': 'Explore the Chapels',
+//           'description':
+//               'Explore these chapels, each with its unique details and history.'
+//         },
+//         {
+//           'title': 'Learn about the History',
+//           'description':
+//               'Take the time to learn about the rich history of the church.'
+//         },
+//         {
+//           'title': 'Learn about the History',
+//           'description':
+//               'Take the time to learn about the rich history of the church.'
+//         },
+//       ],
+//       'imagePath': 'assets/Images/Profiles/Tourist/3T.jpg',
+//       'latitude': 32.0846676,
+//       'longitude': 35.3296158,
+//     },
+//   ];
 }
