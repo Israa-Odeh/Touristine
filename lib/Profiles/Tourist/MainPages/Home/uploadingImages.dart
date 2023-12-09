@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -29,8 +30,8 @@ class _UploadingImagesPageState extends State<UploadingImagesPage> {
       return false;
     }
     if (selectedKeywords.isEmpty) {
-      showCustomSnackBar(context, 'Please select at least one keyword',
-          bottomMargin: 425);
+      showCustomSnackBar(context, 'Please select at least one category',
+          bottomMargin: 400);
       return false;
     }
     return true;
@@ -53,7 +54,7 @@ class _UploadingImagesPageState extends State<UploadingImagesPage> {
     request.fields['destinationName'] = widget.destinationName;
 
     // Add keywords to the request.
-    request.fields['keywords'] = selectedKeywords.join(',');
+    request.fields['keywords'] = selectedKeywords.join(', ');
 
     // Add images to the request.
     for (int i = 0; i < selectedImages.length; i++) {
@@ -74,12 +75,30 @@ class _UploadingImagesPageState extends State<UploadingImagesPage> {
 
       if (response.statusCode == 200) {
         // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, 'Thanks for sharing your experience',
-            bottomMargin: 370);
-      } else {
-        // Handle other status codes if needed.
+        showCustomSnackBar(
+            context, 'Thanks for sharing these images!',
+            bottomMargin: 400);
+      } 
+      else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+
+        if (responseData.containsKey('error')) {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, responseData['error'], bottomMargin: 400);
+        } 
+        else {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, responseData['message'],
+              bottomMargin: 400);
+        }
+      } 
+      else {
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'Failed to upload the images',
+            bottomMargin: 400);
       }
-    } catch (error) {
+    } 
+    catch (error) {
       print('Error uploading images: $error');
     }
   }
@@ -324,9 +343,9 @@ class _UploadingImagesPageState extends State<UploadingImagesPage> {
               ),
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 if (validateForm()) {
-                  uploadImages();
+                  await uploadImages();
                 }
               },
               style: ElevatedButton.styleFrom(
