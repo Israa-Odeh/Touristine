@@ -52,6 +52,8 @@ class _AddDestTabState extends State<AddDestTab> {
     'Luxurious',
   ];
 
+  List<String> citiesList = ['Jerusalem', 'Nablus', 'Ramallah', 'Bethlehem'];
+
   // A function to store the created destination details.
   Future<void> storeDestination() async {
     String currentDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
@@ -188,6 +190,25 @@ class _AddDestTabState extends State<AddDestTab> {
       if (value != null) {
         setState(() {
           selectedBudget = value;
+        });
+      }
+    });
+  }
+
+  String selectedCity = '';
+  void showCityBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomBottomSheet(
+          itemsList: citiesList,
+        );
+      },
+    ).then((value) {
+      // Handle the selected item from the bottom sheet.
+      if (value != null) {
+        setState(() {
+          selectedCity = value;
         });
       }
     });
@@ -639,6 +660,37 @@ class _AddDestTabState extends State<AddDestTab> {
             destBorderIconColor,
             FontAwesomeIcons.locationDot,
           ),
+          // const SizedBox(height: 15),
+          // ElevatedButton(
+          //   onPressed: showCityBottomSheet,
+          //   style: ElevatedButton.styleFrom(
+          //     backgroundColor: const Color.fromARGB(255, 220, 220, 220),
+          //     shape: RoundedRectangleBorder(
+          //       borderRadius: BorderRadius.circular(20.0),
+          //     ),
+          //   ),
+          //   child: SizedBox(
+          //     height: 50,
+          //     child: Row(
+          //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //       children: [
+          //         Padding(
+          //           padding: const EdgeInsets.only(left: 5.0),
+          //           child: Text(
+          //             selectedCity.isEmpty ? 'Select City' : selectedCity,
+          //             style: const TextStyle(
+          //                 color: Color.fromARGB(163, 0, 0, 0), fontSize: 22),
+          //           ),
+          //         ),
+          //         const FaIcon(
+          //           FontAwesomeIcons.list,
+          //           color: Color.fromARGB(100, 0, 0, 0),
+          //           size: 28,
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
           const SizedBox(height: 15),
           ElevatedButton(
             onPressed: showCategorisBottomSheet,

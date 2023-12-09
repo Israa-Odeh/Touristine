@@ -48,6 +48,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
 
   List<Map<String, dynamic>> reviews = [];
   List<Map<String, dynamic>> complaints = [];
+  List<Map<String, dynamic>> uploadedImages = [];
 
   @override
   void initState() {
@@ -408,49 +409,24 @@ class _DestinationDetailsState extends State<DestinationDetails> {
       if (response.statusCode == 200) {
         // Jenan, I need to retrieve a list of uplaoded images by this user for this dest.
         // with the keywords added when images are uplaoded from the upload interface.
-        // The format of the retreived data is as follows:
-        /*
-        List<Map<String, dynamic>> uploadedImages = [
-          {
-            'uploadID': 1,
-            'keywords': 'General, Services',
-            'date': '29/11/2023',
-            'imageUrls': [
-              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Switzerland-Landscapes-1170x780.jpg',
-              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Zermatt-at-night.jpeg',
-            ],
-            'status': 'Approved'
-          },
-          {
-            'uploadID': 2,
-            'keywords': 'Buildings, Cracks',
-            'date': '28/11/2023',
-            'imageUrls': [
-              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Colorful-summer-view-of-Lauterbrunnen-village.jpeg',
-              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Lucerne-skyline.jpeg',
-              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Chillion-Castle.jpeg',
-              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Murren-landscapes.jpeg',
-            ],
-            'status': 'Rejected'
-          },
-          {
-            'uploadID': 3,
-            'keywords': 'General',
-            'date': '07/10/2023',
-            'imageUrls': [
-              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Gruyeres.jpeg',
-              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Geneva-fountain.jpeg',
-              'https://www.travelanddestinations.com/wp-content/uploads/2018/04/Views-from-Grossmu%CC%88nster-Zurich.jpg',
-              'https://www.petalrepublic.com/wp-content/uploads/2023/07/Heather.jpeg.webp',
-              'https://www.petalrepublic.com/wp-content/uploads/2023/07/Heather.jpeg.webp',
-            ],
-            'status': 'Pending'
-          },
-          // Add more uploads as needed....
-        ];
-        */
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        if (responseData.containsKey('uploadedImages')) {
+          uploadedImages =
+              List<Map<String, dynamic>>.from(responseData['uploadedImages']);
+          print(uploadedImages);
+        } else {
+          print('No uploadedImages keyword found in the response');
+        }
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 310);
+      } else if (response.statusCode == 404) {
+        print("Uploaded images list is empty");
       } else {
-        print('Failed to fetch uploads. Status code: ${response.statusCode}');
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'Error retrieving your uploads',
+            bottomMargin: 310);
       }
     } catch (error) {
       print('Error fetching uploads: $error');
@@ -2027,55 +2003,57 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               ElevatedButton(
-                                onPressed: () {
-                                  fetchUploadedImages();
+                                onPressed: () async {
+                                  await fetchUploadedImages();
+                                  // ignore: use_build_context_synchronously
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => UploadedImagesPage(
-                                        token: widget.token,
-                                        destinationName:
-                                            widget.destination['name'],
-                                        // Dummy list of uploaded images (replace it with your actual data)
-                                        uploadedImages: const [
-                                          {
-                                            'uploadID': 1,
-                                            'keywords': 'General, Services',
-                                            'date': '29/11/2023',
-                                            'imageUrls': [
-                                              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Switzerland-Landscapes-1170x780.jpg',
-                                              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Zermatt-at-night.jpeg',
-                                            ],
-                                            'status': 'Pending'
-                                          },
-                                          {
-                                            'uploadID': 2,
-                                            'keywords': 'Buildings, Cracks',
-                                            'date': '28/11/2023',
-                                            'imageUrls': [
-                                              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Colorful-summer-view-of-Lauterbrunnen-village.jpeg',
-                                              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Lucerne-skyline.jpeg',
-                                              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Chillion-Castle.jpeg',
-                                              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Murren-landscapes.jpeg',
-                                            ],
-                                            'status': 'Approved'
-                                          },
-                                          {
-                                            'uploadID': 3,
-                                            'keywords': 'General',
-                                            'date': '07/10/2023',
-                                            'imageUrls': [
-                                              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Gruyeres.jpeg',
-                                              'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Geneva-fountain.jpeg',
-                                              'https://www.travelanddestinations.com/wp-content/uploads/2018/04/Views-from-Grossmu%CC%88nster-Zurich.jpg',
-                                              'https://www.petalrepublic.com/wp-content/uploads/2023/07/Heather.jpeg.webp',
-                                              'https://www.petalrepublic.com/wp-content/uploads/2023/07/Heather.jpeg.webp',
-                                            ],
-                                            'status': 'Rejected'
-                                          },
-                                          // Add more entries as needed
-                                        ],
-                                      ),
+                                          token: widget.token,
+                                          destinationName:
+                                              widget.destination['name'],
+                                          // Dummy list of uploaded images (replace it with your actual data)
+                                          uploadedImages: uploadedImages
+                                          // const [
+                                          //   {
+                                          //     'uploadID': 1,
+                                          //     'keywords': 'General, Services',
+                                          //     'date': '29/11/2023',
+                                          //     'imageUrls': [
+                                          //       'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Switzerland-Landscapes-1170x780.jpg',
+                                          //       'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Zermatt-at-night.jpeg',
+                                          //     ],
+                                          //     'status': 'Pending'
+                                          //   },
+                                          //   {
+                                          //     'uploadID': 2,
+                                          //     'keywords': 'Buildings, Cracks',
+                                          //     'date': '28/11/2023',
+                                          //     'imageUrls': [
+                                          //       'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Colorful-summer-view-of-Lauterbrunnen-village.jpeg',
+                                          //       'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Lucerne-skyline.jpeg',
+                                          //       'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Chillion-Castle.jpeg',
+                                          //       'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Murren-landscapes.jpeg',
+                                          //     ],
+                                          //     'status': 'Approved'
+                                          //   },
+                                          //   {
+                                          //     'uploadID': 3,
+                                          //     'keywords': 'General',
+                                          //     'date': '07/10/2023',
+                                          //     'imageUrls': [
+                                          //       'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Gruyeres.jpeg',
+                                          //       'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Geneva-fountain.jpeg',
+                                          //       'https://www.travelanddestinations.com/wp-content/uploads/2018/04/Views-from-Grossmu%CC%88nster-Zurich.jpg',
+                                          //       'https://www.petalrepublic.com/wp-content/uploads/2023/07/Heather.jpeg.webp',
+                                          //       'https://www.petalrepublic.com/wp-content/uploads/2023/07/Heather.jpeg.webp',
+                                          //     ],
+                                          //     'status': 'Rejected'
+                                          //   },
+                                          //   // Add more entries as needed
+                                          // ],
+                                          ),
                                     ),
                                   );
                                 },
