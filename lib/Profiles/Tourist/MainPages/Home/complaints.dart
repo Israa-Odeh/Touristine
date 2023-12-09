@@ -205,7 +205,7 @@ class ComplaintCard extends StatelessWidget {
                                 ),
                               ),
                               child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10.0),
+                                borderRadius: BorderRadius.circular(8.0),
                                 child: Image.network(
                                   complaint['images'][imgIndex] as String,
                                   width: 100,
@@ -224,16 +224,19 @@ class ComplaintCard extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    complaint['date'],
-                    style: const TextStyle(
-                        fontSize: 19.5,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'Time New Roman',
-                        color: Color.fromARGB(255, 14, 63, 73)),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15.0),
+                    child: Text(
+                      complaint['date'],
+                      style: const TextStyle(
+                          fontSize: 19.5,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'Time New Roman',
+                          color: Color.fromARGB(255, 14, 63, 73)),
+                    ),
                   ),
                   Text(
-                    complaint['status'],
+                    complaint['seen'].toLowerCase() == true? 'Seen': 'Unseen',
                     style: const TextStyle(
                         fontSize: 19.5,
                         fontWeight: FontWeight.w600,

@@ -100,8 +100,14 @@ class _AddingComplaintsPageState extends State<AddingComplaintsPage> {
             bottomMargin: 0);
       } else if (response.statusCode == 500) {
         final Map<String, dynamic> responseData = json.decode(response.body);
-        // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+        if (responseData.containsKey('error')) {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+        } else {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, responseData['message'],
+              bottomMargin: 0);
+        }
       } else {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'Error storing your complaint',
