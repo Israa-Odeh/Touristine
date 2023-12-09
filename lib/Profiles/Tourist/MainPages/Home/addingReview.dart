@@ -12,6 +12,7 @@ class AddingReviewPage extends StatefulWidget {
   final int reviewStars;
   final String reviewTitle;
   final String reviewContent;
+  final Function onReviewAdded;
 
   const AddingReviewPage(
       {super.key,
@@ -19,7 +20,8 @@ class AddingReviewPage extends StatefulWidget {
       required this.destinationName,
       this.reviewStars = 0,
       this.reviewTitle = "",
-      this.reviewContent = ""});
+      this.reviewContent = "",
+      required this.onReviewAdded});
   @override
   _AddingReviewPageState createState() => _AddingReviewPageState();
 }
@@ -96,6 +98,8 @@ class _AddingReviewPageState extends State<AddingReviewPage> {
           // ignore: use_build_context_synchronously
           showCustomSnackBar(context, 'Thanks for sharing your review',
               bottomMargin: 370);
+          // Call the callback to trigger getDestinationDetails.
+          widget.onReviewAdded();
         } else {
           // ignore: use_build_context_synchronously
           showCustomSnackBar(context, 'Your review has been updated',

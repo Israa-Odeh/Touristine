@@ -15,14 +15,15 @@ import 'package:http/http.dart' as http;
 import 'package:touristine/Profiles/Tourist/MainPages/Home/uploadedImages.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/uploadingImages.dart';
 
+// ignore: must_be_immutable
 class DestinationDetails extends StatefulWidget {
   final String token;
   final Map<String, dynamic> destination;
-  final Map<String, dynamic> destinationDetails;
-  final List<Map<String, dynamic>> destinationImages;
-  final Map<String, int> ratings;
+  Map<String, dynamic> destinationDetails;
+  List<Map<String, dynamic>> destinationImages;
+  Map<String, int> ratings;
 
-  const DestinationDetails(
+  DestinationDetails(
       {super.key,
       required this.token,
       required this.destination,
@@ -148,6 +149,10 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                     reviewStars: responseData['stars'],
                     reviewTitle: responseData['title'],
                     reviewContent: responseData['content'],
+                    onReviewAdded: () {
+                      // This function will be called when a new review is added.
+                      getDestinationDetails(widget.destination['name']);
+                    },
                   )),
         );
       } else if (response.statusCode == 500) {
@@ -166,6 +171,10 @@ class _DestinationDetailsState extends State<DestinationDetails> {
               builder: (context) => AddingReviewPage(
                     token: widget.token,
                     destinationName: widget.destination['name'],
+                    onReviewAdded: () {
+                      // This function will be called when a new review is added.
+                      getDestinationDetails(widget.destination['name']);
+                    },
                   )),
         );
       } else {
@@ -175,6 +184,63 @@ class _DestinationDetailsState extends State<DestinationDetails> {
       }
     } catch (error) {
       print('Failed to fetch your review: $error');
+    }
+  }
+
+  // A function to retrieve all of the destination details.
+  Future<void> getDestinationDetails(String destName) async {
+    final url =
+        Uri.parse('https://touristine.onrender.com/get-destination-details');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer ${widget.token}',
+        },
+        body: {
+          'destinationName': destName,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Success.
+        // Parse the response body.
+        final Map<String, dynamic> responseData = json.decode(response.body);
+
+        // Extract destinationImages as List<Map<String, dynamic>>
+        widget.destinationImages =
+            List<Map<String, dynamic>>.from(responseData['destinationImages']);
+
+        // Access destination details and other data.
+        widget.destinationDetails = responseData['destinationDetails'];
+        widget.ratings = Map<String, int>.from(responseData['rating']);
+
+        // Now you can use the data as needed
+        print('Destination Images: ${widget.destinationImages}');
+        print('Destination Details: ${widget.destinationDetails}');
+        print('Rating: ${widget.ratings}');
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        if (responseData.containsKey('error')) {
+          if (responseData['error'] ==
+              'Details for this destination are not available') {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, 'Place details aren\'t available',
+                bottomMargin: 0);
+          } else {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+          }
+        }
+      } else {
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'Error retrieving place details',
+            bottomMargin: 0);
+      }
+    } catch (error) {
+      print('Failed to fetch place details: $error');
     }
   }
 

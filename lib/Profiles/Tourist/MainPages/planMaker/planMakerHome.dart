@@ -65,29 +65,31 @@ class _PlanMakerPageState extends State<PlanMakerPage> {
           'Authorization': 'Bearer ${widget.token}',
         },
       );
-
-      if (response.statusCode == 200) {
-        // Jenan, I need to retrieve a list of plans - if there is any,
-        // the retrieved list of plans will contain the following info:
-        // the plan ID, Dest. Name, # Of suggested places in the dest.,
-        // total estimated time to spend at the destination, the time
-        // interval (from - to) which will be spent at the dest in general
-        // (start time and end time), the creation date of the plan. You can
-        // see the format of the list called plans at line 16.
-        // Note: other data will be added later on.
-        setState(() {
-          // Update state only if the widget is still mounted.
-          plans = List<Map<String, dynamic>>.from(json.decode(response.body));
-          print(plans);
-        });
-      } else if (response.statusCode == 500) {
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
-      } else {
-        // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, 'Error fetching your plans',
-            bottomMargin: 0);
+      if (mounted) {
+        // Check if the widget is still mounted before updating the state.
+        if (response.statusCode == 200) {
+          // Jenan, I need to retrieve a list of plans - if there is any,
+          // the retrieved list of plans will contain the following info:
+          // the plan ID, Dest. Name, # Of suggested places in the dest.,
+          // total estimated time to spend at the destination, the time
+          // interval (from - to) which will be spent at the dest in general
+          // (start time and end time), the creation date of the plan. You can
+          // see the format of the list called plans at line 16.
+          // Note: other data will be added later on.
+          setState(() {
+            // Update state only if the widget is still mounted.
+            plans = List<Map<String, dynamic>>.from(json.decode(response.body));
+            print(plans);
+          });
+        } else if (response.statusCode == 500) {
+          final Map<String, dynamic> responseData = json.decode(response.body);
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+        } else {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, 'Error fetching your plans',
+              bottomMargin: 0);
+        }
       }
     } catch (error) {
       print('Error fetching plans: $error');

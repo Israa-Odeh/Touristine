@@ -20,7 +20,7 @@ class UploadedImagesPage extends StatefulWidget {
 
 class _UploadedImagesPageState extends State<UploadedImagesPage> {
   // A function to delete a specific upload.
-  Future<void> deleteUploadedImages(int uploadID) async {
+  Future<void> deleteUploadedImages(String uploadID) async {
     final url =
         Uri.parse('https://touristine.onrender.com/deleteuploads/$uploadID');
 
