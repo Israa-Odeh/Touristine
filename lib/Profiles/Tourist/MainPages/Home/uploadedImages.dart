@@ -81,8 +81,6 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final ScrollController scrollController = ScrollController();
-
     return Scaffold(
       body: Padding(
         padding:
