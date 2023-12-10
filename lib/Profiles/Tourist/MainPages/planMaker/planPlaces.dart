@@ -111,8 +111,8 @@ class _PlanPlacesPageState extends State<PlanPlacesPage> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(100),
                 child: ElevatedButton(
-                  onPressed: () {
-                    getCurrentPosition();
+                  onPressed: () async {
+                    await getCurrentPosition();
                     if (isLocDetermined) {
                       List<LatLng> destinationsLatLng = [];
 
@@ -121,6 +121,7 @@ class _PlanPlacesPageState extends State<PlanPlacesPage> {
                         double longitude = double.parse(place['longitude']);
                         destinationsLatLng.add(LatLng(latitude, longitude));
                       }
+                      // ignore: use_build_context_synchronously
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => PlanPaths(

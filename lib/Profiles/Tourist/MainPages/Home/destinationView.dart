@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -444,9 +445,9 @@ class _DestinationDetailsState extends State<DestinationDetails> {
       setState(() {
         // print(_currentPosition!.latitude);
         // print(_currentPosition!.longitude);
-        airDistance = Geolocator.distanceBetween(_currentPosition!.latitude,
-                _currentPosition!.longitude, destLat, destLng) /
-            1000;
+        // airDistance = Geolocator.distanceBetween(_currentPosition!.latitude,
+        //         _currentPosition!.longitude, destLat, destLng) /
+        //     1000;
         // print("**************************************************");
         // print(airDistance);
         // print("**************************************************");
@@ -475,6 +476,9 @@ class _DestinationDetailsState extends State<DestinationDetails> {
           final startAddress = legs[0]['start_address'] as String;
           final endAddress = legs[0]['end_address'] as String;
 
+          final airDistance =
+              calculateAirDistance(startLat, startLng, endLat, endLng);
+
           isRouteFetched = true;
           // Convert duration to hours and minutes
           final int hours = duration ~/ 3600;
@@ -502,6 +506,28 @@ class _DestinationDetailsState extends State<DestinationDetails> {
     };
   }
 
+  double calculateAirDistance(
+      double startLat, double startLng, double endLat, double endLng) {
+    const earthRadius = 6371.0; // Radius of the Earth in kilometers.
+
+    final lat1Rad = startLat * (pi / 180.0);
+    final lng1Rad = startLng * (pi / 180.0);
+    final lat2Rad = endLat * (pi / 180.0);
+    final lng2Rad = endLng * (pi / 180.0);
+
+    final dlat = lat2Rad - lat1Rad;
+    final dlng = lng2Rad - lng1Rad;
+
+    final a = pow(sin(dlat / 2), 2) +
+        cos(lat1Rad) * cos(lat2Rad) * pow(sin(dlng / 2), 2);
+
+    final c = 2 * atan2(sqrt(a), sqrt(1 - a));
+
+    final distance = earthRadius * c;
+
+    return distance;
+  }
+
   void fetchRouteClicked() async {
     try {
       await _getCurrentPosition();
@@ -512,6 +538,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
 
         if (directions['distance'] != -1.0) {
           distanceFromTo = directions['distance'];
+          airDistance = directions['airDistance'];
           timeFromToH = directions['duration']['hours'];
           timeFromToMin = directions['duration']['minutes'];
 
@@ -1458,9 +1485,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                         onPressed: () {
                           fetchRouteClicked();
                           if (isRouteFetched) {
-                            setState(() {
-                              /////////////////////////////////////////////////////////////////////////
-                            });
+                            setState(() {});
                           }
                         },
                         style: ElevatedButton.styleFrom(
