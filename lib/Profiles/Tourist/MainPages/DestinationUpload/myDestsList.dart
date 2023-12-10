@@ -110,7 +110,7 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
             ),
           )
         : Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20.0),
+            padding: const EdgeInsets.symmetric(vertical: 0.0),
             child: ListView.builder(
               itemCount: widget.uploadedDestinations.length,
               itemBuilder: (context, index) {
@@ -297,24 +297,54 @@ class _DestinationCardState extends State<DestinationCard> {
                 ),
               ),
             ),
-            // Destination name and category row.
             Padding(
               padding:
                   const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          widget.destination['destinationName'] ?? '',
+                          style: const TextStyle(
+                            color: Color.fromARGB(255, 12, 53, 61),
+                            fontFamily: 'Zilla Slab Light',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 23,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              child:
+                  Divider(thickness: 3, color: Color.fromARGB(80, 19, 83, 96)),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 2.0, bottom: 2.0),
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    widget.destination['destinationName'] ?? '',
+                    widget.destination['category'] ?? '',
                     style: const TextStyle(
                         color: Color.fromARGB(255, 12, 53, 61),
                         fontFamily: 'Zilla Slab Light',
                         fontWeight: FontWeight.bold,
-                        fontSize: 23),
+                        fontSize: 18),
                   ),
-                  Text(
-                    widget.destination['category'] ?? '',
-                    style: const TextStyle(
+                  const Text(
+                    "Bethlehem",
+                    style: TextStyle(
                         color: Color.fromARGB(255, 12, 53, 61),
                         fontFamily: 'Zilla Slab Light',
                         fontWeight: FontWeight.bold,

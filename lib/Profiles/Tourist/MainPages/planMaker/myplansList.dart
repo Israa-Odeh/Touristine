@@ -19,62 +19,6 @@ class MyPlansTab extends StatefulWidget {
 
 class _MyPlansTabState extends State<MyPlansTab> {
   List<Map<String, dynamic>> planContents = [];
-  final List<Map<String, dynamic>> planContentsSample = [
-    {
-      'placeName': 'Al-Aqsa Mosque',
-      'startTime': '06:00',
-      'endTime': '08:00',
-      'activityList': [
-        {
-          'title': 'Praying at Al-Aqsa',
-          'description':
-              'Praying at Al-Aqsa Mosque and making a tour at the museum.'
-        },
-      ],
-      'imagePath': 'assets/Images/Profiles/Tourist/1T.png'
-    },
-    {
-      'placeName': 'The old Town',
-      'startTime': '08:30',
-      'endTime': '10:30',
-      'activityList': [
-        {
-          'title': 'Falafel Restaurant',
-          'description':
-              'Eating breakfast at Al-Quds traditional falafel Restaurant.'
-        },
-        {
-          'title': 'Tour in the Souq',
-          'description':
-              'Making a tour and buying from the traditional souq of Al-Quds.'
-        },
-      ],
-      'imagePath': 'assets/Images/Profiles/Tourist/2T.jpg'
-    },
-    {
-      'placeName': 'Sepulchre Church',
-      'startTime': '11:00',
-      'endTime': '13:00',
-      'activityList': [
-        {
-          'title': 'Explore the Chapels',
-          'description':
-              'Explore these chapels, each with its unique details and history.'
-        },
-        {
-          'title': 'Learn about the History',
-          'description':
-              'Take the time to learn about the rich history of the church.'
-        },
-        {
-          'title': 'Learn about the History',
-          'description':
-              'Take the time to learn about the rich history of the church.'
-        },
-      ],
-      'imagePath': 'assets/Images/Profiles/Tourist/3T.jpg'
-    },
-  ];
 
   // A function to delete a specific plan.
   Future<void> deletePlan(String planId, int index) async {
