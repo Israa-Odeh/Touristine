@@ -510,11 +510,13 @@ class _DestinationDetailsState extends State<DestinationDetails> {
       double startLat, double startLng, double endLat, double endLng) {
     const earthRadius = 6371.0; // Radius of the Earth in kilometers.
 
+    // Conversion from degrees to radians.
     final lat1Rad = startLat * (pi / 180.0);
     final lng1Rad = startLng * (pi / 180.0);
     final lat2Rad = endLat * (pi / 180.0);
     final lng2Rad = endLng * (pi / 180.0);
-
+    
+    // differences in latitude and longitude.
     final dlat = lat2Rad - lat1Rad;
     final dlng = lng2Rad - lng1Rad;
 
