@@ -286,65 +286,6 @@ class _DestinationDetailsState extends State<DestinationDetails> {
     }
   }
 
-  List<Map<String, dynamic>> complaintsSample = [
-    {
-      'title': 'Slow Service',
-      'content': 'The service at the restaurant was incredibly slow.',
-      'date': '25/10/2019',
-      // There are images.
-      'images': [
-        {
-          'url':
-              'https://cdn.britannica.com/84/73184-050-05ED59CB/Sunflower-field-Fargo-North-Dakota.jpg'
-        },
-        {
-          'url':
-              'https://cdn.britannica.com/89/131089-050-A4773446/flowers-garden-petunia.jpg'
-        },
-        {
-          'url':
-              'https://cdn.britannica.com/89/131089-050-A4773446/flowers-garden-petunia.jpg'
-        },
-        {
-          'url':
-              'https://cdn.britannica.com/89/131089-050-A4773446/flowers-garden-petunia.jpg'
-        },
-      ],
-      'status': 'Seen'
-    },
-    {
-      'title': 'Dirty Room',
-      'content': 'The hotel room was not clean upon arrival.',
-      'date': '15/05/2020',
-      // There are images.
-      'images': [
-        {
-          'url':
-              'https://www.petalrepublic.com/wp-content/uploads/2023/07/Heather.jpeg.webp'
-        },
-        {
-          'url':
-              'https://cdn.britannica.com/89/131089-050-A4773446/flowers-garden-petunia.jpg'
-        },
-      ],
-      'status': 'Unseen'
-    },
-    {
-      'title': 'Dirty Room',
-      'content': 'The hotel room was not clean upon arrival.',
-      'date': '20/11/2022',
-      // There are no images attached to this complaint.
-      'status': 'Unseen'
-    },
-    {
-      'title': 'Noisy Environment',
-      'content': 'The neighborhood was too noisy during the night.',
-      'date': '17/09/2023',
-      // There are no images attached to this complaint.
-      'status': 'Seen'
-    },
-  ];
-
   // A Function to fetch user complaints from the backend.
   Future<void> fetchUserComplaints() async {
     final url = Uri.parse('https://touristine.onrender.com/get-complaints');

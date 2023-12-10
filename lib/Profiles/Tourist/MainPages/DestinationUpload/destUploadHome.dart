@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/DestinationUpload/destGenerator.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/DestinationUpload/myDestsList.dart';
 
@@ -14,6 +17,9 @@ class DestsUploadHomePage extends StatefulWidget {
 }
 
 class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
+  List<Map<String, dynamic>> uploadedDestinations = [];
+  late Future<void> fetchUploadedDestsFuture;
+
   // A Function to fetch user uploaded destinations.
   Future<void> fetchUploadedDests() async {
     final url = Uri.parse('https://touristine.onrender.com/get-uploaded-dests');
@@ -28,34 +34,32 @@ class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
       );
 
       if (response.statusCode == 200) {
-        // Jenan, I need to retrieve a list of uploaded destinations in the following format:
-        /*
-        final List<Map<String, dynamic>> destinations = [
-          {
-            'destID': 1,
-            'date': '07/10/2023',
-            'destinationName': 'Al-Aqsa Mosque',
-            'category': 'Religious Landmarks',
-            'budget': 'Mid-Range',
-            'timeToSpend': '12h and 30 min',
-            'sheltered': true, // or false
-            'status': 'Seen', // or Unseen
-            'about':
-                'It is situated in the heart of the Old City of Jerusalem, is one of the holiest sites in Islam.',
-            'imagesURLs': [
-              'assets/Images/Profiles/Tourist/1T.png',
-              'assets/Images/Profiles/Tourist/11T.jpg',
-              'assets/Images/Profiles/Tourist/10T.jpg'
-            ],
-            // If the status of the uploaded dest is unseen, by default there
-            // won't be an admin comment, so don't send this field in such cases.
-            'adminComment': "This destination already exists."
-          },
-          ///////////////Other destinations.
-        ]; 
-        */
+        final List<dynamic> responseData = json.decode(response.body);
+
+        // Convert destinationsData into a list of maps.
+        uploadedDestinations = responseData.map((destinationData) {
+          return {
+            'destID': destinationData['destID'],
+            'date': destinationData['date'],
+            'destinationName': destinationData['destinationName'],
+            'category': destinationData['category'],
+            'budget': destinationData['budget'],
+            'timeToSpend': destinationData['timeToSpend'],
+            'sheltered': destinationData['sheltered'],
+            'status': destinationData['status'],
+            'about': destinationData['about'],
+            'imagesURLs': destinationData['imagesURLs'],
+          };
+        }).toList();
+        print(uploadedDestinations);
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
       } else {
-        // Handle other possible cases.
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'Error retrieving your places',
+            bottomMargin: 0);
       }
     } catch (error) {
       print('Error fetching uploaded dests: $error');
@@ -65,7 +69,7 @@ class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
   @override
   void initState() {
     super.initState();
-    fetchUploadedDests();
+    fetchUploadedDestsFuture = fetchUploadedDests();
   }
 
   @override
@@ -83,7 +87,6 @@ class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
         ),
         body: Stack(
           children: [
-            // Background Image.
             Container(
               decoration: const BoxDecoration(
                 image: DecorationImage(
@@ -145,9 +148,24 @@ class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
                       AddDestTab(
                         token: widget.token,
                       ),
-                      DestinationCardGenerator(
-                          token: widget.token, uploadedDestinations: []),
-                      // The list of uplaoded destinations must be passed.
+                      FutureBuilder<void>(
+                        future: fetchUploadedDestsFuture,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            return DestinationCardGenerator(
+                              token: widget.token,
+                              uploadedDestinations: uploadedDestinations,
+                            );
+                          } else {
+                            return const Center(
+                                child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                  Color(0xFF1E889E)),
+                            ));
+                          }
+                        },
+                      ),
                     ],
                   ),
                 ),

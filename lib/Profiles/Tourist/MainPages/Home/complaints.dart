@@ -235,7 +235,7 @@ class ComplaintCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    complaint['seen'].toLowerCase() == true ? 'Seen' : 'Unseen',
+                    complaint['seen'].toLowerCase() == "true" ? 'Seen' : 'Unseen',
                     style: const TextStyle(
                         fontSize: 19.5,
                         fontWeight: FontWeight.w600,

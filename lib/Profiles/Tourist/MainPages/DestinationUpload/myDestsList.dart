@@ -1,12 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:touristine/Notifications/SnackBar.dart';
 
+// ignore: must_be_immutable
 class DestinationCardGenerator extends StatefulWidget {
   final String token;
-  final List<Map<String, dynamic>> uploadedDestinations;
+  List<Map<String, dynamic>> uploadedDestinations;
 
-  const DestinationCardGenerator(
+  DestinationCardGenerator(
       {super.key, required this.token, required this.uploadedDestinations});
 
   @override
@@ -15,70 +19,72 @@ class DestinationCardGenerator extends StatefulWidget {
 }
 
 class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
-  final List<Map<String, dynamic>> destinations = [
-    {
-      'destID': 1,
-      'date': '07/10/2023',
-      'destinationName': 'Al-Aqsa Mosque',
-      'category': 'Religious Landmarks',
-      'budget': 'Budget-Friendly',
-      'timeToSpend': '12h and 30 min',
-      'sheltered': true,
-      'status': 'Seen',
-      'about':
-          'It is situated in the heart of the Old City of Jerusalem, is one of the holiest sites in Islam.',
-      'imagesURLs': [
-        'assets/Images/Profiles/Tourist/1T.png',
-        'assets/Images/Profiles/Tourist/11T.jpg',
-        'assets/Images/Profiles/Tourist/10T.jpg'
-      ],
-      'adminComment': "This destination already exists."
-    },
-    {
-      'destID': 2,
-      'date': '07/10/2023',
-      'destinationName': 'Al-Aqsa Mosque',
-      'category': 'Religious Landmarks',
-      'budget': 'Mid-Range',
-      'timeToSpend': '12h and 30 min',
-      'sheltered': true,
-      'status': 'Unseen',
-      'about':
-          'It is situated in the heart of the Old City of Jerusalem, is one of the holiest sites in Islam.',
-      'imagesURLs': [
-        'assets/Images/Profiles/Tourist/1T.png',
-        'assets/Images/Profiles/Tourist/11T.jpg',
-        'assets/Images/Profiles/Tourist/10T.jpg'
-      ],
-    },
-    {
-      'destID': 3,
-      'date': '07/10/2023',
-      'destinationName': 'Al-Aqsa Mosque',
-      'category': 'Religious Landmarks',
-      'budget': 'Mid-Range',
-      'timeToSpend': '12h and 30 min',
-      'sheltered': true,
-      'status': 'Seen',
-      'about':
-          'It is situated in the heart of the Old City of Jerusalem, is one of the holiest sites in Islam.',
-      'imagesURLs': [
-        'assets/Images/Profiles/Tourist/1T.png',
-        'assets/Images/Profiles/Tourist/11T.jpg',
-        'assets/Images/Profiles/Tourist/10T.jpg'
-      ],
-      'adminComment': "This destination already exists."
-    },
-  ];
+  // A Function to fetch user uploaded destinations.
+  Future<void> fetchUploadedDests() async {
+    final url = Uri.parse('https://touristine.onrender.com/get-uploaded-dests');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer ${widget.token}',
+        },
+      );
+      if (mounted) {
+        if (response.statusCode == 200) {
+          setState(() {
+            final List<dynamic> responseData = json.decode(response.body);
+
+            // Convert destinationsData into a list of maps.
+            widget.uploadedDestinations = responseData.map((destinationData) {
+              return {
+                'destID': destinationData['destID'],
+                'date': destinationData['date'],
+                'destinationName': destinationData['destinationName'],
+                'category': destinationData['category'],
+                'budget': destinationData['budget'],
+                'timeToSpend': destinationData['timeToSpend'],
+                'sheltered': destinationData['sheltered'],
+                'status': destinationData['status'],
+                'about': destinationData['about'],
+                'imagesURLs': destinationData['imagesURLs'],
+              };
+            }).toList();
+            print(widget.uploadedDestinations);
+          });
+        } else if (response.statusCode == 500) {
+          final Map<String, dynamic> responseData = json.decode(response.body);
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+        } else {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, 'Error retrieving your places',
+              bottomMargin: 0);
+        }
+      }
+    } catch (error) {
+      if (mounted) {
+        print('Error fetching uploaded dests: $error');
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUploadedDests();
+  }
 
   @override
   Widget build(BuildContext context) {
     ScrollController pageScrollController = ScrollController();
 
-    return destinations.length > 1
+    return widget.uploadedDestinations.length > 1
         ? ScrollbarTheme(
             data: ScrollbarThemeData(
-              thumbColor: MaterialStateProperty.all(const Color(0xFF1E889E)),
+              thumbColor: MaterialStateProperty.all(
+                  const Color.fromARGB(255, 131, 131, 131)),
               radius: const Radius.circular(0),
             ),
             child: Scrollbar(
@@ -88,14 +94,14 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
               controller: pageScrollController,
               child: ListView.builder(
                 controller: pageScrollController,
-                itemCount: destinations.length,
+                itemCount: widget.uploadedDestinations.length,
                 itemBuilder: (context, index) {
                   return DestinationCard(
                     token: widget.token,
-                    destination: destinations[index],
+                    destination: widget.uploadedDestinations[index],
                     onDelete: () {
                       setState(() {
-                        destinations.removeAt(index);
+                        widget.uploadedDestinations.removeAt(index);
                       });
                     },
                   );
@@ -106,14 +112,14 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
         : Padding(
             padding: const EdgeInsets.symmetric(vertical: 20.0),
             child: ListView.builder(
-              itemCount: destinations.length,
+              itemCount: widget.uploadedDestinations.length,
               itemBuilder: (context, index) {
                 return DestinationCard(
                   token: widget.token,
-                  destination: destinations[index],
+                  destination: widget.uploadedDestinations[index],
                   onDelete: () {
                     setState(() {
-                      destinations.removeAt(index);
+                      widget.uploadedDestinations.removeAt(index);
                     });
                   },
                 );
@@ -125,7 +131,6 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
 
 class DestinationCard extends StatefulWidget {
   final String token;
-
   final Map<String, dynamic> destination;
   final VoidCallback onDelete;
 
@@ -144,12 +149,12 @@ class _DestinationCardState extends State<DestinationCard> {
   final ScrollController aboutScrollController = ScrollController();
 
   // A function to delete a specific destination.
-  Future<void> deleteDestination(int destID) async {
+  Future<void> deleteDestination(String destId) async {
     final url =
-        Uri.parse('https://touristine.onrender.com/deletedestination/$destID');
+        Uri.parse('https://touristine.onrender.com/delete-destination/$destId');
 
     try {
-      final response = await http.delete(
+      final response = await http.post(
         url,
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -158,13 +163,28 @@ class _DestinationCardState extends State<DestinationCard> {
       );
 
       if (response.statusCode == 200) {
-        // Success.
-        // Israa, show a message.
-        // Israa, here the card should be deleted from the whole widget.
+        final Map<String, dynamic> responseData = json.decode(response.body);
+
+        if (responseData.containsKey('message')) {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, 'The Destination has been deleted',
+              bottomMargin: 0);
+        } else {
+          // Handle the case when 'message' key is not present in the response
+          print('No message keyword found in the response');
+        }
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+      } else if (response.statusCode == 404) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
       } else {
-        // Israa, Handle other possible cases....
-        print(
-            'Failed to delete the destination. Status code: ${response.statusCode}');
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'Error deleting this destination',
+            bottomMargin: 0);
       }
     } catch (error) {
       print('Error deleting the destination: $error');
@@ -208,7 +228,9 @@ class _DestinationCardState extends State<DestinationCard> {
                         ),
                         const SizedBox(width: 8.0),
                         Text(
-                          widget.destination['status'],
+                          widget.destination['status'].toLowerCase() == "seen"
+                              ? "Seen"
+                              : "Unseen",
                           style: const TextStyle(
                               color: Color(0xFF7F7F7F),
                               fontFamily: 'Calibri',
@@ -265,7 +287,7 @@ class _DestinationCardState extends State<DestinationCard> {
                       width: 400,
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 10.0),
-                        child: Image.asset(
+                        child: Image.network(
                           widget.destination['imagesURLs'][index],
                           fit: BoxFit.cover,
                         ),
@@ -349,7 +371,7 @@ class _DestinationCardState extends State<DestinationCard> {
                     style: const TextStyle(fontFamily: 'Calibri', fontSize: 20),
                   ),
                   Text(
-                      widget.destination['sheltered'] == true
+                      widget.destination['sheltered'] == "true"
                           ? 'Sheltered'
                           : 'Unsheltered',
                       style:
@@ -371,7 +393,8 @@ class _DestinationCardState extends State<DestinationCard> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(widget.destination['timeToSpend'] ?? '',
+                  Text(
+                      '${widget.destination['timeToSpend']} ${widget.destination['timeToSpend'] > 1 ? 'hours' : 'hour'}',
                       style:
                           const TextStyle(fontFamily: 'Calibri', fontSize: 20)),
                   Text(widget.destination['date'] ?? '',
