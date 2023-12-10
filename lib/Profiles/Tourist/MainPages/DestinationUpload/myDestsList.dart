@@ -19,6 +19,7 @@ class DestinationCardGenerator extends StatefulWidget {
 }
 
 class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
+  int uploadedDestsLength = 0;
   // A Function to fetch user uploaded destinations.
   Future<void> fetchUploadedDests() async {
     final url = Uri.parse('https://touristine.onrender.com/get-uploaded-dests');
@@ -74,6 +75,7 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
   void initState() {
     super.initState();
     fetchUploadedDests();
+    uploadedDestsLength = widget.uploadedDestinations.length;
   }
 
   @override
@@ -104,6 +106,7 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
                         widget.uploadedDestinations.removeAt(index);
                       });
                     },
+                    uploadedDestsLength: uploadedDestsLength,
                   );
                 },
               ),
@@ -122,6 +125,7 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
                       widget.uploadedDestinations.removeAt(index);
                     });
                   },
+                  uploadedDestsLength: uploadedDestsLength,
                 );
               },
             ),
@@ -132,12 +136,14 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
 class DestinationCard extends StatefulWidget {
   final String token;
   final Map<String, dynamic> destination;
+  final int uploadedDestsLength;
   final VoidCallback onDelete;
 
   const DestinationCard(
       {super.key,
       required this.token,
       required this.destination,
+      required this.uploadedDestsLength,
       required this.onDelete});
 
   @override
@@ -272,7 +278,10 @@ class _DestinationCardState extends State<DestinationCard> {
             ),
             // Horizontal ListView of images.
             SizedBox(
-              height: 220,
+              height: widget.uploadedDestsLength == 1 &&
+                      widget.destination['status'].toLowerCase() == "seen"
+                  ? 175
+                  : 220,
               child: Scrollbar(
                 trackVisibility: true,
                 thumbVisibility: true,
@@ -289,7 +298,7 @@ class _DestinationCardState extends State<DestinationCard> {
                         padding: const EdgeInsets.only(bottom: 10.0),
                         child: Image.network(
                           widget.destination['imagesURLs'][index],
-                          fit: BoxFit.cover,
+                          fit: BoxFit.fill,
                         ),
                       ),
                     );
@@ -330,7 +339,8 @@ class _DestinationCardState extends State<DestinationCard> {
                   Divider(thickness: 3, color: Color.fromARGB(80, 19, 83, 96)),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 2.0, bottom: 2.0),
+              padding: const EdgeInsets.only(
+                  left: 15.0, right: 15.0, top: 2.0, bottom: 2.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

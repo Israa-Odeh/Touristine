@@ -139,7 +139,7 @@ class _HomePageState extends State<HomePage> {
   Widget buildPlaceTile(
       String title, String imagePath, VoidCallback onTapAction) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Card(
         color: const Color.fromARGB(71, 111, 228, 252),
         shape: RoundedRectangleBorder(
@@ -160,12 +160,12 @@ class _HomePageState extends State<HomePage> {
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.only(right: 20),
+                  padding: const EdgeInsets.only(right: 15),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: Image.network(
                       imagePath,
-                      width: 160,
+                      width: 140,
                       height: 140,
                       fit: BoxFit.fill,
                     ),
@@ -176,7 +176,7 @@ class _HomePageState extends State<HomePage> {
                     child: Text(
                       title,
                       style: const TextStyle(
-                        fontSize: 26,
+                        fontSize: 25,
                         fontFamily: 'Zilla',
                         color: Color.fromARGB(227, 245, 243, 243),
                         fontWeight: FontWeight.bold,
@@ -239,7 +239,7 @@ class _HomePageState extends State<HomePage> {
                     height: 20,
                   ),
                   const Padding(
-                    padding: EdgeInsets.only(right: 220),
+                    padding: EdgeInsets.only(right: 230),
                     child: Text(
                       "Other Places",
                       style: TextStyle(

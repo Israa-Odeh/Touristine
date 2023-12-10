@@ -242,26 +242,16 @@ class PlanCard extends StatelessWidget {
             child: Column(
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(top: 8.0, left: 140),
+                      padding: const EdgeInsets.only(top: 8.0, left: 10),
                       child: Text(
                         plan['destination'],
                         style: const TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
                           fontFamily: 'Zilla',
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 10.0),
-                      child: GestureDetector(
-                        onTap: onDelete,
-                        child: const FaIcon(
-                          FontAwesomeIcons.xmark,
-                          color: Color(0xFF1E889E),
                         ),
                       ),
                     ),
@@ -289,7 +279,7 @@ class PlanCard extends StatelessWidget {
                           child: Image.network(
                             plan['imagePath'],
                             height: 195,
-                            width: 160,
+                            width: 155,
                             fit: BoxFit.fill,
                           ),
                         ),
@@ -301,7 +291,7 @@ class PlanCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(left: 10.0),
+                            padding: const EdgeInsets.only(left: 5.0),
                             child: RichText(
                               text: TextSpan(
                                 style: const TextStyle(
@@ -323,7 +313,7 @@ class PlanCard extends StatelessWidget {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(left: 10.0),
+                            padding: const EdgeInsets.only(left: 5.0),
                             child: RichText(
                               text: TextSpan(
                                 style: const TextStyle(
@@ -346,7 +336,7 @@ class PlanCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 15),
                           Padding(
-                            padding: const EdgeInsets.only(left: 10.0),
+                            padding: const EdgeInsets.only(left: 5.0),
                             child: Text(
                               '${plan['startTime']} - ${plan['endTime']}',
                               style: const TextStyle(
@@ -356,15 +346,27 @@ class PlanCard extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 30),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 10.0),
-                            child: Text(
-                              plan['date'],
-                              style: const TextStyle(
-                                fontSize: 23,
-                                fontFamily: 'Times New Roman',
+                          Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(left: 5.0),
+                                child: Text(
+                                  plan['date'],
+                                  style: const TextStyle(
+                                    fontSize: 23,
+                                    fontFamily: 'Times New Roman',
+                                  ),
+                                ),
                               ),
-                            ),
+                              const SizedBox(width: 70),
+                              GestureDetector(
+                                onTap: onDelete,
+                                child: const FaIcon(
+                                  FontAwesomeIcons.trash,
+                                  color: Color(0xFF1E889E),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
