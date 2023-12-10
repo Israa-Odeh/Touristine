@@ -177,8 +177,7 @@ class ComplaintCard extends StatelessWidget {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(10.0),
                                   child: Image.network(
-                                    (complaint['images'] as List)[imgIndex]
-                                        ['url'],
+                                    (complaint['images'] as List)[imgIndex],
                                     width: 100,
                                     height: 100,
                                     fit: BoxFit.cover,

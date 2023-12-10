@@ -510,7 +510,13 @@ class _AddDestTabState extends State<AddDestTab> {
                             showCustomSnackBar(
                                 context, 'Please select a destination category',
                                 bottomMargin: 0);
-                          } else {
+                          }
+                          else if (selectedCity.isEmpty) {
+                            showCustomSnackBar(
+                                context, 'Please select a destination city',
+                                bottomMargin: 0);
+                          }
+                          else {
                             nextPage();
                           }
                         } else if (currentPage == 2) {
@@ -653,6 +659,8 @@ class _AddDestTabState extends State<AddDestTab> {
           ),
           Image.asset(
               'assets/Images/Profiles/Tourist/DestUpload/DestUpload.gif',
+              height: 270,
+              width: 270,
               fit: BoxFit.cover),
           buildDestInput(
             'Destination Name',
@@ -660,37 +668,37 @@ class _AddDestTabState extends State<AddDestTab> {
             destBorderIconColor,
             FontAwesomeIcons.locationDot,
           ),
-          // const SizedBox(height: 15),
-          // ElevatedButton(
-          //   onPressed: showCityBottomSheet,
-          //   style: ElevatedButton.styleFrom(
-          //     backgroundColor: const Color.fromARGB(255, 220, 220, 220),
-          //     shape: RoundedRectangleBorder(
-          //       borderRadius: BorderRadius.circular(20.0),
-          //     ),
-          //   ),
-          //   child: SizedBox(
-          //     height: 50,
-          //     child: Row(
-          //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //       children: [
-          //         Padding(
-          //           padding: const EdgeInsets.only(left: 5.0),
-          //           child: Text(
-          //             selectedCity.isEmpty ? 'Select City' : selectedCity,
-          //             style: const TextStyle(
-          //                 color: Color.fromARGB(163, 0, 0, 0), fontSize: 22),
-          //           ),
-          //         ),
-          //         const FaIcon(
-          //           FontAwesomeIcons.list,
-          //           color: Color.fromARGB(100, 0, 0, 0),
-          //           size: 28,
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
+          const SizedBox(height: 15),
+          ElevatedButton(
+            onPressed: showCityBottomSheet,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color.fromARGB(255, 220, 220, 220),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+            ),
+            child: SizedBox(
+              height: 50,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 5.0),
+                    child: Text(
+                      selectedCity.isEmpty ? 'Select City' : selectedCity,
+                      style: const TextStyle(
+                          color: Color.fromARGB(163, 0, 0, 0), fontSize: 22),
+                    ),
+                  ),
+                  const FaIcon(
+                    FontAwesomeIcons.list,
+                    color: Color.fromARGB(100, 0, 0, 0),
+                    size: 28,
+                  ),
+                ],
+              ),
+            ),
+          ),
           const SizedBox(height: 15),
           ElevatedButton(
             onPressed: showCategorisBottomSheet,

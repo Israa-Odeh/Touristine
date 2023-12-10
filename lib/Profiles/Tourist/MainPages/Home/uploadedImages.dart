@@ -5,13 +5,14 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:touristine/Notifications/SnackBar.dart';
 
+// ignore: must_be_immutable
 class UploadedImagesPage extends StatefulWidget {
   final String token;
   final String destinationName;
-  final List<Map<String, dynamic>> uploadedImages;
+  List<Map<String, dynamic>> uploadedImages;
   final int minImagesToShowScrollbar = 3;
 
-  const UploadedImagesPage(
+  UploadedImagesPage(
       {super.key,
       required this.token,
       required this.destinationName,
@@ -22,8 +23,10 @@ class UploadedImagesPage extends StatefulWidget {
 }
 
 class _UploadedImagesPageState extends State<UploadedImagesPage> {
+  List<ScrollController> imageScrollControllers = [];
+
   // A function to delete a specific upload.
-  Future<void> deleteUploadedImages(String uploadId) async {
+  Future<void> deleteUploadedImages(String uploadId, int index) async {
     final url =
         Uri.parse('https://touristine.onrender.com/delete-uploads/$uploadId');
 
@@ -43,23 +46,36 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
         final Map<String, dynamic> responseData = json.decode(response.body);
 
         if (responseData.containsKey('message')) {
+          setState(() {
+            widget.uploadedImages.removeAt(index);
+          });
           // ignore: use_build_context_synchronously
           showCustomSnackBar(context, "The images has been deleted",
-              bottomMargin: 310);
+              bottomMargin: 320);
         } else {
           print('No message keyword found in the response');
         }
       } else if (response.statusCode == 500) {
         final Map<String, dynamic> responseData = json.decode(response.body);
         // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, responseData['error'], bottomMargin: 310);
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 320);
       } else {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'Error deleting your upload',
-            bottomMargin: 310);
+            bottomMargin: 320);
       }
     } catch (error) {
       print('Error deleting the upload: $error');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize the imageScrollControllers list with a controller for each card
+    for (int i = 0; i < widget.uploadedImages.length; i++) {
+      imageScrollControllers.add(ScrollController());
     }
   }
 
@@ -113,10 +129,10 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
                     itemBuilder: (context, index) {
                       final imageInfo = widget.uploadedImages[index];
                       final List<String> keywords =
-                          (imageInfo['keywords'] as String).split(', ');
+                          List<String>.from(imageInfo['keywords']);
                       final String uploadingDate = imageInfo['date'];
                       final List<String> imageUrls =
-                          List<String>.from(imageInfo['imageUrls']);
+                          List<String>.from(imageInfo['images']);
                       return Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12.0),
@@ -141,15 +157,49 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  'Categories: ${keywords.join(', ')}',
-                                  style: const TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.w100,
-                                      fontFamily: 'Zilla',
-                                      color: Color.fromARGB(255, 14, 63, 73)),
-                                ),
-                                // const SizedBox(height: 5,),
+                                if (keywords.length <= 2)
+                                  Row(
+                                    children: [
+                                      const Text(
+                                        'Categories: ',
+                                        style: TextStyle(
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.w100,
+                                            fontFamily: 'Zilla',
+                                            color: Color.fromARGB(
+                                                255, 14, 63, 73)),
+                                      ),
+                                      Text(
+                                        keywords.join(', '),
+                                        style: const TextStyle(
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.w100,
+                                            fontFamily: 'Zilla',
+                                            color: Color.fromARGB(
+                                                255, 14, 63, 73)),
+                                      ),
+                                    ],
+                                  ),
+                                if (keywords.length > 2)
+                                  const Text(
+                                    'Categories: ',
+                                    style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w100,
+                                        fontFamily: 'Zilla',
+                                        color: Color.fromARGB(255, 14, 63, 73)),
+                                  ),
+                                if (keywords.length > 2)
+                                  const SizedBox(height: 10),
+                                if (keywords.length > 2)
+                                  Text(
+                                    keywords.join(', '),
+                                    style: const TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w100,
+                                        fontFamily: 'Zilla',
+                                        color: Color.fromARGB(255, 14, 63, 73)),
+                                  ),
                                 const Divider(
                                   color: Color.fromARGB(126, 14, 63, 73),
                                   thickness: 2,
@@ -161,8 +211,9 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
                                       ? Scrollbar(
                                           trackVisibility: true,
                                           thumbVisibility: true,
-                                          controller: scrollController,
+                                          controller: imageScrollControllers[index],
                                           child: ListView.builder(
+                                            controller: imageScrollControllers[index],
                                             scrollDirection: Axis.horizontal,
                                             itemCount: imageUrls.length,
                                             itemBuilder: (context, index) {
@@ -188,7 +239,7 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
                                           ),
                                         )
                                       : ListView.builder(
-                                          controller: scrollController,
+                                          controller: imageScrollControllers[index],
                                           scrollDirection: Axis.horizontal,
                                           itemCount: imageUrls.length,
                                           itemBuilder: (context, index) {
@@ -259,12 +310,13 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
                                         color: const Color(0xFF1E889E),
                                         icon: const FaIcon(
                                             FontAwesomeIcons.trash),
-                                        onPressed: () {
+                                        onPressed: () async {
                                           print(widget.uploadedImages[index]
-                                              ['uploadID']);
-                                          deleteUploadedImages(
+                                              ['_id']);
+                                          await deleteUploadedImages(
                                               widget.uploadedImages[index]
-                                                  ['uploadID']);
+                                                  ['_id'],
+                                              index);
                                         },
                                       ),
                                     ],

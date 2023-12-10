@@ -2013,47 +2013,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                                           token: widget.token,
                                           destinationName:
                                               widget.destination['name'],
-                                          // Dummy list of uploaded images (replace it with your actual data)
-                                          uploadedImages: uploadedImages
-                                          // const [
-                                          //   {
-                                          //     'uploadID': 1,
-                                          //     'keywords': 'General, Services',
-                                          //     'date': '29/11/2023',
-                                          //     'imageUrls': [
-                                          //       'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Switzerland-Landscapes-1170x780.jpg',
-                                          //       'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Zermatt-at-night.jpeg',
-                                          //     ],
-                                          //     'status': 'Pending'
-                                          //   },
-                                          //   {
-                                          //     'uploadID': 2,
-                                          //     'keywords': 'Buildings, Cracks',
-                                          //     'date': '28/11/2023',
-                                          //     'imageUrls': [
-                                          //       'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Colorful-summer-view-of-Lauterbrunnen-village.jpeg',
-                                          //       'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Lucerne-skyline.jpeg',
-                                          //       'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Chillion-Castle.jpeg',
-                                          //       'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Murren-landscapes.jpeg',
-                                          //     ],
-                                          //     'status': 'Approved'
-                                          //   },
-                                          //   {
-                                          //     'uploadID': 3,
-                                          //     'keywords': 'General',
-                                          //     'date': '07/10/2023',
-                                          //     'imageUrls': [
-                                          //       'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Gruyeres.jpeg',
-                                          //       'https://www.travelanddestinations.com/wp-content/uploads/2019/03/Geneva-fountain.jpeg',
-                                          //       'https://www.travelanddestinations.com/wp-content/uploads/2018/04/Views-from-Grossmu%CC%88nster-Zurich.jpg',
-                                          //       'https://www.petalrepublic.com/wp-content/uploads/2023/07/Heather.jpeg.webp',
-                                          //       'https://www.petalrepublic.com/wp-content/uploads/2023/07/Heather.jpeg.webp',
-                                          //     ],
-                                          //     'status': 'Rejected'
-                                          //   },
-                                          //   // Add more entries as needed
-                                          // ],
-                                          ),
+                                          uploadedImages: uploadedImages),
                                     ),
                                   );
                                 },
