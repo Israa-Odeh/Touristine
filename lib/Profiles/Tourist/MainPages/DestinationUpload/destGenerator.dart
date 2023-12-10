@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -74,6 +75,7 @@ class _AddDestTabState extends State<AddDestTab> {
     // Add destination data to the request.
     request.fields['date'] = currentDate;
     request.fields['destinationName'] = destNameController.text;
+    request.fields['city'] = selectedCity;
     request.fields['category'] = selectedCategory;
     request.fields['budget'] = selectedBudget;
     request.fields['timeToSpend'] = "$formattedHours:$formattedMinutes";
@@ -83,6 +85,7 @@ class _AddDestTabState extends State<AddDestTab> {
     // Israa, these print statements will be deleted after finishing this code.
     print(currentDate);
     print(destNameController.text);
+    print(selectedCity);
     print(selectedCategory);
     print(selectedBudget);
     print("$formattedHours:$formattedMinutes");
@@ -108,15 +111,22 @@ class _AddDestTabState extends State<AddDestTab> {
       final response = await http.Response.fromStream(await request.send());
 
       if (response.statusCode == 200) {
-        // Success.
-        // Israa, show a notification.
         // ignore: use_build_context_synchronously
-        // showCustomSnackBar(context, 'Thanks for sharing your experience',
-        //     bottomMargin: 0);
+        showCustomSnackBar(context, 'Thanks for sharing your experience',
+            bottomMargin: 0);
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        if (responseData.containsKey('error')) {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+        } else {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, responseData['message'], bottomMargin: 0);
+        }
       } else {
-        // Handle other cases....
-        print(
-            'Failed to store the destination. Status code: ${response.statusCode}');
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'Error storing your destination',
+            bottomMargin: 0);
       }
     } catch (error) {
       print('Error storing the destination: $error');
@@ -200,9 +210,7 @@ class _AddDestTabState extends State<AddDestTab> {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return CustomBottomSheet(
-          itemsList: citiesList,
-        );
+        return CustomBottomSheet(itemsList: citiesList, height: 300);
       },
     ).then((value) {
       // Handle the selected item from the bottom sheet.
@@ -324,7 +332,7 @@ class _AddDestTabState extends State<AddDestTab> {
                           onPressed: showBudgetBottomSheet,
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
-                                const Color.fromARGB(255, 220, 220, 220),
+                                const Color.fromARGB(255, 231, 231, 231),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
                             ),
@@ -360,17 +368,17 @@ class _AddDestTabState extends State<AddDestTab> {
                             Container(
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: const Color.fromARGB(125, 0, 0, 0),
-                                  width: 2,
+                                  color: const Color.fromARGB(146, 0, 0, 0),
+                                  width: 1,
                                 ),
                                 borderRadius: BorderRadius.circular(15),
                               ),
                               child: Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: const Color.fromARGB(255, 19, 67, 69)
-                                      .withAlpha(50),
-                                  borderRadius: BorderRadius.circular(10),
+                                  color:
+                                      const Color.fromARGB(255, 231, 231, 231),
+                                  borderRadius: BorderRadius.circular(15),
                                 ),
                                 child: const Padding(
                                   padding: EdgeInsets.all(6.0),
@@ -506,17 +514,15 @@ class _AddDestTabState extends State<AddDestTab> {
                             showCustomSnackBar(context,
                                 'Invalid characters in destination name',
                                 bottomMargin: 0);
+                          } else if (selectedCity.isEmpty) {
+                            showCustomSnackBar(
+                                context, 'Please select a destination city',
+                                bottomMargin: 0);
                           } else if (selectedCategory.isEmpty) {
                             showCustomSnackBar(
                                 context, 'Please select a destination category',
                                 bottomMargin: 0);
-                          }
-                          else if (selectedCity.isEmpty) {
-                            showCustomSnackBar(
-                                context, 'Please select a destination city',
-                                bottomMargin: 0);
-                          }
-                          else {
+                          } else {
                             nextPage();
                           }
                         } else if (currentPage == 2) {
@@ -672,7 +678,7 @@ class _AddDestTabState extends State<AddDestTab> {
           ElevatedButton(
             onPressed: showCityBottomSheet,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(255, 220, 220, 220),
+              backgroundColor: const Color.fromARGB(255, 231, 231, 231),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0),
               ),
@@ -691,9 +697,9 @@ class _AddDestTabState extends State<AddDestTab> {
                     ),
                   ),
                   const FaIcon(
-                    FontAwesomeIcons.list,
+                    FontAwesomeIcons.city,
                     color: Color.fromARGB(100, 0, 0, 0),
-                    size: 28,
+                    size: 25,
                   ),
                 ],
               ),
@@ -703,7 +709,7 @@ class _AddDestTabState extends State<AddDestTab> {
           ElevatedButton(
             onPressed: showCategorisBottomSheet,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(255, 220, 220, 220),
+              backgroundColor: const Color.fromARGB(255, 231, 231, 231),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0),
               ),
@@ -1026,7 +1032,9 @@ class _AddDestTabState extends State<AddDestTab> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 60.0),
             child: ElevatedButton(
-              onPressed: storeDestination,
+              onPressed: () async {
+                await storeDestination();
+              },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10,

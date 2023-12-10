@@ -114,7 +114,7 @@ class _TimeWheelPickerState extends State<TimeWheelPicker> {
         height: 55.0,
         width: 150,
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 19, 67, 69).withAlpha(26),
+          color: const Color.fromARGB(255, 13, 47, 48).withAlpha(26),
           borderRadius: BorderRadius.circular(8.0),
         ),
       ),
