@@ -332,7 +332,16 @@ class _AccountPageState extends State<AccountPage> {
                         size: 30,
                       ),
                       onPressed: () {
-                       Navigator.of(context).pop();
+                        Navigator.pushReplacement(
+                          // This will be edited based on the profile type.
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => TouristProfile(
+                                    token: widget.token,
+                                    stepNum: 4,
+                                    googleAccount: widget.googleAccount,
+                                  )),
+                        );
                       },
                     ),
                   ),
