@@ -31,6 +31,7 @@ class _LoginPageState extends State<LoginPage>
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   late ImageProvider profileImageProvider; // To uplaod the image early.
+  bool isLoading = false;
 
   // A boolean variable for the "Remember Me" checkbox state.
   bool rememberPassword = false; // Initially unchecked.
@@ -367,7 +368,9 @@ class _LoginPageState extends State<LoginPage>
                     );
 
                 // ignore: use_build_context_synchronously
-                context.read<UserProvider>().updateImage(newImageURL: user.photoURL);
+                context
+                    .read<UserProvider>()
+                    .updateImage(newImageURL: user.photoURL);
                 // ignore: use_build_context_synchronously
                 Navigator.pushReplacement(
                   context,
@@ -377,9 +380,9 @@ class _LoginPageState extends State<LoginPage>
                             googleAccount: true,
                           )),
                 );
-              } 
-              else {
-                final String token = responseData['token']; // Contains the email.
+              } else {
+                final String token =
+                    responseData['token']; // Contains the email.
 
                 // ignore: use_build_context_synchronously
                 context.read<UserProvider>().updateData(
@@ -389,7 +392,9 @@ class _LoginPageState extends State<LoginPage>
                     );
 
                 // ignore: use_build_context_synchronously
-                context.read<UserProvider>().updateImage(newImageURL: user.photoURL);
+                context
+                    .read<UserProvider>()
+                    .updateImage(newImageURL: user.photoURL);
 
                 // Open the tourist account.
                 // ignore: use_build_context_synchronously
@@ -406,29 +411,25 @@ class _LoginPageState extends State<LoginPage>
                 );
               }
             }
-          } 
-          else if (response.statusCode == 500) {
-            final Map<String, dynamic> responseData = json.decode(response.body);
+          } else if (response.statusCode == 500) {
+            final Map<String, dynamic> responseData =
+                json.decode(response.body);
             if (responseData.containsKey('error')) {
               // ignore: use_build_context_synchronously
               showCustomSnackBar(context, responseData['error']);
             }
-          } 
-          else {
+          } else {
             // ignore: use_build_context_synchronously
             showCustomSnackBar(context, 'Log In with Google Failed');
           }
-        } 
-        catch (e) {
+        } catch (e) {
           print('Error sending data to the server: $e');
         }
-      } 
-      else {
+      } else {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'User information aren\'t available');
       }
-    } 
-    catch (e) {
+    } catch (e) {
       print('Error occurred: $e');
     }
   }
@@ -438,8 +439,8 @@ class _LoginPageState extends State<LoginPage>
       forgetPasswordTapped = true;
     });
 
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => ForgotPasswordPage()));
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const ForgotPasswordPage()));
   }
 
   @override
@@ -627,49 +628,63 @@ class _LoginPageState extends State<LoginPage>
                             },
                           ),
                         ),
-                        const SizedBox(
-                            width:
-                                90), // Add horizontal spacing between the icons.
+                        const SizedBox(width: 90),
 
                         // Google BTN animation.
                         Padding(
                           padding: const EdgeInsets.only(bottom: 30.0),
-                          child: InkWell(
-                            onTap: () {
-                              // Start the button animation.
-                              _animationController!.forward();
+                          child: isLoading
+                              ? const Padding(
+                                padding: EdgeInsets.only(left: 20.0),
+                                child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Color(0xFF1E889E)),
+                                  ),
+                              )
+                              : InkWell(
+                                  onTap: () async {
+                                    setState(() {
+                                      isLoading = true;
+                                    });
 
-                              // Simulate a delay before signing-in process.
-                              Future.delayed(const Duration(milliseconds: 500),
-                                  () {
-                                // Stop the button animation
-                                _animationController!.reverse();
+                                    // Start the button animation.
+                                    _animationController!.forward();
 
-                                // Perform the Google sign-in action.
-                                signInWithGoogle();
-                              });
-                            },
-                            child: Transform.scale(
-                              scale: _scaleAnimation
-                                  .value, // Apply the animation scale
-                              // Create a circular shape around the Google icon.
-                              child: Container(
-                                width: 80,
-                                height: 80,
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFFa5cfd8),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Center(
-                                  child: Image.asset(
-                                    'assets/Images/LoginPage/SignIn/google.png',
-                                    width: 50,
-                                    height: 50,
+                                    // Simulate a delay before signing-in process.
+                                    await Future.delayed(
+                                        const Duration(milliseconds: 500));
+
+                                    // Stop the button animation.
+                                    _animationController!.reverse();
+
+                                    // Perform the Google sign-in action.
+                                    await signInWithGoogle();
+
+                                    setState(() {
+                                      isLoading = false;
+                                    });
+                                  },
+                                  child: Transform.scale(
+                                    scale: _scaleAnimation
+                                        .value, // Apply the animation scale
+                                    // Create a circular shape around the Google icon.
+                                    child: Container(
+                                      width: 80,
+                                      height: 80,
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFFa5cfd8),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Center(
+                                        child: Image.asset(
+                                          'assets/Images/LoginPage/SignIn/google.png',
+                                          width: 50,
+                                          height: 50,
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          ),
                         ),
                       ],
                     ),
