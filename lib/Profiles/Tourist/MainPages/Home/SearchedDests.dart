@@ -241,13 +241,13 @@ class _SearchedDestinationsState extends State<SearchedDestinations> {
 Widget buildPlaceTile(
     String title, String imagePath, VoidCallback onTapAction, bool isLoading) {
   return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 10),
+    padding: const EdgeInsets.symmetric(horizontal: 5),
     child: Card(
       color: const Color.fromARGB(21, 4, 208, 249),
       shape: RoundedRectangleBorder(
         side: const BorderSide(
           color: Color(0xFF1E889E),
-          width: 2,
+          width: 2.5,
         ),
         borderRadius: BorderRadius.circular(20),
       ),
@@ -257,9 +257,10 @@ Widget buildPlaceTile(
             contentPadding: EdgeInsets.zero,
             onTap: onTapAction,
             title: Container(
+              height: 140,
               padding: const EdgeInsets.only(
                 left: 0,
-                right: 25,
+                right: 25
               ),
               child: Row(
                 children: [
@@ -270,8 +271,8 @@ Widget buildPlaceTile(
                       child: Image.network(
                         imagePath,
                         width: 140,
-                        height: 130,
-                        fit: BoxFit.cover,
+                        height: 140,
+                        fit: BoxFit.fill,
                       ),
                     ),
                   ),
