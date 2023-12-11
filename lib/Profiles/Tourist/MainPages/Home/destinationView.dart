@@ -1259,7 +1259,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                               child: Text(
                                 widget.destinationDetails['sheltered']
                                             .toLowerCase() ==
-                                        ("yes")
+                                        ("true")
                                     ? 'Sheltered'
                                     : 'Unsheltered',
                                 style: const TextStyle(
