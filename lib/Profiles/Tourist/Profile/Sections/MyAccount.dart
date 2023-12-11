@@ -10,7 +10,6 @@ import 'package:http/http.dart' as http;
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:provider/provider.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
-import 'package:touristine/Profiles/Tourist/MainPages/tourist.dart';
 import 'package:touristine/components/customField.dart';
 import 'package:touristine/UserData/userProvider.dart';
 
