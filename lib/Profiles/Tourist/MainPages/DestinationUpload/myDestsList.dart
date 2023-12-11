@@ -82,22 +82,62 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
 
   @override
   Widget build(BuildContext context) {
-    ScrollController pageScrollController = ScrollController();
-
-    return widget.uploadedDestinations.length > 1
-        ? ScrollbarTheme(
-            data: ScrollbarThemeData(
-              thumbColor: MaterialStateProperty.all(
-                  const Color.fromARGB(255, 131, 131, 131)),
-              radius: const Radius.circular(0),
+    if (widget.uploadedDestinations.isEmpty) {
+      return Center(
+        child: Column(
+          children: [
+            const SizedBox(height: 80),
+            Image.asset(
+              'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
+              fit: BoxFit.cover,
             ),
-            child: Scrollbar(
-              thumbVisibility: true,
-              trackVisibility: true,
-              thickness: 6.0,
-              controller: pageScrollController,
-              child: ListView.builder(
+            const Text(
+              'No places found',
+              style: TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Gabriola',
+                  color: Color.fromARGB(255, 23, 99, 114)),
+            ),
+          ],
+        ),
+      );
+    } else {
+      ScrollController pageScrollController = ScrollController();
+
+      return widget.uploadedDestinations.length > 1
+          ? ScrollbarTheme(
+              data: ScrollbarThemeData(
+                thumbColor: MaterialStateProperty.all(
+                    const Color.fromARGB(255, 131, 131, 131)),
+                radius: const Radius.circular(0),
+              ),
+              child: Scrollbar(
+                thumbVisibility: true,
+                trackVisibility: true,
+                thickness: 6.0,
                 controller: pageScrollController,
+                child: ListView.builder(
+                  controller: pageScrollController,
+                  itemCount: widget.uploadedDestinations.length,
+                  itemBuilder: (context, index) {
+                    return DestinationCard(
+                      token: widget.token,
+                      destination: widget.uploadedDestinations[index],
+                      onDelete: () {
+                        setState(() {
+                          widget.uploadedDestinations.removeAt(index);
+                        });
+                      },
+                      uploadedDestsLength: uploadedDestsLength,
+                    );
+                  },
+                ),
+              ),
+            )
+          : Padding(
+              padding: const EdgeInsets.symmetric(vertical: 0.0),
+              child: ListView.builder(
                 itemCount: widget.uploadedDestinations.length,
                 itemBuilder: (context, index) {
                   return DestinationCard(
@@ -112,26 +152,8 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
                   );
                 },
               ),
-            ),
-          )
-        : Padding(
-            padding: const EdgeInsets.symmetric(vertical: 0.0),
-            child: ListView.builder(
-              itemCount: widget.uploadedDestinations.length,
-              itemBuilder: (context, index) {
-                return DestinationCard(
-                  token: widget.token,
-                  destination: widget.uploadedDestinations[index],
-                  onDelete: () {
-                    setState(() {
-                      widget.uploadedDestinations.removeAt(index);
-                    });
-                  },
-                  uploadedDestsLength: uploadedDestsLength,
-                );
-              },
-            ),
-          );
+            );
+    }
   }
 }
 
