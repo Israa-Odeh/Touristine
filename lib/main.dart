@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
             create: (context) => UserProvider(
                 firstName: "", lastName: "", password: "", imageURL: ""))
       ],
-      child: MaterialApp(
+      child: const MaterialApp(
         debugShowCheckedModeBanner: false,
         home: TopOuterScreen(),
       ),
