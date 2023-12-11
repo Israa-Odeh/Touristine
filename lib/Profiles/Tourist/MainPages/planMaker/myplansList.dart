@@ -9,16 +9,17 @@ import 'package:touristine/Profiles/Tourist/MainPages/PlanMaker/planPlaces.dart'
 // ignore: must_be_immutable
 class MyPlansTab extends StatefulWidget {
   final String token;
-  List<Map<String, dynamic>> userPlans;
 
-  MyPlansTab({super.key, required this.token, required this.userPlans});
+  MyPlansTab({super.key, required this.token});
 
   @override
   _MyPlansTabState createState() => _MyPlansTabState();
 }
 
 class _MyPlansTabState extends State<MyPlansTab> {
+  List<Map<String, dynamic>> userPlans = [];
   List<Map<String, dynamic>> planContents = [];
+  bool isLoading = true;
 
   // A function to delete a specific plan.
   Future<void> deletePlan(String planId, int index) async {
@@ -39,7 +40,7 @@ class _MyPlansTabState extends State<MyPlansTab> {
         final Map<String, dynamic> responseData = json.decode(response.body);
         if (responseData.containsKey('message')) {
           setState(() {
-            widget.userPlans.removeAt(index);
+            userPlans.removeAt(index);
           });
           // ignore: use_build_context_synchronously
           showCustomSnackBar(context, 'Your plan has been deleted',
@@ -108,6 +109,10 @@ class _MyPlansTabState extends State<MyPlansTab> {
 
   // A Function to fetch user plans from the backend.
   Future<void> fetchUserPlans() async {
+    setState(() {
+      isLoading = true;
+    });
+
     final url = Uri.parse('https://touristine.onrender.com/get-plans');
 
     try {
@@ -130,9 +135,9 @@ class _MyPlansTabState extends State<MyPlansTab> {
           // Note: other data will be added later on.
           setState(() {
             // Update state only if the widget is still mounted.
-            widget.userPlans =
+            userPlans =
                 List<Map<String, dynamic>>.from(json.decode(response.body));
-            print(widget.userPlans);
+            print(userPlans);
           });
         } else if (response.statusCode == 500) {
           final Map<String, dynamic> responseData = json.decode(response.body);
@@ -148,6 +153,10 @@ class _MyPlansTabState extends State<MyPlansTab> {
       if (mounted) {
         print('Error fetching plans: $error');
       }
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -159,7 +168,13 @@ class _MyPlansTabState extends State<MyPlansTab> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.userPlans.isEmpty) {
+    if (isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1E889E)),
+        ),
+      );
+    } else if (userPlans.isEmpty) {
       return Center(
         child: Column(
           children: [
@@ -181,9 +196,9 @@ class _MyPlansTabState extends State<MyPlansTab> {
       );
     } else {
       return ListView.builder(
-        itemCount: widget.userPlans.length,
+        itemCount: userPlans.length,
         itemBuilder: (context, index) {
-          final plan = widget.userPlans[index];
+          final plan = userPlans[index];
           return PlanCard(
             plan: plan,
             onTap: () async {

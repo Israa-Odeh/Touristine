@@ -17,89 +17,10 @@ class PlanMakerPage extends StatefulWidget {
 }
 
 class _PlanMakerPageState extends State<PlanMakerPage> {
-  List<Map<String, dynamic>> plans = [];
-  List<Map<String, dynamic>> plansSample = [
-    {
-      'planID': 1, // Plan ID
-      'destName': 'Jerusalem', // Dest. Name.
-      'numOfPlaces': 5, // # Of suggested places in the dest.
-      'totalTime': 5, // total estimated time to spend at the destination.
-      'startTime': '10:00', // start time.
-      'endTime': '15:00', // end time.
-      'imagePath':
-          'assets/Images/Profiles/Tourist/1T.png', // An image indicating the destination of the plan.
-      'date': '26/05/2023', // The creation date of the plan.
-      // Other data details will be added later on.
-    },
-    {
-      'planID': 2,
-      'destName': 'Nablus',
-      'numOfPlaces': 3,
-      'totalTime': 2,
-      'startTime': '13:00',
-      'endTime': '15:00',
-      'imagePath': 'assets/Images/Profiles/Tourist/2T.jpg',
-      'date': '06/10/2021'
-    },
-    {
-      'planID': 3,
-      'destName': 'Gaza',
-      'numOfPlaces': 6,
-      'totalTime': 4,
-      'startTime': '09:00',
-      'endTime': '13:00',
-      'imagePath': 'assets/Images/Profiles/Tourist/3T.jpg',
-      'date': '10/11/2020',
-    },
-  ];
-
-  // A Function to fetch user plans from the backend.
-  Future<void> fetchUserPlans() async {
-    final url = Uri.parse('https://touristine.onrender.com/get-plans');
-
-    try {
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': 'Bearer ${widget.token}',
-        },
-      );
-      if (mounted) {
-        // Check if the widget is still mounted before updating the state.
-        if (response.statusCode == 200) {
-          // Jenan, I need to retrieve a list of plans - if there is any,
-          // the retrieved list of plans will contain the following info:
-          // the plan ID, Dest. Name, # Of suggested places in the dest.,
-          // total estimated time to spend at the destination, the time
-          // interval (from - to) which will be spent at the dest in general
-          // (start time and end time), the creation date of the plan. You can
-          // see the format of the list called plans at line 16.
-          // Note: other data will be added later on.
-          setState(() {
-            // Update state only if the widget is still mounted.
-            plans = List<Map<String, dynamic>>.from(json.decode(response.body));
-            print(plans);
-          });
-        } else if (response.statusCode == 500) {
-          final Map<String, dynamic> responseData = json.decode(response.body);
-          // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
-        } else {
-          // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, 'Error fetching your plans',
-              bottomMargin: 0);
-        }
-      }
-    } catch (error) {
-      print('Error fetching plans: $error');
-    }
-  }
 
   @override
   void initState() {
     super.initState();
-    fetchUserPlans();
   }
 
   @override
@@ -188,7 +109,6 @@ class _PlanMakerPageState extends State<PlanMakerPage> {
                       ),
                       MyPlansTab(
                         token: widget.token,
-                        userPlans: plans,
                       ),
                     ],
                   ),
