@@ -264,12 +264,12 @@ Widget buildPlaceTile(
               child: Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.only(right: 20),
+                    padding: const EdgeInsets.only(right: 15),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20),
                       child: Image.network(
                         imagePath,
-                        width: 145,
+                        width: 140,
                         height: 130,
                         fit: BoxFit.cover,
                       ),
@@ -293,7 +293,7 @@ Widget buildPlaceTile(
               ),
             ),
           ),
-          // Circular progress indicator
+          // Circular progress indicator.
           if (isLoading)
             const Positioned.fill(
               child: Align(
