@@ -104,6 +104,7 @@ class _AddingReviewPageState extends State<AddingReviewPage> {
           // ignore: use_build_context_synchronously
           showCustomSnackBar(context, 'Your review has been updated',
               bottomMargin: 370);
+          widget.onReviewAdded();
         }
       } else if (response.statusCode == 500) {
         final Map<String, dynamic> responseData = json.decode(response.body);
