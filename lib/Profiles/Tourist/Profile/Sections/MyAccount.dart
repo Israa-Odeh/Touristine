@@ -56,30 +56,6 @@ class _AccountPageState extends State<AccountPage> {
     }
   }
 
-  // Functions Section.
-  Future<void> fetchUserData() async {
-    final url = Uri.parse(
-        'https://touristine.onrender.com/user-data'); // Replace this with your API endpoint
-
-    try {
-      final response = await http.get(
-        url,
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': 'Bearer ${widget.token}',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        // First Name, Last Name, password, Image.
-      } else {
-        print('Failed to fetch user data: $response.statusCode');
-      }
-    } catch (e) {
-      print('Exception during user data fetch: $e');
-    }
-  }
-
   void updateIsImageChanged(bool isChanged) {
     setState(() {
       isImageChanged = isChanged;
@@ -332,16 +308,7 @@ class _AccountPageState extends State<AccountPage> {
                         size: 30,
                       ),
                       onPressed: () {
-                        Navigator.pushReplacement(
-                          // This will be edited based on the profile type.
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => TouristProfile(
-                                    token: widget.token,
-                                    stepNum: 4,
-                                    googleAccount: widget.googleAccount,
-                                  )),
-                        );
+                        Navigator.of(context).pop();
                       },
                     ),
                   ),
