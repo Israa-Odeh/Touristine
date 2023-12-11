@@ -382,7 +382,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
   }
 
   String getFormattedDays(List<dynamic> days) {
-    // Define the order of days
+    // Define the order of days.
     List<String> orderOfDays = [
       "Saturday",
       "Sunday",
@@ -393,43 +393,43 @@ class _DestinationDetailsState extends State<DestinationDetails> {
       "Friday",
     ];
 
-    // Check if the given days are in the desired order
+    // Check if the given days are in the desired order.
     bool isInOrder = List.generate(days.length, (index) => index)
         .every((index) => days[index] == orderOfDays[index]);
 
-    // Sort the days if they are not in order
+    // Sort the days if they are not in order.
     if (!isInOrder) {
       days.sort((a, b) => orderOfDays.indexOf(a) - orderOfDays.indexOf(b));
     }
 
-    // Check if the days are in sequence
+    // Check if the days are in sequence.
     bool isInSequence = List.generate(days.length, (index) => index)
         .every((index) => orderOfDays.indexOf(days[index]) == index);
 
-    // Identify consecutive days
+    // Identify consecutive days.
     List<String> formattedDays = [];
     int startConsecutiveIndex = 0;
     for (int i = 1; i < days.length; i++) {
       if (orderOfDays.indexOf(days[i]) ==
           orderOfDays.indexOf(days[i - 1]) + 1) {
-        // Continue checking consecutive days
+        // Continue checking consecutive days.
         continue;
       } else {
-        // Consecutive sequence ended
+        // Consecutive sequence ended.
         if (startConsecutiveIndex == i - 1) {
-          // Consecutive days were just one day, add that day
+          // Consecutive days were just one day, add that day.
           formattedDays.add(days[startConsecutiveIndex].toString());
         } else {
-          // Add the consecutive range
+          // Add the consecutive range.
           formattedDays.add(
               '${days[startConsecutiveIndex].toString()}-${days[i - 1].toString()}');
         }
-        // Reset start index for the next consecutive sequence
+        // Reset start index for the next consecutive sequence.
         startConsecutiveIndex = i;
       }
     }
 
-    // Add the last day or consecutive range
+    // Add the last day or consecutive range.
     if (startConsecutiveIndex == days.length - 1) {
       formattedDays.add(days[startConsecutiveIndex].toString());
     } else {
@@ -437,7 +437,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
           '${days[startConsecutiveIndex].toString()}-${days[days.length - 1].toString()}');
     }
 
-    // Return the formatted string based on the conditions
+    // Return the formatted string based on the conditions.
     if (days.length == 1) {
       return days.first.toString();
     } else if (days.length == 2) {
