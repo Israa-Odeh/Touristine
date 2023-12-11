@@ -95,23 +95,35 @@ class _SearchedDestinationsState extends State<SearchedDestinations> {
         builder: (context) {
           if (widget.destinationsList.isEmpty) {
             return Center(
-              child: Column(
-                children: [
-                  const SizedBox(height: 150),
-                  Image.asset(
-                    'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
-                    fit: BoxFit.cover,
-                  ),
-                  const Text(
-                    'No results found',
-                    style: TextStyle(
-                      fontSize: 40,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: 'Gabriola',
-                      color: Color.fromARGB(255, 23, 99, 114),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 24.0),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(
+                          'assets/Images/Profiles/Tourist/emptyListBackground.png'),
+                      fit: BoxFit.cover,
                     ),
                   ),
-                ],
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 150),
+                      Image.asset(
+                        'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
+                        fit: BoxFit.cover,
+                      ),
+                      const Text(
+                        'No results found',
+                        style: TextStyle(
+                          fontSize: 40,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'Gabriola',
+                          color: Color.fromARGB(255, 23, 99, 114),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             );
           } else {
@@ -223,14 +235,20 @@ class _SearchedDestinationsState extends State<SearchedDestinations> {
           }
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'BackToHome',
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
-        backgroundColor: const Color(0xFF1E889E),
-        elevation: 0,
-        child: const Icon(FontAwesomeIcons.arrowLeft),
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(
+            bottom: widget.destinationsList.isNotEmpty ? 0.0 : 10.0),
+        child: FloatingActionButton(
+          heroTag: 'BackToHome',
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          backgroundColor: widget.destinationsList.isNotEmpty
+              ? const Color.fromARGB(129, 30, 137, 158)
+              : const Color(0xFF1E889E),
+          elevation: 0,
+          child: const Icon(FontAwesomeIcons.arrowLeft),
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
     );
@@ -258,10 +276,7 @@ Widget buildPlaceTile(
             onTap: onTapAction,
             title: Container(
               height: 140,
-              padding: const EdgeInsets.only(
-                left: 0,
-                right: 25
-              ),
+              padding: const EdgeInsets.only(left: 0, right: 25),
               child: Row(
                 children: [
                   Container(
