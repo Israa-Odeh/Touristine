@@ -381,10 +381,107 @@ class _DestinationDetailsState extends State<DestinationDetails> {
     });
   }
 
-  String _getFormattedDays(List<dynamic> days) {
-    return days.length >= 3 && days.length <= 7
-        ? '${days.first} - ${days.last}'
-        : days.join(', ');
+  String getFormattedDays(List<dynamic> days) {
+    // Define the order of days
+    List<String> orderOfDays = [
+      "Saturday",
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+    ];
+
+    // Check if the given days are in the desired order
+    bool isInOrder = List.generate(days.length, (index) => index)
+        .every((index) => days[index] == orderOfDays[index]);
+
+    // Sort the days if they are not in order
+    if (!isInOrder) {
+      days.sort((a, b) => orderOfDays.indexOf(a) - orderOfDays.indexOf(b));
+    }
+
+    // Check if the days are in sequence
+    bool isInSequence = List.generate(days.length, (index) => index)
+        .every((index) => orderOfDays.indexOf(days[index]) == index);
+
+    // Identify consecutive days
+    List<String> formattedDays = [];
+    int startConsecutiveIndex = 0;
+    for (int i = 1; i < days.length; i++) {
+      if (orderOfDays.indexOf(days[i]) ==
+          orderOfDays.indexOf(days[i - 1]) + 1) {
+        // Continue checking consecutive days
+        continue;
+      } else {
+        // Consecutive sequence ended
+        if (startConsecutiveIndex == i - 1) {
+          // Consecutive days were just one day, add that day
+          formattedDays.add(days[startConsecutiveIndex].toString());
+        } else {
+          // Add the consecutive range
+          formattedDays.add(
+              '${days[startConsecutiveIndex].toString()}-${days[i - 1].toString()}');
+        }
+        // Reset start index for the next consecutive sequence
+        startConsecutiveIndex = i;
+      }
+    }
+
+    // Add the last day or consecutive range
+    if (startConsecutiveIndex == days.length - 1) {
+      formattedDays.add(days[startConsecutiveIndex].toString());
+    } else {
+      formattedDays.add(
+          '${days[startConsecutiveIndex].toString()}-${days[days.length - 1].toString()}');
+    }
+
+    // Return the formatted string based on the conditions
+    if (days.length == 1) {
+      return days.first.toString();
+    } else if (days.length == 2) {
+      return '${days.first}, ${days.last}';
+    } else {
+      return (isInSequence)
+          ? '${days.first} - ${days.last}'
+          : formattedDays.join(', ');
+    }
+  }
+
+  void showWDDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Working Days"),
+          content: Text(
+            getFormattedDays(widget.destinationDetails['WorkingDays']),
+            style: const TextStyle(
+              fontFamily: 'Time New Roman',
+              fontSize: 18,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                'Close',
+                style: TextStyle(
+                  fontSize: 22.0,
+                  fontFamily: 'Zilla',
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 200, 50, 27),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   // Section of location accquistion functions.
@@ -515,7 +612,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
     final lng1Rad = startLng * (pi / 180.0);
     final lat2Rad = endLat * (pi / 180.0);
     final lng2Rad = endLng * (pi / 180.0);
-    
+
     // differences in latitude and longitude.
     final dlat = lat2Rad - lat1Rad;
     final dlng = lng2Rad - lng1Rad;
@@ -1059,38 +1156,48 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                         ),
                       ),
                       const SizedBox(height: 10.0),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          color: const Color(0xFF1E889E),
-                        ),
-                        width: 370.0,
-                        height: 60.0,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(left: 30.0),
-                              child: FaIcon(
-                                FontAwesomeIcons.calendar,
-                                color: Colors.white,
-                                size: 38,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 30.0),
-                              child: Text(
-                                _getFormattedDays(
-                                    widget.destinationDetails['WorkingDays']),
-                                style: const TextStyle(
+                      GestureDetector(
+                        onTap: () {
+                          showWDDialog(context);
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            color: const Color(0xFF1E889E),
+                          ),
+                          width: 370.0,
+                          height: 60.0,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.only(left: 30.0),
+                                child: FaIcon(
+                                  FontAwesomeIcons.calendar,
                                   color: Colors.white,
-                                  fontFamily: 'Time New Roman',
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.w500,
+                                  size: 38,
                                 ),
                               ),
-                            ),
-                          ],
+                              Padding(
+                                padding: const EdgeInsets.only(right: 30.0),
+                                child: Text(
+                                  getFormattedDays(widget.destinationDetails[
+                                                  'WorkingDays'])
+                                              .length <=
+                                          20
+                                      ? getFormattedDays(widget
+                                          .destinationDetails['WorkingDays'])
+                                      : "Workings Days",
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'Time New Roman',
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       const SizedBox(height: 10.0),
