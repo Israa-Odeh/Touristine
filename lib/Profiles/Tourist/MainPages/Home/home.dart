@@ -14,7 +14,12 @@ class HomePage extends StatefulWidget {
   final List<Map<String, dynamic>> popularDestinations;
   final List<Map<String, dynamic>> otherDestinations;
 
-  const HomePage({super.key, required this.token, required this.recommendedDestinations, required this.popularDestinations, required this.otherDestinations});
+  const HomePage(
+      {super.key,
+      required this.token,
+      required this.recommendedDestinations,
+      required this.popularDestinations,
+      required this.otherDestinations});
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -23,6 +28,8 @@ class _HomePageState extends State<HomePage> {
   Map<String, dynamic> destinationDetails = {};
   List<Map<String, dynamic>> destinationImages = [];
   Map<String, int> ratings = {};
+  bool isLoadingPlaceDetails = false;
+  int selectedPlaceIndex = -1;
 
   @override
   void initState() {
@@ -35,6 +42,10 @@ class _HomePageState extends State<HomePage> {
         Uri.parse('https://touristine.onrender.com/get-destination-details');
 
     try {
+      setState(() {
+        isLoadingPlaceDetails = true;
+      });
+
       final response = await http.post(
         url,
         headers: {
@@ -45,6 +56,9 @@ class _HomePageState extends State<HomePage> {
           'destinationName': destName,
         },
       );
+      setState(() {
+        isLoadingPlaceDetails = false;
+      });
 
       if (response.statusCode == 200) {
         // Success.
@@ -82,6 +96,9 @@ class _HomePageState extends State<HomePage> {
             bottomMargin: 0);
       }
     } catch (error) {
+      setState(() {
+        isLoadingPlaceDetails = false;
+      });
       print('Failed to fetch place details: $error');
     }
   }
@@ -251,32 +268,59 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   // Adding others section using a loop.
-                  for (var place in widget.otherDestinations)
-                    Column(
+                  for (var index = 0;
+                      index < widget.otherDestinations.length;
+                      index++)
+                    Stack(
                       children: [
-                        buildPlaceTile(
-                          place['name'],
-                          place['image'],
-                          () async {
-                            print(place['name']);
-                            await getDestinationDetails(place['name']);
+                        Column(
+                          children: [
+                            buildPlaceTile(
+                              widget.otherDestinations[index]['name'],
+                              widget.otherDestinations[index]['image'],
+                              () async {
+                                print(widget.otherDestinations[index]['name']);
+                                setState(() {
+                                  selectedPlaceIndex = index;
+                                });
 
-                            // ignore: use_build_context_synchronously
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => DestinationDetails(
-                                  destination: place,
-                                  token: widget.token,
-                                  destinationDetails: destinationDetails,
-                                  destinationImages: destinationImages,
-                                  ratings: ratings,
+                                await getDestinationDetails(
+                                    widget.otherDestinations[index]['name']);
+
+                                // ignore: use_build_context_synchronously
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => DestinationDetails(
+                                      destination:
+                                          widget.otherDestinations[index],
+                                      token: widget.token,
+                                      destinationDetails: destinationDetails,
+                                      destinationImages: destinationImages,
+                                      ratings: ratings,
+                                    ),
+                                  ),
+                                ).then((value) {
+                                  setState(() {
+                                    selectedPlaceIndex = -1;
+                                  });
+                                });
+                              },
+                            ),
+                            const SizedBox(height: 10),
+                          ],
+                        ),
+                        if (selectedPlaceIndex == index)
+                          if (isLoadingPlaceDetails)
+                            const Center(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 50.0),
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Color(0xFF1E889E)),
                                 ),
                               ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 10),
+                            ),
                       ],
                     ),
                 ],
