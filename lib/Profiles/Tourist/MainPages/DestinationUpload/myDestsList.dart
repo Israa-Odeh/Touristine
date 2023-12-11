@@ -43,6 +43,7 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
                 'destID': destinationData['destID'],
                 'date': destinationData['date'],
                 'destinationName': destinationData['destinationName'],
+                'city': destinationData['city'],
                 'category': destinationData['category'],
                 'budget': destinationData['budget'],
                 'timeToSpend': destinationData['timeToSpend'],
@@ -50,6 +51,7 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
                 'status': destinationData['status'],
                 'about': destinationData['about'],
                 'imagesURLs': destinationData['imagesURLs'],
+                'adminComment': destinationData['adminComment'],
               };
             }).toList();
             print(widget.uploadedDestinations);
@@ -352,9 +354,9 @@ class _DestinationCardState extends State<DestinationCard> {
                         fontWeight: FontWeight.bold,
                         fontSize: 18),
                   ),
-                  const Text(
-                    "Bethlehem",
-                    style: TextStyle(
+                  Text(
+                    widget.destination['city'],
+                    style: const TextStyle(
                         color: Color.fromARGB(255, 12, 53, 61),
                         fontFamily: 'Zilla Slab Light',
                         fontWeight: FontWeight.bold,

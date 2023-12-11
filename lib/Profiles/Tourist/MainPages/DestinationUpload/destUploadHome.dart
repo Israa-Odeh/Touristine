@@ -42,6 +42,7 @@ class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
             'destID': destinationData['destID'],
             'date': destinationData['date'],
             'destinationName': destinationData['destinationName'],
+            'city': destinationData['city'],
             'category': destinationData['category'],
             'budget': destinationData['budget'],
             'timeToSpend': destinationData['timeToSpend'],
@@ -49,6 +50,7 @@ class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
             'status': destinationData['status'],
             'about': destinationData['about'],
             'imagesURLs': destinationData['imagesURLs'],
+            'adminComment': destinationData['adminComment'],
           };
         }).toList();
         print(uploadedDestinations);
