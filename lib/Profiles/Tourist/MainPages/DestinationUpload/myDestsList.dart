@@ -5,13 +5,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:touristine/Notifications/SnackBar.dart';
 
-// ignore: must_be_immutable
 class DestinationCardGenerator extends StatefulWidget {
   final String token;
-  List<Map<String, dynamic>> uploadedDestinations;
 
-  DestinationCardGenerator(
-      {super.key, required this.token, required this.uploadedDestinations});
+  DestinationCardGenerator({super.key, required this.token});
 
   @override
   _DestinationCardGeneratorState createState() =>
@@ -20,8 +17,15 @@ class DestinationCardGenerator extends StatefulWidget {
 
 class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
   int uploadedDestsLength = 0;
+  List<Map<String, dynamic>> uploadedDestinations = [];
+  bool isLoading = true;
+
   // A Function to fetch user uploaded destinations.
   Future<void> fetchUploadedDests() async {
+    setState(() {
+      isLoading = true;
+    });
+
     final url = Uri.parse('https://touristine.onrender.com/get-uploaded-dests');
 
     try {
@@ -38,7 +42,7 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
             final List<dynamic> responseData = json.decode(response.body);
 
             // Convert destinationsData into a list of maps.
-            widget.uploadedDestinations = responseData.map((destinationData) {
+            uploadedDestinations = responseData.map((destinationData) {
               return {
                 'destID': destinationData['destID'],
                 'date': destinationData['date'],
@@ -54,7 +58,7 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
                 'adminComment': destinationData['adminComment'],
               };
             }).toList();
-            print(widget.uploadedDestinations);
+            print(uploadedDestinations);
           });
         } else if (response.statusCode == 500) {
           final Map<String, dynamic> responseData = json.decode(response.body);
@@ -70,6 +74,12 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
       if (mounted) {
         print('Error fetching uploaded dests: $error');
       }
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -77,12 +87,17 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
   void initState() {
     super.initState();
     fetchUploadedDests();
-    uploadedDestsLength = widget.uploadedDestinations.length;
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.uploadedDestinations.isEmpty) {
+    if (isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1E889E)),
+        ),
+      );
+    } else if (uploadedDestinations.isEmpty) {
       return Center(
         child: Column(
           children: [
@@ -105,7 +120,7 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
     } else {
       ScrollController pageScrollController = ScrollController();
 
-      return widget.uploadedDestinations.length > 1
+      return uploadedDestinations.length > 1
           ? ScrollbarTheme(
               data: ScrollbarThemeData(
                 thumbColor: MaterialStateProperty.all(
@@ -119,14 +134,14 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
                 controller: pageScrollController,
                 child: ListView.builder(
                   controller: pageScrollController,
-                  itemCount: widget.uploadedDestinations.length,
+                  itemCount: uploadedDestinations.length,
                   itemBuilder: (context, index) {
                     return DestinationCard(
                       token: widget.token,
-                      destination: widget.uploadedDestinations[index],
+                      destination: uploadedDestinations[index],
                       onDelete: () {
                         setState(() {
-                          widget.uploadedDestinations.removeAt(index);
+                          uploadedDestinations.removeAt(index);
                         });
                       },
                       uploadedDestsLength: uploadedDestsLength,
@@ -138,14 +153,14 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
           : Padding(
               padding: const EdgeInsets.symmetric(vertical: 0.0),
               child: ListView.builder(
-                itemCount: widget.uploadedDestinations.length,
+                itemCount: uploadedDestinations.length,
                 itemBuilder: (context, index) {
                   return DestinationCard(
                     token: widget.token,
-                    destination: widget.uploadedDestinations[index],
+                    destination: uploadedDestinations[index],
                     onDelete: () {
                       setState(() {
-                        widget.uploadedDestinations.removeAt(index);
+                        uploadedDestinations.removeAt(index);
                       });
                     },
                     uploadedDestsLength: uploadedDestsLength,

@@ -18,60 +18,10 @@ class DestsUploadHomePage extends StatefulWidget {
 
 class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
   List<Map<String, dynamic>> uploadedDestinations = [];
-  late Future<void> fetchUploadedDestsFuture;
-
-  // A Function to fetch user uploaded destinations.
-  Future<void> fetchUploadedDests() async {
-    final url = Uri.parse('https://touristine.onrender.com/get-uploaded-dests');
-
-    try {
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': 'Bearer ${widget.token}',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> responseData = json.decode(response.body);
-
-        // Convert destinationsData into a list of maps.
-        uploadedDestinations = responseData.map((destinationData) {
-          return {
-            'destID': destinationData['destID'],
-            'date': destinationData['date'],
-            'destinationName': destinationData['destinationName'],
-            'city': destinationData['city'],
-            'category': destinationData['category'],
-            'budget': destinationData['budget'],
-            'timeToSpend': destinationData['timeToSpend'],
-            'sheltered': destinationData['sheltered'],
-            'status': destinationData['status'],
-            'about': destinationData['about'],
-            'imagesURLs': destinationData['imagesURLs'],
-            'adminComment': destinationData['adminComment'],
-          };
-        }).toList();
-        print(uploadedDestinations);
-      } else if (response.statusCode == 500) {
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
-      } else {
-        // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, 'Error retrieving your places',
-            bottomMargin: 0);
-      }
-    } catch (error) {
-      print('Error fetching uploaded dests: $error');
-    }
-  }
 
   @override
   void initState() {
     super.initState();
-    fetchUploadedDestsFuture = fetchUploadedDests();
   }
 
   @override
@@ -150,24 +100,7 @@ class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
                       AddDestTab(
                         token: widget.token,
                       ),
-                      FutureBuilder<void>(
-                        future: fetchUploadedDestsFuture,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.done) {
-                            return DestinationCardGenerator(
-                              token: widget.token,
-                              uploadedDestinations: uploadedDestinations,
-                            );
-                          } else {
-                            return const Center(
-                                child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                  Color(0xFF1E889E)),
-                            ));
-                          }
-                        },
-                      ),
+                      DestinationCardGenerator(token: widget.token),
                     ],
                   ),
                 ),

@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/PlanMaker/planPlaces.dart';
 
-// ignore: must_be_immutable
 class MyPlansTab extends StatefulWidget {
   final String token;
 
@@ -154,9 +153,11 @@ class _MyPlansTabState extends State<MyPlansTab> {
         print('Error fetching plans: $error');
       }
     } finally {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
