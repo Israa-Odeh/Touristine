@@ -42,9 +42,11 @@ class _HomePageState extends State<HomePage> {
         Uri.parse('https://touristine.onrender.com/get-destination-details');
 
     try {
-      setState(() {
-        isLoadingPlaceDetails = true;
-      });
+      if (mounted) {
+        setState(() {
+          isLoadingPlaceDetails = true;
+        });
+      }
 
       final response = await http.post(
         url,
@@ -56,9 +58,11 @@ class _HomePageState extends State<HomePage> {
           'destinationName': destName,
         },
       );
-      setState(() {
-        isLoadingPlaceDetails = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoadingPlaceDetails = false;
+        });
+      }
 
       if (response.statusCode == 200) {
         // Success.
@@ -96,9 +100,11 @@ class _HomePageState extends State<HomePage> {
             bottomMargin: 0);
       }
     } catch (error) {
-      setState(() {
-        isLoadingPlaceDetails = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoadingPlaceDetails = false;
+        });
+      }
       print('Failed to fetch place details: $error');
     }
   }

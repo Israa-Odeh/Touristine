@@ -54,7 +54,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
   @override
   void initState() {
     super.initState();
-    selectedImage = widget.destination['image'];
+    selectedImage = widget.destination['image'] ?? widget.destination['imagePath'];
     getDestinationLatLng();
   }
 

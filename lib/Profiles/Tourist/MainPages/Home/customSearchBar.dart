@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -37,6 +39,8 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
   List<String> filteredSuggestions = [];
   Color iconColor = Colors.grey;
 
+  bool isSearching = false;
+
   @override
   void initState() {
     super.initState();
@@ -50,18 +54,11 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
 
   // A function to send a search request to the backend.
   Future<void> sendSearchRequest(String query) async {
-    // This navigator will be deleted, and placed on the correct part.
-      Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const SearchedDestinations(
-          token: '',
-          destinationsList: {},
-        ),
-      ),
-    );
-    /////////////////////////////////////////////////////////////////
-    // print(query);
+    if (mounted) {
+      setState(() {
+        isSearching = true;
+      });
+    }
     final url = Uri.parse('https://touristine.onrender.com/search-destination');
 
     try {
@@ -76,35 +73,46 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
           'isBudgetFriendly': isBudgetFriendly.toString(),
           'isMidRange': isMidRange.toString(),
           'isLuxurious': isLuxurious.toString(),
-          'Shelterd': yes ? yes.toString() : "false"
+          'Sheltered': yes ? yes.toString() : "false"
         },
       );
 
       if (response.statusCode == 200) {
         // Success.
-        // Jenan I need to retreive a list with the following format:
-        /*
-        final List<Map<String, dynamic>> destinationsList = [
-          {
-            'name': 'Gaza Mosque',
-            'imagePath': 'assets/Images/Profiles/Tourist/3T.jpg',
-          },
-          {
-            'name': 'Al-Aqsa Mosque',
-            'imagePath': 'assets/Images/Profiles/Tourist/1T.png',
-          },
-          {
-            'name': 'Nablus Mountain',
-            'imagePath': 'assets/Images/Profiles/Tourist/2T.jpg',
-          },
-        ];
-        */
-        // Israa, open page containing the results.
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        List<dynamic> rawDestinationsList = responseData['destinationsList'];
+
+        List<Map<String, dynamic>> destinationsList =
+            List<Map<String, dynamic>>.from(rawDestinationsList);
+
+        print(destinationsList);
+        // ignore: use_build_context_synchronously
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SearchedDestinations(
+              token: widget.token,
+              destinationsList: destinationsList,
+            ),
+          ),
+        );
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 350);
       } else {
-        // Handle other response statuses....
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'Failed to retrieve search results',
+            bottomMargin: 350);
       }
     } catch (error) {
       print('Failed to send search request: $error');
+    } finally {
+      if (mounted) {
+        setState(() {
+          isSearching = false;
+        });
+      }
     }
   }
 
@@ -273,7 +281,6 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
-          // Background Image
           Image.asset(
             'assets/Images/Profiles/Tourist/homeBackground.jpg',
             fit: BoxFit.cover,
@@ -344,6 +351,11 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                 const SizedBox(height: 16),
                 buildSuggestionsList(),
                 const SizedBox(height: 16),
+                if (isSearching)
+                  const CircularProgressIndicator(
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(Color(0xFF1E889E)),
+                  ),
               ],
             ),
           ),
@@ -408,14 +420,3 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
           );
   }
 }
-/*
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const SearchedDestinations(
-          token: '',
-          destinationsList: {},
-        ),
-      ),
-    );
- */
