@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:touristine/LoginAndRegistration/MainPages/landingPage.dart';
 
 class TopOuterScreen extends StatefulWidget {
+  const TopOuterScreen({super.key});
+
   @override
   _TopOuterScreenState createState() => _TopOuterScreenState();
 }
