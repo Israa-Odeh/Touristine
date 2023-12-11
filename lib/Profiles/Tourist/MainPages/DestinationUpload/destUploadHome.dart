@@ -1,9 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/DestinationUpload/destGenerator.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/DestinationUpload/myDestsList.dart';
 
