@@ -247,7 +247,7 @@ Widget buildPlaceTile(
       shape: RoundedRectangleBorder(
         side: const BorderSide(
           color: Color(0xFF1E889E),
-          width: 2.5,
+          width: 4,
         ),
         borderRadius: BorderRadius.circular(20),
       ),
