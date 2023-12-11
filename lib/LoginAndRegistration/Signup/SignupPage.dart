@@ -117,7 +117,7 @@ class _SignupPageState extends State<SignupPage> {
                 );
 
             // ignore: use_build_context_synchronously
-            context.read<UserProvider>().updateImage(newImageURL: null);
+            context.read<UserProvider>().updateImage(newImageURL: "");
           }
         }
 

@@ -24,7 +24,6 @@ class UserProvider extends ChangeNotifier {
     print("--------------------------------" + firstName);
     print("--------------------------------" + lastName);
     print("--------------------------------" + password);
-    print("--------------------------------" + imageURL!);
 
     notifyListeners();
   }
@@ -38,6 +37,7 @@ class UserProvider extends ChangeNotifier {
       notifyListeners();
     } 
     else {
+      imageURL = "";
       print("Received a null newImageURL");
     }
   }
