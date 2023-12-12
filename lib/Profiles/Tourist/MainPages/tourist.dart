@@ -272,7 +272,7 @@ class _TouristAppState extends State<TouristProfile> {
               ),
               _buildBottomNavigationBarItem(
                 FontAwesomeIcons.mapLocationDot,
-                'Places Upload',
+                'Upload Places',
                 2,
               ),
               _buildBottomNavigationBarItem(
