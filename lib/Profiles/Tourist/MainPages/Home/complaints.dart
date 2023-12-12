@@ -180,7 +180,7 @@ class ComplaintCard extends StatelessWidget {
                                     (complaint['images'] as List)[imgIndex],
                                     width: 100,
                                     height: 100,
-                                    fit: BoxFit.cover,
+                                    fit: BoxFit.fill,
                                   ),
                                 ),
                               ),
