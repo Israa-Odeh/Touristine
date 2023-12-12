@@ -140,8 +140,7 @@ class _UploadingImagesPageState extends State<UploadingImagesPage> {
     const List<String> availableKeywords = [
       'General',
       'Services',
-      'Buildings',
-      'Cracks',
+      'Cracks'
     ];
 
     return Scaffold(
