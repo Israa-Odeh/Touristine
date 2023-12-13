@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:touristine/LoginAndRegistration/MainPages/TopOuterScreen.dart';
+import 'package:touristine/Profiles/Admin/MainPages/admin.dart';
 import 'package:touristine/UserData/userProvider.dart';
 
 void main() {
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
       ],
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: TopOuterScreen(),
+        home: AdminProfile(token: '',),
       ),
     );
   }
