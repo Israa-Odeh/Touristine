@@ -6,8 +6,9 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
-import 'package:touristine/Profiles/Tourist/MainPages/DestinationUpload/timePicker.dart';
-import 'package:touristine/Profiles/Tourist/MainPages/PlanMaker/customBottomSheet.dart';
+import 'package:touristine/Profiles/Admin/MainPages/DestinationUpload/bottomDropList.dart';
+import 'package:touristine/Profiles/Admin/MainPages/DestinationUpload/timePicker.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/planMaker/customBottomSheet.dart';
 
 class AddDestTab extends StatefulWidget {
   final String token;
@@ -23,10 +24,26 @@ class _AddDestTabState extends State<AddDestTab> {
   bool no = false;
 
   TextEditingController destNameController = TextEditingController();
+  TextEditingController destLatController = TextEditingController();
+  TextEditingController destLngController = TextEditingController();
+  TextEditingController startTimeController = TextEditingController();
+  TextEditingController endTimeController = TextEditingController();
+  TextEditingController otherServicesController = TextEditingController();
+  TextEditingController activityTitleController = TextEditingController();
+  TextEditingController activityContentController = TextEditingController();
+
   TextEditingController aboutController = TextEditingController();
   List<File> selectedImages = []; // List to store selected images.
 
-  Color destBorderIconColor = Colors.grey;
+  Color destNameBorderIconColor = Colors.grey;
+  Color destLatBorderIconColor = Colors.grey;
+  Color destLngBorderIconColor = Colors.grey;
+
+  Color startTimeBorderIconColor = Colors.grey;
+  Color endTimeBorderIconColor = Colors.grey;
+
+  TimeOfDay selectedStartTime = TimeOfDay.now();
+  TimeOfDay selectedEndTime = TimeOfDay.now();
 
   late PageController pageController;
   int currentPage = 0;
@@ -112,7 +129,7 @@ class _AddDestTabState extends State<AddDestTab> {
 
       if (response.statusCode == 200) {
         // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, 'Thanks for sharing your experience',
+        showCustomSnackBar(context, 'The destination has been added',
             bottomMargin: 0);
       } else if (response.statusCode == 500) {
         final Map<String, dynamic> responseData = json.decode(response.body);
@@ -125,12 +142,112 @@ class _AddDestTabState extends State<AddDestTab> {
         }
       } else {
         // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, 'Error storing your destination',
+        showCustomSnackBar(context, 'Error storing the destination',
             bottomMargin: 0);
       }
     } catch (error) {
       print('Error storing the destination: $error');
     }
+  }
+
+  Future<void> selectStartTime(BuildContext context) async {
+    final TimeOfDay? pickedStartTime = await showTimePicker(
+      context: context,
+      initialTime: selectedStartTime,
+    );
+
+    if (pickedStartTime != null &&
+        pickedStartTime.hour >= 5 &&
+        pickedStartTime.hour <= 20) {
+      setState(() {
+        selectedStartTime = pickedStartTime;
+        startTimeController.text =
+            '${pickedStartTime.hour.toString().padLeft(2, '0')}:${pickedStartTime.minute.toString().padLeft(2, '0')}';
+        updateStartTimeColors();
+
+        // If end time is specified, re-validate and update if necessary
+        if (endTimeController.text.isNotEmpty) {
+          validateAndUpdateEndTime();
+        }
+      });
+    } else {
+      if (pickedStartTime != null) {
+        startTimeController.text = "";
+        showCustomSnackBar(context, 'Start time must be from 5 AM to 8 PM',
+            bottomMargin: 0);
+      }
+    }
+  }
+
+  Future<void> selectEndTime(BuildContext context) async {
+    final TimeOfDay? pickedEndTime = await showTimePicker(
+      context: context,
+      initialTime: selectedEndTime,
+    );
+
+    if (pickedEndTime != null &&
+        pickedEndTime.hour >= 7 &&
+        pickedEndTime.hour <= 22) {
+      if (isEndTimeValid(selectedStartTime, pickedEndTime,
+          minHourDifference: 5)) {
+        setState(() {
+          selectedEndTime = pickedEndTime;
+          endTimeController.text =
+              '${pickedEndTime.hour.toString().padLeft(2, '0')}:${pickedEndTime.minute.toString().padLeft(2, '0')}';
+          updateEndTimeColors();
+        });
+      } else {
+        // Print statement and immediate clearing of the end time controller
+        endTimeController.text = "";
+        showCustomSnackBar(context, 'End time should be 5 hours after start',
+            bottomMargin: 0);
+      }
+    } else {
+      if (pickedEndTime != null) {
+        // Print statement and immediate clearing of the end time controller
+        print("End time must be from 7 AM to 10 PM");
+        endTimeController.text = "";
+        showCustomSnackBar(context, 'End time must be from 7 AM to 10 PM',
+            bottomMargin: 0);
+      }
+    }
+  }
+
+// Helper function to validate and update end time
+  void validateAndUpdateEndTime() {
+    final TimeOfDay currentEndTime = TimeOfDay(
+        hour: int.parse(endTimeController.text.split(":")[0]),
+        minute: int.parse(endTimeController.text.split(":")[1]));
+
+    if (!isEndTimeValid(selectedStartTime, currentEndTime,
+        minHourDifference: 5)) {
+      // Update the end time if it doesn't meet the criteria
+      endTimeController.text = "";
+    }
+  }
+
+  bool isEndTimeValid(TimeOfDay startTime, TimeOfDay endTime,
+      {int minHourDifference = 0}) {
+    final DateTime startDateTime =
+        DateTime(2023, 1, 1, startTime.hour, startTime.minute);
+    final DateTime endDateTime =
+        DateTime(2023, 1, 1, endTime.hour, endTime.minute);
+
+    final Duration difference = endDateTime.difference(startDateTime);
+
+    return difference.inHours >= minHourDifference;
+  }
+
+  void updateStartTimeColors() {
+    setState(() {
+      startTimeBorderIconColor = const Color(0xFF1E889E);
+    });
+  }
+
+  void updateEndTimeColors() {
+    setState(() {
+      endTimeBorderIconColor = const Color(0xFF1E889E);
+    });
   }
 
   @override
@@ -146,7 +263,8 @@ class _AddDestTabState extends State<AddDestTab> {
   }
 
   void nextPage() {
-    if (currentPage < 5) {
+    if (currentPage < 9) {
+      /////////////////////////////////////////////////////////////
       pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
@@ -222,6 +340,69 @@ class _AddDestTabState extends State<AddDestTab> {
     });
   }
 
+  List<String> daysOfWeek = [
+    'Saturday',
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+  ];
+
+  List<String> selectedWorkingDays = [];
+
+  void showWorkingDaysBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return BottomDropList(
+          itemsList: daysOfWeek,
+          height: 450,
+          initiallySelectedItems: selectedWorkingDays,
+          onDone: (List<String> selectedItems) {
+            setState(() {
+              selectedWorkingDays = selectedItems;
+            });
+          },
+        );
+      },
+    );
+  }
+
+  List<String> suggestedServices = [
+    'Restrooms',
+    'Parking Areas',
+    'Nearby Gas stations',
+    'Wheel Chair Ramps',
+    'Kids Area',
+    'Restaurants',
+    'Nearby Restaurants',
+    'Photographers',
+    'Kiosks'
+  ];
+
+  List<String> selectedServices = [];
+  List<String> otherServices = [];
+
+  void showServicesBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return BottomDropList(
+          itemsList: suggestedServices,
+          height: 450,
+          initiallySelectedItems: selectedServices,
+          onDone: (List<String> selectedItems) {
+            setState(() {
+              selectedServices = selectedItems;
+            });
+          },
+        );
+      },
+    );
+  }
+
   // Function to open image picker.
   Future<void> pickImage() async {
     final pickedFile =
@@ -279,6 +460,77 @@ class _AddDestTabState extends State<AddDestTab> {
     return true;
   }
 
+  bool isValidDouble(String value) {
+    try {
+      double.parse(value);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  bool validateLatLng() {
+    if (destLatController.text.isEmpty) {
+      showCustomSnackBar(context, 'Please enter a latitude value',
+          bottomMargin: 0);
+      return false;
+    } else if (destLngController.text.isEmpty) {
+      showCustomSnackBar(context, 'Please enter a longitude value',
+          bottomMargin: 0);
+      return false;
+    } else if (!isValidDouble(destLatController.text)) {
+      showCustomSnackBar(context, 'Latitude must be a double value',
+          bottomMargin: 0);
+      return false;
+    } else if (!isValidDouble(destLngController.text)) {
+      showCustomSnackBar(context, 'Longitude must be a double value',
+          bottomMargin: 0);
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  bool validateTimeAndWD() {
+    if (startTimeController.text.isEmpty) {
+      showCustomSnackBar(context, 'Please specify the opening time',
+          bottomMargin: 0);
+      return false;
+    } else if (endTimeController.text.isEmpty) {
+      showCustomSnackBar(context, 'Please specify the closing time',
+          bottomMargin: 0);
+      return false;
+    } else if (selectedWorkingDays.isEmpty) {
+      showCustomSnackBar(context, 'Please specify the working days',
+          bottomMargin: 0);
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  bool validateActivities() {
+    if (activityTitleController.text.isEmpty) {
+      showCustomSnackBar(context, 'Please enter the activity title',
+          bottomMargin: 0);
+      return false;
+    } else if (activityContentController.text.isEmpty) {
+      showCustomSnackBar(context, 'Please enter the activity content',
+          bottomMargin: 0);
+      return false;
+    } else if (activityTitleController.text.length < 4) {
+      showCustomSnackBar(context, 'The title must be at least of 4 chars',
+          bottomMargin: 0);
+      return false;
+    } else if (activityContentController.text.length < 40) {
+      showCustomSnackBar(context, 'Content should be at least 40 chars',
+          bottomMargin: 0);
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -295,6 +547,93 @@ class _AddDestTabState extends State<AddDestTab> {
                 children: [
                   buildIntroPage(),
                   buildDestNameCatPage(),
+                  buildDestLatLngPage(),
+                  Container(
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Image.asset(
+                          'assets/Images/Profiles/Admin/DestUpload/workingDays.gif',
+                          height: 280,
+                          width: 280,
+                        ),
+                        SizedBox(
+                            height:
+                                startTimeController.text.isNotEmpty ? 20 : 10),
+                        buildTimeInput(
+                          'Opening Time',
+                          startTimeController,
+                          startTimeBorderIconColor,
+                          FontAwesomeIcons.clock,
+                          () => selectStartTime(context),
+                        ),
+                        SizedBox(
+                            height:
+                                endTimeController.text.isNotEmpty ? 20 : 10),
+                        buildTimeInput(
+                          'Closing Time',
+                          endTimeController,
+                          endTimeBorderIconColor,
+                          FontAwesomeIcons.clock,
+                          () => selectEndTime(context),
+                        ),
+                        SizedBox(
+                            height: startTimeController.text.isNotEmpty &&
+                                    endTimeController.text.isNotEmpty
+                                ? 15
+                                : 10),
+                        ElevatedButton(
+                          onPressed: showWorkingDaysBottomSheet,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromARGB(255, 231, 231, 231),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                          child: SizedBox(
+                            height: 50,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 5.0),
+                                  child: Text(
+                                    selectedWorkingDays.isEmpty
+                                        ? 'Select Working Days'
+                                        : "Working Days",
+                                    style: const TextStyle(
+                                        color: Color.fromARGB(163, 0, 0, 0),
+                                        fontSize: 22),
+                                  ),
+                                ),
+                                const FaIcon(
+                                  FontAwesomeIcons.calendarCheck,
+                                  color: Color.fromARGB(100, 0, 0, 0),
+                                  size: 28,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   Container(
                     margin: const EdgeInsets.all(10),
                     padding: const EdgeInsets.all(20),
@@ -462,6 +801,8 @@ class _AddDestTabState extends State<AddDestTab> {
                     ),
                   ),
                   buildAboutPage(),
+                  buildServicesPage(),
+                  buildActivitiesPage(),
                   buildImagesPage(),
                   buildSummaryPage(),
                 ],
@@ -497,7 +838,7 @@ class _AddDestTabState extends State<AddDestTab> {
                   ),
                   const SizedBox(width: 10),
                   Visibility(
-                    visible: currentPage < 5,
+                    visible: currentPage < 9,
                     child: ElevatedButton(
                       onPressed: () {
                         if (currentPage == 1) {
@@ -526,10 +867,18 @@ class _AddDestTabState extends State<AddDestTab> {
                             nextPage();
                           }
                         } else if (currentPage == 2) {
-                          if (validateForm()) {
+                          if (validateLatLng()) {
                             nextPage();
                           }
                         } else if (currentPage == 3) {
+                          if (validateTimeAndWD()) {
+                            nextPage();
+                          }
+                        } else if (currentPage == 4) {
+                          if (validateForm()) {
+                            nextPage();
+                          }
+                        } else if (currentPage == 5) {
                           if (aboutController.text.isEmpty) {
                             showCustomSnackBar(
                                 context, 'Provide information about the place',
@@ -541,7 +890,21 @@ class _AddDestTabState extends State<AddDestTab> {
                           } else {
                             nextPage();
                           }
-                        } else if (currentPage == 4) {
+                        } else if (currentPage == 6) {
+                          if (selectedServices.isEmpty) {
+                            showCustomSnackBar(
+                                context, 'Please specify the provided services',
+                                bottomMargin: 0);
+                          } else {
+                            nextPage();
+                          }
+                        } else if (currentPage == 7) {
+                          if (validateActivities()) {
+                            nextPage();
+                          }
+                        } else if (currentPage == 8) {
+                          nextPage();
+                        } else if (currentPage == 9) {
                           if (selectedImages.isEmpty) {
                             showCustomSnackBar(
                                 context, 'Destination images are needed',
@@ -605,7 +968,7 @@ class _AddDestTabState extends State<AddDestTab> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           const Text(
-            'Share your unique experiences!',
+            'A Call to Explore Palestine!',
             style: TextStyle(
               fontFamily: 'Gabriola',
               fontSize: 33,
@@ -616,12 +979,12 @@ class _AddDestTabState extends State<AddDestTab> {
           ),
           const SizedBox(height: 10),
           Image.asset(
-            'assets/Images/Profiles/Tourist/DestUpload/CableCar.gif',
+            'assets/Images/Profiles/Admin/DestUpload/horseRiding.gif',
             fit: BoxFit.cover,
           ),
           const SizedBox(height: 22.57),
           const Text(
-            'Contribute by adding your destinations to inspire others',
+            'Promote Palestinian tourism with enticing destinations',
             style: TextStyle(
               fontFamily: 'Gabriola',
               fontSize: 33,
@@ -654,7 +1017,7 @@ class _AddDestTabState extends State<AddDestTab> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           const Text(
-            'Add your destination details',
+            'Add the destination details',
             style: TextStyle(
               fontFamily: 'Gabriola',
               fontSize: 33,
@@ -663,15 +1026,13 @@ class _AddDestTabState extends State<AddDestTab> {
             ),
             textAlign: TextAlign.center,
           ),
-          Image.asset(
-              'assets/Images/Profiles/Tourist/DestUpload/DestUpload.gif',
-              height: 270,
-              width: 270,
+          Image.asset('assets/Images/Profiles/Admin/DestUpload/guide.gif',
               fit: BoxFit.cover),
           buildDestInput(
             'Destination Name',
+            60,
             destNameController,
-            destBorderIconColor,
+            destNameBorderIconColor,
             FontAwesomeIcons.locationDot,
           ),
           const SizedBox(height: 15),
@@ -743,14 +1104,119 @@ class _AddDestTabState extends State<AddDestTab> {
     );
   }
 
+  Widget buildDestLatLngPage() {
+    return Container(
+      margin: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          const Text(
+            'Specify the destination location',
+            style: TextStyle(
+              fontFamily: 'Gabriola',
+              fontSize: 33,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF455a64),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          Image.asset(
+              'assets/Images/Profiles/Admin/DestUpload/currentLocation.gif',
+              fit: BoxFit.cover),
+          const SizedBox(height: 20),
+          buildDestInput(
+            'Latitude',
+            55,
+            destLatController,
+            destLatBorderIconColor,
+            FontAwesomeIcons.locationDot,
+          ),
+          const SizedBox(height: 15),
+          buildDestInput(
+            'Longitude',
+            55,
+            destLngController,
+            destLngBorderIconColor,
+            FontAwesomeIcons.locationDot,
+          ),
+          const SizedBox(height: 15),
+        ],
+      ),
+    );
+  }
+
+  Widget buildTimeInput(
+    String labelText,
+    TextEditingController controller,
+    Color borderIconColor,
+    IconData icon,
+    Function() onTap,
+  ) {
+    return SizedBox(
+      height: 60,
+      child: InkWell(
+        onTap: onTap,
+        child: IgnorePointer(
+          child: TextFormField(
+            controller: controller,
+            style: const TextStyle(
+                fontSize: 22, color: Color.fromARGB(192, 0, 0, 0)),
+            decoration: InputDecoration(
+              labelStyle: const TextStyle(fontSize: 22),
+              labelText: labelText,
+              floatingLabelStyle: const TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.w400,
+                color: Color(0xFF1E889E),
+              ),
+              suffixIcon: Icon(
+                icon,
+                color: borderIconColor,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: BorderSide(
+                  color: borderIconColor,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: BorderSide(
+                  color: borderIconColor,
+                ),
+              ),
+              hintStyle: TextStyle(
+                color: borderIconColor,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget buildDestInput(
     String labelText,
+    double height,
     TextEditingController controller,
     Color borderIconColor,
     IconData icon,
   ) {
     return SizedBox(
-      height: 60,
+      height: height,
       child: InkWell(
         child: TextFormField(
           controller: controller,
@@ -809,7 +1275,7 @@ class _AddDestTabState extends State<AddDestTab> {
             ),
             textAlign: TextAlign.center,
           ),
-          Image.asset('assets/Images/Profiles/Tourist/DestUpload/Notes.gif',
+          Image.asset('assets/Images/Profiles/Admin/DestUpload/Notes.gif',
               height: imageDimensions, width: imageDimensions),
           TextFormField(
             controller: aboutController,
@@ -843,6 +1309,302 @@ class _AddDestTabState extends State<AddDestTab> {
     );
   }
 
+  Widget buildServicesPage() {
+    ScrollController servicesSccrollController = ScrollController();
+
+    return buildPageContent(
+      CustomScrollView(
+        controller: servicesSccrollController,
+        slivers: [
+          SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Text(
+                  'Share the destination Services!',
+                  style: TextStyle(
+                    fontFamily: 'Gabriola',
+                    fontSize: 33,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF455a64),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                Visibility(
+                  visible: otherServices.isNotEmpty,
+                  child: const SizedBox(height: 40),
+                ),
+                Visibility(
+                  visible: otherServices.isEmpty,
+                  child: Image.asset(
+                      'assets/Images/Profiles/Admin/DestUpload/Questions.gif',
+                      height: 200,
+                      width: 200,
+                      fit: BoxFit.cover),
+                ),
+
+                ElevatedButton(
+                  onPressed: showServicesBottomSheet,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 231, 231, 231),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                  ),
+                  child: SizedBox(
+                    height: 50,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 5.0),
+                          child: Text(
+                            selectedServices.isEmpty
+                                ? 'Select Services'
+                                : "Services",
+                            style: const TextStyle(
+                                color: Color.fromARGB(163, 0, 0, 0),
+                                fontSize: 22),
+                          ),
+                        ),
+                        const FaIcon(
+                          FontAwesomeIcons.listCheck,
+                          color: Color.fromARGB(100, 0, 0, 0),
+                          size: 28,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                // Replace the "Add Others" button with a TextField
+                TextFormField(
+                  controller: otherServicesController,
+                  decoration: const InputDecoration(
+                    labelText: 'Other Services',
+                    labelStyle: TextStyle(
+                      fontSize: 22,
+                      color: Color(0xFF1E889E),
+                      fontWeight: FontWeight.bold,
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xFF1E889E)),
+                    ),
+                  ),
+                  minLines: 1,
+                  maxLines: 2,
+                  maxLength: 43,
+                  style: const TextStyle(fontSize: 20),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton(
+                    onPressed: addOtherItem,
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 10,
+                      ),
+                      backgroundColor: const Color.fromARGB(255, 216, 215, 215),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    child: const Text(
+                      'Add Service',
+                      style: TextStyle(
+                        color: Color.fromARGB(163, 0, 0, 0),
+                        fontSize: 22,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+              ],
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: otherServices.length > 1
+                ? SizedBox(
+                    height: 150, // Adjust the height as needed
+                    child: Scrollbar(
+                      controller: servicesSccrollController,
+                      trackVisibility: true,
+                      thumbVisibility: true,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: otherServices.asMap().entries.map((entry) {
+                            final int index = entry.key;
+                            final String item = entry.value;
+
+                            return Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                                side: const BorderSide(
+                                  color: Color.fromARGB(50, 0, 0, 0),
+                                  width: 1.0,
+                                ),
+                              ),
+                              elevation: 3,
+                              margin: const EdgeInsets.all(8),
+                              child: ListTile(
+                                title: Text(item,
+                                    style: const TextStyle(
+                                        fontSize: 22, fontFamily: 'Andalus')),
+                                trailing: InkWell(
+                                  onTap: () => removeItem(index),
+                                  child: const FaIcon(
+                                      FontAwesomeIcons.circleXmark),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+                  )
+                : Column(
+                    children: otherServices.asMap().entries.map((entry) {
+                      final int index = entry.key;
+                      final String item = entry.value;
+
+                      return Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          side: const BorderSide(
+                            color: Color.fromARGB(50, 0, 0, 0),
+                            width: 1.0,
+                          ),
+                        ),
+                        elevation: 3,
+                        margin: const EdgeInsets.all(8),
+                        child: ListTile(
+                          title: Text(item,
+                              style: const TextStyle(
+                                  fontSize: 22, fontFamily: 'Andalus')),
+                          trailing: InkWell(
+                            onTap: () => removeItem(index),
+                            child: const FaIcon(FontAwesomeIcons.circleXmark),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void addOtherItem() {
+    if (otherServicesController.text.isEmpty) {
+      showCustomSnackBar(context, 'Please enter the service you want!',
+          bottomMargin: 0);
+    } else if (otherServicesController.text.length > 43) {
+      showCustomSnackBar(
+          context, 'A service can\'t be longer than 43 characters!',
+          bottomMargin: 0);
+    } else {
+      setState(() {
+        otherServices.add(otherServicesController.text);
+        otherServicesController.clear();
+      });
+    }
+  }
+
+  void removeItem(int index) {
+    setState(() {
+      otherServices.removeAt(index);
+    });
+  }
+
+  Widget buildActivitiesPage() {
+    double imageDimensions = 280;
+    setState(() {
+      imageDimensions = activityTitleController.text.isEmpty &&
+              activityContentController.text.isEmpty
+          ? 280
+          : activityContentController.text.isNotEmpty
+              ? activityContentController.text.length <= 60
+                  ? 250
+                  : 215
+              : 280;
+    });
+    return buildPageContent(
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          const Text(
+            'Highlight potential activities',
+            style: TextStyle(
+              fontFamily: 'Gabriola',
+              fontSize: 33,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF455a64),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          Image.asset('assets/Images/Profiles/Admin/DestUpload/activity.gif',
+              height: imageDimensions, width: imageDimensions),
+          TextField(
+            controller: activityTitleController,
+            decoration: const InputDecoration(
+              labelText: 'Activity Title',
+              labelStyle: TextStyle(
+                fontSize: 22,
+                color: Color(0xFF1E889E),
+                fontWeight: FontWeight.bold,
+              ),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Color(0xFF1E889E)),
+              ),
+            ),
+            maxLength: 25,
+            style: const TextStyle(fontSize: 18),
+          ),
+          TextFormField(
+            controller: activityContentController,
+            onChanged: (text) {
+              setState(() {
+                if (text.isEmpty) {
+                  imageDimensions = 280;
+                } else if (text.length <= 60) {
+                  imageDimensions = 250;
+                } else {
+                  imageDimensions = 215;
+                }
+              });
+            },
+            decoration: const InputDecoration(
+              labelText: 'About Activity',
+              labelStyle: TextStyle(
+                fontSize: 22,
+                color: Color(0xFF1E889E),
+                fontWeight: FontWeight.bold,
+              ),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Color(0xFF1E889E)),
+              ),
+            ),
+            minLines: 1,
+            maxLines: 4,
+            maxLength: 500,
+            style: const TextStyle(fontSize: 20),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget buildImagesPage() {
     final ScrollController scrollController = ScrollController();
 
@@ -863,12 +1625,16 @@ class _AddDestTabState extends State<AddDestTab> {
             ),
             textAlign: TextAlign.center,
           ),
-          Visibility(
+                        Visibility(
               visible: selectedImages.isEmpty,
-              child: const SizedBox(height: 50)),
-          Image.asset(
-              'assets/Images/Profiles/Tourist/DestUpload/ImagesSection.gif',
-              fit: BoxFit.cover),
+              child: const SizedBox(height: 20)),
+          Image.asset('assets/Images/Profiles/Admin/DestUpload/destImages.gif',
+          height: selectedImages.isEmpty? 300: 190,
+          width: selectedImages.isEmpty? 300: 190,
+              fit: BoxFit.fill),
+              Visibility(
+              visible: selectedImages.isNotEmpty,
+              child: const SizedBox(height: 10)),
           if (selectedImages.isNotEmpty)
             SizedBox(
               height: 200,
@@ -975,7 +1741,7 @@ class _AddDestTabState extends State<AddDestTab> {
                       },
                     ),
             ),
-          SizedBox(height: selectedImages.isEmpty ? 50 : 7.5),
+          SizedBox(height: selectedImages.isEmpty ? 30 : 7.5),
           ElevatedButton(
             onPressed: pickImage,
             style: ElevatedButton.styleFrom(

@@ -93,6 +93,7 @@ flutter:
     - assets/Images/Profiles/Admin/
     - assets/Images/Profiles/Admin/ProfilePage/
     - assets/Images/Profiles/Admin/AccountPage/
+    - assets/Images/Profiles/Admin/DestUpload/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
