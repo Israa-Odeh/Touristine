@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class BottomDropList extends StatefulWidget {
   final List<String> itemsList;
   final double height;
+  final String title;
   final List<String> initiallySelectedItems;
   final Function(List<String>) onDone;
 
-  const BottomDropList({
-    Key? key,
-    required this.itemsList,
-    required this.initiallySelectedItems,
-    required this.onDone,
-    this.height = 400,
-  }) : super(key: key);
+  const BottomDropList(
+      {super.key,
+      required this.itemsList,
+      this.height = 400,
+      required this.title,
+      required this.initiallySelectedItems,
+      required this.onDone});
 
   @override
   _CustomBottomSheetState createState() => _CustomBottomSheetState();
@@ -27,7 +27,7 @@ class _CustomBottomSheetState extends State<BottomDropList> {
     super.initState();
     selectedItems = List<bool>.filled(widget.itemsList.length, false);
 
-    // Set initially selected items
+    // Set initially selected items.
     for (var item in widget.initiallySelectedItems) {
       int index = widget.itemsList.indexOf(item);
       if (index != -1) {
@@ -51,11 +51,11 @@ class _CustomBottomSheetState extends State<BottomDropList> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.only(left: 5.0),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 5.0),
                     child: Text(
-                      'Working Days',
-                      style: TextStyle(
+                      widget.title,
+                      style: const TextStyle(
                         fontFamily: 'Andalus',
                         fontSize: 25,
                         fontWeight: FontWeight.bold,
@@ -80,17 +80,16 @@ class _CustomBottomSheetState extends State<BottomDropList> {
                       ),
                     ),
                     onPressed: () {
-                      // Get the list of selected items
+                      // Get the list of selected items.
                       List<String> selectedItemsList = [];
                       for (int i = 0; i < selectedItems.length; i++) {
                         if (selectedItems[i]) {
                           selectedItemsList.add(widget.itemsList[i]);
                         }
                       }
-
                       // Pass the selected items back to the calling widget
                       widget.onDone(selectedItemsList);
-                      Navigator.pop(context); // Close the bottom sheet
+                      Navigator.pop(context);
                     },
                     child: const Text('Done'),
                   )

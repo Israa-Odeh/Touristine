@@ -1,14 +1,15 @@
-import 'dart:convert';
-import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:http/http.dart' as http;
-import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
-import 'package:touristine/Notifications/SnackBar.dart';
+import 'package:touristine/Profiles/Admin/MainPages/DestinationUpload/activityList.dart';
 import 'package:touristine/Profiles/Admin/MainPages/DestinationUpload/bottomDropList.dart';
 import 'package:touristine/Profiles/Admin/MainPages/DestinationUpload/timePicker.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/planMaker/customBottomSheet.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:touristine/Notifications/SnackBar.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'dart:convert';
+import 'dart:io';
 
 class AddDestTab extends StatefulWidget {
   final String token;
@@ -31,9 +32,10 @@ class _AddDestTabState extends State<AddDestTab> {
   TextEditingController otherServicesController = TextEditingController();
   TextEditingController activityTitleController = TextEditingController();
   TextEditingController activityContentController = TextEditingController();
-
   TextEditingController aboutController = TextEditingController();
+
   List<File> selectedImages = []; // List to store selected images.
+  List<Map<String, String>> addedActivities = [];
 
   Color destNameBorderIconColor = Colors.grey;
   Color destLatBorderIconColor = Colors.grey;
@@ -73,14 +75,15 @@ class _AddDestTabState extends State<AddDestTab> {
   List<String> citiesList = ['Jerusalem', 'Nablus', 'Ramallah', 'Bethlehem'];
 
   // A function to store the created destination details.
-  Future<void> storeDestination() async {
+  Future<void> addDestination() async {
     String currentDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
 
     // Format time to spend (hours and minutes).
     String formattedHours = selectedHours.toString().padLeft(2, '0');
     String formattedMinutes = selectedMinutes.toString().padLeft(2, '0');
 
-    final url = Uri.parse('https://touristine.onrender.com/store-destination');
+    final url =
+        Uri.parse('https://touristine.onrender.com/add-new-destination');
 
     // Create a multi-part request.
     final request = http.MultipartRequest('POST', url);
@@ -94,20 +97,37 @@ class _AddDestTabState extends State<AddDestTab> {
     request.fields['destinationName'] = destNameController.text;
     request.fields['city'] = selectedCity;
     request.fields['category'] = selectedCategory;
+    request.fields['latitude'] = destLatController.text;
+    request.fields['longitude'] = destLngController.text;
+    request.fields['openingTime'] = startTimeController.text;
+    request.fields['closingTime'] = endTimeController.text;
+    request.fields['workingDays'] = selectedWorkingDays.toString();
     request.fields['budget'] = selectedBudget;
     request.fields['timeToSpend'] = "$formattedHours:$formattedMinutes";
-    request.fields['sheltered'] = yes ? yes.toString() : "false";
+    request.fields['sheltered'] =
+        yes ? yes.toString() : "false"; // true or false.
     request.fields['about'] = aboutController.text;
+    request.fields['services'] = selectedServices.toString();
+    request.fields['otherServices'] =
+        otherServices.toString(); // might be empty.
+    request.fields['activities'] = addedActivities.toString();
 
-    // Israa, these print statements will be deleted after finishing this code.
-    print(currentDate);
-    print(destNameController.text);
-    print(selectedCity);
-    print(selectedCategory);
-    print(selectedBudget);
-    print("$formattedHours:$formattedMinutes");
-    print("Sheltered ${yes ? yes.toString() : false}");
-    print(aboutController.text);
+    print('Date: $currentDate');
+    print('Destination Name: ${destNameController.text}');
+    print('City: $selectedCity');
+    print('Category: $selectedCategory');
+    print('Latitude: ${destLatController.text}');
+    print('Longitude: ${destLngController.text}');
+    print('Opening Time: ${startTimeController.text}');
+    print('Closing Time: ${endTimeController.text}');
+    print('Working Days: ${selectedWorkingDays.toString()}');
+    print('Budget: $selectedBudget');
+    print('Time To Spend: $formattedHours:$formattedMinutes');
+    print('Sheltered: ${yes ? 'true' : 'false'}');
+    print('About: ${aboutController.text}');
+    print('Services: ${selectedServices.toString()}');
+    print('Other Services: ${otherServices.toString()}');
+    print('Activity Map: ${addedActivities.toString()}');
     print(selectedImages);
 
     // Add images to the request.
@@ -132,21 +152,21 @@ class _AddDestTabState extends State<AddDestTab> {
         showCustomSnackBar(context, 'The destination has been added',
             bottomMargin: 0);
       } else if (response.statusCode == 500) {
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        if (responseData.containsKey('error')) {
-          // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
-        } else {
-          // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, responseData['message'], bottomMargin: 0);
-        }
+        // final Map<String, dynamic> responseData = json.decode(response.body);
+        // if (responseData.containsKey('error')) {
+        //   // ignore: use_build_context_synchronously
+        //   showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+        // } else {
+        //   // ignore: use_build_context_synchronously
+        //   showCustomSnackBar(context, responseData['message'], bottomMargin: 0);
+        // }
       } else {
         // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, 'Error storing the destination',
+        showCustomSnackBar(context, 'Error adding a new destination',
             bottomMargin: 0);
       }
     } catch (error) {
-      print('Error storing the destination: $error');
+      print('Error adding the destination: $error');
     }
   }
 
@@ -165,7 +185,7 @@ class _AddDestTabState extends State<AddDestTab> {
             '${pickedStartTime.hour.toString().padLeft(2, '0')}:${pickedStartTime.minute.toString().padLeft(2, '0')}';
         updateStartTimeColors();
 
-        // If end time is specified, re-validate and update if necessary
+        // If end time is specified, re-validate and update if necessary.
         if (endTimeController.text.isNotEmpty) {
           validateAndUpdateEndTime();
         }
@@ -173,6 +193,7 @@ class _AddDestTabState extends State<AddDestTab> {
     } else {
       if (pickedStartTime != null) {
         startTimeController.text = "";
+        // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'Start time must be from 5 AM to 8 PM',
             bottomMargin: 0);
       }
@@ -197,23 +218,22 @@ class _AddDestTabState extends State<AddDestTab> {
           updateEndTimeColors();
         });
       } else {
-        // Print statement and immediate clearing of the end time controller
         endTimeController.text = "";
+        // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'End time should be 5 hours after start',
             bottomMargin: 0);
       }
     } else {
       if (pickedEndTime != null) {
-        // Print statement and immediate clearing of the end time controller
-        print("End time must be from 7 AM to 10 PM");
         endTimeController.text = "";
+        // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'End time must be from 7 AM to 10 PM',
             bottomMargin: 0);
       }
     }
   }
 
-// Helper function to validate and update end time
+  // Helper function to validate and update end time.
   void validateAndUpdateEndTime() {
     final TimeOfDay currentEndTime = TimeOfDay(
         hour: int.parse(endTimeController.text.split(":")[0]),
@@ -221,7 +241,7 @@ class _AddDestTabState extends State<AddDestTab> {
 
     if (!isEndTimeValid(selectedStartTime, currentEndTime,
         minHourDifference: 5)) {
-      // Update the end time if it doesn't meet the criteria
+      // Update the end time if it doesn't meet the criteria.
       endTimeController.text = "";
     }
   }
@@ -264,7 +284,6 @@ class _AddDestTabState extends State<AddDestTab> {
 
   void nextPage() {
     if (currentPage < 9) {
-      /////////////////////////////////////////////////////////////
       pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
@@ -365,6 +384,7 @@ class _AddDestTabState extends State<AddDestTab> {
               selectedWorkingDays = selectedItems;
             });
           },
+          title: 'Working Days',
         );
       },
     );
@@ -373,7 +393,7 @@ class _AddDestTabState extends State<AddDestTab> {
   List<String> suggestedServices = [
     'Restrooms',
     'Parking Areas',
-    'Nearby Gas stations',
+    'Nearby Gas Stations',
     'Wheel Chair Ramps',
     'Kids Area',
     'Restaurants',
@@ -398,6 +418,7 @@ class _AddDestTabState extends State<AddDestTab> {
               selectedServices = selectedItems;
             });
           },
+          title: 'Suggested Services',
         );
       },
     );
@@ -519,7 +540,7 @@ class _AddDestTabState extends State<AddDestTab> {
           bottomMargin: 0);
       return false;
     } else if (activityTitleController.text.length < 4) {
-      showCustomSnackBar(context, 'The title must be at least of 4 chars',
+      showCustomSnackBar(context, 'The title must be at least 4 chars',
           bottomMargin: 0);
       return false;
     } else if (activityContentController.text.length < 40) {
@@ -567,14 +588,24 @@ class _AddDestTabState extends State<AddDestTab> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
+                        const Text(
+                          'Set working times and days',
+                          style: TextStyle(
+                            fontFamily: 'Gabriola',
+                            fontSize: 33,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF455a64),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
                         Image.asset(
                           'assets/Images/Profiles/Admin/DestUpload/workingDays.gif',
-                          height: 280,
-                          width: 280,
+                          height: 245,
+                          width: 245,
                         ),
                         SizedBox(
                             height:
-                                startTimeController.text.isNotEmpty ? 20 : 10),
+                                startTimeController.text.isNotEmpty ? 10 : 0),
                         buildTimeInput(
                           'Opening Time',
                           startTimeController,
@@ -664,7 +695,7 @@ class _AddDestTabState extends State<AddDestTab> {
                           textAlign: TextAlign.center,
                         ),
                         Image.asset(
-                            'assets/Images/Profiles/Tourist/DestUpload/Timer.gif',
+                            'assets/Images/Profiles/Admin/DestUpload/Timer.gif',
                             height: 260,
                             width: 260),
                         ElevatedButton(
@@ -891,7 +922,8 @@ class _AddDestTabState extends State<AddDestTab> {
                             nextPage();
                           }
                         } else if (currentPage == 6) {
-                          if (selectedServices.isEmpty) {
+                          if (selectedServices.isEmpty &&
+                              otherServices.isEmpty) {
                             showCustomSnackBar(
                                 context, 'Please specify the provided services',
                                 bottomMargin: 0);
@@ -899,12 +931,14 @@ class _AddDestTabState extends State<AddDestTab> {
                             nextPage();
                           }
                         } else if (currentPage == 7) {
-                          if (validateActivities()) {
+                          if (addedActivities.isEmpty) {
+                            showCustomSnackBar(
+                                context, 'Please enter at least one activity',
+                                bottomMargin: 0);
+                          } else {
                             nextPage();
                           }
                         } else if (currentPage == 8) {
-                          nextPage();
-                        } else if (currentPage == 9) {
                           if (selectedImages.isEmpty) {
                             showCustomSnackBar(
                                 context, 'Destination images are needed',
@@ -1144,7 +1178,7 @@ class _AddDestTabState extends State<AddDestTab> {
             destLatBorderIconColor,
             FontAwesomeIcons.locationDot,
           ),
-          const SizedBox(height: 15),
+          SizedBox(height: destLngController.text.isEmpty ? 15 : 20),
           buildDestInput(
             'Longitude',
             55,
@@ -1333,17 +1367,16 @@ class _AddDestTabState extends State<AddDestTab> {
                 ),
                 Visibility(
                   visible: otherServices.isNotEmpty,
-                  child: const SizedBox(height: 40),
+                  child: const SizedBox(height: 10),
                 ),
                 Visibility(
                   visible: otherServices.isEmpty,
                   child: Image.asset(
                       'assets/Images/Profiles/Admin/DestUpload/Questions.gif',
-                      height: 200,
-                      width: 200,
+                      height: 210,
+                      width: 210,
                       fit: BoxFit.cover),
                 ),
-
                 ElevatedButton(
                   onPressed: showServicesBottomSheet,
                   style: ElevatedButton.styleFrom(
@@ -1378,9 +1411,8 @@ class _AddDestTabState extends State<AddDestTab> {
                   ),
                 ),
                 const SizedBox(
-                  height: 20,
+                  height: 15,
                 ),
-                // Replace the "Add Others" button with a TextField
                 TextFormField(
                   controller: otherServicesController,
                   decoration: const InputDecoration(
@@ -1399,28 +1431,32 @@ class _AddDestTabState extends State<AddDestTab> {
                   maxLength: 43,
                   style: const TextStyle(fontSize: 20),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
                 Align(
                   alignment: Alignment.centerRight,
-                  child: ElevatedButton(
-                    onPressed: addOtherItem,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 10,
-                      ),
-                      backgroundColor: const Color.fromARGB(255, 216, 215, 215),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    child: const Text(
-                      'Add Service',
-                      style: TextStyle(
-                        color: Color.fromARGB(163, 0, 0, 0),
-                        fontSize: 22,
+                  child: Visibility(
+                    visible: otherServices.isEmpty,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 25.0),
+                      child: ElevatedButton(
+                        onPressed: addOtherItem,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 10,
+                          ),
+                          backgroundColor:
+                              const Color.fromARGB(255, 216, 215, 215),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                        child: const Text(
+                          'Add Service',
+                          style: TextStyle(
+                            color: Color.fromARGB(163, 0, 0, 0),
+                            fontSize: 22,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -1432,9 +1468,9 @@ class _AddDestTabState extends State<AddDestTab> {
             ),
           ),
           SliverToBoxAdapter(
-            child: otherServices.length > 1
+            child: otherServices.length > 2
                 ? SizedBox(
-                    height: 150, // Adjust the height as needed
+                    height: 190,
                     child: Scrollbar(
                       controller: servicesSccrollController,
                       trackVisibility: true,
@@ -1499,6 +1535,37 @@ class _AddDestTabState extends State<AddDestTab> {
                     }).toList(),
                   ),
           ),
+          SliverToBoxAdapter(
+            child: Visibility(
+              visible: otherServices.isNotEmpty,
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: ElevatedButton(
+                    onPressed: addOtherItem,
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 10,
+                      ),
+                      backgroundColor: const Color.fromARGB(255, 216, 215, 215),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    child: const Text(
+                      'Add Service',
+                      style: TextStyle(
+                        color: Color.fromARGB(163, 0, 0, 0),
+                        fontSize: 22,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -1527,16 +1594,16 @@ class _AddDestTabState extends State<AddDestTab> {
   }
 
   Widget buildActivitiesPage() {
-    double imageDimensions = 280;
+    double imageDimensions = 220;
     setState(() {
       imageDimensions = activityTitleController.text.isEmpty &&
               activityContentController.text.isEmpty
-          ? 280
+          ? 220
           : activityContentController.text.isNotEmpty
               ? activityContentController.text.length <= 60
-                  ? 250
-                  : 215
-              : 280;
+                  ? 170
+                  : 150
+              : 220;
     });
     return buildPageContent(
       Column(
@@ -1576,11 +1643,11 @@ class _AddDestTabState extends State<AddDestTab> {
             onChanged: (text) {
               setState(() {
                 if (text.isEmpty) {
-                  imageDimensions = 280;
+                  imageDimensions = 220;
                 } else if (text.length <= 60) {
-                  imageDimensions = 250;
+                  imageDimensions = 170;
                 } else {
-                  imageDimensions = 215;
+                  imageDimensions = 150;
                 }
               });
             },
@@ -1599,6 +1666,84 @@ class _AddDestTabState extends State<AddDestTab> {
             maxLines: 4,
             maxLength: 500,
             style: const TextStyle(fontSize: 20),
+          ),
+          const SizedBox(height: 15),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Visibility(
+                visible: addedActivities.isNotEmpty,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Open a new page to view added activities.
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ActivityListPage(
+                                addedActivities: addedActivities,
+                              )),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10,
+                    ),
+                    backgroundColor: const Color(0xFFe0e0e0),
+                    textStyle: const TextStyle(
+                      fontSize: 27,
+                      fontFamily: 'Zilla',
+                      fontWeight: FontWeight.w300,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                  ),
+                  child: const Text(
+                    'View All',
+                    style: TextStyle(
+                        fontFamily: 'Zilla', color: Color(0xFF455a64)),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              ElevatedButton(
+                onPressed: () {
+                  if (validateActivities()) {
+                    setState(() {
+                      addedActivities.add({
+                        'title': activityTitleController.text,
+                        'content': activityContentController.text,
+                      });
+                      activityTitleController.clear();
+                      activityContentController.clear();
+                      imageDimensions = 220;
+                    });
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
+                  ),
+                  backgroundColor: const Color(0xFFe0e0e0),
+                  textStyle: const TextStyle(
+                    fontSize: 27,
+                    fontFamily: 'Zilla',
+                    fontWeight: FontWeight.w300,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                ),
+                child: const FaIcon(
+                  FontAwesomeIcons.plus,
+                  size: 27,
+                  color: Color(0xFF455a64),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -1625,14 +1770,14 @@ class _AddDestTabState extends State<AddDestTab> {
             ),
             textAlign: TextAlign.center,
           ),
-                        Visibility(
+          Visibility(
               visible: selectedImages.isEmpty,
               child: const SizedBox(height: 20)),
           Image.asset('assets/Images/Profiles/Admin/DestUpload/destImages.gif',
-          height: selectedImages.isEmpty? 300: 190,
-          width: selectedImages.isEmpty? 300: 190,
+              height: selectedImages.isEmpty ? 300 : 190,
+              width: selectedImages.isEmpty ? 300 : 190,
               fit: BoxFit.fill),
-              Visibility(
+          Visibility(
               visible: selectedImages.isNotEmpty,
               child: const SizedBox(height: 10)),
           if (selectedImages.isNotEmpty)
@@ -1792,14 +1937,14 @@ class _AddDestTabState extends State<AddDestTab> {
             ),
             textAlign: TextAlign.center,
           ),
-          Image.asset('assets/Images/Profiles/Tourist/PlanMaker/Confirmed.gif',
+          Image.asset('assets/Images/Profiles/Admin/DestUpload/Confirmed.gif',
               fit: BoxFit.cover),
           const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 60.0),
             child: ElevatedButton(
               onPressed: () async {
-                await storeDestination();
+                await addDestination();
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
