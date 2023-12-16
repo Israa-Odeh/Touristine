@@ -338,7 +338,7 @@ class _AddDestTabState extends State<AddDestTab> {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return CustomBottomSheet(itemsList: budgetsList, height: 250);
+        return CustomBottomSheet(itemsList: budgetsList, height: 240);
       },
     ).then((value) {
       // Handle the selected item from the bottom sheet.
@@ -1740,7 +1740,7 @@ class _AddDestTabState extends State<AddDestTab> {
           bottomMargin: 0);
     } else if (otherServicesController.text.length < 4) {
       showCustomSnackBar(
-          context, 'A service can\'t be shorter than 4 characters!',
+          context, 'A service can\'t be shorter than 4 chars!',
           bottomMargin: 0);
     } else if (otherServicesController.text.length > 43) {
       showCustomSnackBar(
