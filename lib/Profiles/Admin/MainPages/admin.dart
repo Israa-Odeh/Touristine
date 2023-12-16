@@ -26,9 +26,9 @@ class _AdminAppState extends State<AdminProfile> {
   late Future<void> fetchData;
 
   // To be edited for the admin.
-  List<Map<String, dynamic>> recommendedDestinations = [];
-  List<Map<String, dynamic>> popularDestinations = [];
-  List<Map<String, dynamic>> otherDestinations = [];
+  // List<Map<String, dynamic>> recommendedDestinations = [];
+  // List<Map<String, dynamic>> popularDestinations = [];
+  // List<Map<String, dynamic>> otherDestinations = [];
 
   @override
   void initState() {
@@ -45,12 +45,7 @@ class _AdminAppState extends State<AdminProfile> {
 
   void initializeChildren() {
     _children = [
-      HomePage(
-        token: widget.token,
-        recommendedDestinations: recommendedDestinations,
-        popularDestinations: popularDestinations,
-        otherDestinations: otherDestinations,
-      ),
+      HomePage(token: widget.token),
       DestsUploadHomePage(token: widget.token),
       ChattingPage(token: widget.token),
       ProfilePage(token: widget.token)

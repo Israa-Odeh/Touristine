@@ -1,228 +1,107 @@
-import 'dart:convert';
-
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:touristine/Notifications/SnackBar.dart';
-import 'package:touristine/Profiles/Tourist/MainPages/Home/CustomSearchBar.dart';
-import 'package:touristine/Profiles/Tourist/MainPages/Home/destinations.dart';
+import 'dart:math';
 import 'package:http/http.dart' as http;
-import 'package:touristine/Profiles/Tourist/MainPages/Home/destinationView.dart';
+import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/PlanMaker/customBottomSheet.dart';
 
 class HomePage extends StatefulWidget {
   final String token;
-  final List<Map<String, dynamic>> recommendedDestinations;
-  final List<Map<String, dynamic>> popularDestinations;
-  final List<Map<String, dynamic>> otherDestinations;
 
-  const HomePage(
-      {super.key,
-      required this.token,
-      required this.recommendedDestinations,
-      required this.popularDestinations,
-      required this.otherDestinations});
+  const HomePage({super.key, required this.token});
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  Map<String, dynamic> destinationDetails = {};
-  List<Map<String, dynamic>> destinationImages = [];
-  Map<String, int> ratings = {};
-  bool isLoadingPlaceDetails = false;
-  int selectedPlaceIndex = -1;
+  final Map<String, int> visitsByCity = {
+    'Jerusalem': 20,
+    'Nablus': 10,
+    'Ramallah': 30,
+    'Bethlehem': 50
+  };
 
-  @override
-  void initState() {
-    super.initState();
-  }
+  final List<Color> barColors = [
+    const Color(0xFF1E889E),
+    const Color.fromARGB(255, 160, 176, 160),
+    const Color.fromARGB(255, 138, 169, 168),
+    const Color.fromARGB(255, 211, 211, 211),
+    const Color.fromARGB(255, 125, 159, 127),
+    const Color.fromARGB(255, 85, 150, 146),
+    const Color.fromARGB(255, 201, 147, 142),
+    const Color.fromARGB(255, 168, 164, 197),
+    const Color.fromARGB(255, 181, 128, 133),
+    const Color.fromARGB(255, 180, 174, 107),
+    const Color.fromARGB(255, 125, 165, 188),
+    const Color.fromARGB(255, 160, 144, 164),
+    const Color.fromARGB(255, 147, 110, 135),
+    const Color.fromARGB(255, 148, 177, 166),
+    const Color.fromARGB(255, 92, 142, 152),
+    const Color.fromARGB(255, 123, 163, 124),
+    const Color.fromARGB(255, 143, 200, 196),
+    const Color.fromARGB(255, 222, 168, 163),
+    const Color.fromARGB(255, 125, 107, 119),
+    const Color.fromARGB(255, 134, 134, 134),
+    const Color.fromARGB(255, 161, 218, 196),
+    const Color.fromARGB(255, 112, 108, 136),
+    const Color.fromARGB(255, 205, 150, 156),
+    const Color.fromARGB(255, 201, 192, 97),
+    const Color.fromARGB(255, 140, 169, 185),
+    const Color.fromARGB(255, 131, 147, 131),
+    const Color.fromARGB(255, 99, 129, 128),
+    const Color.fromARGB(255, 167, 151, 171),
+    const Color.fromARGB(255, 186, 190, 137),
+    const Color.fromARGB(255, 194, 219, 172),
+  ];
 
-  // A function to retrieve all of the destination details.
-  Future<void> getDestinationDetails(String destName) async {
-    final url =
-        Uri.parse('https://touristine.onrender.com/get-destination-details');
+  String selectedCity = 'All';
+  String selectedCategory = 'By City';
+  double padding = 0;
 
-    try {
-      if (mounted) {
+  List<String> statisticsList = [
+    'Visits Count',
+    'Reviews Count',
+    'Complaints Count',
+    'Ratings Count'
+  ];
+
+  String selectedStatisticsType = '';
+  void showChoicesBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomBottomSheet(itemsList: statisticsList, height: 300);
+      },
+    ).then((value) {
+      // Handle the selected item from the bottom sheet.
+      if (value != null) {
         setState(() {
-          isLoadingPlaceDetails = true;
+          selectedStatisticsType = value;
         });
+        updateChart();
       }
-
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': 'Bearer ${widget.token}',
-        },
-        body: {
-          'destinationName': destName,
-        },
-      );
-      if (mounted) {
-        setState(() {
-          isLoadingPlaceDetails = false;
-        });
-      }
-
-      if (response.statusCode == 200) {
-        // Success.
-        // Parse the response body.
-        final Map<String, dynamic> responseData = json.decode(response.body);
-
-        // Extract destinationImages as List<Map<String, dynamic>>
-        destinationImages =
-            List<Map<String, dynamic>>.from(responseData['destinationImages']);
-
-        // Access destination details and other data.
-        destinationDetails = responseData['destinationDetails'];
-        ratings = Map<String, int>.from(responseData['rating']);
-
-        // Now you can use the data as needed
-        print('Destination Images: $destinationImages');
-        print('Destination Details: $destinationDetails');
-        print('Rating: $ratings');
-      } else if (response.statusCode == 500) {
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        if (responseData.containsKey('error')) {
-          if (responseData['error'] ==
-              'Details for this destination are not available') {
-            // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, 'Place details aren\'t available',
-                bottomMargin: 0);
-          } else {
-            // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
-          }
-        }
-      } else {
-        // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, 'Error retrieving place details',
-            bottomMargin: 0);
-      }
-    } catch (error) {
-      if (mounted) {
-        setState(() {
-          isLoadingPlaceDetails = false;
-        });
-      }
-      print('Failed to fetch place details: $error');
-    }
-  }
-
-  // A Function to build a search box.
-  Widget buildSearchBox() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFF1E889E),
-          borderRadius: BorderRadius.circular(50),
-        ),
-        child: ListTile(
-          tileColor: Colors.transparent,
-          contentPadding: EdgeInsets.zero,
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => CustomSearchBar(token: widget.token)),
-            );
-          },
-          title: Container(
-            padding:
-                const EdgeInsets.only(top: 13, bottom: 13, right: 18, left: 18),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.only(right: 15),
-                  child: const Icon(
-                    FontAwesomeIcons.magnifyingGlass,
-                    color: Color.fromARGB(255, 252, 252, 252),
-                  ),
-                ),
-                const Expanded(
-                  child: Text(
-                    "Search Places",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      color: Color.fromARGB(255, 255, 255, 255),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // A Function to build a profile tile with a title, image, and onTap action.
-  Widget buildPlaceTile(
-      String title, String imagePath, VoidCallback onTapAction) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Card(
-        color: const Color.fromARGB(71, 111, 228, 252),
-        shape: RoundedRectangleBorder(
-          side: const BorderSide(
-            color: Color(0xFF1E889E),
-            width: 4,
-          ),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: ListTile(
-          contentPadding: EdgeInsets.zero,
-          onTap: onTapAction,
-          title: Container(
-            padding: const EdgeInsets.only(
-              left: 0,
-              right: 25,
-            ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.only(right: 15),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: Image.network(
-                      imagePath,
-                      width: 140,
-                      height: 140,
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 25,
-                        fontFamily: 'Zilla',
-                        color: Color.fromARGB(227, 245, 243, 243),
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          // Background image.
-          Container(
+    double maxVisits = visitsByCity.values.reduce(max).toDouble();
+    double maxPaddingThreshold = 10000;
+    padding = maxVisits > 0 ? min(maxVisits * 0.1, maxPaddingThreshold) : 1.0;
+
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(0.0),
+          child: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0, // Remove app bar shadow.
+          ),
+        ),
+        body: SingleChildScrollView(
+          child: Container(
+            height: 755,
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(
@@ -230,111 +109,283 @@ class _HomePageState extends State<HomePage> {
                 fit: BoxFit.cover,
               ),
             ),
-          ),
-
-          // Search Box on top of the background.
-          Container(
-            margin: const EdgeInsets.only(top: 50),
-            child: buildSearchBox(),
-          ),
-
-          Padding(
-            padding: const EdgeInsets.only(top: 115.0),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 10.0, right: 10, top: 30),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Special For You Section.
-                  DestinationList(
-                    destinations: widget.recommendedDestinations,
-                    listTitle: 'Special For You',
-                    token: widget.token,
-                  ),
-                  // Popular Places Section.
-                  DestinationList(
-                    destinations: widget.popularDestinations,
-                    listTitle: 'Popular Places',
-                    token: widget.token,
-                  ),
-
-                  // Other Places Section.
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(right: 230),
-                    child: Text(
-                      "Other Places",
-                      style: TextStyle(
-                        fontSize: 38,
-                        fontFamily: 'Gabriola',
-                        color: Color(0xFF1E889E),
-                        fontWeight: FontWeight.bold,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                    child: ElevatedButton(
+                      onPressed: showChoicesBottomSheet,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            const Color.fromARGB(255, 231, 231, 231),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                      ),
+                      child: SizedBox(
+                        height: 50,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 5.0),
+                              child: Text(
+                                selectedStatisticsType.isEmpty
+                                    ? 'Select Statistic Type'
+                                    : selectedStatisticsType,
+                                style: const TextStyle(
+                                    color: Color.fromARGB(163, 0, 0, 0),
+                                    fontSize: 22),
+                              ),
+                            ),
+                            const FaIcon(
+                              FontAwesomeIcons.chartSimple,
+                              color: Color.fromARGB(100, 0, 0, 0),
+                              size: 25,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                  // Adding others section using a loop.
-                  for (var index = 0;
-                      index < widget.otherDestinations.length;
-                      index++)
-                    Stack(
-                      children: [
-                        Column(
-                          children: [
-                            buildPlaceTile(
-                              widget.otherDestinations[index]['name'],
-                              widget.otherDestinations[index]['image'],
-                              () async {
-                                print(widget.otherDestinations[index]['name']);
-                                setState(() {
-                                  selectedPlaceIndex = index;
-                                });
-
-                                await getDestinationDetails(
-                                    widget.otherDestinations[index]['name']);
-
-                                // ignore: use_build_context_synchronously
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => DestinationDetails(
-                                      destination:
-                                          widget.otherDestinations[index],
-                                      token: widget.token,
-                                      destinationDetails: destinationDetails,
-                                      destinationImages: destinationImages,
-                                      ratings: ratings,
-                                    ),
-                                  ),
-                                ).then((value) {
-                                  setState(() {
-                                    selectedPlaceIndex = -1;
-                                  });
-                                });
-                              },
-                            ),
-                            const SizedBox(height: 10),
-                          ],
+                  const SizedBox(height: 35),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 35.0),
+                        child: DropdownButton<String>(
+                          value: selectedCity,
+                          icon: const Icon(
+                            FontAwesomeIcons.caretDown,
+                            color: Color.fromARGB(104, 0, 0, 0),
+                          ),
+                          items: [
+                            'All',
+                            'Nablus',
+                            'Ramallah',
+                            'Jerusalem',
+                            'Bethlehem'
+                          ].map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (String? value) {
+                            setState(() {
+                              selectedCity = value ?? 'All';
+                              updateChart();
+                            });
+                          },
                         ),
-                        if (selectedPlaceIndex == index)
-                          if (isLoadingPlaceDetails)
-                            const Center(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(vertical: 50.0),
-                                child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                      Color(0xFF1E889E)),
-                                ),
-                              ),
+                      ),
+                      DropdownButton<String>(
+                        value: selectedCategory,
+                        icon: const Icon(
+                          FontAwesomeIcons.caretDown,
+                          color: Color.fromRGBO(0, 0, 0, 0.5),
+                        ),
+                        items: [
+                          'By City',
+                          'Coastal Areas',
+                          'Mountains',
+                          'National Parks',
+                          'Major Cities',
+                          'Countryside',
+                          'Historical Sites',
+                          'Religious Landmarks',
+                          'Aquariums',
+                          'Zoos',
+                          'Others'
+                        ].map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (String? value) {
+                          setState(() {
+                            selectedCategory = value ?? 'By City';
+                            updateChart();
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 500,
+                    child: visitsByCity.length > 4
+                        ? Scrollbar(
+                            trackVisibility: true,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: buildChart(),
                             ),
-                      ],
+                          )
+                        : buildChart(),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20, left: 70),
+                    child: Text(
+                      selectedCategory,
+                      style: const TextStyle(
+                        color: Color.fromARGB(163, 0, 0, 0),
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Zilla Slab Light',
+                      ),
                     ),
+                  ),
                 ],
               ),
             ),
-          )
-        ],
+          ),
+        ),
       ),
     );
+  }
+
+  Widget buildChart() {
+    return Row(
+      children: [
+        Container(
+          alignment: Alignment.centerRight,
+          padding: const EdgeInsets.only(left: 5),
+          child: RotatedBox(
+            quarterTurns: 3,
+            child: Text(
+              selectedStatisticsType.isEmpty
+                  ? 'Visits Count'
+                  : selectedStatisticsType,
+              style: const TextStyle(
+                  color: Color.fromARGB(163, 0, 0, 0),
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Zilla Slab Light'),
+            ),
+          ),
+        ),
+        SizedBox(
+          width: visitsByCity.length <= 4
+              ? 360
+              : (80 * visitsByCity.length).toDouble(),
+          child: Padding(
+            padding: const EdgeInsets.only(top: 10.0),
+            child: BarChart(
+              BarChartData(
+                alignment: BarChartAlignment.spaceAround,
+                maxY: visitsByCity.values.reduce(max).toDouble() + padding,
+                barGroups: getAllCityBarGroups(),
+                titlesData: FlTitlesData(
+                  leftTitles: SideTitles(
+                    showTitles: true,
+                    reservedSize: 45,
+                    getTitles: (value) {
+                      if (value == 0) {
+                        return '0';
+                      } else if (value >= 1000000000) {
+                        return '${(value ~/ 1000000000)}B';
+                      } else if (value >= 1000000) {
+                        return '${(value ~/ 1000000)}M';
+                      } else if (value >= 1000) {
+                        return '${(value ~/ 1000)}K';
+                      }
+                      return value.toInt().toString();
+                    },
+                  ),
+                  rightTitles: SideTitles(
+                    showTitles: false,
+                  ),
+                  bottomTitles: SideTitles(
+                    showTitles: true,
+                    getTitles: (value) {
+                      if (value.toInt() >= 0 &&
+                          value.toInt() < visitsByCity.length) {
+                        return visitsByCity.keys.elementAt(value.toInt());
+                      }
+                      return '';
+                    },
+                  ),
+                  topTitles: SideTitles(showTitles: false),
+                ),
+                gridData: FlGridData(show: false),
+                borderData: FlBorderData(
+                  show: true,
+                  border: Border.all(color: const Color(0xff37434d), width: 1),
+                ),
+                backgroundColor: Colors.transparent,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  List<BarChartGroupData> getAllCityBarGroups() {
+    return visitsByCity.keys.map((city) {
+      final int index = visitsByCity.keys.toList().indexOf(city);
+      return BarChartGroupData(
+        x: index,
+        barsSpace: 8,
+        barRods: [
+          BarChartRodData(
+            y: visitsByCity[city]!.toDouble(),
+            colors: [barColors[index]],
+            borderRadius: BorderRadius.zero,
+            width: 40,
+          ),
+        ],
+      );
+    }).toList();
+  }
+
+  Future<void> updateChart() async {
+    print("I have changed a selection!");
+    final url = Uri.parse('https://touristine.onrender.com/get-statistics');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer ${widget.token}',
+        },
+        body: {
+          'StatisticType': selectedStatisticsType.isNotEmpty
+              ? selectedStatisticsType
+              : 'Visits Count',
+          'city': selectedCity,
+          'category': selectedCategory
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Israa, here you must handle the state of
+        // the chart to be updated with the new data.
+        
+        // Jenan, here I want to get the information arranged like a map.
+        // Keep the format as a map, but change the details based on different situations.
+        // An example of the format:
+        /*
+                    final Map<String, int> visitsByCity = {
+                      'Jerusalem': 20,
+                      'Nablus': 10,
+                      'Ramallah': 30,
+                      'Bethlehem': 50
+                    };
+        */
+      } else {
+        // Israa, handle other possible cases.
+        print('Backend request failed with status code ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error during backend request: $error');
+    }
   }
 }
