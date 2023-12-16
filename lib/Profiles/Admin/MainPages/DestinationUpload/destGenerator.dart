@@ -33,9 +33,11 @@ class _AddDestTabState extends State<AddDestTab> {
   TextEditingController activityTitleController = TextEditingController();
   TextEditingController activityContentController = TextEditingController();
   TextEditingController aboutController = TextEditingController();
+  TextEditingController geoTagsController = TextEditingController();
 
   List<File> selectedImages = []; // List to store selected images.
   List<Map<String, String>> addedActivities = [];
+  List<String> geoTags = [];
 
   Color destNameBorderIconColor = Colors.grey;
   Color destLatBorderIconColor = Colors.grey;
@@ -111,6 +113,9 @@ class _AddDestTabState extends State<AddDestTab> {
     request.fields['otherServices'] =
         otherServices.toString(); // might be empty.
     request.fields['activities'] = addedActivities.toString();
+    request.fields['visitorTypes'] = selectedVisitorTypes.toString();
+    request.fields['ageCategories'] = selectedAgeCategories.toString();
+    request.fields['geoTags'] = geoTags.toString();
 
     print('Date: $currentDate');
     print('Destination Name: ${destNameController.text}');
@@ -128,6 +133,9 @@ class _AddDestTabState extends State<AddDestTab> {
     print('Services: ${selectedServices.toString()}');
     print('Other Services: ${otherServices.toString()}');
     print('Activity Map: ${addedActivities.toString()}');
+    print('Visitor Types: ${selectedVisitorTypes.toString()}');
+    print('Age Categories: ${selectedAgeCategories.toString()}');
+    print('Search Terms: ${geoTags.toString()}');
     print(selectedImages);
 
     // Add images to the request.
@@ -283,7 +291,7 @@ class _AddDestTabState extends State<AddDestTab> {
   }
 
   void nextPage() {
-    if (currentPage < 9) {
+    if (currentPage < 11) {
       pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
@@ -419,6 +427,50 @@ class _AddDestTabState extends State<AddDestTab> {
             });
           },
           title: 'Suggested Services',
+        );
+      },
+    );
+  }
+
+  List<String> visitorTypes = ['Family', 'Friends', 'Solo'];
+  List<String> selectedVisitorTypes = [];
+
+  void showVisitorTypesBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return BottomDropList(
+          itemsList: visitorTypes,
+          height: 230,
+          initiallySelectedItems: selectedVisitorTypes,
+          onDone: (List<String> selectedItems) {
+            setState(() {
+              selectedVisitorTypes = selectedItems;
+            });
+          },
+          title: 'Visitor Types',
+        );
+      },
+    );
+  }
+
+  List<String> ageCategories = ['Children', 'Teenagers', 'Adults', 'Elders'];
+  List<String> selectedAgeCategories = [];
+
+  void showAgeCategoriesBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return BottomDropList(
+          itemsList: ageCategories,
+          height: 290,
+          initiallySelectedItems: selectedAgeCategories,
+          onDone: (List<String> selectedItems) {
+            setState(() {
+              selectedAgeCategories = selectedItems;
+            });
+          },
+          title: 'Age Categories',
         );
       },
     );
@@ -831,9 +883,11 @@ class _AddDestTabState extends State<AddDestTab> {
                       ],
                     ),
                   ),
+                  buildVisitorsAgesPage(),
                   buildAboutPage(),
                   buildServicesPage(),
                   buildActivitiesPage(),
+                  buildGeoTagsPage(),
                   buildImagesPage(),
                   buildSummaryPage(),
                 ],
@@ -869,7 +923,7 @@ class _AddDestTabState extends State<AddDestTab> {
                   ),
                   const SizedBox(width: 10),
                   Visibility(
-                    visible: currentPage < 9,
+                    visible: currentPage < 11,
                     child: ElevatedButton(
                       onPressed: () {
                         if (currentPage == 1) {
@@ -910,6 +964,18 @@ class _AddDestTabState extends State<AddDestTab> {
                             nextPage();
                           }
                         } else if (currentPage == 5) {
+                          if (selectedVisitorTypes.isEmpty) {
+                            showCustomSnackBar(
+                                context, 'Please specify the visitor types',
+                                bottomMargin: 0);
+                          } else if (selectedAgeCategories.isEmpty) {
+                            showCustomSnackBar(
+                                context, 'Please select the age categories',
+                                bottomMargin: 0);
+                          } else {
+                            nextPage();
+                          }
+                        } else if (currentPage == 6) {
                           if (aboutController.text.isEmpty) {
                             showCustomSnackBar(
                                 context, 'Provide information about the place',
@@ -921,7 +987,7 @@ class _AddDestTabState extends State<AddDestTab> {
                           } else {
                             nextPage();
                           }
-                        } else if (currentPage == 6) {
+                        } else if (currentPage == 7) {
                           if (selectedServices.isEmpty &&
                               otherServices.isEmpty) {
                             showCustomSnackBar(
@@ -930,7 +996,7 @@ class _AddDestTabState extends State<AddDestTab> {
                           } else {
                             nextPage();
                           }
-                        } else if (currentPage == 7) {
+                        } else if (currentPage == 8) {
                           if (addedActivities.isEmpty) {
                             showCustomSnackBar(
                                 context, 'Please enter at least one activity',
@@ -938,7 +1004,15 @@ class _AddDestTabState extends State<AddDestTab> {
                           } else {
                             nextPage();
                           }
-                        } else if (currentPage == 8) {
+                        } else if (currentPage == 9) {
+                          if (geoTags.isEmpty) {
+                            showCustomSnackBar(context,
+                                'Please enter at least one search term',
+                                bottomMargin: 0);
+                          } else {
+                            nextPage();
+                          }
+                        } else if (currentPage == 10) {
                           if (selectedImages.isEmpty) {
                             showCustomSnackBar(
                                 context, 'Destination images are needed',
@@ -1289,6 +1363,95 @@ class _AddDestTabState extends State<AddDestTab> {
     );
   }
 
+  Widget buildVisitorsAgesPage() {
+    return buildPageContent(
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          const Text(
+            'Define ages and visitor types',
+            style: TextStyle(
+              fontFamily: 'Gabriola',
+              fontSize: 33,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF455a64),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          Image.asset('assets/Images/Profiles/Admin/DestUpload/camel.png',
+              fit: BoxFit.cover),
+          const SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: showVisitorTypesBottomSheet,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color.fromARGB(255, 231, 231, 231),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+            ),
+            child: SizedBox(
+              height: 50,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 5.0),
+                    child: Text(
+                      selectedVisitorTypes.isEmpty
+                          ? 'Select Visitor Types'
+                          : "Visitor Types",
+                      style: const TextStyle(
+                          color: Color.fromARGB(163, 0, 0, 0), fontSize: 22),
+                    ),
+                  ),
+                  const FaIcon(
+                    FontAwesomeIcons.listCheck,
+                    color: Color.fromARGB(100, 0, 0, 0),
+                    size: 28,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 15),
+          ElevatedButton(
+            onPressed: showAgeCategoriesBottomSheet,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color.fromARGB(255, 231, 231, 231),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+            ),
+            child: SizedBox(
+              height: 50,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 5.0),
+                    child: Text(
+                      selectedAgeCategories.isEmpty
+                          ? 'Select Age Categories'
+                          : "Age Categories",
+                      style: const TextStyle(
+                          color: Color.fromARGB(163, 0, 0, 0), fontSize: 22),
+                    ),
+                  ),
+                  const FaIcon(
+                    FontAwesomeIcons.userGroup,
+                    color: Color.fromARGB(100, 0, 0, 0),
+                    size: 28,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget buildAboutPage() {
     double imageDimensions = 360;
     setState(() {
@@ -1575,6 +1738,10 @@ class _AddDestTabState extends State<AddDestTab> {
     if (otherServicesController.text.isEmpty) {
       showCustomSnackBar(context, 'Please enter the service you want!',
           bottomMargin: 0);
+    } else if (otherServicesController.text.length < 4) {
+      showCustomSnackBar(
+          context, 'A service can\'t be shorter than 4 characters!',
+          bottomMargin: 0);
     } else if (otherServicesController.text.length > 43) {
       showCustomSnackBar(
           context, 'A service can\'t be longer than 43 characters!',
@@ -1748,6 +1915,212 @@ class _AddDestTabState extends State<AddDestTab> {
         ],
       ),
     );
+  }
+
+  Widget buildGeoTagsPage() {
+    ScrollController geoTagsSccrollController = ScrollController();
+
+    return buildPageContent(
+      CustomScrollView(
+        controller: geoTagsSccrollController,
+        slivers: [
+          SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Text(
+                  'Identify search keywords!',
+                  style: TextStyle(
+                    fontFamily: 'Gabriola',
+                    fontSize: 33,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF455a64),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                Image.asset(
+                    'assets/Images/Profiles/Admin/DestUpload/Search.gif',
+                    height: geoTags.isEmpty ? 300 : geoTags.length > 1? 0: 180,
+                    width: geoTags.isEmpty ? 300 :  geoTags.length > 1? 0: 180,
+                    fit: BoxFit.cover),
+                TextFormField(
+                  controller: geoTagsController,
+                  decoration: const InputDecoration(
+                    labelText: 'Search Term',
+                    labelStyle: TextStyle(
+                      fontSize: 22,
+                      color: Color(0xFF1E889E),
+                      fontWeight: FontWeight.bold,
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xFF1E889E)),
+                    ),
+                  ),
+                  minLines: 1,
+                  maxLines: 2,
+                  maxLength: 30,
+                  style: const TextStyle(fontSize: 20),
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Visibility(
+                    visible: geoTags.isEmpty,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 20.0),
+                      child: ElevatedButton(
+                        onPressed: addGeoTag,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 10,
+                          ),
+                          backgroundColor:
+                              const Color.fromARGB(255, 216, 215, 215),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                        child: const Text(
+                          'Add Term',
+                          style: TextStyle(
+                            color: Color.fromARGB(163, 0, 0, 0),
+                            fontSize: 22,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+              ],
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: geoTags.length > 3
+                ? SizedBox(
+                    height: 270,
+                    child: Scrollbar(
+                      controller: geoTagsSccrollController,
+                      trackVisibility: true,
+                      thumbVisibility: true,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: geoTags.asMap().entries.map((entry) {
+                            final int index = entry.key;
+                            final String item = entry.value;
+
+                            return Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                                side: const BorderSide(
+                                  color: Color.fromARGB(50, 0, 0, 0),
+                                  width: 1.0,
+                                ),
+                              ),
+                              elevation: 3,
+                              margin: const EdgeInsets.all(8),
+                              child: ListTile(
+                                title: Text(item,
+                                    style: const TextStyle(
+                                        fontSize: 22, fontFamily: 'Andalus')),
+                                trailing: InkWell(
+                                  onTap: () => removeGeoTag(index),
+                                  child: const FaIcon(
+                                      FontAwesomeIcons.circleXmark),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+                  )
+                : Column(
+                    children: geoTags.asMap().entries.map((entry) {
+                      final int index = entry.key;
+                      final String item = entry.value;
+
+                      return Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          side: const BorderSide(
+                            color: Color.fromARGB(50, 0, 0, 0),
+                            width: 1.0,
+                          ),
+                        ),
+                        elevation: 3,
+                        margin: const EdgeInsets.all(8),
+                        child: ListTile(
+                          title: Text(item,
+                              style: const TextStyle(
+                                  fontSize: 22, fontFamily: 'Andalus')),
+                          trailing: InkWell(
+                            onTap: () => removeGeoTag(index),
+                            child: const FaIcon(FontAwesomeIcons.circleXmark),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+          ),
+          SliverToBoxAdapter(
+            child: Visibility(
+              visible: geoTags.isNotEmpty,
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: ElevatedButton(
+                    onPressed: addGeoTag,
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 10,
+                      ),
+                      backgroundColor: const Color.fromARGB(255, 216, 215, 215),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    child: const Text(
+                      'Add Term',
+                      style: TextStyle(
+                        color: Color.fromARGB(163, 0, 0, 0),
+                        fontSize: 22,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void addGeoTag() {
+    if (geoTagsController.text.isEmpty) {
+      showCustomSnackBar(context, 'Please enter the term you want!',
+          bottomMargin: 0);
+    } else if (geoTagsController.text.length < 3) {
+      showCustomSnackBar(context, 'A term can\'t be shorter than 3 chars!',
+          bottomMargin: 0);
+    } else {
+      setState(() {
+        geoTags.add(geoTagsController.text);
+        geoTagsController.clear();
+      });
+    }
+  }
+
+  void removeGeoTag(int index) {
+    setState(() {
+      geoTags.removeAt(index);
+    });
   }
 
   Widget buildImagesPage() {
