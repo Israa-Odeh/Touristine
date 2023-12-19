@@ -150,23 +150,20 @@ class _AdminAppState extends State<AdminProfile> {
   }
 
   Widget _buildIconOrImage(dynamic iconOrImage) {
-    double imageSize = 24.0; // Set the desired size for the image
+    double imageSize = 24.0;
 
     if (iconOrImage is IconData) {
-      // If it's an icon, return the Icon widget
       return Icon(iconOrImage, size: imageSize);
     } else if (iconOrImage is String) {
-      // If it's a string (assumed to be an image path), return the Image widget
       return SizedBox(
         width: imageSize,
         height: imageSize,
         child: Image.asset(
           iconOrImage,
-          fit: BoxFit.contain, // Adjust the fit based on your requirements
+          fit: BoxFit.contain,
         ),
       );
     } else {
-      // Handle other cases or throw an exception based on your requirements
       throw ArgumentError('Invalid type for iconOrImage');
     }
   }
