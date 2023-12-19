@@ -7,6 +7,7 @@ import 'package:touristine/Profiles/Admin/MainPages/DestinationUpload/destUpload
 import 'package:touristine/Profiles/Admin/MainPages/Home/home.dart';
 import 'package:touristine/Profiles/Admin/MainPages/profilePage.dart';
 import 'package:touristine/Profiles/Admin/MainPages/chatting.dart';
+import 'package:touristine/Profiles/Admin/MainPages/cracksAnalysis.dart';
 
 class AdminProfile extends StatefulWidget {
   final String token;
@@ -47,6 +48,7 @@ class _AdminAppState extends State<AdminProfile> {
     _children = [
       HomePage(token: widget.token),
       DestsUploadHomePage(token: widget.token),
+      CracksAnalysisPage(token: widget.token),
       ChattingPage(token: widget.token),
       ProfilePage(token: widget.token)
     ];
@@ -98,14 +100,19 @@ class _AdminAppState extends State<AdminProfile> {
                 1,
               ),
               _buildBottomNavigationBarItem(
+                "assets/Images/Profiles/Admin/crack.png",
+                'Cracks Analysis',
+                2,
+              ),
+              _buildBottomNavigationBarItem(
                 FontAwesomeIcons.comment,
                 'Chatting',
-                2,
+                3,
               ),
               _buildBottomNavigationBarItem(
                 FontAwesomeIcons.user,
                 'Profile',
-                3,
+                4,
               ),
             ],
             selectedItemColor: const Color.fromARGB(255, 255, 255, 255),
@@ -126,7 +133,7 @@ class _AdminAppState extends State<AdminProfile> {
   }
 
   BottomNavigationBarItem _buildBottomNavigationBarItem(
-    IconData icon,
+    dynamic iconOrImage,
     String label,
     int index,
   ) {
@@ -134,11 +141,33 @@ class _AdminAppState extends State<AdminProfile> {
       icon: _currentIndex == index
           ? Padding(
               padding: const EdgeInsets.only(bottom: 8.0, top: 0),
-              child: Icon(icon),
+              child: _buildIconOrImage(iconOrImage),
             )
-          : Icon(icon),
+          : _buildIconOrImage(iconOrImage),
       label: label,
       backgroundColor: const Color(0xFF1E889E),
     );
+  }
+
+  Widget _buildIconOrImage(dynamic iconOrImage) {
+    double imageSize = 24.0; // Set the desired size for the image
+
+    if (iconOrImage is IconData) {
+      // If it's an icon, return the Icon widget
+      return Icon(iconOrImage, size: imageSize);
+    } else if (iconOrImage is String) {
+      // If it's a string (assumed to be an image path), return the Image widget
+      return SizedBox(
+        width: imageSize,
+        height: imageSize,
+        child: Image.asset(
+          iconOrImage,
+          fit: BoxFit.contain, // Adjust the fit based on your requirements
+        ),
+      );
+    } else {
+      // Handle other cases or throw an exception based on your requirements
+      throw ArgumentError('Invalid type for iconOrImage');
+    }
   }
 }
