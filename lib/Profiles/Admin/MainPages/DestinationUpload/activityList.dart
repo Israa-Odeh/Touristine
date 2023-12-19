@@ -62,7 +62,7 @@ class _ActivityListPageState extends State<ActivityListPage> {
                         itemBuilder: (context, index) {
                           return buildSingleActivity(
                             widget.addedActivities[index]['title'] ?? '',
-                            widget.addedActivities[index]['content'] ?? '',
+                            widget.addedActivities[index]['description'] ?? '',
                             () {
                               setState(() {
                                 widget.addedActivities.removeAt(index);

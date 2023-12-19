@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:touristine/Profiles/Admin/MainPages/DestinationUpload/activityList.dart';
 import 'package:touristine/Profiles/Admin/MainPages/DestinationUpload/bottomDropList.dart';
 import 'package:touristine/Profiles/Admin/MainPages/DestinationUpload/timePicker.dart';
@@ -76,9 +78,39 @@ class _AddDestTabState extends State<AddDestTab> {
 
   List<String> citiesList = ['Jerusalem', 'Nablus', 'Ramallah', 'Bethlehem'];
 
+  List<String> compressServicesNames(List<String?> selectedServices) {
+    // Map the selected services to the desired format.
+    final Map<String, String> serviceMapping = {
+      'Restrooms': 'restrooms',
+      'Parking Areas': 'parking',
+      'Nearby Gas Stations': 'gasstations',
+      'Wheel Chair Ramps': 'wheelchairramps',
+      'Kids Area': 'kidsarea',
+      'Restaurants': 'restaurants',
+      'Photographers': 'photographers',
+      'Nearby Health Centers': 'healthcenters',
+      'Kiosks': 'kiosks',
+    };
+
+    // Convert selected services to the desired format, filtering out null values.
+    return selectedServices
+        .where((service) => service != null)
+        .map((service) => serviceMapping[service!])
+        .where((formattedService) => formattedService != null)
+        .map((formattedService) => formattedService!)
+        .toList();
+  }
+
   // A function to store the created destination details.
   Future<void> addDestination() async {
     String currentDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
+
+    // Convert selected services to the desired format.
+    List<String> formattedServices = compressServicesNames(selectedServices);
+
+    // Convert each element in selectedVisitorTypes to lowercase.
+    List<String> lowercaseVisitorTypes =
+        selectedVisitorTypes.map((type) => type.toLowerCase()).toList();
 
     // Format time to spend (hours and minutes).
     String formattedHours = selectedHours.toString().padLeft(2, '0');
@@ -98,44 +130,51 @@ class _AddDestTabState extends State<AddDestTab> {
     request.fields['date'] = currentDate;
     request.fields['destinationName'] = destNameController.text;
     request.fields['city'] = selectedCity;
-    request.fields['category'] = selectedCategory;
+    request.fields['category'] =
+        selectedCategory.toLowerCase().replaceAll(' ', '');
     request.fields['latitude'] = destLatController.text;
     request.fields['longitude'] = destLngController.text;
     request.fields['openingTime'] = startTimeController.text;
     request.fields['closingTime'] = endTimeController.text;
-    request.fields['workingDays'] = selectedWorkingDays.toString();
-    request.fields['budget'] = selectedBudget;
+    String selectedWorkingDaysJson = jsonEncode(selectedWorkingDays);
+    request.fields['workingDays'] = selectedWorkingDaysJson;
+    request.fields['budget'] = selectedBudget.toLowerCase().replaceAll('-', '');
     request.fields['timeToSpend'] = "$formattedHours:$formattedMinutes";
     request.fields['sheltered'] =
         yes ? yes.toString() : "false"; // true or false.
     request.fields['about'] = aboutController.text;
-    request.fields['services'] = selectedServices.toString();
-    request.fields['otherServices'] =
-        otherServices.toString(); // might be empty.
-    request.fields['activities'] = addedActivities.toString();
-    request.fields['visitorTypes'] = selectedVisitorTypes.toString();
-    request.fields['ageCategories'] = selectedAgeCategories.toString();
-    request.fields['geoTags'] = geoTags.toString();
+    String servicesJson = jsonEncode(formattedServices);
+    request.fields['services'] = servicesJson;
+    String otherServicesJson = jsonEncode(otherServices);
+    request.fields['otherServices'] = otherServicesJson;
+    String activitiesJson = jsonEncode(addedActivities);
+    request.fields['activities'] = activitiesJson;
+    String selectedVisitorTypesJson = jsonEncode(lowercaseVisitorTypes);
+    request.fields['visitorTypes'] = selectedVisitorTypesJson;
+    String selectedAgeCategoriesJson = jsonEncode(selectedAgeCategories);
+    request.fields['ageCategories'] = selectedAgeCategoriesJson;
+    String geoTagsJson = jsonEncode(geoTags);
+    request.fields['geoTags'] = geoTagsJson;
 
-    print('Date: $currentDate');
-    print('Destination Name: ${destNameController.text}');
-    print('City: $selectedCity');
-    print('Category: $selectedCategory');
-    print('Latitude: ${destLatController.text}');
-    print('Longitude: ${destLngController.text}');
-    print('Opening Time: ${startTimeController.text}');
-    print('Closing Time: ${endTimeController.text}');
-    print('Working Days: ${selectedWorkingDays.toString()}');
-    print('Budget: $selectedBudget');
-    print('Time To Spend: $formattedHours:$formattedMinutes');
-    print('Sheltered: ${yes ? 'true' : 'false'}');
-    print('About: ${aboutController.text}');
-    print('Services: ${selectedServices.toString()}');
-    print('Other Services: ${otherServices.toString()}');
-    print('Activity Map: ${addedActivities.toString()}');
-    print('Visitor Types: ${selectedVisitorTypes.toString()}');
-    print('Age Categories: ${selectedAgeCategories.toString()}');
-    print('Search Terms: ${geoTags.toString()}');
+    print('date: ${request.fields['date']}');
+    print('destinationName: ${request.fields['destinationName']}');
+    print('city: ${request.fields['city']}');
+    print('category: ${request.fields['category']}');
+    print('latitude: ${request.fields['latitude']}');
+    print('longitude: ${request.fields['longitude']}');
+    print('openingTime: ${request.fields['openingTime']}');
+    print('closingTime: ${request.fields['closingTime']}');
+    print('workingDays: ${request.fields['workingDays']}');
+    print('budget: ${request.fields['budget']}');
+    print('timeToSpend: ${request.fields['timeToSpend']}');
+    print('sheltered: ${request.fields['sheltered']}');
+    print('about: ${request.fields['about']}');
+    print('services: ${request.fields['services']}');
+    print('otherServices: ${request.fields['otherServices']}');
+    print('activities: ${request.fields['activities']}');
+    print('visitorTypes: ${request.fields['visitorTypes']}');
+    print('ageCategories: ${request.fields['ageCategories']}');
+    print('geoTags: ${request.fields['geoTags']}');
     print(selectedImages);
 
     // Add images to the request.
@@ -405,7 +444,7 @@ class _AddDestTabState extends State<AddDestTab> {
     'Wheel Chair Ramps',
     'Kids Area',
     'Restaurants',
-    'Nearby Restaurants',
+    'Nearby Health Centers',
     'Photographers',
     'Kiosks'
   ];
@@ -1739,8 +1778,7 @@ class _AddDestTabState extends State<AddDestTab> {
       showCustomSnackBar(context, 'Please enter the service you want!',
           bottomMargin: 0);
     } else if (otherServicesController.text.length < 4) {
-      showCustomSnackBar(
-          context, 'A service can\'t be shorter than 4 chars!',
+      showCustomSnackBar(context, 'A service can\'t be shorter than 4 chars!',
           bottomMargin: 0);
     } else if (otherServicesController.text.length > 43) {
       showCustomSnackBar(
@@ -1881,7 +1919,7 @@ class _AddDestTabState extends State<AddDestTab> {
                     setState(() {
                       addedActivities.add({
                         'title': activityTitleController.text,
-                        'content': activityContentController.text,
+                        'description': activityContentController.text,
                       });
                       activityTitleController.clear();
                       activityContentController.clear();
@@ -1941,8 +1979,16 @@ class _AddDestTabState extends State<AddDestTab> {
                 ),
                 Image.asset(
                     'assets/Images/Profiles/Admin/DestUpload/Search.gif',
-                    height: geoTags.isEmpty ? 300 : geoTags.length > 1? 0: 180,
-                    width: geoTags.isEmpty ? 300 :  geoTags.length > 1? 0: 180,
+                    height: geoTags.isEmpty
+                        ? 300
+                        : geoTags.length > 1
+                            ? 0
+                            : 180,
+                    width: geoTags.isEmpty
+                        ? 300
+                        : geoTags.length > 1
+                            ? 0
+                            : 180,
                     fit: BoxFit.cover),
                 TextFormField(
                   controller: geoTagsController,
