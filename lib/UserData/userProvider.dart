@@ -35,8 +35,7 @@ class UserProvider extends ChangeNotifier {
       imageURL = newImageURL;
       print("--------------------------------" + imageURL!);
       notifyListeners();
-    } 
-    else {
+    } else {
       imageURL = "";
       print("Received a null newImageURL");
     }

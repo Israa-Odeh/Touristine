@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:touristine/LoginAndRegistration/Login/ForgotPassword.dart';
 import 'package:touristine/LoginAndRegistration/MainPages/SplashScreen.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
+import 'package:touristine/Profiles/Admin/MainPages/admin.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/tourist.dart';
 import 'package:touristine/components/textField.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -116,8 +117,7 @@ class _LoginPageState extends State<LoginPage>
   }
 
   Future<void> sendData() async {
-    final url = Uri.parse(
-        'https://touristine.onrender.com/login'); // Replace this with your Node.js server URL.
+    final url = Uri.parse('https://touristine.onrender.com/login');
     try {
       final response = await http.post(
         url,
@@ -158,7 +158,6 @@ class _LoginPageState extends State<LoginPage>
             String lastName = responseData['lastName'];
             String password = responseData['password'];
             String? imageURL = responseData['profileImage'];
-            // The image will be forwareded later on........................
 
             print("Email extracted from token: $token");
             print("first name: $firstName");
@@ -184,8 +183,6 @@ class _LoginPageState extends State<LoginPage>
               context.read<UserProvider>().updateImage(newImageURL: null);
             }
             // ignore: use_build_context_synchronously
-            // Pass the token to the SplashScreen
-            // ignore: use_build_context_synchronously
             Navigator.pushReplacement(
               // This will be edited based on the profile type.
               context,
@@ -194,15 +191,54 @@ class _LoginPageState extends State<LoginPage>
                   profileType: TouristProfile(
                     token: token,
                   ),
-                ), // Pass the token to the SplashScreen constructor
+                ),
               ),
             );
           }
-
           // It is an Admin user type in this case.
-          // --------------------------------------
-          // It is a stuff user type in this case.
-          // --------------------------------------
+          else {
+            String token = responseData['token'];
+            String firstName = responseData['firstName'];
+            String lastName = responseData['lastName'];
+            String password = responseData['password'];
+            String? imageURL = responseData['profileImage'];
+
+            print("Email extracted from token: $token");
+            print("first name: $firstName");
+            print("last name: $lastName");
+            print("Password: $password");
+            print("Profile Image: $imageURL");
+
+            // ignore: use_build_context_synchronously
+            context.read<UserProvider>().updateData(
+                  newFirstName: firstName,
+                  newLastName: lastName,
+                  newPassword: password,
+                );
+
+            if (imageURL != null && imageURL != "") {
+              profileImageProvider = NetworkImage(imageURL);
+              // ignore: use_build_context_synchronously
+              precacheImage(profileImageProvider, context);
+              // ignore: use_build_context_synchronously
+              context.read<UserProvider>().updateImage(newImageURL: imageURL);
+            } else {
+              // ignore: use_build_context_synchronously
+              context.read<UserProvider>().updateImage(newImageURL: null);
+            }
+            // Here I need to check whether it's the admin's first time logging in.
+            // ignore: use_build_context_synchronously
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SplashScreen(
+                  profileType: AdminProfile(
+                    token: token,
+                  ),
+                ),
+              ),
+            );
+          }
         }
 
         /* Here you can handle the response as needed.
@@ -635,12 +671,12 @@ class _LoginPageState extends State<LoginPage>
                           padding: const EdgeInsets.only(bottom: 30.0),
                           child: isLoading
                               ? const Padding(
-                                padding: EdgeInsets.only(left: 20.0),
-                                child: CircularProgressIndicator(
+                                  padding: EdgeInsets.only(left: 20.0),
+                                  child: CircularProgressIndicator(
                                     valueColor: AlwaysStoppedAnimation<Color>(
                                         Color(0xFF1E889E)),
                                   ),
-                              )
+                                )
                               : InkWell(
                                   onTap: () async {
                                     setState(() {

@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       ],
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: AdminProfile(token: ''),
+        home: TopOuterScreen(),
       ),
     );
   }
