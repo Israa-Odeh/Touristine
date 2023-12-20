@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -6,10 +7,21 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/planMaker/customBottomSheet.dart';
 
+// ignore: must_be_immutable
 class HomePage extends StatefulWidget {
   final String token;
+  Map<String, int> statisticsResult;
+  String selectedCity;
+  String selectedCategory;
+  String selectedStatisticsType;
 
-  const HomePage({Key? key, required this.token}) : super(key: key);
+  HomePage(
+      {super.key,
+      required this.token,
+      required this.statisticsResult,
+      required this.selectedCity,
+      required this.selectedCategory,
+      required this.selectedStatisticsType});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -18,13 +30,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   double reservedSizeForBottomTitles = 30;
   int maxNumberOfWords = 0;
-
-  final Map<String, int> statisticsResult = {
-    'Jerusalem': 20,
-    'Nablus': 10,
-    'Ramallah': 30,
-    'Bethlehem': 50
-  };
 
   final List<Color> barColors = [
     const Color(0xFF1E889E),
@@ -59,8 +64,6 @@ class _HomePageState extends State<HomePage> {
     const Color.fromARGB(255, 194, 219, 172),
   ];
 
-  String selectedCity = 'All';
-  String selectedCategory = '';
   double padding = 0;
 
   List<String> statisticsList = [
@@ -70,7 +73,6 @@ class _HomePageState extends State<HomePage> {
     'Ratings Count'
   ];
 
-  String selectedStatisticsType = '';
   ChartType selectedChartType = ChartType.bar;
 
   void showChoicesBottomSheet() {
@@ -82,7 +84,7 @@ class _HomePageState extends State<HomePage> {
     ).then((value) {
       if (value != null) {
         setState(() {
-          selectedStatisticsType = value;
+          widget.selectedStatisticsType = value;
         });
       }
     });
@@ -133,16 +135,39 @@ class _HomePageState extends State<HomePage> {
                     : 82;
   }
 
+  String getPlaceCategory(String placeCategory) {
+    if (placeCategory.toLowerCase() == "coastalareas") {
+      return "Coastal Areas";
+    } else if (placeCategory.toLowerCase() == "mountains") {
+      return "Mountains";
+    } else if (placeCategory.toLowerCase() == "nationalparks") {
+      return "National Parks";
+    } else if (placeCategory.toLowerCase() == "majorcities") {
+      return "Major Cities";
+    } else if (placeCategory.toLowerCase() == "countryside") {
+      return "Countryside";
+    } else if (placeCategory.toLowerCase() == "historicalsites") {
+      return "Historical Sites";
+    } else if (placeCategory.toLowerCase() == "religiouslandmarks") {
+      return "Religious Landmarks";
+    } else if (placeCategory.toLowerCase() == "aquariums") {
+      return "Aquariums";
+    } else if (placeCategory.toLowerCase() == "zoos") {
+      return "Zoos";
+    } else if (placeCategory.toLowerCase() == "others") {
+      return "Others";
+    } else {
+      return placeCategory;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (selectedCity == 'All') {
-      selectedCategory = getCategoriesListForAllChoice().first;
-    } else {
-      selectedCategory = getCategoriesListForNonAll().first;
+    if (widget.statisticsResult.isNotEmpty) {
+      double maxVisits = widget.statisticsResult.values.reduce(max).toDouble();
+      double maxPaddingThreshold = 10000;
+      padding = maxVisits > 0 ? min(maxVisits * 0.1, maxPaddingThreshold) : 1.0;
     }
-    double maxVisits = statisticsResult.values.reduce(max).toDouble();
-    double maxPaddingThreshold = 100000;
-    padding = maxVisits > 0 ? min(maxVisits * 0.1, maxPaddingThreshold) : 1.0;
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -189,9 +214,9 @@ class _HomePageState extends State<HomePage> {
                             Padding(
                               padding: const EdgeInsets.only(left: 5.0),
                               child: Text(
-                                selectedStatisticsType.isEmpty
+                                widget.selectedStatisticsType.isEmpty
                                     ? 'Select Statistic Type'
-                                    : selectedStatisticsType,
+                                    : widget.selectedStatisticsType,
                                 style: const TextStyle(
                                     color: Color.fromARGB(163, 0, 0, 0),
                                     fontSize: 22),
@@ -209,20 +234,24 @@ class _HomePageState extends State<HomePage> {
                   ),
                   const SizedBox(height: 20),
                   Row(
-                    mainAxisAlignment: selectedChartType == ChartType.bar
+                    mainAxisAlignment: selectedChartType == ChartType.bar &&
+                            widget.statisticsResult.isNotEmpty
                         ? MainAxisAlignment.end
-                        : MainAxisAlignment.spaceAround,
+                        : selectedChartType == ChartType.pie &&
+                                widget.statisticsResult.isNotEmpty
+                            ? MainAxisAlignment.spaceAround
+                            : MainAxisAlignment.center,
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(right: 35.0),
                         child: DropdownButton<String>(
-                          value: selectedCity,
+                          value: widget.selectedCity,
                           icon: const Icon(
                             FontAwesomeIcons.caretDown,
                             color: Color.fromARGB(104, 0, 0, 0),
                           ),
                           items: [
-                            'All',
+                            'All Cities',
                             'Nablus',
                             'Ramallah',
                             'Jerusalem',
@@ -235,56 +264,102 @@ class _HomePageState extends State<HomePage> {
                           }).toList(),
                           onChanged: (String? value) {
                             setState(() {
-                              selectedCity = value ?? 'All';
+                              widget.selectedCity = value ?? 'All Cities';
                             });
                           },
                         ),
                       ),
-                      DropdownButton<String>(
-                        value: selectedCategory,
-                        icon: const Icon(
-                          FontAwesomeIcons.caretDown,
-                          color: Color.fromRGBO(0, 0, 0, 0.5),
+                      if (widget.selectedCity == "All Cities")
+                        DropdownButton<String>(
+                          value: widget.selectedCategory,
+                          icon: const Icon(
+                            FontAwesomeIcons.caretDown,
+                            color: Color.fromRGBO(0, 0, 0, 0.5),
+                          ),
+                          items: (getCategoriesListForAllChoice())
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (String? value) {
+                            if (value != null) {
+                              setState(() {
+                                widget.selectedCategory = value;
+                              });
+                            }
+                          },
                         ),
-                        items: (selectedCity == 'All'
-                                ? getCategoriesListForAllChoice()
-                                : getCategoriesListForNonAll())
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (String? value) {
-                          if (value != null) {
-                            setState(() {
-                              selectedCategory = value;
-                            });
-                          }
-                        },
-                      ),
+                      if (widget.selectedCity != "All Cities")
+                        DropdownButton<String>(
+                          value: widget.selectedCategory == "By City"
+                              ? "By Category"
+                              : widget.selectedCategory,
+                          icon: const Icon(
+                            FontAwesomeIcons.caretDown,
+                            color: Color.fromRGBO(0, 0, 0, 0.5),
+                          ),
+                          items: (getCategoriesListForNonAll())
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: (String? value) {
+                            if (value != null) {
+                              setState(() {
+                                widget.selectedCategory = value;
+                              });
+                            }
+                          },
+                        )
                     ],
                   ),
-                  SizedBox(
-                    height: selectedChartType == ChartType.bar ? 450 : 490,
-                    child: statisticsResult.length > 4 &&
-                            selectedChartType == ChartType.bar
-                        ? Scrollbar(
-                            trackVisibility: true,
-                            // thumbVisibility: true,
-                            child: SingleChildScrollView(
+                  if (widget.statisticsResult.isNotEmpty)
+                    SizedBox(
+                      height: selectedChartType == ChartType.bar ? 450 : 490,
+                      child: (widget.statisticsResult.length > 4 &&
+                              selectedChartType == ChartType.bar)
+                          ? Scrollbar(
+                              trackVisibility: true,
+                              child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
-                                child: buildBarChart()),
-                          )
-                        : selectedChartType == ChartType.bar
-                            ? buildBarChart()
-                            : buildPieChart(),
-                  ),
-                  if (selectedChartType == ChartType.bar)
+                                child: buildBarChart(),
+                              ),
+                            )
+                          : selectedChartType == ChartType.bar
+                              ? buildBarChart()
+                              : buildPieChart(),
+                    )
+                  else
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                            'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
+                            fit: BoxFit.fill),
+                        const Text(
+                          'No results found',
+                          style: TextStyle(
+                              fontSize: 40,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Gabriola',
+                              color: Color.fromARGB(255, 23, 99, 114)),
+                        ),
+                        if (selectedChartType == ChartType.bar)
+                          const SizedBox(height: 36.5),
+                        if (selectedChartType == ChartType.pie)
+                          const SizedBox(height: 30.5)
+                      ],
+                    ),
+                  if (selectedChartType == ChartType.bar &&
+                      widget.statisticsResult.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.only(top: 20, left: 70),
                       child: Text(
-                        selectedCategory,
+                        widget.selectedCategory,
                         style: const TextStyle(
                           color: Color.fromARGB(163, 0, 0, 0),
                           fontSize: 22,
@@ -295,7 +370,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   SizedBox(
                       height: selectedChartType == ChartType.bar ? 30 : 36),
-                  if (statisticsResult.length <= 10)
+                  if (widget.statisticsResult.length <= 10)
                     Padding(
                       padding: const EdgeInsets.only(left: 10.0),
                       child: Row(
@@ -308,9 +383,9 @@ class _HomePageState extends State<HomePage> {
                               setState(() {
                                 selectedChartType = ChartType.bar;
                               });
-                              if (selectedStatisticsType.isNotEmpty &&
-                                  selectedCity.isNotEmpty &&
-                                  selectedCategory.isNotEmpty) {
+                              if (widget.selectedStatisticsType.isNotEmpty &&
+                                  widget.selectedCity.isNotEmpty &&
+                                  widget.selectedCategory.isNotEmpty) {
                                 updateChart();
                               } else {
                                 showCustomSnackBar(context,
@@ -325,9 +400,9 @@ class _HomePageState extends State<HomePage> {
                               setState(() {
                                 selectedChartType = ChartType.pie;
                               });
-                              if (selectedStatisticsType.isNotEmpty &&
-                                  selectedCity.isNotEmpty &&
-                                  selectedCategory.isNotEmpty) {
+                              if (widget.selectedStatisticsType.isNotEmpty &&
+                                  widget.selectedCity.isNotEmpty &&
+                                  widget.selectedCategory.isNotEmpty) {
                                 updateChart();
                               } else {
                                 showCustomSnackBar(context,
@@ -339,14 +414,14 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                     ),
-                  if (statisticsResult.length > 10)
+                  if (widget.statisticsResult.length > 10)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 70.0),
                       child: ElevatedButton(
                         onPressed: () {
-                          if (selectedStatisticsType.isNotEmpty &&
-                              selectedCity.isNotEmpty &&
-                              selectedCategory.isNotEmpty) {
+                          if (widget.selectedStatisticsType.isNotEmpty &&
+                              widget.selectedCity.isNotEmpty &&
+                              widget.selectedCategory.isNotEmpty) {
                             updateChart();
                           } else {
                             showCustomSnackBar(
@@ -401,9 +476,9 @@ class _HomePageState extends State<HomePage> {
           child: RotatedBox(
             quarterTurns: 3,
             child: Text(
-              selectedStatisticsType.isEmpty
+              widget.selectedStatisticsType.isEmpty
                   ? 'Visits Count'
-                  : selectedStatisticsType,
+                  : widget.selectedStatisticsType,
               style: const TextStyle(
                   color: Color.fromARGB(163, 0, 0, 0),
                   fontSize: 22,
@@ -413,15 +488,18 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         SizedBox(
-          width: statisticsResult.length <= 4
+          width: widget.statisticsResult.length <= 4
               ? 360
-              : (80 * statisticsResult.length).toDouble(),
+              : (80 * widget.statisticsResult.length).toDouble(),
           child: Padding(
             padding: const EdgeInsets.only(top: 10.0),
             child: BarChart(
               BarChartData(
                 alignment: BarChartAlignment.spaceAround,
-                maxY: statisticsResult.values.reduce(max).toDouble() + padding,
+                maxY: widget.statisticsResult.values.reduce(max).toDouble() >= 8
+                    ? widget.statisticsResult.values.reduce(max).toDouble() +
+                        padding
+                    : 10,
                 barGroups: getBarGroups(),
                 titlesData: FlTitlesData(
                   leftTitles: SideTitles(
@@ -454,9 +532,9 @@ class _HomePageState extends State<HomePage> {
                     interval: 1,
                     getTitles: (value) {
                       if (value.toInt() >= 0 &&
-                          value.toInt() < statisticsResult.length) {
-                        final title =
-                            statisticsResult.keys.elementAt(value.toInt());
+                          value.toInt() < widget.statisticsResult.length) {
+                        final title = widget.statisticsResult.keys
+                            .elementAt(value.toInt());
                         final words = title.split(' ');
                         maxNumberOfWords = words.length > maxNumberOfWords
                             ? words.length
@@ -511,18 +589,19 @@ class _HomePageState extends State<HomePage> {
         ),
         Padding(
           padding: const EdgeInsets.only(top: 100.0),
-          child: statisticsResult.keys.length <= 3
+          child: widget.statisticsResult.keys.length <= 3
               ? SizedBox(
                   height: 100,
                   child: Wrap(
                     spacing: 8.0,
                     runSpacing: 8.0,
-                    children: statisticsResult.keys.map((city) {
+                    children: widget.statisticsResult.keys.map((city) {
                       return Container(
                         width: 300,
                         height: 40,
-                        color: barColors[
-                            statisticsResult.keys.toList().indexOf(city)],
+                        color: barColors[widget.statisticsResult.keys
+                            .toList()
+                            .indexOf(city)],
                         child: Center(
                           child: Text(
                             city,
@@ -545,12 +624,13 @@ class _HomePageState extends State<HomePage> {
                       child: Wrap(
                         spacing: 8.0,
                         runSpacing: 10.0,
-                        children: statisticsResult.keys.map((city) {
+                        children: widget.statisticsResult.keys.map((city) {
                           return Container(
                             width: 300,
                             height: 40,
-                            color: barColors[
-                                statisticsResult.keys.toList().indexOf(city)],
+                            color: barColors[widget.statisticsResult.keys
+                                .toList()
+                                .indexOf(city)],
                             child: Center(
                               child: Text(
                                 city,
@@ -572,10 +652,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<PieChartSectionData> getSections() {
-    int total = statisticsResult.values.reduce((a, b) => a + b);
+    int total = widget.statisticsResult.values.reduce((a, b) => a + b);
     List<PieChartSectionData> sections = [];
     int i = 0;
-    statisticsResult.forEach((city, count) {
+    widget.statisticsResult.forEach((city, count) {
       final double percentage = count.toDouble() / total;
       final double angle = percentage * 360;
       sections.add(
@@ -598,14 +678,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<BarChartGroupData> getBarGroups() {
-    return statisticsResult.keys.map((city) {
-      final int index = statisticsResult.keys.toList().indexOf(city);
+    return widget.statisticsResult.keys.map((city) {
+      final int index = widget.statisticsResult.keys.toList().indexOf(city);
       return BarChartGroupData(
         x: index,
         barsSpace: 8,
         barRods: [
           BarChartRodData(
-            y: statisticsResult[city]!.toDouble(),
+            y: widget.statisticsResult[city]!.toDouble(),
             colors: [barColors[index]],
             borderRadius: BorderRadius.zero,
             width: 40,
@@ -642,8 +722,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> updateChart() async {
     print("I have changed a selection!");
-    final url =
-        Uri.parse('https://touristine.onrender.com/get-statistics-test');
+    final url = Uri.parse('https://touristine.onrender.com/get-statistics');
 
     try {
       final response = await http.post(
@@ -653,35 +732,49 @@ class _HomePageState extends State<HomePage> {
           'Authorization': 'Bearer ${widget.token}',
         },
         body: {
-          'StatisticType': selectedStatisticsType.isNotEmpty
-              ? selectedStatisticsType
+          'StatisticType': widget.selectedStatisticsType.isNotEmpty
+              ? widget.selectedStatisticsType
               : 'Visits Count',
-          'city': selectedCity,
-          'category': selectedCategory
+          'city': widget.selectedCity == "All Cities"
+              ? "allcities"
+              : widget.selectedCity,
+          'category': widget.selectedCategory.toLowerCase().replaceAll(' ', '')
         },
       );
 
       if (response.statusCode == 200) {
         // Israa, here you must handle the state of
         // the chart to be updated with the new data.
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        final List<dynamic> graphData = responseData['graphData'];
 
-        // Jenan, here I want to get the information arranged like a map.
-        // Keep the format as a map, but change the details based on different situations.
-        // An example of the format:
-        /*
-                    final Map<String, int> visitsByCity = {
-                      'Jerusalem': 20,
-                      'Nablus': 10,
-                      'Ramallah': 30,
-                      'Bethlehe': 50
-                    };
-        */
+        // Map the data to categories using getPlaceCategory function
+        final Map<String, int> newStatisticsResult = {};
+        for (var item in graphData) {
+          if (item is Map<String, dynamic> && item.length == 1) {
+            final String key = item.keys.first;
+            final double value = item.values.first.toDouble();
+            final String category = getPlaceCategory(key);
+            newStatisticsResult[category] = value.toInt();
+          }
+        }
+        setState(() {
+          widget.statisticsResult.clear();
+          widget.statisticsResult =
+              Map.fromEntries(newStatisticsResult.entries);
+        });
+
+        print(widget.statisticsResult);
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
       } else {
-        // Israa, handle other possible cases.
-        print('Backend request failed with status code ${response.statusCode}');
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'Error finding a result', bottomMargin: 0);
       }
     } catch (error) {
-      print('Error during backend request: $error');
+      print('Error during finding a result: $error');
     }
   }
 }

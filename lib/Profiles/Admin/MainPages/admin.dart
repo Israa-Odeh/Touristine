@@ -1,8 +1,8 @@
-// import 'dart:convert';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-// import 'package:touristine/Notifications/SnackBar.dart';
-// import 'package:http/http.dart' as http;
+import 'package:touristine/Notifications/SnackBar.dart';
+import 'package:http/http.dart' as http;
 import 'package:touristine/Profiles/Admin/MainPages/DestinationUpload/destUploadHome.dart';
 import 'package:touristine/Profiles/Admin/MainPages/Home/home.dart';
 import 'package:touristine/Profiles/Admin/MainPages/profilePage.dart';
@@ -26,10 +26,58 @@ class _AdminAppState extends State<AdminProfile> {
   late List<Widget> _children = [];
   late Future<void> fetchData;
 
-  // To be edited for the admin.
-  // List<Map<String, dynamic>> recommendedDestinations = [];
-  // List<Map<String, dynamic>> popularDestinations = [];
-  // List<Map<String, dynamic>> otherDestinations = [];
+  Map<String, int> mainStatistics = {};
+
+  Future<void> updateChart() async {
+    final url = Uri.parse('https://touristine.onrender.com/get-statistics');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer ${widget.token}',
+        },
+        body: {
+          'StatisticType': "Visits Count",
+          'city': "allcities",
+          'category': "bycity"
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Israa, here you must handle the state of
+        // the chart to be updated with the new data.
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        final List<dynamic> graphData = responseData['graphData'];
+
+        // Map the data to categories using getPlaceCategory function
+        final Map<String, int> newStatisticsResult = {};
+
+        for (var item in graphData) {
+          if (item is Map<String, dynamic> && item.length == 1) {
+            final String key = item.keys.first;
+            final double value = item.values.first.toDouble();
+            newStatisticsResult[key] = value.toInt();
+          }
+        }
+
+        setState(() {
+          mainStatistics = Map.fromEntries(newStatisticsResult.entries);
+        });
+        print(mainStatistics);
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+      } else {
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'Error finding a result', bottomMargin: 0);
+      }
+    } catch (error) {
+      print('Error during finding a result: $error');
+    }
+  }
 
   @override
   void initState() {
@@ -38,15 +86,19 @@ class _AdminAppState extends State<AdminProfile> {
   }
 
   Future<void> fetchAllData() async {
-    // await getRecommendedDestinations();
-    // await getPopularDestinations();
-    // await getOtherDestinations();
+    await updateChart();
     initializeChildren();
   }
 
   void initializeChildren() {
     _children = [
-      HomePage(token: widget.token),
+      HomePage(
+        token: widget.token,
+        statisticsResult: mainStatistics,
+        selectedCity: 'All Cities',
+        selectedCategory: 'By City',
+        selectedStatisticsType: 'Visits Count',
+      ),
       DestsUploadHomePage(token: widget.token),
       CracksAnalysisPage(token: widget.token),
       ChattingPage(token: widget.token),
@@ -64,7 +116,6 @@ class _AdminAppState extends State<AdminProfile> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        // To prevent going back.
         return false;
       },
       child: MaterialApp(
@@ -160,7 +211,7 @@ class _AdminAppState extends State<AdminProfile> {
         height: imageSize,
         child: Image.asset(
           iconOrImage,
-          fit: BoxFit.contain,
+          fit: BoxFit.cover,
         ),
       );
     } else {
