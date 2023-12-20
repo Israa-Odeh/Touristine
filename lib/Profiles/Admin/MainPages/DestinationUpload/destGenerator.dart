@@ -199,14 +199,14 @@ class _AddDestTabState extends State<AddDestTab> {
         showCustomSnackBar(context, 'The destination has been added',
             bottomMargin: 0);
       } else if (response.statusCode == 500) {
-        // final Map<String, dynamic> responseData = json.decode(response.body);
-        // if (responseData.containsKey('error')) {
-        //   // ignore: use_build_context_synchronously
-        //   showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
-        // } else {
-        //   // ignore: use_build_context_synchronously
-        //   showCustomSnackBar(context, responseData['message'], bottomMargin: 0);
-        // }
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        if (responseData.containsKey('error')) {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+        } else {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, responseData['message'], bottomMargin: 0);
+        }
       } else {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'Error adding a new destination',
