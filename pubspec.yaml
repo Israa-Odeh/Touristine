@@ -55,6 +55,7 @@ dependencies:
   numberpicker: ^2.1.2
   wheel_picker: ^0.0.3
   fl_chart: ^0.40.0
+  photo_view: ^0.14.0
 
 dev_dependencies:
   flutter_test:
