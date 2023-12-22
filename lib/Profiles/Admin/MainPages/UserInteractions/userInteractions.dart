@@ -65,9 +65,11 @@ class _UserInteractionsPageState extends State<UserInteractionsPage> {
     } catch (error) {
       print('Error: $error');
     } finally {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
