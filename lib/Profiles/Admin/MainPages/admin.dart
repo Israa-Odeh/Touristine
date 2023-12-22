@@ -5,6 +5,7 @@ import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:http/http.dart' as http;
 import 'package:touristine/Profiles/Admin/MainPages/DestinationUpload/destUploadHome.dart';
 import 'package:touristine/Profiles/Admin/MainPages/Home/home.dart';
+import 'package:touristine/Profiles/Admin/MainPages/UserInteractions/tabBarViewer.dart';
 import 'package:touristine/Profiles/Admin/MainPages/profilePage.dart';
 import 'package:touristine/Profiles/Admin/MainPages/chatting.dart';
 import 'package:touristine/Profiles/Admin/MainPages/cracksAnalysis.dart';
@@ -100,6 +101,7 @@ class _AdminAppState extends State<AdminProfile> {
         selectedStatisticsType: 'Visits Count',
       ),
       DestsUploadHomePage(token: widget.token),
+      TabBarViewer(token: widget.token),
       CracksAnalysisPage(token: widget.token),
       ChattingPage(token: widget.token),
       ProfilePage(token: widget.token)
@@ -151,19 +153,24 @@ class _AdminAppState extends State<AdminProfile> {
                 1,
               ),
               _buildBottomNavigationBarItem(
+                FontAwesomeIcons.usersViewfinder,
+                'User Interactions',
+                2,
+              ),
+              _buildBottomNavigationBarItem(
                 "assets/Images/Profiles/Admin/crack.png",
                 'Cracks Analysis',
-                2,
+                3,
               ),
               _buildBottomNavigationBarItem(
                 FontAwesomeIcons.comment,
                 'Chatting',
-                3,
+                4,
               ),
               _buildBottomNavigationBarItem(
                 FontAwesomeIcons.user,
                 'Profile',
-                4,
+                5,
               ),
             ],
             selectedItemColor: const Color.fromARGB(255, 255, 255, 255),
