@@ -639,7 +639,7 @@ class ComplaintCard extends StatelessWidget {
                   icon: Icon(
                     FontAwesomeIcons.solidCircleCheck,
                     color: isSeen
-                        ? const Color.fromARGB(255, 35, 78, 36)
+                        ? const Color.fromARGB(157, 24, 108, 125)
                         : const Color(0xFF1E889E),
                     size: 30,
                   ),

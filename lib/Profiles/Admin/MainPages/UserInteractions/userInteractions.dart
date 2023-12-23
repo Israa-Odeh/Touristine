@@ -53,6 +53,15 @@ class _UserInteractionsPageState extends State<UserInteractionsPage> {
       if (!mounted) return;
 
       if (response.statusCode == 200) {
+        // Jenan, the retreived map will be of the following format:
+        /*
+            Map<String, String> destinations = {
+              'Al-Aqsa Mousqe': 'assets/Images/Profiles/Admin/T1.jpg',
+              'Bethlehem': 'assets/Images/Profiles/Admin/T2.jpg',
+              'Old City of Yaffa': 'assets/Images/Profiles/Admin/3T.jpg',
+              'Gaza': 'assets/Images/Profiles/Admin/4T.jpg',
+        };
+        */
         // final Map<String, String> destinationsData =
         //     Map<String, String>.from(json.decode(response.body));
         // setState(() {
@@ -101,6 +110,8 @@ class _UserInteractionsPageState extends State<UserInteractionsPage> {
       if (!mounted) return;
 
       if (response.statusCode == 200) {
+        // Jenan, the retreived list<map> will be of the following format:
+        // List<Map<String, dynamic>> reviews with fields like the ones below.
         final Map<String, dynamic> responseData = json.decode(response.body);
 
         if (responseData.containsKey('reviews')) {
