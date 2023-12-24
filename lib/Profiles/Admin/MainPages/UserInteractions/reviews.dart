@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class AllReviewsPage extends StatefulWidget {
+class ReviewsPage extends StatefulWidget {
   final List<Map<String, dynamic>> reviews;
 
-  const AllReviewsPage({Key? key, required this.reviews}) : super(key: key);
+  const ReviewsPage({Key? key, required this.reviews}) : super(key: key);
 
   @override
-  _AllReviewsPageState createState() => _AllReviewsPageState();
+  _ReviewsPageState createState() => _ReviewsPageState();
 }
 
-class _AllReviewsPageState extends State<AllReviewsPage> {
+class _ReviewsPageState extends State<ReviewsPage> {
   @override
   void initState() {
     super.initState();

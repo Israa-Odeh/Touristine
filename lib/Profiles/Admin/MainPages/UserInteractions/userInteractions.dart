@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:http/http.dart' as http;
 import 'package:touristine/Profiles/Admin/MainPages/UserInteractions/complaints.dart';
+import 'package:touristine/Profiles/Admin/MainPages/UserInteractions/reviews.dart';
 
 class UserInteractionsPage extends StatefulWidget {
   final String token;
@@ -19,21 +20,13 @@ class _UserInteractionsPageState extends State<UserInteractionsPage> {
   List<bool> isLoadingList = [];
   bool isLoading = true;
 
-  Map<String, String> destinations = {
-    'Al-Aqsa Mousqe': 'assets/Images/Profiles/Admin/T1.jpg',
-    'Bethlehem': 'assets/Images/Profiles/Admin/T2.jpg',
-    'Old City of Yaffa': 'assets/Images/Profiles/Admin/3T.jpg',
-    'Gaza': 'assets/Images/Profiles/Admin/4T.jpg',
-  };
+  Map<String, String> destinations = {};
 
   @override
   void initState() {
     super.initState();
     isLoading = true;
     fetchDestinations();
-
-    // This must be placed inside the fetchDestinations function.
-    isLoadingList = List.generate(destinations.length, (index) => false);
   }
 
   // Retrieve destinations that have uploads, reviews, or images.
@@ -53,26 +46,30 @@ class _UserInteractionsPageState extends State<UserInteractionsPage> {
       if (!mounted) return;
 
       if (response.statusCode == 200) {
-        // Jenan, the retreived map will be of the following format:
-        /*
-            Map<String, String> destinations = {
-              'Al-Aqsa Mousqe': 'assets/Images/Profiles/Admin/T1.jpg',
-              'Bethlehem': 'assets/Images/Profiles/Admin/T2.jpg',
-              'Old City of Yaffa': 'assets/Images/Profiles/Admin/3T.jpg',
-              'Gaza': 'assets/Images/Profiles/Admin/4T.jpg',
-        };
-        */
-        // final Map<String, String> destinationsData =
-        //     Map<String, String>.from(json.decode(response.body));
-        // setState(() {
-        //   destinations = destinationsData;
-        // });
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        final List<dynamic> destinationsData = responseData['destinations'];
+        for (var destinationData in destinationsData) {
+          destinationData.forEach((name, mainImage) {
+            destinations[name] = mainImage;
+          });
+        }
+        setState(() {
+          isLoadingList = List.generate(destinations.length, (index) => false);
+        });
+        print(destinations);
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
       } else {
-        // Israa, handle other error cases.
-        print('Error: Failed to fetch destinations');
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'Error retrieving the destinations',
+            bottomMargin: 0);
       }
     } catch (error) {
-      print('Error: $error');
+      if (mounted) {
+        print('Error fetching the destinations: $error');
+      }
     } finally {
       if (mounted) {
         setState(() {
@@ -128,8 +125,14 @@ class _UserInteractionsPageState extends State<UserInteractionsPage> {
             };
           }).toList();
           print(reviews);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ReviewsPage(reviews: reviews),
+            ),
+          );
         } else {
-          print('Error: Reviews key not found in the response');
+          print('Reviews key not found in the response');
         }
       } else if (response.statusCode == 500) {
         final Map<String, dynamic> responseData = json.decode(response.body);
@@ -177,7 +180,7 @@ class _UserInteractionsPageState extends State<UserInteractionsPage> {
               ClipRRect(
                 borderRadius:
                     const BorderRadius.vertical(top: Radius.circular(16)),
-                child: Image.asset(
+                child: Image.network(
                   imagePath,
                   height: 150,
                   width: double.infinity,
