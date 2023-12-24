@@ -96,6 +96,7 @@ class _ComplaintsListPageState extends State<ComplaintsListPage> {
     );
 
     if (confirmDeletion == true) {
+      if (!mounted) return;
       try {
         final url =
             Uri.parse('https://touristine.onrender.com/delete-all-complaints');
@@ -112,14 +113,16 @@ class _ComplaintsListPageState extends State<ComplaintsListPage> {
         );
         if (response.statusCode == 200) {
           // Successful deletion on the backend, now update the UI.
-          // Israa, show a notification.
           setState(() {
             complaints.clear();
           });
-          print('All complaints deleted successfully');
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, "The complaints have been deleted",
+              bottomMargin: 0);
         } else {
-          // Israa, handle different cases of errors.
-          print('Error deleting all complaints: ${response.statusCode}');
+          final Map<String, dynamic> responseData = json.decode(response.body);
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
         }
       } catch (error) {
         print('Error deleting all complaints: $error');
@@ -131,6 +134,7 @@ class _ComplaintsListPageState extends State<ComplaintsListPage> {
     bool? confirmDeletion = await showConfirmationDialog(context);
 
     if (confirmDeletion == true) {
+      if (!mounted) return;
       try {
         final url =
             Uri.parse('https://touristine.onrender.com/delete-complaint');
@@ -153,20 +157,23 @@ class _ComplaintsListPageState extends State<ComplaintsListPage> {
             complaints
                 .removeWhere((complaint) => complaint['id'] == complaintId);
           });
-          print('Complaint with ID $complaintId deleted successfully');
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, "The complaint has been deleted",
+              bottomMargin: 0);
         } else {
-          // Israa, handle error cases.
-          print(
-              'Error deleting complaint on the backend: ${response.statusCode}');
+          final Map<String, dynamic> responseData = json.decode(response.body);
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
         }
       } catch (error) {
         print('Error deleting complaint: $error');
-        // You may want to show a snackbar or display an error message
       }
     }
   }
 
   Future<void> markComplaintAsSeen(String complaintId) async {
+    if (!mounted) return;
+
     try {
       final url =
           Uri.parse('https://touristine.onrender.com/mark-complaint-as-seen');
@@ -184,11 +191,13 @@ class _ComplaintsListPageState extends State<ComplaintsListPage> {
       );
 
       if (response.statusCode == 200) {
-        // Israa, show a notification.
-        print('Complaint with ID $complaintId marked as seen successfully');
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, "The seen status has been modified",
+            bottomMargin: 0);
       } else {
-        // Israa, handle error cases.
-        print('Error marking complaint as seen: ${response.statusCode}');
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
       }
     } catch (error) {
       print('Error marking complaint as seen: $error');
@@ -607,7 +616,9 @@ class ComplaintCard extends StatelessWidget {
             ),
             const SizedBox(height: 5),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: isSeen
+                  ? MainAxisAlignment.end
+                  : MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 IconButton(
@@ -621,22 +632,21 @@ class ComplaintCard extends StatelessWidget {
                     print('complaint: ${complaint['title']}');
                   },
                 ),
-                IconButton(
-                  tooltip: "Mark as Seen",
-                  icon: Icon(
-                    FontAwesomeIcons.solidCircleCheck,
-                    color: isSeen
-                        ? const Color.fromARGB(157, 24, 108, 125)
-                        : const Color(0xFF1E889E),
-                    size: 30,
+                if (!isSeen)
+                  IconButton(
+                    tooltip: "Mark as Seen",
+                    icon: const Icon(
+                      FontAwesomeIcons.solidCircleCheck,
+                      color: Color(0xFF1E889E),
+                      size: 30,
+                    ),
+                    onPressed: () async {
+                      await markAsSeen(complaint['id']);
+                      // Update the 'seen' status locally
+                      updateComplaintLocally(complaint['id']);
+                      print('The marked complaint: ${complaint['title']}');
+                    },
                   ),
-                  onPressed: () async {
-                    await markAsSeen(complaint['id']);
-                    // Update the 'seen' status locally
-                    updateComplaintLocally(complaint['id']);
-                    print('The marked complaint: ${complaint['title']}');
-                  },
-                ),
               ],
             ),
           ],
