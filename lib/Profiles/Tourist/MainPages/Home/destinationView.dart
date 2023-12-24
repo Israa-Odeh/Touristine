@@ -54,7 +54,8 @@ class _DestinationDetailsState extends State<DestinationDetails> {
   @override
   void initState() {
     super.initState();
-    selectedImage = widget.destination['image'] ?? widget.destination['imagePath'];
+    selectedImage =
+        widget.destination['image'] ?? widget.destination['imagePath'];
     getDestinationLatLng();
   }
 
@@ -1534,7 +1535,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                               padding: const EdgeInsets.only(right: 30.0),
                               child: Text(
                                 isRouteFetched
-                                    ? '${timeFromToH > 0 ? '$timeFromToH h' : ''}${timeFromToH > 0 && timeFromToMin > 0 ? ', ' : ''}${timeFromToMin > 0 ? '$timeFromToMin min' : ''}${timeFromToH == 0 && timeFromToMin == 0 ? 'Less than a minute' : ''} away'
+                                    ? '${timeFromToH > 0 ? '$timeFromToH h' : ''}${timeFromToH > 0 && timeFromToMin > 0 ? ', ' : ''}${timeFromToMin > 0 ? '$timeFromToMin min' : ''}${timeFromToH == 0 && timeFromToMin == 0 ? 'Just moments' : ''} away'
                                     : '_ _       h away',
                                 style: const TextStyle(
                                   color: Colors.white,
