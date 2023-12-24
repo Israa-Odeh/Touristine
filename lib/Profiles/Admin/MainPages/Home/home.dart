@@ -738,7 +738,10 @@ class _HomePageState extends State<HomePage> {
           'city': widget.selectedCity == "All Cities"
               ? "allcities"
               : widget.selectedCity,
-          'category': widget.selectedCategory.toLowerCase().replaceAll(' ', '')
+          'category': widget.selectedCity != "All Cities" &&
+                  widget.selectedCategory == "By City"
+              ? 'bycategory'
+              : widget.selectedCategory.toLowerCase().replaceAll(' ', '')
         },
       );
 
