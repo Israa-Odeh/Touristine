@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -16,6 +18,7 @@ class ComplaintsListPage extends StatefulWidget {
 }
 
 class _ComplaintsListPageState extends State<ComplaintsListPage> {
+  List<Map<String, dynamic>> complaints = [];
   bool isLoading = true;
 
   // A Function to fetch destination complaints from the backend.
@@ -47,8 +50,23 @@ class _ComplaintsListPageState extends State<ComplaintsListPage> {
         // Jenan, I need to retrieve a list of complaints - if there is any,
         // the retrieved list<map> will be of the same format as the one
         // given at line 243.
+        final Map<String, dynamic> responseBody = json.decode(response.body);
+        final List<Map<String, dynamic>> fetchedComplaints =
+            List<Map<String, dynamic>>.from(responseBody['complaints']);
+
+        setState(() {
+          complaints = fetchedComplaints;
+        });
+        print(complaints);
       } else if (response.statusCode == 500) {
-        // Handle 500 cases.
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        if (responseData['error'] ==
+            'Complaints are not available for this destination') {
+          showCustomSnackBar(context, 'Complaints are not available',
+              bottomMargin: 0);
+        } else {
+          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+        }
       } else {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'Error retrieving destination complaints',
@@ -59,8 +77,8 @@ class _ComplaintsListPageState extends State<ComplaintsListPage> {
         setState(() {
           isLoading = false;
         });
+        print('Error fetching complaints: $error');
       }
-      print('Error fetching complaints: $error');
     } finally {
       if (mounted) {
         setState(() {
@@ -240,37 +258,6 @@ class _ComplaintsListPageState extends State<ComplaintsListPage> {
     );
   }
 
-  List<Map<String, dynamic>> complaints = [
-    {
-      'id': '1',
-      'firstName': 'Samar',
-      'lastName': 'Odeh',
-      'title': 'The place is unclean',
-      'complaint':
-          'The location lacks cleanliness, no sanitation staff present',
-      'images': [
-        'https://static3.depositphotos.com/1003681/164/i/950/depositphotos_1646367-stock-photo-crocus.jpg',
-        'https://st.depositphotos.com/1953667/3393/i/950/depositphotos_33937471-stock-photo-cosmos-flowers.jpg',
-      ],
-      'date': '13/12/2023',
-      'seen': 'false',
-    },
-    {
-      'id': '2',
-      'firstName': 'Nijwan',
-      'lastName': 'Samer',
-      'title': 'Gaps in Tanks',
-      'complaint': 'Fish tanks have big holes. I\'m Concerned about it.',
-      'images': [
-        'https://static3.depositphotos.com/1003681/164/i/950/depositphotos_1646367-stock-photo-crocus.jpg',
-        'https://st.depositphotos.com/1953667/3393/i/950/depositphotos_33937471-stock-photo-cosmos-flowers.jpg',
-      ],
-      'date': '7/10/2023',
-      'seen': 'false',
-    },
-    // Add more complaints as needed....
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -307,7 +294,7 @@ class _ComplaintsListPageState extends State<ComplaintsListPage> {
                         ? Center(
                             child: Column(
                               children: [
-                                const SizedBox(height: 150),
+                                const SizedBox(height: 120),
                                 Image.asset(
                                   'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
                                   fit: BoxFit.cover,
