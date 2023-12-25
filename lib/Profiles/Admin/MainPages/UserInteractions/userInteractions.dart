@@ -5,6 +5,7 @@ import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:http/http.dart' as http;
 import 'package:touristine/Profiles/Admin/MainPages/UserInteractions/complaints.dart';
 import 'package:touristine/Profiles/Admin/MainPages/UserInteractions/reviews.dart';
+import 'package:touristine/Profiles/Admin/MainPages/UserInteractions/uploads.dart';
 
 class UserInteractionsPage extends StatefulWidget {
   final String token;
@@ -290,7 +291,13 @@ class _UserInteractionsPageState extends State<UserInteractionsPage> {
                           40,
                           const Color(0xFF1E889E),
                           const Color.fromARGB(255, 255, 255, 255), () {
-                        print('Uploads Button tapped!');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UploadedImagesPage(
+                                  token: widget.token,
+                                  destinationName: destinationName)),
+                        );
                       }),
                     ],
                   ),

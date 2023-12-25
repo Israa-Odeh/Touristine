@@ -229,7 +229,7 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
                                                     imageUrls[index],
                                                     width: 160,
                                                     height: 110,
-                                                    fit: BoxFit.cover,
+                                                    fit: BoxFit.fill,
                                                   ),
                                                 ),
                                               );
@@ -251,7 +251,7 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
                                                   imageUrls[index],
                                                   width: 160,
                                                   height: 110,
-                                                  fit: BoxFit.cover,
+                                                  fit: BoxFit.fill,
                                                 ),
                                               ),
                                             );
