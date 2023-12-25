@@ -18,7 +18,7 @@ class UploadedImagesPage extends StatefulWidget {
 class _UploadedImagesPageState extends State<UploadedImagesPage> {
   List<ScrollController> imageScrollControllers = [];
   List<List<bool>> selectedImages = [];
-  bool isLoading = false;
+  bool isLoading = true;
 
   List<Map<String, dynamic>> uploadedImages = [
     {
