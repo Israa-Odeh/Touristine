@@ -101,7 +101,7 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
       return Center(
         child: Column(
           children: [
-            const SizedBox(height: 80),
+            const SizedBox(height: 70),
             Image.asset(
               'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
               fit: BoxFit.cover,

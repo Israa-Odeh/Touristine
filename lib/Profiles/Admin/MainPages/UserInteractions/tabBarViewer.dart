@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:touristine/Profiles/Admin/MainPages/UserInteractions/suggestedPlaces.dart';
@@ -5,8 +7,13 @@ import 'package:touristine/Profiles/Admin/MainPages/UserInteractions/userInterac
 
 class TabBarViewer extends StatefulWidget {
   final String token;
+  final Function(int) changeTabIndex;
 
-  const TabBarViewer({super.key, required this.token});
+  const TabBarViewer({
+    super.key,
+    required this.token,
+    required this.changeTabIndex,
+  });
 
   @override
   _TabBarViewerState createState() => _TabBarViewerState();
@@ -88,7 +95,9 @@ class _TabBarViewerState extends State<TabBarViewer> {
                   child: TabBarView(
                     children: [
                       UserInteractionsPage(token: widget.token),
-                      SuggestedPlacesPage(token: widget.token),
+                      SuggestedPlacesPage(
+                          token: widget.token,
+                          changeTabIndex: widget.changeTabIndex),
                     ],
                   ),
                 ),

@@ -101,11 +101,20 @@ class _AdminAppState extends State<AdminProfile> {
         selectedStatisticsType: 'Visits Count',
       ),
       DestsUploadHomePage(token: widget.token),
-      TabBarViewer(token: widget.token),
+      TabBarViewer(
+        token: widget.token,
+        changeTabIndex: changeTabIndex,
+      ),
       CracksAnalysisPage(token: widget.token),
       ChattingPage(token: widget.token),
       ProfilePage(token: widget.token)
     ];
+  }
+
+  void changeTabIndex(int newIndex) {
+    setState(() {
+      _currentIndex = newIndex;
+    });
   }
 
   void moveToStep(int index) {

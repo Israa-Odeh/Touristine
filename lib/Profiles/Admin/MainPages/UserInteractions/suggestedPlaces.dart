@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -6,17 +7,26 @@ import 'package:touristine/Notifications/SnackBar.dart';
 
 class SuggestedPlacesPage extends StatefulWidget {
   final String token;
+  final Function(int) changeTabIndex;
 
-  SuggestedPlacesPage({super.key, required this.token});
+  SuggestedPlacesPage(
+      {super.key, required this.token, required this.changeTabIndex});
 
   @override
   _SuggestedPlacesPageState createState() => _SuggestedPlacesPageState();
 }
 
 class _SuggestedPlacesPageState extends State<SuggestedPlacesPage> {
+  // Example usage in TabBarView
+  void changeTabIndex(int newIndex) {
+    widget.changeTabIndex(newIndex);
+  }
+
   int uploadedDestsLength = 0;
   List<Map<String, dynamic>> uploadedDestinations = [
     {
+      'firstName': 'Israa',
+      'lastName': 'Odeh',
       'destID': '1',
       'date': '2023-01-01',
       'destinationName': 'Sample Destination 1',
@@ -32,10 +42,12 @@ class _SuggestedPlacesPageState extends State<SuggestedPlacesPage> {
         'https://noblesanctuary.com/wp-content/uploads/2021/08/Jami-al-Aqsa.jpg',
         'https://i.pinimg.com/736x/9c/58/86/9c588698ef11f7e3b46a5e7d73bd1067.jpg',
       ],
-      // 'adminComment': 'Admin comment for sample destination 1.',
+      'adminComment': 'Admin comment for sample destination 1.',
     },
     // Add more sample destinations as needed
     {
+      'firstName': 'Rula',
+      'lastName': 'Odeh',
       'destID': '2',
       'date': '2023-01-02',
       'destinationName': 'Sample Destination 2',
@@ -51,7 +63,8 @@ class _SuggestedPlacesPageState extends State<SuggestedPlacesPage> {
         'https://noblesanctuary.com/wp-content/uploads/2021/08/Jami-al-Aqsa.jpg',
         'https://i.pinimg.com/736x/9c/58/86/9c588698ef11f7e3b46a5e7d73bd1067.jpg',
       ],
-      // 'adminComment': '', // No admin comment for this sample destination
+      'adminComment':
+          'Admin comment for sample destination 2.', // No admin comment for this sample destination
     },
   ];
   bool isLoading = true;
@@ -151,6 +164,11 @@ class _SuggestedPlacesPageState extends State<SuggestedPlacesPage> {
   void initState() {
     super.initState();
     fetchSuggestions();
+
+    Timer(Duration(seconds: 5), () {
+      // Call the changeTabIndex function after the timer expires
+      changeTabIndex(1); // Replace 1 with the desired index
+    });
   }
 
   @override
@@ -165,7 +183,7 @@ class _SuggestedPlacesPageState extends State<SuggestedPlacesPage> {
       return Center(
         child: Column(
           children: [
-            const SizedBox(height: 80),
+            const SizedBox(height: 70),
             Image.asset(
               'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
               fit: BoxFit.cover,
@@ -200,6 +218,8 @@ class _SuggestedPlacesPageState extends State<SuggestedPlacesPage> {
                   controller: pageScrollController,
                   itemCount: uploadedDestinations.length,
                   itemBuilder: (context, index) {
+                    TextEditingController commentController =
+                        TextEditingController();
                     return DestinationCard(
                       token: widget.token,
                       destination: uploadedDestinations[index],
@@ -209,6 +229,7 @@ class _SuggestedPlacesPageState extends State<SuggestedPlacesPage> {
                         });
                       },
                       uploadedDestsLength: uploadedDestsLength,
+                      commentController: commentController,
                     );
                   },
                 ),
@@ -219,6 +240,8 @@ class _SuggestedPlacesPageState extends State<SuggestedPlacesPage> {
               child: ListView.builder(
                 itemCount: uploadedDestinations.length,
                 itemBuilder: (context, index) {
+                  TextEditingController commentController =
+                      TextEditingController();
                   return DestinationCard(
                     token: widget.token,
                     destination: uploadedDestinations[index],
@@ -228,6 +251,7 @@ class _SuggestedPlacesPageState extends State<SuggestedPlacesPage> {
                       });
                     },
                     uploadedDestsLength: uploadedDestsLength,
+                    commentController: commentController,
                   );
                 },
               ),
@@ -241,13 +265,16 @@ class DestinationCard extends StatefulWidget {
   final Map<String, dynamic> destination;
   final int uploadedDestsLength;
   final VoidCallback onDelete;
+  final TextEditingController commentController;
 
-  const DestinationCard(
-      {super.key,
-      required this.token,
-      required this.destination,
-      required this.uploadedDestsLength,
-      required this.onDelete});
+  const DestinationCard({
+    super.key,
+    required this.token,
+    required this.destination,
+    required this.uploadedDestsLength,
+    required this.onDelete,
+    required this.commentController,
+  });
 
   @override
   _DestinationCardState createState() => _DestinationCardState();
@@ -281,6 +308,8 @@ class _DestinationCardState extends State<DestinationCard> {
           final Map<String, dynamic> responseData = json.decode(response.body);
 
           if (responseData.containsKey('message')) {
+            // Call onDelete only if deletion is successful
+            widget.onDelete();
             // ignore: use_build_context_synchronously
             showCustomSnackBar(context, 'The suggestion has been deleted',
                 bottomMargin: 0);
@@ -328,48 +357,40 @@ class _DestinationCardState extends State<DestinationCard> {
               height: 55,
               color: const Color.fromARGB(94, 195, 195, 195),
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10.0),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        const Icon(
-                          FontAwesomeIcons.circleXmark,
-                          color: Color(0xFF7F7F7F),
-                          size: 23,
-                        ),
-                        const SizedBox(width: 8.0),
-                        Text(
-                          widget.destination['status'],
-                          style: const TextStyle(
-                              color: Color(0xFF7F7F7F),
-                              fontFamily: 'Calibri',
-                              fontWeight: FontWeight.bold,
-                              fontSize: 25),
-                        ),
-                      ],
+                    IconButton(
+                      onPressed: () {
+                        showTouristNameDialog(
+                            "${widget.destination['firstName']} ${widget.destination['lastName']}");
+                      },
+                      icon: const FaIcon(
+                        FontAwesomeIcons.circleUser,
+                        size: 30,
+                        color: Color.fromARGB(185, 0, 0, 0),
+                      ),
+                      iconSize: 30,
+                      color: const Color.fromARGB(82, 30, 137, 158),
                     ),
                     Material(
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: () {
-                          showCommentDialog(widget
-                              .destination['adminComment']); ////////////////
+                          showCommentDialog(
+                            widget.commentController,
+                          );
                         },
                         borderRadius: BorderRadius.circular(100.0),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 0.0),
-                          child: Visibility(
-                            visible: widget.destination['adminComment'] != "",
-                            child: Image.asset(
-                                'assets/Images/Profiles/Admin/message.png',
-                                color: Colors.black,
-                                width: 35,
-                                height: 35,
-                                fit: BoxFit.cover),
-                          ),
+                          child: Image.asset(
+                              'assets/Images/Profiles/Admin/message.png',
+                              color: Colors.black,
+                              width: 35,
+                              height: 35,
+                              fit: BoxFit.cover),
                         ),
                       ),
                     ),
@@ -553,8 +574,6 @@ class _DestinationCardState extends State<DestinationCard> {
                         onTap: () async {
                           print(widget.destination['destID']);
                           await deleteSuggestion(widget.destination['destID']);
-                          // This will be called only if the deletion process succeeded.
-                          widget.onDelete();
                         },
                         borderRadius: BorderRadius.circular(30.0),
                         child: const Padding(
@@ -569,7 +588,11 @@ class _DestinationCardState extends State<DestinationCard> {
                     ),
                     IconButton(
                       onPressed: () {
-                        // Add destination logic.
+                        if (widget.commentController.text.isEmpty) {
+                          print("add a comment");
+                        } else {
+                          print("A comment is added");
+                        }
                       },
                       icon: const FaIcon(
                         FontAwesomeIcons.circlePlus,
@@ -589,10 +612,7 @@ class _DestinationCardState extends State<DestinationCard> {
     );
   }
 
-  Future<void> showCommentDialog(String initialComment) async {
-    TextEditingController commentController =
-        TextEditingController(text: initialComment);
-
+  Future<void> showTouristNameDialog(String name) async {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -612,7 +632,7 @@ class _DestinationCardState extends State<DestinationCard> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Text(
-                  'Enter your comment',
+                  'This place is suggested by',
                   style: TextStyle(
                     fontSize: 30.0,
                     fontFamily: 'Gabriola',
@@ -623,19 +643,74 @@ class _DestinationCardState extends State<DestinationCard> {
                 const Divider(
                     thickness: 1, color: Color.fromARGB(255, 16, 73, 85)),
                 const SizedBox(height: 10.0),
+                Text(
+                  name,
+                  style: const TextStyle(
+                    fontSize: 28.0,
+                    fontFamily: 'Zilla Slab Light',
+                    color: Color.fromARGB(255, 18, 84, 97),
+                  ),
+                ),
+                const SizedBox(height: 20.0),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text(
+                      'Close',
+                      style: TextStyle(
+                        fontSize: 22.0,
+                        fontFamily: 'Zilla',
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 214, 61, 27),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> showCommentDialog(TextEditingController controller) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          elevation: 0.0,
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16.0),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
                 TextField(
-                  controller: commentController,
+                  cursorColor: const Color(0xFF1E889E),
+                  controller: controller,
                   minLines: 1,
-                  maxLines: 5,
+                  maxLines: 7,
                   maxLength: 200,
                   decoration: const InputDecoration(
-                    // labelText: 'Enter your comment',
+                    labelText: 'Enter your comment',
                     focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: Color(0xFF1E889E)),
                     ),
-                    // labelStyle: TextStyle(
-                    //   color: Color(0xFF1E889E),
-                    // ),
+                    labelStyle: TextStyle(
+                      fontSize: 25,
+                      color: Color.fromARGB(255, 71, 71, 71),
+                    ),
                   ),
                   style: const TextStyle(
                     fontSize: 22.0,
@@ -654,24 +729,7 @@ class _DestinationCardState extends State<DestinationCard> {
                           Navigator.of(context).pop();
                         },
                         child: const Text(
-                          'Cancel',
-                          style: TextStyle(
-                            fontSize: 22.0,
-                            fontFamily: 'Zilla',
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 214, 61, 27),
-                          ),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          // Do something with the entered comment
-                          // String enteredComment = commentController.text;
-                          // You can use enteredComment as needed
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text(
-                          'Save',
+                          'Close',
                           style: TextStyle(
                             fontSize: 22.0,
                             fontFamily: 'Zilla',
