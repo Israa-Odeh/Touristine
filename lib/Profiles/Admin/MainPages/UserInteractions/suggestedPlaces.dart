@@ -666,7 +666,7 @@ class _DestinationCardState extends State<DestinationCard> {
                       TextButton(
                         onPressed: () {
                           // Do something with the entered comment
-                          String enteredComment = commentController.text;
+                          // String enteredComment = commentController.text;
                           // You can use enteredComment as needed
                           Navigator.of(context).pop();
                         },
