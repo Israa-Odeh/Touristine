@@ -20,61 +20,7 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
   List<List<bool>> selectedImages = [];
   bool isLoading = true;
 
-  List<Map<String, dynamic>> uploadedImages = [
-    {
-      'id': '120',
-      'keywords': ['General', 'Services'],
-      'date': '7/10/2023',
-      'images': [
-        'https://noblesanctuary.com/wp-content/uploads/2021/08/Jami-al-Aqsa.jpg',
-        'https://i.pinimg.com/736x/9c/58/86/9c588698ef11f7e3b46a5e7d73bd1067.jpg',
-        'https://media.tacdn.com/media/attractions-splice-spp-674x446/0b/39/8b/8d.jpg',
-      ],
-      'status': 'Pending',
-    },
-    {
-      'id': '121',
-      'keywords': ['General', 'Cracks'],
-      'date': '7/10/2023',
-      'images': [
-        'https://noblesanctuary.com/wp-content/uploads/2021/08/Jami-al-Aqsa.jpg',
-        'https://i.pinimg.com/736x/9c/58/86/9c588698ef11f7e3b46a5e7d73bd1067.jpg',
-        'https://media.tacdn.com/media/attractions-splice-spp-674x446/0b/39/8b/8d.jpg',
-      ],
-      'status': 'Pending',
-    },
-    {
-      'id': '122',
-      'keywords': ['Services', 'Cracks'],
-      'date': '7/10/2023',
-      'images': [
-        'https://noblesanctuary.com/wp-content/uploads/2021/08/Jami-al-Aqsa.jpg',
-        'https://i.pinimg.com/736x/9c/58/86/9c588698ef11f7e3b46a5e7d73bd1067.jpg',
-        'https://media.tacdn.com/media/attractions-splice-spp-674x446/0b/39/8b/8d.jpg',
-      ],
-      'status': 'Pending',
-    },
-    {
-      'id': '123',
-      'keywords': ['General', 'Services', 'Cracks'],
-      'date': '7/10/2023',
-      'images': [
-        'https://noblesanctuary.com/wp-content/uploads/2021/08/Jami-al-Aqsa.jpg'
-      ],
-      'status': 'Pending',
-    },
-    {
-      'id': '124',
-      'keywords': ['General'],
-      'date': '7/10/2023',
-      'images': [
-        'https://noblesanctuary.com/wp-content/uploads/2021/08/Jami-al-Aqsa.jpg',
-        'https://i.pinimg.com/736x/9c/58/86/9c588698ef11f7e3b46a5e7d73bd1067.jpg',
-        'https://media.tacdn.com/media/attractions-splice-spp-674x446/0b/39/8b/8d.jpg',
-      ],
-      'status': 'Pending',
-    },
-  ];
+  List<Map<String, dynamic>> uploadedImages = [];
 
   // A Function to fetch destination uploads from the backend.
   Future<void> getDestinationUploads() async {
@@ -103,12 +49,17 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
 
       if (response.statusCode == 200) {
         // Jenan, I need to retrieve a List<Map> of uploaded images - PENDING.
-        // The fomrat must be like the one at line 23.
-
-        // Israa, handle the code and retrieve the result in the uploaded images.
-        /////////////////////////////////////////////////////////////////////////
+        final Map<String, dynamic> responseBody = json.decode(response.body);
+        final List<Map<String, dynamic>> fetchedUploads =
+            List<Map<String, dynamic>>.from(responseBody['uploadedImages']);
+        setState(() {
+          uploadedImages = fetchedUploads;
+        });
+        print(uploadedImages);
+        initializeScrollers();
       } else if (response.statusCode == 500) {
-        // Israa, handle possible error cases.
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
       } else {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'Error retrieving destination uploads',
@@ -130,6 +81,14 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
     }
   }
 
+  void initializeScrollers() {
+    for (int i = 0; i < uploadedImages.length; i++) {
+      imageScrollControllers.add(ScrollController());
+      selectedImages
+          .add(List<bool>.filled(uploadedImages[i]['images'].length, false));
+    }
+  }
+
   void approveAnUpload(int index) async {
     List<String> selectedUrls = [];
     // Collect selected image URLs.
@@ -145,9 +104,11 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
           bottomMargin: 0);
       return;
     }
+
     print("The upload ID: ${uploadedImages[index]['id']}");
     print("The selected Images URLs: $selectedUrls");
 
+    if (!mounted) return;
     try {
       final url =
           Uri.parse('https://touristine.onrender.com/approve-an-upload');
@@ -164,19 +125,22 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
           'destinationName': widget.destinationName,
         },
       );
+      if (!mounted) return;
 
       if (response.statusCode == 200) {
         // Jenan, in case of success the upload status must be updated to "Approved".
-
-        // Israa, update the UI to remove this upload from the interface once approved.
+        setState(() {
+          uploadedImages.removeWhere(
+              (upload) => upload['id'] == uploadedImages[index]['id']);
+        });
 
         // ignore: use_build_context_synchronously
-        // showCustomSnackBar(context, "Images have been approved",
-        //     bottomMargin: 0);
+        showCustomSnackBar(context, "The Images have been approved",
+            bottomMargin: 0);
       } else {
-        // final Map<String, dynamic> responseData = json.decode(response.body);
-        // // ignore: use_build_context_synchronously
-        // showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
       }
     } catch (error) {
       print('Error approving the upload: $error');
@@ -212,15 +176,15 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
             uploadedImages.clear();
           });
           // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, "The uploads have been deleted",
+          showCustomSnackBar(context, "The uploads have been rejected",
               bottomMargin: 0);
         } else {
-          // final Map<String, dynamic> responseData = json.decode(response.body);
+          final Map<String, dynamic> responseData = json.decode(response.body);
           // ignore: use_build_context_synchronously
-          // showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
         }
       } catch (error) {
-        print('Error deleting all uploads: $error');
+        print('Error rejecting all uploads: $error');
       }
     }
   }
@@ -251,15 +215,15 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
             uploadedImages.removeWhere((upload) => upload['id'] == uploadId);
           });
           // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, "The upload has been deleted",
+          showCustomSnackBar(context, "The upload has been rejected",
               bottomMargin: 0);
         } else {
-          // final Map<String, dynamic> responseData = json.decode(response.body);
-          // // ignore: use_build_context_synchronously
-          // showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+          final Map<String, dynamic> responseData = json.decode(response.body);
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
         }
       } catch (error) {
-        print('Error deleting the upload: $error');
+        print('Error rejecting the upload: $error');
       }
     }
   }
@@ -319,13 +283,7 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
   @override
   void initState() {
     super.initState();
-
-    // This should be moved inside the getDestinationUplaods.
-    for (int i = 0; i < uploadedImages.length; i++) {
-      imageScrollControllers.add(ScrollController());
-      selectedImages
-          .add(List<bool>.filled(uploadedImages[i]['images'].length, false));
-    }
+    getDestinationUploads();
   }
 
   @override
@@ -574,6 +532,7 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
                                       children: [
                                         Row(
                                           children: [
+                                            // Reject Button.
                                             ElevatedButton(
                                               onPressed: () {
                                                 rejectAnUpload(
@@ -605,7 +564,7 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
                                             const SizedBox(
                                               width: 10,
                                             ),
-                                            // Approve Button
+                                            // Approve Button.
                                             ElevatedButton(
                                               onPressed: () {
                                                 approveAnUpload(index);

@@ -50,7 +50,7 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
             widget.uploadedImages.removeAt(index);
           });
           // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, "The images has been deleted",
+          showCustomSnackBar(context, "The upload has been deleted",
               bottomMargin: 320);
         } else {
           print('No message keyword found in the response');
