@@ -36,8 +36,8 @@ class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
             Container(
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image:
-                      AssetImage('assets/Images/Profiles/Admin/mainBackground.jpg'),
+                  image: AssetImage(
+                      'assets/Images/Profiles/Admin/mainBackground.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -91,9 +91,7 @@ class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
                 Expanded(
                   child: TabBarView(
                     children: [
-                      AddDestTab(
-                        token: widget.token,
-                      ),
+                      AddDestTab(token: widget.token),
                       DestinationCardGenerator(token: widget.token),
                     ],
                   ),

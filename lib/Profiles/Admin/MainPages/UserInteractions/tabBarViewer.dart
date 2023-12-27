@@ -5,7 +5,7 @@ import 'package:touristine/Profiles/Admin/MainPages/UserInteractions/userInterac
 
 class TabBarViewer extends StatefulWidget {
   final String token;
-  final Function(int) changeTabIndex;
+  final Function(int, Map<String, String>) changeTabIndex;
 
   const TabBarViewer({
     super.key,

@@ -26,8 +26,8 @@ class _AdminAppState extends State<AdminProfile> {
   int _currentIndex = 0;
   late List<Widget> _children = [];
   late Future<void> fetchData;
-
   Map<String, int> mainStatistics = {};
+  Map<String, String> destinationToBeAdded = {};
 
   Future<void> updateChart() async {
     final url = Uri.parse('https://touristine.onrender.com/get-statistics');
@@ -101,20 +101,21 @@ class _AdminAppState extends State<AdminProfile> {
         selectedStatisticsType: 'Visits Count',
       ),
       DestsUploadHomePage(token: widget.token),
-      TabBarViewer(
-        token: widget.token,
-        changeTabIndex: changeTabIndex,
-      ),
+      TabBarViewer(token: widget.token, changeTabIndex: changeTabIndex),
       CracksAnalysisPage(token: widget.token),
       ChattingPage(token: widget.token),
       ProfilePage(token: widget.token)
     ];
   }
 
-  void changeTabIndex(int newIndex) {
+  void changeTabIndex(int newIndex, Map<String, String> destinationInfo) {
     setState(() {
+      destinationToBeAdded = destinationInfo;
       _currentIndex = newIndex;
     });
+    print("----------------------------------------------------");
+    print(destinationToBeAdded);
+    print("----------------------------------------------------");
   }
 
   void moveToStep(int index) {
