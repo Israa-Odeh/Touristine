@@ -7,9 +7,9 @@ import 'package:touristine/Notifications/SnackBar.dart';
 
 class SuggestedPlacesPage extends StatefulWidget {
   final String token;
-  final Function(int, Map<String, String>) changeTabIndex;
+  final Function(int, Map<String, dynamic>) changeTabIndex;
 
-  SuggestedPlacesPage(
+  const SuggestedPlacesPage(
       {super.key, required this.token, required this.changeTabIndex});
 
   @override
@@ -17,14 +17,13 @@ class SuggestedPlacesPage extends StatefulWidget {
 }
 
 class _SuggestedPlacesPageState extends State<SuggestedPlacesPage> {
-  int uploadedDestsLength = 0;
-  Map<String, String> approvedDestination = {};
+  bool isLoading = true;
   List<Map<String, dynamic>> uploadedDestinations = [
     {
       'firstName': 'Israa',
       'lastName': 'Odeh',
       'destID': '200',
-      'date': '2023-01-01',
+      'date': '12/10/2023',
       'destinationName': 'Sample Destination 1',
       'city': 'Sample City 1',
       'category': 'Sample Category 1',
@@ -39,31 +38,31 @@ class _SuggestedPlacesPageState extends State<SuggestedPlacesPage> {
         'https://i.pinimg.com/736x/9c/58/86/9c588698ef11f7e3b46a5e7d73bd1067.jpg',
       ],
     },
-    // Add more sample destinations as needed
-    // {
-    //   'firstName': 'Rula',
-    //   'lastName': 'Odeh',
-    //   'destID': '201',
-    //   'date': '2023-01-02',
-    //   'destinationName': 'Sample Destination 2',
-    //   'city': 'Sample City 2',
-    //   'category': 'Sample Category 2',
-    //   'budget': 'Sample Budget 2',
-    //   'timeToSpend': 3,
-    //   'sheltered': 'false',
-    //   'status': 'Unseen',
-    //   'about':
-    //       'This is another sample destination description for the testing purposes.',
-    //   'imagesURLs': [
-    //     'https://noblesanctuary.com/wp-content/uploads/2021/08/Jami-al-Aqsa.jpg',
-    //     'https://i.pinimg.com/736x/9c/58/86/9c588698ef11f7e3b46a5e7d73bd1067.jpg',
-    //   ],
-    // },
+    {
+      'firstName': 'Rula',
+      'lastName': 'Odeh',
+      'destID': '201',
+      'date': '13/10/2023',
+      'destinationName': 'Sample Destination 2',
+      'city': 'Sample City 2',
+      'category': 'Sample Category 2',
+      'budget': 'Sample Budget 2',
+      'timeToSpend': 3,
+      'sheltered': 'false',
+      'status': 'Unseen',
+      'about':
+          'This is another sample destination description for the testing purposes.',
+      'imagesURLs': [
+        'https://noblesanctuary.com/wp-content/uploads/2021/08/Jami-al-Aqsa.jpg',
+        'https://i.pinimg.com/736x/9c/58/86/9c588698ef11f7e3b46a5e7d73bd1067.jpg',
+      ],
+    },
   ];
-  bool isLoading = true;
 
-  // A Function to fetch user uploaded destinations.
+  // A Function to fetch users suggested destinations.
   Future<void> fetchSuggestions() async {
+    if (!mounted) return;
+
     setState(() {
       isLoading = true;
     });
@@ -80,12 +79,15 @@ class _SuggestedPlacesPageState extends State<SuggestedPlacesPage> {
       );
       if (mounted) {
         if (response.statusCode == 200) {
+          // Jenan, here I need to retrieve a List<Map>
+          // similar to the format shown at line 22.
           setState(() {
             final List<dynamic> responseData = json.decode(response.body);
-
             // Convert destinationsData into a list of maps.
             uploadedDestinations = responseData.map((destinationData) {
               return {
+                'firstName': destinationData['firstName'],
+                'lastName': destinationData['lastName'],
                 'destID': destinationData['destID'],
                 'date': destinationData['date'],
                 'destinationName': destinationData['destinationName'],
@@ -97,7 +99,6 @@ class _SuggestedPlacesPageState extends State<SuggestedPlacesPage> {
                 'status': destinationData['status'],
                 'about': destinationData['about'],
                 'imagesURLs': destinationData['imagesURLs'],
-                // 'adminComment': destinationData['adminComment'],
               };
             }).toList();
             print(uploadedDestinations);
@@ -126,16 +127,13 @@ class _SuggestedPlacesPageState extends State<SuggestedPlacesPage> {
   }
 
   // If there are any suggestion to be added as a new destination, navigate
-  // to theuploads interface and include the destination where needed.
-  void changeTabIndex(int newIndex, Map<String, String> destinationInfo) {
+  // to the uploads interface and include the destination where needed.
+  void changeTabIndex(int newIndex, Map<String, dynamic> destinationInfo) {
     widget.changeTabIndex(newIndex, destinationInfo);
   }
 
-  void approveDestination(Map<String, String> destinationInfo) {
-    approvedDestination = destinationInfo;
-    print("Destination Approved: $approvedDestination");
-
-    changeTabIndex(1, approvedDestination);
+  void approveDestination(Map<String, dynamic> destinationInfo) {
+    changeTabIndex(1, destinationInfo);
   }
 
   @override
@@ -201,7 +199,6 @@ class _SuggestedPlacesPageState extends State<SuggestedPlacesPage> {
                           uploadedDestinations.removeAt(index);
                         });
                       },
-                      uploadedDestsLength: uploadedDestsLength,
                       commentController: commentController,
                       onApproveSuggestion: (destinationInfo) {
                         approveDestination(destinationInfo);
@@ -226,10 +223,8 @@ class _SuggestedPlacesPageState extends State<SuggestedPlacesPage> {
                         uploadedDestinations.removeAt(index);
                       });
                     },
-                    uploadedDestsLength: uploadedDestsLength,
                     commentController: commentController,
                     onApproveSuggestion: (destinationInfo) {
-                      // Call the approveDestination function with the destinationInfo
                       approveDestination(destinationInfo);
                     },
                   );
@@ -243,16 +238,14 @@ class _SuggestedPlacesPageState extends State<SuggestedPlacesPage> {
 class DestinationCard extends StatefulWidget {
   final String token;
   final Map<String, dynamic> destination;
-  final int uploadedDestsLength;
   final VoidCallback onDelete;
   final TextEditingController commentController;
-  final void Function(Map<String, String>) onApproveSuggestion;
+  final void Function(Map<String, dynamic>) onApproveSuggestion;
 
   const DestinationCard({
     super.key,
     required this.token,
     required this.destination,
-    required this.uploadedDestsLength,
     required this.onDelete,
     required this.commentController,
     required this.onApproveSuggestion,
@@ -274,6 +267,7 @@ class _DestinationCardState extends State<DestinationCard> {
       dialogMessage: 'Are you sure you want to delete this suggestion?',
     );
     if (confirmDeletion == true) {
+      if (!mounted) return;
       final url = Uri.parse(
           'https://touristine.onrender.com/delete-suggestion/$suggestionId');
 
@@ -285,12 +279,13 @@ class _DestinationCardState extends State<DestinationCard> {
             'Authorization': 'Bearer ${widget.token}',
           },
         );
+        if (!mounted) return;
 
         if (response.statusCode == 200) {
           final Map<String, dynamic> responseData = json.decode(response.body);
 
           if (responseData.containsKey('message')) {
-            // Call onDelete only if deletion is successful
+            // Call onDelete only if deletion is successful.
             widget.onDelete();
             // ignore: use_build_context_synchronously
             showCustomSnackBar(context, 'The suggestion has been deleted',
@@ -322,8 +317,7 @@ class _DestinationCardState extends State<DestinationCard> {
     print(suggestionID);
     print(comment);
     try {
-      final url =
-          Uri.parse('https://touristine.onrender.com/add-admin-comment');
+      final url = Uri.parse('https://touristine.onrender.com/add-comment');
 
       final response = await http.post(
         url,
@@ -339,9 +333,9 @@ class _DestinationCardState extends State<DestinationCard> {
         showCustomSnackBar(context, 'Your comment has been added',
             bottomMargin: 0);
       } else {
-        // final Map<String, dynamic> responseData = json.decode(response.body);
-        // // ignore: use_build_context_synchronously
-        // showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
       }
     } catch (error) {
       print('Error adding the comment: $error');
@@ -364,7 +358,7 @@ class _DestinationCardState extends State<DestinationCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Status icon and button row.
+            // Username and comment buttons row.
             Container(
               height: 55,
               color: const Color.fromARGB(94, 195, 195, 195),
@@ -463,7 +457,6 @@ class _DestinationCardState extends State<DestinationCard> {
                 ],
               ),
             ),
-
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 10.0),
               child:
@@ -599,41 +592,22 @@ class _DestinationCardState extends State<DestinationCard> {
                       ),
                     ),
                     IconButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (widget.commentController.text.isEmpty) {
                           showCustomSnackBar(
                               context, 'Kindly provide feedback for the user',
                               bottomMargin: 0);
                         } else {
-                          print("A comment is added");
-                          addAdminComment(widget.destination['destID'],
-                              widget.commentController.text);
-
-                          // Send a request to update the admin comment.
-                          List<String> imagesURLs =
-                              widget.destination['imagesURLs'];
-                          String imagesURLsString = imagesURLs.join(', ');
-
-                          // Format the map with all destination information
-                          Map<String, String> destinationInfo = {
-                            // 'destID': widget.destination['destID'],
-                            // 'comment': widget.commentController.text,
-                            'destinationName':
-                                widget.destination['destinationName'],
-                            'city': widget.destination['city'],
-                            'category': widget.destination['category'],
-                            'budget': widget.destination['budget'],
-                            'timeToSpend':
-                                widget.destination['timeToSpend'].toString(),
-                            'sheltered': widget.destination['sheltered'],
-                            'status': widget.destination['status'],
-                            'about': widget.destination['about'],
-                            'imageURLs': imagesURLsString,
-                            // Add other destination information as needed
-                            ///////////////// Image URLs //////////////////
-                          };
-                          // Call the callback function when add comment button is pressed
-                          widget.onApproveSuggestion(destinationInfo);
+                          bool? confirmAddition =
+                              await showConfirmationDialog(context, 'Confirm');
+                          if (confirmAddition == true) {
+                            addAdminComment(widget.destination['destID'],
+                                widget.commentController.text);
+                            Timer(const Duration(seconds: 3), () {
+                              // Call the callback function when add comment button is pressed.
+                              widget.onApproveSuggestion(widget.destination);
+                            });
+                          }
                         }
                       },
                       icon: const FaIcon(
@@ -795,7 +769,7 @@ class _DestinationCardState extends State<DestinationCard> {
     BuildContext context,
     String confirmBTN, {
     String dialogMessage =
-        'Are you certain about adding this suggestion as a new destination?',
+        'Are you sure about adding this suggestion as a new destination?',
   }) async {
     return showDialog<bool>(
       context: context,

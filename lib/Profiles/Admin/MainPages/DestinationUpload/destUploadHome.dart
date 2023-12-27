@@ -3,19 +3,27 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:touristine/Profiles/Admin/MainPages/DestinationUpload/destGenerator.dart';
 import 'package:touristine/Profiles/Admin/MainPages/DestinationUpload/myDestsList.dart';
 
+// ignore: must_be_immutable
 class DestsUploadHomePage extends StatefulWidget {
   final String token;
+  Map<String, dynamic> destinationToBeAdded;
 
-  const DestsUploadHomePage({super.key, required this.token});
+  DestsUploadHomePage(
+      {super.key, required this.token, this.destinationToBeAdded = const {}});
 
   @override
   _DestsUploadHomePageState createState() => _DestsUploadHomePageState();
 }
 
 class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
+  Map<String, dynamic> destinationToBeAddedInfo = {};
   @override
   void initState() {
     super.initState();
+    print(widget.destinationToBeAdded); /////////////////
+    destinationToBeAddedInfo = widget.destinationToBeAdded;
+    widget.destinationToBeAdded = {};
+    print(widget.destinationToBeAdded); ////////////////
   }
 
   @override

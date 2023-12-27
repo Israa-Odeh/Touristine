@@ -1,14 +1,14 @@
-import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
-import 'package:http/http.dart' as http;
 import 'package:touristine/Profiles/Admin/MainPages/DestinationUpload/destUploadHome.dart';
 import 'package:touristine/Profiles/Admin/MainPages/Home/home.dart';
 import 'package:touristine/Profiles/Admin/MainPages/UserInteractions/tabBarViewer.dart';
 import 'package:touristine/Profiles/Admin/MainPages/profilePage.dart';
 import 'package:touristine/Profiles/Admin/MainPages/chatting.dart';
 import 'package:touristine/Profiles/Admin/MainPages/cracksAnalysis.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
+import 'dart:convert';
 
 class AdminProfile extends StatefulWidget {
   final String token;
@@ -27,7 +27,6 @@ class _AdminAppState extends State<AdminProfile> {
   late List<Widget> _children = [];
   late Future<void> fetchData;
   Map<String, int> mainStatistics = {};
-  Map<String, String> destinationToBeAdded = {};
 
   Future<void> updateChart() async {
     final url = Uri.parse('https://touristine.onrender.com/get-statistics');
@@ -62,7 +61,6 @@ class _AdminAppState extends State<AdminProfile> {
             newStatisticsResult[key] = value.toInt();
           }
         }
-
         setState(() {
           mainStatistics = Map.fromEntries(newStatisticsResult.entries);
         });
@@ -108,14 +106,15 @@ class _AdminAppState extends State<AdminProfile> {
     ];
   }
 
-  void changeTabIndex(int newIndex, Map<String, String> destinationInfo) {
+  void changeTabIndex(int newIndex, Map<String, dynamic> destinationInfo) {
     setState(() {
-      destinationToBeAdded = destinationInfo;
       _currentIndex = newIndex;
     });
-    print("----------------------------------------------------");
-    print(destinationToBeAdded);
-    print("----------------------------------------------------");
+    // Pass destinationToBeAdded to DestsUploadHomePage.
+    _children[1] = DestsUploadHomePage(
+      token: widget.token,
+      destinationToBeAdded: destinationInfo,
+    );
   }
 
   void moveToStep(int index) {
