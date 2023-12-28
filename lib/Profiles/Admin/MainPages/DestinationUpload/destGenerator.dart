@@ -10,11 +10,15 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
+// ignore: must_be_immutable
 class AddDestTab extends StatefulWidget {
   final String token;
+  Map<String, dynamic> destinationToBeAdded;
 
-  const AddDestTab({super.key, required this.token});
+  AddDestTab(
+      {super.key, required this.token, this.destinationToBeAdded = const {}});
 
   @override
   _AddDestTabState createState() => _AddDestTabState();
@@ -319,6 +323,48 @@ class _AddDestTabState extends State<AddDestTab> {
   void initState() {
     super.initState();
     pageController = PageController();
+    print("The destination to be added:");
+    print(widget.destinationToBeAdded);
+    if (widget.destinationToBeAdded.isNotEmpty) {
+      setupFieldsForNewDestination();
+    }
+  }
+
+  void setupFieldsForNewDestination() {
+    destNameController.text = widget.destinationToBeAdded['destinationName'];
+    selectedCity = widget.destinationToBeAdded['city'];
+    selectedCategory = widget.destinationToBeAdded['category'];
+    selectedBudget = widget.destinationToBeAdded['budget'];
+    aboutController.text = widget.destinationToBeAdded['about'];
+    if (widget.destinationToBeAdded['sheltered'] == 'true') {
+      yes = true;
+      no = false;
+    } else {
+      no = true;
+      yes = false;
+    }
+    selectedHours = widget.destinationToBeAdded['timeToSpend'];
+    selectedMinutes = 0;
+    downloadImages();
+  }
+
+  Future<void> downloadImages() async {
+    List<File> downloadedImages = [];
+
+    for (String imageUrl in widget.destinationToBeAdded['imagesURLs']) {
+      final response = await http.get(Uri.parse(imageUrl));
+      final documentDirectory = await getApplicationDocumentsDirectory();
+      final file = File(
+          '${documentDirectory.path}/${DateTime.now().millisecondsSinceEpoch}.png');
+
+      await file.writeAsBytes(response.bodyBytes);
+      downloadedImages.add(file);
+    }
+
+    setState(() {
+      selectedImages = downloadedImages;
+    });
+    print(selectedImages);
   }
 
   @override

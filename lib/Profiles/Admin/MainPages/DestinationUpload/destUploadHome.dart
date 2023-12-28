@@ -17,13 +17,12 @@ class DestsUploadHomePage extends StatefulWidget {
 
 class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
   Map<String, dynamic> destinationToBeAddedInfo = {};
+
   @override
   void initState() {
     super.initState();
-    print(widget.destinationToBeAdded); /////////////////
     destinationToBeAddedInfo = widget.destinationToBeAdded;
     widget.destinationToBeAdded = {};
-    print(widget.destinationToBeAdded); ////////////////
   }
 
   @override
@@ -99,7 +98,9 @@ class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
                 Expanded(
                   child: TabBarView(
                     children: [
-                      AddDestTab(token: widget.token),
+                      AddDestTab(
+                          token: widget.token,
+                          destinationToBeAdded: destinationToBeAddedInfo),
                       DestinationCardGenerator(token: widget.token),
                     ],
                   ),
