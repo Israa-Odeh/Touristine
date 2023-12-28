@@ -260,7 +260,7 @@ class _DestinationCardState extends State<DestinationCard> {
   final ScrollController aboutScrollController = ScrollController();
 
   // A function to delete a specific destination.
-  Future<void> deleteSuggestion(String suggestionId) async {
+  Future<void> deleteSuggestion(String suggestionId, String comment) async {
     bool? confirmDeletion = await showConfirmationDialog(
       context,
       'Delete',
@@ -268,6 +268,7 @@ class _DestinationCardState extends State<DestinationCard> {
     );
     if (confirmDeletion == true) {
       if (!mounted) return;
+      addAdminComment(suggestionId, comment);
       final url = Uri.parse(
           'https://touristine.onrender.com/delete-suggestion/$suggestionId');
 
@@ -577,8 +578,15 @@ class _DestinationCardState extends State<DestinationCard> {
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: () async {
-                          print(widget.destination['destID']);
-                          await deleteSuggestion(widget.destination['destID']);
+                          if (widget.commentController.text.isEmpty) {
+                            showCustomSnackBar(
+                                context, 'Kindly provide feedback for the user',
+                                bottomMargin: 0);
+                          } else {
+                            print(widget.destination['destID']);
+                            await deleteSuggestion(widget.destination['destID'],
+                                widget.commentController.text);
+                          }
                         },
                         borderRadius: BorderRadius.circular(30.0),
                         child: const Padding(
