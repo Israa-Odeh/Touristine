@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:touristine/LoginAndRegistration/MainPages/landingPage.dart';
+import 'package:touristine/Profiles/Admin/Profile/Sections/addingAdmins.dart';
 import 'package:touristine/Profiles/Admin/Profile/Sections/myAccount.dart';
 import 'package:touristine/components/profilePicture.dart';
+import 'package:flutter/material.dart';
 
 class ProfilePage extends StatefulWidget {
   final String token;
@@ -97,6 +98,17 @@ class _ProfilePageState extends State<ProfilePage> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => AccountPage(
+                          token: widget.token,
+                        ),
+                      ),
+                    );
+                  }),
+                  const SizedBox(height: 15),
+                  buildProfileTile("New Admin",
+                      "assets/Images/Profiles/Admin/ProfilePage/add.png", () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => AdminAddingPage(
                           token: widget.token,
                         ),
                       ),
