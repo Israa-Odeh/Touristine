@@ -1,32 +1,49 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:touristine/Notifications/SnackBar.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/planMaker/customBottomSheet.dart';
 
-class DestinationCardGenerator extends StatefulWidget {
+class AddedDestinationsPage extends StatefulWidget {
   final String token;
 
-  DestinationCardGenerator({super.key, required this.token});
+  const AddedDestinationsPage({super.key, required this.token});
 
   @override
-  _DestinationCardGeneratorState createState() =>
-      _DestinationCardGeneratorState();
+  _AddedDestinationsPageState createState() => _AddedDestinationsPageState();
 }
 
-class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
-  int uploadedDestsLength = 0;
-  List<Map<String, dynamic>> uploadedDestinations = [];
+class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
   bool isLoading = true;
 
-  // A Function to fetch user uploaded destinations.
-  Future<void> fetchUploadedDests() async {
-    setState(() {
-      isLoading = true;
-    });
+  List<Map<String, dynamic>> destinationsList = [
+    {
+      'name': 'Mar Saba Monastery',
+      'image': 'https://www.bethlehem.edu/wp-content/uploads/2020/03/5-1.jpg',
+      'city': 'Bethlehem',
+      'category': 'Religious Landmark',
+    },
+    {
+      'name': 'Sufi Cafe',
+      'image':
+          'https://i.pinimg.com/736x/74/59/4d/74594def71eb01f598366e091ea53e4a.jpg',
+      'city': 'Ramallah',
+      'category': 'Others',
+    }
+  ];
 
-    final url = Uri.parse('https://touristine.onrender.com/get-uploaded-dests');
+  @override
+  void initState() {
+    super.initState();
+    isLoading = false;
+    fetchAddedDestinations();
+  }
+
+  void fetchAddedDestinations() async {
+    print("Fetching Destinations................");
+    if (!mounted) return;
+    final url =
+        Uri.parse('https://touristine.onrender.com/get-added-destinations');
 
     try {
       final response = await http.post(
@@ -35,44 +52,27 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Authorization': 'Bearer ${widget.token}',
         },
+        body: {
+          'filter':
+              selectedFilter == "Select a Filter" ? 'All' : selectedFilter,
+        },
       );
-      if (mounted) {
-        if (response.statusCode == 200) {
-          setState(() {
-            final List<dynamic> responseData = json.decode(response.body);
 
-            // Convert destinationsData into a list of maps.
-            uploadedDestinations = responseData.map((destinationData) {
-              return {
-                'destID': destinationData['destID'],
-                'date': destinationData['date'],
-                'destinationName': destinationData['destinationName'],
-                'city': destinationData['city'],
-                'category': destinationData['category'],
-                'budget': destinationData['budget'],
-                'timeToSpend': destinationData['timeToSpend'],
-                'sheltered': destinationData['sheltered'],
-                'status': destinationData['status'],
-                'about': destinationData['about'],
-                'imagesURLs': destinationData['imagesURLs'],
-                'adminComment': destinationData['adminComment'],
-              };
-            }).toList();
-            print(uploadedDestinations);
-          });
-        } else if (response.statusCode == 500) {
-          final Map<String, dynamic> responseData = json.decode(response.body);
-          // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
-        } else {
-          // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, 'Error retrieving your places',
-              bottomMargin: 0);
-        }
+      if (!mounted) return;
+
+      if (response.statusCode == 200) {
+        // Jenan, here I need to retrieve a List<Map> of destinations
+        // similar to the format shown at line 19.
+      } else if (response.statusCode == 500) {
+        // Israa, Handle 500 status code
+      } else {
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'Error retrieving the destinations',
+            bottomMargin: 0);
       }
     } catch (error) {
       if (mounted) {
-        print('Error fetching uploaded dests: $error');
+        print('Error fetching the destinations: $error');
       }
     } finally {
       if (mounted) {
@@ -83,440 +83,173 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    fetchUploadedDests();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1E889E)),
-        ),
-      );
-    } else if (uploadedDestinations.isEmpty) {
-      return Center(
-        child: Column(
-          children: [
-            const SizedBox(height: 70),
-            Image.asset(
-              'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
-              fit: BoxFit.cover,
-            ),
-            const Text(
-              'No places found',
-              style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Gabriola',
-                  color: Color.fromARGB(255, 23, 99, 114)),
-            ),
-          ],
-        ),
-      );
-    } else {
-      ScrollController pageScrollController = ScrollController();
-
-      return uploadedDestinations.length > 1
-          ? ScrollbarTheme(
-              data: ScrollbarThemeData(
-                thumbColor: MaterialStateProperty.all(
-                    const Color.fromARGB(255, 131, 131, 131)),
-                radius: const Radius.circular(0),
-              ),
-              child: Scrollbar(
-                thumbVisibility: true,
-                trackVisibility: true,
-                thickness: 6.0,
-                controller: pageScrollController,
-                child: ListView.builder(
-                  controller: pageScrollController,
-                  itemCount: uploadedDestinations.length,
-                  itemBuilder: (context, index) {
-                    return DestinationCard(
-                      token: widget.token,
-                      destination: uploadedDestinations[index],
-                      onDelete: () {
-                        setState(() {
-                          uploadedDestinations.removeAt(index);
-                        });
-                      },
-                      uploadedDestsLength: uploadedDestsLength,
-                    );
-                  },
-                ),
-              ),
-            )
-          : Padding(
-              padding: const EdgeInsets.symmetric(vertical: 0.0),
-              child: ListView.builder(
-                itemCount: uploadedDestinations.length,
-                itemBuilder: (context, index) {
-                  return DestinationCard(
-                    token: widget.token,
-                    destination: uploadedDestinations[index],
-                    onDelete: () {
-                      setState(() {
-                        uploadedDestinations.removeAt(index);
-                      });
-                    },
-                    uploadedDestsLength: uploadedDestsLength,
-                  );
-                },
-              ),
-            );
-    }
-  }
-}
-
-class DestinationCard extends StatefulWidget {
-  final String token;
-  final Map<String, dynamic> destination;
-  final int uploadedDestsLength;
-  final VoidCallback onDelete;
-
-  const DestinationCard(
-      {super.key,
-      required this.token,
-      required this.destination,
-      required this.uploadedDestsLength,
-      required this.onDelete});
-
-  @override
-  _DestinationCardState createState() => _DestinationCardState();
-}
-
-class _DestinationCardState extends State<DestinationCard> {
-  final ScrollController imagesScrollController = ScrollController();
-  final ScrollController aboutScrollController = ScrollController();
-
-  // A function to delete a specific destination.
-  Future<void> deleteDestination(String destId) async {
-    final url =
-        Uri.parse('https://touristine.onrender.com/delete-destination/$destId');
-
-    try {
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': 'Bearer ${widget.token}',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = json.decode(response.body);
-
-        if (responseData.containsKey('message')) {
-          // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, 'The Destination has been deleted',
-              bottomMargin: 0);
-        } else {
-          // Handle the case when 'message' key is not present in the response
-          print('No message keyword found in the response');
-        }
-      } else if (response.statusCode == 500) {
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
-      } else if (response.statusCode == 404) {
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
-      } else {
-        // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, 'Error deleting this destination',
-            bottomMargin: 0);
-      }
-    } catch (error) {
-      print('Error deleting the destination: $error');
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildCard(
+      String destinationName, String imagePath, String city, String category) {
     return Card(
-      margin: const EdgeInsets.all(16.0),
+      elevation: 5,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0),
-        side: const BorderSide(
-          color: Color.fromARGB(80, 0, 0, 0),
-          width: 2.0,
-        ),
+        borderRadius: BorderRadius.circular(16),
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(15.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Status icon and button row.
-            Container(
-              height: 55,
-              color: const Color.fromARGB(94, 195, 195, 195),
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          widget.destination['status'].toLowerCase() == "seen"
-                              ? FontAwesomeIcons.circleCheck
-                              : FontAwesomeIcons.circleXmark,
-                          color: const Color(0xFF7F7F7F),
-                          size: 23,
-                        ),
-                        const SizedBox(width: 8.0),
-                        Text(
-                          widget.destination['status'].toLowerCase() == "seen"
-                              ? "Seen"
-                              : "Unseen",
-                          style: const TextStyle(
-                              color: Color(0xFF7F7F7F),
-                              fontFamily: 'Calibri',
-                              fontWeight: FontWeight.bold,
-                              fontSize: 25),
-                        ),
-                      ],
-                    ),
-                    Visibility(
-                      visible:
-                          widget.destination['status'].toLowerCase() == "seen",
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: () {
-                            showCommentDialog(
-                                widget.destination['adminComment']);
-                          },
-                          borderRadius: BorderRadius.circular(100.0),
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 0.0),
-                            child: Visibility(
-                              visible: widget.destination['adminComment'] != "",
-                              child: Image.asset(
-                                  'assets/Images/Profiles/Tourist/DestUpload/adminIcon.png',
-                                  color: Colors.black,
-                                  width: 32,
-                                  height: 32,
-                                  fit: BoxFit.cover),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Stack(
+            alignment: Alignment.topRight,
+            children: [
+              ClipRRect(
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(16)),
+                child: Image.network(
+                  imagePath,
+                  height: 200,
+                  width: double.infinity,
+                  fit: BoxFit.fill,
                 ),
               ),
-            ),
-            // Horizontal ListView of images.
-            SizedBox(
-              height: widget.uploadedDestsLength == 1 &&
-                      widget.destination['status'].toLowerCase() == "seen"
-                  ? 175
-                  : 220,
-              child: Scrollbar(
-                trackVisibility: true,
-                thumbVisibility: true,
-                thickness: 5,
-                controller: imagesScrollController,
-                child: ListView.builder(
-                  controller: imagesScrollController,
-                  scrollDirection: Axis.horizontal,
-                  itemCount: widget.destination['imagesURLs'].length,
-                  itemBuilder: (context, index) {
-                    return SizedBox(
-                      width: 400,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 10.0),
-                        child: Image.network(
-                          widget.destination['imagesURLs'][index],
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                    );
-                  },
+            ],
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius:
+                  const BorderRadius.vertical(bottom: Radius.circular(16)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.8),
+                  spreadRadius: 2,
+                  blurRadius: 6,
+                  offset: const Offset(0, 3),
                 ),
-              ),
+              ],
             ),
-            Padding(
-              padding:
-                  const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          widget.destination['destinationName'] ?? '',
-                          style: const TextStyle(
-                            color: Color.fromARGB(255, 12, 53, 61),
-                            fontFamily: 'Zilla Slab Light',
-                            fontWeight: FontWeight.bold,
-                            fontSize: 23,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-              child:
-                  Divider(thickness: 3, color: Color.fromARGB(80, 19, 83, 96)),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                  left: 15.0, right: 15.0, top: 2.0, bottom: 2.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    widget.destination['category'] ?? '',
-                    style: const TextStyle(
-                        color: Color.fromARGB(255, 12, 53, 61),
-                        fontFamily: 'Zilla Slab Light',
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18),
-                  ),
-                  Text(
-                    widget.destination['city'],
-                    style: const TextStyle(
-                        color: Color.fromARGB(255, 12, 53, 61),
-                        fontFamily: 'Zilla Slab Light',
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18),
-                  ),
-                ],
-              ),
-            ),
-            // Divider.
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-              child:
-                  Divider(thickness: 3, color: Color.fromARGB(80, 19, 83, 96)),
-            ),
-            // About destination text.
-            Scrollbar(
-              thickness: 5.0,
-              thumbVisibility: true,
-              trackVisibility: true,
-              controller: aboutScrollController,
-              child: SizedBox(
-                height: 130.0,
-                child: SingleChildScrollView(
-                  controller: aboutScrollController,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 15.0, vertical: 8),
-                    child: Text(
-                      widget.destination['about'] ?? '',
-                      style: const TextStyle(
-                        fontFamily: 'Andalus',
-                        color: Color(0xFF595959),
-                        fontSize: 25,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            // Divider.
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-              child: Divider(thickness: 2.0, color: Color(0xFFbfbfbf)),
-            ),
-            // Budget and sheltered status row.
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 15, vertical: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    widget.destination['budget'] ?? '',
-                    style: const TextStyle(fontFamily: 'Calibri', fontSize: 20),
-                  ),
-                  Text(
-                      widget.destination['sheltered'] == "true"
-                          ? 'Sheltered'
-                          : 'Unsheltered',
-                      style:
-                          const TextStyle(fontFamily: 'Calibri', fontSize: 20)),
-                ],
-              ),
-            ),
-            // Divider.
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-              child: Divider(thickness: 2.0, color: Color(0xFFbfbfbf)),
-            ),
-            // Time to spend and date row.
-            Padding(
-              padding: widget.destination['status'].toLowerCase() == "seen"
-                  ? const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10)
-                  : const EdgeInsets.only(
-                      left: 15.0, right: 15, top: 10, bottom: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                      '${widget.destination['timeToSpend']} ${widget.destination['timeToSpend'] > 1 ? 'hours' : 'hour'}',
-                      style:
-                          const TextStyle(fontFamily: 'Calibri', fontSize: 20)),
-                  Text(widget.destination['date'] ?? '',
-                      style:
-                          const TextStyle(fontFamily: 'Calibri', fontSize: 20)),
-                ],
-              ),
-            ),
-            // Container with icon button.
-            Visibility(
-              visible: widget.destination['status'].toLowerCase() == "seen",
-              child: Container(
-                color: const Color.fromARGB(94, 195, 195, 195),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: () async {
-                            print(widget.destination['destID']);
-                            await deleteDestination(
-                                widget.destination['destID']);
-                            // This will be called only if the deletion process succeeded.
-                            widget.onDelete();
-                          },
-                          borderRadius: BorderRadius.circular(30.0),
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 20.0, vertical: 10),
-                            child: FaIcon(
-                              FontAwesomeIcons.solidTrashCan,
-                              color: Colors.black,
+                      Text(
+                        destinationName,
+                        style: const TextStyle(
+                          fontFamily: 'Andalus',
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                      const Divider(
+                        thickness: 3,
+                        color: Color.fromARGB(80, 19, 83, 96),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            city,
+                            style: const TextStyle(
+                              fontFamily: 'Zilla',
+                              fontSize: 18,
+                              fontWeight: FontWeight.w300,
                             ),
                           ),
-                        ),
+                          Text(
+                            category,
+                            style: const TextStyle(
+                              fontFamily: 'Zilla',
+                              fontSize: 18,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
-              ),
+                buildButton(
+                  FontAwesomeIcons.anglesRight,
+                  const Color.fromARGB(255, 231, 231, 231),
+                  const Color.fromARGB(255, 0, 0, 0),
+                  () {
+                    // Israa, here navigate to the clicked destination page.
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<String> filteringList = [
+    'Jerusalem',
+    'Nablus',
+    'Ramallah',
+    'Bethlehem',
+    'Coastal Areas',
+    'Mountains',
+    'National Parks',
+    'Major Cities',
+    'Countryside',
+    'Historical Sites',
+    'Religious Landmarks',
+    'Aquariums',
+    'Zoos',
+    'Others'
+  ];
+
+  String selectedFilter = 'Select a Filter';
+
+  void showFiltersBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomBottomSheet(itemsList: filteringList, height: 400);
+      },
+    ).then((value) {
+      if (value != null) {
+        setState(() {
+          selectedFilter = value;
+        });
+        fetchAddedDestinations();
+      }
+    });
+  }
+
+  Widget buildButton(
+    IconData buttonIcon,
+    Color btnColor,
+    Color btnTxtColor,
+    VoidCallback onPressedFunction,
+  ) {
+    return ElevatedButton(
+      onPressed: onPressedFunction,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: btnColor,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(15.0),
+            bottomRight: Radius.circular(15.0),
+          ),
+        ),
+      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 5,
+          vertical: 20,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Icon(
+              buttonIcon,
+              size: 24,
+              color: btnTxtColor,
             ),
           ],
         ),
@@ -524,68 +257,115 @@ class _DestinationCardState extends State<DestinationCard> {
     );
   }
 
-  Future<void> showCommentDialog(String comment) async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0),
-          ),
-          elevation: 0.0,
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(0.0),
+        child: AppBar(
           backgroundColor: Colors.transparent,
-          child: Container(
-            padding: const EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16.0),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'Admin Comment',
-                  style: TextStyle(
-                    fontSize: 30.0,
-                    fontFamily: 'Gabriola',
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 18, 84, 97),
-                  ),
-                ),
-                const Divider(
-                    thickness: 1, color: Color.fromARGB(255, 16, 73, 85)),
-                const SizedBox(height: 10.0),
-                Text(
-                  comment,
-                  style: const TextStyle(
-                    fontSize: 22.0,
-                    fontFamily: 'Zilla Slab Light',
-                    color: Color.fromARGB(255, 18, 84, 97),
-                  ),
-                ),
-                const SizedBox(height: 20.0),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text(
-                      'Close',
-                      style: TextStyle(
-                        fontSize: 22.0,
-                        fontFamily: 'Zilla',
-                        fontWeight: FontWeight.bold,
-                        color: Color.fromARGB(255, 214, 61, 27),
+          elevation: 0,
+        ),
+      ),
+      body: Stack(
+        children: [
+          Image.asset(
+            'assets/Images/Profiles/Admin/mainBackground.jpg',
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (destinationsList.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(
+                      right: 20, left: 20.0, top: 15, bottom: 10),
+                  child: ElevatedButton(
+                    onPressed: showFiltersBottomSheet,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 231, 231, 231),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                    ),
+                    child: SizedBox(
+                      height: 50,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5.0),
+                            child: Text(
+                              selectedFilter,
+                              style: const TextStyle(
+                                color: Color.fromARGB(163, 0, 0, 0),
+                                fontSize: 22,
+                              ),
+                            ),
+                          ),
+                          const FaIcon(
+                            FontAwesomeIcons.list,
+                            color: Color.fromARGB(100, 0, 0, 0),
+                            size: 25,
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
-              ],
-            ),
+              Expanded(
+                child: isLoading
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Color(0xFF1E889E)),
+                        ),
+                      )
+                    : destinationsList.isEmpty
+                        ? Center(
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 72),
+                                Image.asset(
+                                  'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
+                                  fit: BoxFit.cover,
+                                ),
+                                const Text(
+                                  'No destinations found',
+                                  style: TextStyle(
+                                    fontSize: 40,
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: 'Gabriola',
+                                    color: Color.fromARGB(255, 23, 99, 114),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : ListView(
+                            padding: const EdgeInsets.only(
+                                left: 16, right: 16, bottom: 16),
+                            children: destinationsList.map((destinationData) {
+                              final destinationName = destinationData['name'];
+                              final imagePath = destinationData['image'];
+                              final city = destinationData['city'];
+                              final category = destinationData['category'];
+                              return Column(
+                                children: [
+                                  _buildCard(destinationName, imagePath, city,
+                                      category),
+                                  const SizedBox(height: 10),
+                                ],
+                              );
+                            }).toList(),
+                          ),
+              ),
+            ],
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 }

@@ -376,7 +376,7 @@ class _UserInteractionsPageState extends State<UserInteractionsPage> {
                             fit: BoxFit.cover,
                           ),
                           const Text(
-                            'No Interactions found',
+                            'No interactions found',
                             style: TextStyle(
                               fontSize: 40,
                               fontWeight: FontWeight.w600,

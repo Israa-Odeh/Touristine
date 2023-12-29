@@ -101,7 +101,7 @@ class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
                       AddDestTab(
                           token: widget.token,
                           destinationToBeAdded: destinationToBeAddedInfo),
-                      DestinationCardGenerator(token: widget.token),
+                      AddedDestinationsPage(token: widget.token),
                     ],
                   ),
                 ),
