@@ -40,6 +40,7 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
 
   void fetchAddedDestinations() async {
     print("Fetching Destinations................");
+    print( selectedFilter.toLowerCase().replaceAll(" ", ""));
 
     if (!mounted) return;
     setState(() {
@@ -58,7 +59,7 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
         },
         body: {
           'filter':
-              selectedFilter == "Select a Filter" ? 'All' : selectedFilter,
+              selectedFilter == "Select a Filter" ? 'all' : selectedFilter.toLowerCase().replaceAll(" ", ""),
         },
       );
 
