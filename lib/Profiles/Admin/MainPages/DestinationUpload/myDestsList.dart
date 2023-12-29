@@ -35,13 +35,17 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
   @override
   void initState() {
     super.initState();
-    isLoading = false;
     fetchAddedDestinations();
   }
 
   void fetchAddedDestinations() async {
     print("Fetching Destinations................");
+
     if (!mounted) return;
+    setState(() {
+      isLoading = true;
+    });
+
     final url =
         Uri.parse('https://touristine.onrender.com/get-added-destinations');
 
@@ -278,7 +282,7 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (destinationsList.isNotEmpty)
+              if (destinationsList.isNotEmpty && !isLoading)
                 Padding(
                   padding: const EdgeInsets.only(
                       right: 20, left: 20.0, top: 15, bottom: 10),
