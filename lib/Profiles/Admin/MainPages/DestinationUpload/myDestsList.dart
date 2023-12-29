@@ -190,6 +190,7 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
   }
 
   List<String> filteringList = [
+    'All',
     'Jerusalem',
     'Nablus',
     'Ramallah',
