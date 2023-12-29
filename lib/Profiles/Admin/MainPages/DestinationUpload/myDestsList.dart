@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -15,22 +17,7 @@ class AddedDestinationsPage extends StatefulWidget {
 
 class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
   bool isLoading = true;
-
-  List<Map<String, dynamic>> destinationsList = [
-    {
-      'name': 'Mar Saba Monastery',
-      'image': 'https://www.bethlehem.edu/wp-content/uploads/2020/03/5-1.jpg',
-      'city': 'Bethlehem',
-      'category': 'Religious Landmark',
-    },
-    {
-      'name': 'Sufi Cafe',
-      'image':
-          'https://i.pinimg.com/736x/74/59/4d/74594def71eb01f598366e091ea53e4a.jpg',
-      'city': 'Ramallah',
-      'category': 'Others',
-    }
-  ];
+  List<Map<String, dynamic>> destinationsList = [];
 
   @override
   void initState() {
@@ -39,7 +26,6 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
   }
 
   void fetchAddedDestinations() async {
-    print("Fetching Destinations................");
     if (!mounted) return;
     setState(() {
       isLoading = true;
@@ -56,8 +42,9 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
           'Authorization': 'Bearer ${widget.token}',
         },
         body: {
-          'filter':
-              selectedFilter == "Select a Filter" ? 'all' : selectedFilter.toLowerCase().replaceAll(" ", ""),
+          'filter': selectedFilter == "Select a Filter"
+              ? 'all'
+              : selectedFilter.toLowerCase().replaceAll(" ", ""),
         },
       );
 
@@ -66,8 +53,13 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
       if (response.statusCode == 200) {
         // Jenan, here I need to retrieve a List<Map> of destinations
         // similar to the format shown at line 19.
+        Map<String, dynamic> jsonResponse = json.decode(response.body);
+        List<dynamic> destinationsData = jsonResponse['destinationsList'];
+        destinationsList = List<Map<String, dynamic>>.from(destinationsData);
+        print(destinationsList);
       } else if (response.statusCode == 500) {
-        // Israa, Handle 500 status code
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
       } else {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'Error retrieving the destinations',
@@ -83,6 +75,30 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
           isLoading = false;
         });
       }
+    }
+  }
+
+  String getPlaceCategory(String placeCategory) {
+    if (placeCategory.toLowerCase() == "coastalareas") {
+      return "Coastal Area";
+    } else if (placeCategory.toLowerCase() == "mountains") {
+      return "Mountain";
+    } else if (placeCategory.toLowerCase() == "nationalparks") {
+      return "National Park";
+    } else if (placeCategory.toLowerCase() == "majorcities") {
+      return "Major City";
+    } else if (placeCategory.toLowerCase() == "countryside") {
+      return "Countryside";
+    } else if (placeCategory.toLowerCase() == "historicalsites") {
+      return "Historical Site";
+    } else if (placeCategory.toLowerCase() == "religiouslandmarks") {
+      return "Religious Landmark";
+    } else if (placeCategory.toLowerCase() == "aquariums") {
+      return "Aquarium";
+    } else if (placeCategory.toLowerCase() == "zoos") {
+      return "Zoo";
+    } else {
+      return "Others";
     }
   }
 
@@ -161,7 +177,7 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
                             ),
                           ),
                           Text(
-                            category,
+                            getPlaceCategory(category),
                             style: const TextStyle(
                               fontFamily: 'Zilla',
                               fontSize: 18,
@@ -282,7 +298,7 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (destinationsList.isNotEmpty && !isLoading)
+              if (!isLoading)
                 Padding(
                   padding: const EdgeInsets.only(
                       right: 20, left: 20.0, top: 15, bottom: 10),
@@ -331,7 +347,7 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
                         ? Center(
                             child: Column(
                               children: [
-                                const SizedBox(height: 72),
+                                const SizedBox(height: 40),
                                 Image.asset(
                                   'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
                                   fit: BoxFit.cover,
