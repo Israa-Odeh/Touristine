@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:touristine/LoginAndRegistration/MainPages/SplashScreen.dart';
+import 'package:touristine/Profiles/Admin/MainPages/admin.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/tourist.dart';
-import 'package:touristine/onBoarding/Admin/adminProfile.dart';
 import 'package:touristine/onBoarding/Page_Screen/onboardingScreen.dart';
 
 class OnBoardingPage extends StatefulWidget {
@@ -16,8 +16,7 @@ class OnBoardingPage extends StatefulWidget {
   final double titleSize;
   final int numOfPages;
   final int
-      profileType; // 0: Indicates tourist Profile, 1: Indicates admin profile.
-  // There might be 2 for the stuff profiles, this will be decided later on.
+      profileType; // 100: Indicates tourist Profile, 200: Indicates admin profile.
 
   const OnBoardingPage({
     Key? key,
@@ -137,7 +136,11 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                                     token: widget.token,
                                     googleAccount: widget.googleAccount,
                                   ))
-                                : const AdminProfile();
+                                : SplashScreen(
+                                    profileType: AdminProfile(
+                                      token: widget.token,
+                                    ),
+                                  );
                           }));
                         },
                         style: ElevatedButton.styleFrom(

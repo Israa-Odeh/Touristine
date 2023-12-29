@@ -1,8 +1,11 @@
-
 import 'package:flutter/material.dart';
 import 'package:touristine/onBoarding/Page_Screen/onboardingPage.dart';
 
 class AdminOnBoardingPage extends StatefulWidget {
+  final String token;
+
+  const AdminOnBoardingPage({super.key, required this.token});
+
   @override
   _AdminOnBoardingPageState createState() => _AdminOnBoardingPageState();
 }
@@ -10,30 +13,30 @@ class AdminOnBoardingPage extends StatefulWidget {
 class _AdminOnBoardingPageState extends State<AdminOnBoardingPage> {
   @override
   Widget build(BuildContext context) {
-    return const OnBoardingPage(
-      token: "", // To be edited later on.
-      title: [
+    return OnBoardingPage(
+      token: widget.token,
+      title: const [
         'Managing destinations',
         'Content Approval',
         'Crack Analysis',
         'Map View',
         'Reports Generation',
       ],
-      imageAsset: [
+      imageAsset: const [
         'assets/Images/onBoardingPage/Admin/DestinationManaging.gif',
         'assets/Images/onBoardingPage/Admin/ContentApproval.gif',
         'assets/Images/onBoardingPage/Admin/Cracks1.gif',
         'assets/Images/onBoardingPage/Admin/Map.gif',
         'assets/Images/onBoardingPage/Admin/Report.gif',
       ],
-      firstText: [
+      firstText: const [
         'Add and update destination',
         'Review and approve tourist-',
         'Use machine learning to analyze',
         'A map distribution of jeopardy',
         'Display visitor statistics, tourist',
       ],
-      secondText: [
+      secondText: const [
         'details and services',
         'submitted destination photos',
         'cracks in building images',
@@ -42,7 +45,7 @@ class _AdminOnBoardingPageState extends State<AdminOnBoardingPage> {
       ],
       titleSize: 50, // Set your desired title size to be 50.
       numOfPages: 5, // The number of pages in the onboarding Page.
-      profileType: 1, // 1 for admin profile, 0 for tourist profile.
+      profileType: 200, // 200 for admin profile.
     );
   }
 }

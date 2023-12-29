@@ -16,6 +16,7 @@ import 'package:touristine/UserData/userProvider.dart';
 
 // Import the http package.
 import 'package:http/http.dart' as http;
+import 'package:touristine/onBoarding/Admin/adminOnboardingPage.dart';
 import 'package:touristine/onBoarding/Tourist/touristOnboardingPage.dart';
 
 class LoginPage extends StatefulWidget {
@@ -228,16 +229,28 @@ class _LoginPageState extends State<LoginPage>
             }
             // Here I need to check whether it's the admin's first time logging in.
             // ignore: use_build_context_synchronously
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SplashScreen(
-                  profileType: AdminProfile(
-                    token: token,
+            if (responseData['newAdmin'] == "true") {
+              // ignore: use_build_context_synchronously
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => AdminOnBoardingPage(
+                          token: token,
+                        )),
+              );
+            } else {
+              // ignore: use_build_context_synchronously
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SplashScreen(
+                    profileType: AdminProfile(
+                      token: token,
+                    ),
                   ),
                 ),
-              ),
-            );
+              );
+            }
           }
         }
 
