@@ -18,46 +18,7 @@ class SuggestedPlacesPage extends StatefulWidget {
 
 class _SuggestedPlacesPageState extends State<SuggestedPlacesPage> {
   bool isLoading = true;
-  List<Map<String, dynamic>> uploadedDestinations = [
-    {
-      'firstName': 'Israa',
-      'lastName': 'Odeh',
-      'destID': '200',
-      'date': '12/10/2023',
-      'destinationName': 'Sample Destination 1',
-      'city': 'Sample City 1',
-      'category': 'Sample Category 1',
-      'budget': 'Sample Budget 1',
-      'timeToSpend': 2,
-      'sheltered': 'true',
-      'status': 'Unseen',
-      'about':
-          'This is a sample destination description for the testing purposes.',
-      'imagesURLs': [
-        'https://noblesanctuary.com/wp-content/uploads/2021/08/Jami-al-Aqsa.jpg',
-        'https://i.pinimg.com/736x/9c/58/86/9c588698ef11f7e3b46a5e7d73bd1067.jpg',
-      ],
-    },
-    {
-      'firstName': 'Rula',
-      'lastName': 'Odeh',
-      'destID': '201',
-      'date': '13/10/2023',
-      'destinationName': 'Sample Destination 2',
-      'city': 'Sample City 2',
-      'category': 'Sample Category 2',
-      'budget': 'Sample Budget 2',
-      'timeToSpend': 3,
-      'sheltered': 'false',
-      'status': 'Unseen',
-      'about':
-          'This is another sample destination description for the testing purposes.',
-      'imagesURLs': [
-        'https://noblesanctuary.com/wp-content/uploads/2021/08/Jami-al-Aqsa.jpg',
-        'https://i.pinimg.com/736x/9c/58/86/9c588698ef11f7e3b46a5e7d73bd1067.jpg',
-      ],
-    },
-  ];
+  List<Map<String, dynamic>> uploadedDestinations = [];
 
   // A Function to fetch users suggested destinations.
   Future<void> fetchSuggestions() async {
@@ -81,28 +42,14 @@ class _SuggestedPlacesPageState extends State<SuggestedPlacesPage> {
         if (response.statusCode == 200) {
           // Jenan, here I need to retrieve a List<Map>
           // similar to the format shown at line 22.
+          final Map<String, dynamic> responseBody = json.decode(response.body);
+          final List<Map<String, dynamic>> fetchedUploads =
+              List<Map<String, dynamic>>.from(
+                  responseBody['uploadedDestinations']);
           setState(() {
-            final List<dynamic> responseData = json.decode(response.body);
-            // Convert destinationsData into a list of maps.
-            uploadedDestinations = responseData.map((destinationData) {
-              return {
-                'firstName': destinationData['firstName'],
-                'lastName': destinationData['lastName'],
-                'destID': destinationData['destID'],
-                'date': destinationData['date'],
-                'destinationName': destinationData['destinationName'],
-                'city': destinationData['city'],
-                'category': destinationData['category'],
-                'budget': destinationData['budget'],
-                'timeToSpend': destinationData['timeToSpend'],
-                'sheltered': destinationData['sheltered'],
-                'status': destinationData['status'],
-                'about': destinationData['about'],
-                'imagesURLs': destinationData['imagesURLs'],
-              };
-            }).toList();
-            print(uploadedDestinations);
+            uploadedDestinations = fetchedUploads;
           });
+          print(uploadedDestinations);
         } else if (response.statusCode == 500) {
           final Map<String, dynamic> responseData = json.decode(response.body);
           // ignore: use_build_context_synchronously
@@ -115,7 +62,7 @@ class _SuggestedPlacesPageState extends State<SuggestedPlacesPage> {
       }
     } catch (error) {
       if (mounted) {
-        print('Error fetching suggested dests: $error');
+        print('Error fetching suggested destinations: $error');
       }
     } finally {
       if (mounted) {
@@ -160,7 +107,7 @@ class _SuggestedPlacesPageState extends State<SuggestedPlacesPage> {
               fit: BoxFit.cover,
             ),
             const Text(
-              'No places found',
+              'No suggestions found',
               style: TextStyle(
                   fontSize: 40,
                   fontWeight: FontWeight.w600,
@@ -268,7 +215,7 @@ class _DestinationCardState extends State<DestinationCard> {
     );
     if (confirmDeletion == true) {
       if (!mounted) return;
-      addAdminComment(suggestionId, comment);
+      await addAdminComment(suggestionId, comment);
       final url = Uri.parse(
           'https://touristine.onrender.com/delete-suggestion/$suggestionId');
 
@@ -299,10 +246,6 @@ class _DestinationCardState extends State<DestinationCard> {
           final Map<String, dynamic> responseData = json.decode(response.body);
           // ignore: use_build_context_synchronously
           showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
-        } else if (response.statusCode == 404) {
-          final Map<String, dynamic> responseData = json.decode(response.body);
-          // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
         } else {
           // ignore: use_build_context_synchronously
           showCustomSnackBar(context, 'Error deleting this suggestion',
@@ -314,8 +257,8 @@ class _DestinationCardState extends State<DestinationCard> {
     }
   }
 
-  void addAdminComment(String suggestionID, String comment) async {
-    print(suggestionID);
+  Future<void> addAdminComment(String suggestionId, String comment) async {
+    print(suggestionId);
     print(comment);
     try {
       final url = Uri.parse('https://touristine.onrender.com/add-comment');
@@ -326,7 +269,7 @@ class _DestinationCardState extends State<DestinationCard> {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Authorization': 'Bearer ${widget.token}',
         },
-        body: {'suggestionID': suggestionID, 'adminComment': comment},
+        body: {'suggestionId': suggestionId, 'adminComment': comment},
       );
 
       if (response.statusCode == 200) {
@@ -609,7 +552,7 @@ class _DestinationCardState extends State<DestinationCard> {
                           bool? confirmAddition =
                               await showConfirmationDialog(context, 'Confirm');
                           if (confirmAddition == true) {
-                            addAdminComment(widget.destination['destID'],
+                            await addAdminComment(widget.destination['destID'],
                                 widget.commentController.text);
                             Timer(const Duration(seconds: 3), () {
                               // Call the callback function when add comment button is pressed.
