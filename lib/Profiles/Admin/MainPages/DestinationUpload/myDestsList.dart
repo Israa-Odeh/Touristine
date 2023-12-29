@@ -40,8 +40,6 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
 
   void fetchAddedDestinations() async {
     print("Fetching Destinations................");
-    print( selectedFilter.toLowerCase().replaceAll(" ", ""));
-
     if (!mounted) return;
     setState(() {
       isLoading = true;
