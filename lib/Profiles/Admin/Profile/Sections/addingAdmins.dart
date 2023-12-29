@@ -92,7 +92,7 @@ class _AdminAddingPageState extends State<AdminAddingPage> {
       } else {
         final Map<String, dynamic> responseData = json.decode(response.body);
         // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 620.0);
       }
     } catch (error) {
       print('Error adding a new admin: $error');
