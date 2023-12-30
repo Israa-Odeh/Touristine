@@ -79,42 +79,97 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
   }
 
   Future<void> deleteDestination(String destinationId) async {
-    if (!mounted) return;
+    bool? confirmDeletion = await showConfirmationDialog(context);
 
-    final url = Uri.parse(
-        'https://touristine.onrender.com/delete-added-destination/$destinationId');
-
-    try {
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': 'Bearer ${widget.token}'
-        },
-      );
-
+    if (confirmDeletion == true) {
       if (!mounted) return;
+      final url = Uri.parse(
+          'https://touristine.onrender.com/delete-added-destination-/$destinationId');
 
-      if (response.statusCode == 200) {
-        setState(() {
-          destinationsList
-              .removeWhere((destination) => destination['id'] == destinationId);
-        });
-        // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, 'The destination has been deleted',
-            bottomMargin: 0);
-      } else if (response.statusCode == 500) {
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
-      } else {
-        // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, 'Error deleting the destination',
-            bottomMargin: 0);
+      try {
+        final response = await http.post(
+          url,
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': 'Bearer ${widget.token}'
+          },
+        );
+
+        if (!mounted) return;
+
+        if (response.statusCode == 200) {
+          setState(() {
+            destinationsList.removeWhere(
+                (destination) => destination['id'] == destinationId);
+          });
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, 'The destination has been deleted',
+              bottomMargin: 0);
+        } else if (response.statusCode == 500) {
+          final Map<String, dynamic> responseData = json.decode(response.body);
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+        } else {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, 'Error deleting the destination',
+              bottomMargin: 0);
+        }
+      } catch (error) {
+        print('Error deleting destination: $error');
       }
-    } catch (error) {
-      print('Error deleting destination: $error');
     }
+  }
+
+  Future<bool?> showConfirmationDialog(
+    BuildContext context, {
+    String dialogMessage = 'Are you sure you want to delete this destination?',
+  }) async {
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Deletion',
+              style: TextStyle(
+                  fontFamily: 'Zilla Slab Light',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25)),
+          content: Text(
+            dialogMessage,
+            style: const TextStyle(fontFamily: 'Andalus', fontSize: 25),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                  fontSize: 22.0,
+                  fontFamily: 'Zilla',
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 0, 0, 0),
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: const Text(
+                "Delete",
+                style: TextStyle(
+                  fontSize: 22.0,
+                  fontFamily: 'Zilla',
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 200, 50, 27),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   String getPlaceCategory(String placeCategory) {
