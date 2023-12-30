@@ -100,6 +100,8 @@ class _ActivityListPageState extends State<ActivityListPage> {
     String content,
     VoidCallback onDelete,
   ) {
+    int? maxLines = title.length > 25 ? 5 : 1;
+
     return Card(
       margin: const EdgeInsets.only(right: 10, left: 10, bottom: 10),
       color: const Color.fromARGB(68, 30, 137, 158),
@@ -115,13 +117,18 @@ class _ActivityListPageState extends State<ActivityListPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Times New Roman',
-                    color: Color.fromARGB(255, 21, 98, 113),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width - 120,
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Times New Roman',
+                      color: Color.fromARGB(255, 21, 98, 113),
+                    ),
+                    maxLines: maxLines,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 IconButton(

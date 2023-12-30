@@ -92,7 +92,7 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
     if (confirmDeletion == true) {
       if (!mounted) return;
       final url = Uri.parse(
-          'https://touristine.onrender.com/delete-added-destination-/$destinationId');
+          'https://touristine.onrender.com/delete-added-destination/$destinationId');
 
       try {
         final response = await http.post(
@@ -129,6 +129,7 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
   }
 
   Future<void> getDestinationInfo(String destinationId) async {
+    if (!mounted) return;
     final url =
         Uri.parse('https://touristine.onrender.com/get-destination-info');
     try {
@@ -142,42 +143,17 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
           'destinationId': destinationId,
         },
       );
+      if (!mounted) return;
 
       if (response.statusCode == 200) {
-        // Jenan, here I need to retrieve a Map<String, dynamic>
-        // with exactly the following format:
-        /*
-        Map<String, dynamic> destinationMap = {
-          'destID': '657671f5bcadae9e44fc423e',
-          'imagesURLs': [
-            'https://firebasestorage.googleapis.com/v0/b/touristine-9a51a.appspot.com/o/destinations_images%2FiStock-917872674-1500x1000.jpg?alt=media&token=7f64c216-a8db-4bdf-8b6a-104a705cae20',
-            'https://firebasestorage.googleapis.com/v0/b/touristine-9a51a.appspot.com/o/destinations_images%2FGettyImages-1171678625.jpg?alt=media&token=94e2db08-f1d7-49d8-bb42-6295bd554252',
-            'https://firebasestorage.googleapis.com/v0/b/touristine-9a51a.appspot.com/o/destinations_images%2Fsaintsabbas-044645.jpg?alt=media&token=903c9b53-0bd8-4c7a-a09d-d78823ae1eac'
-          ],
-          'destinationName': 'Mar Saba',
-          'city': 'Bethlehem',
-          'category': 'Religious Landmarks',
-          'budget': 'Budget-Friendly',
-          'timeToSpend': 4,
-          'sheltered': true,
-          'about':
-              'The Holy Lavra of Saint Sabbas, known in Arabic and Syriac as Mar Saba and historically as the Great Laura of Saint Sabas, is a Greek Orthodox monastery overlooking the Kidron Valley in the Bethlehem Governorate of Palestine',
-          'latitude': 35.5,
-          'longitude': 35.5,
-          'openingTime': '12:00',
-          'closingTime': '20:00',
-          'selectedWorkingDays': ['Monday', 'Wednesday', 'Friday'],
-          'visitorTypes': ['Family', 'Friends', 'Solo'],
-          'ageCategories': ['Children', 'Teenagers', 'Adults', 'Elders'],
-          'selectedServices': ['restrooms', 'photographers', 'kiosks'];
-          'otherServices': ['Tour in place', 'Baby settes', 'Skydiving']; //might be empty
-          'addedActivities': [
-            {'title': 'Activity 1', 'description': 'Description for Activity 1'},
-            {'title': 'Activity 2', 'description': 'Description for Activity 2'},],
-          'geoTags': ['GeoTag1', GeoTag2', GeoTag3', GeoTag4'],
-        };
-        */
-        // Israa, handle the result data and send it to the callback.
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        final Map<String, dynamic> destinationInfo =
+            responseData['destinationMap'];
+        print(destinationInfo);
+
+        // Send the destination info to the callback.
+        editDestinationInfo(1, destinationInfo);
+
         // Handle all these stuff in the dest generator *O*.
       } else if (response.statusCode == 500) {
         final Map<String, dynamic> responseData = json.decode(response.body);

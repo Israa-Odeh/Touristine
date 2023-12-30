@@ -112,7 +112,7 @@ class _AdminAppState extends State<AdminProfile> {
       _currentIndex = newIndex;
     });
     // Pass destinationToBeAdded to DestsUploadHomePage.
-    _children[1] = DestsUploadHomePage(
+    _children[newIndex] = DestsUploadHomePage(
         token: widget.token,
         destinationToBeAdded: destinationInfo,
         editDestinationCallback: changeTabIndex);

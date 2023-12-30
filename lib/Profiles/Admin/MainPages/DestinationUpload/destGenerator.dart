@@ -337,8 +337,10 @@ class _AddDestTabState extends State<AddDestTab> {
   void setupFieldsForNewDestination() {
     destNameController.text = widget.destinationToBeAdded['destinationName'];
     selectedCity = widget.destinationToBeAdded['city'];
-    selectedCategory = widget.destinationToBeAdded['category'];
-    selectedBudget = widget.destinationToBeAdded['budget'];
+    print(widget.destinationToBeAdded['category']);
+    selectedCategory =
+        getPlaceCategory(widget.destinationToBeAdded['category']);
+    selectedBudget = getBudgetLevel(widget.destinationToBeAdded['budget']);
     aboutController.text = widget.destinationToBeAdded['about'];
     if (widget.destinationToBeAdded['sheltered'] == 'true') {
       yes = true;
@@ -384,25 +386,100 @@ class _AddDestTabState extends State<AddDestTab> {
         List<String>.from(widget.destinationToBeAdded['selectedWorkingDays']);
 
     selectedVisitorTypes =
-        List<String>.from(widget.destinationToBeAdded['visitorTypes']);
+        List<String>.from(widget.destinationToBeAdded['visitorTypes'])
+            .map((String type) => capitalizeFirstChar(type))
+            .toList();
 
     selectedAgeCategories =
         List<String>.from(widget.destinationToBeAdded['ageCategories']);
-
-    List<String> services =
-        List<String>.from(widget.destinationToBeAdded['selectedServices']);
-
+    List<String> services = [];
+    List<String> possibleServicesSelections = [
+      'restrooms',
+      'parking',
+      'gasstations',
+      'wheelchairramps',
+      'kidsarea',
+      'restaurants',
+      'photographers',
+      'healthcenters',
+      'kiosks',
+    ];
+    for (var service in widget.destinationToBeAdded['selectedServices']) {
+      if (service.containsKey('name')) {
+        String serviceName = service['name'];
+        if (possibleServicesSelections.contains(serviceName)) {
+          services.add(serviceName);
+        } else {
+          otherServices.add(serviceName);
+        }
+      }
+    }
     selectedServices = mapServicesNames(services);
 
-    /// LOOOOOOOOOOOOOOOOOOOOOOOOOOOOOp
+    List<dynamic> rawActivities =
+        widget.destinationToBeAdded['addedActivities'];
 
-    otherServices =
-        List<String>.from(widget.destinationToBeAdded['otherServices']);
+    // Iterate over the raw activities and convert them to Map<String, String>
+    for (var rawActivity in rawActivities) {
+      if (rawActivity is Map<String, dynamic>) {
+        // Check if each activity is a Map<String, dynamic>
+        Map<String, String> activity = {};
 
-    addedActivities = List<Map<String, String>>.from(
-        widget.destinationToBeAdded['addedActivities']);
+        // Convert dynamic values to strings if needed
+        rawActivity.forEach((key, value) {
+          activity[key] = value.toString();
+        });
+
+        addedActivities.add(activity);
+      }
+    }
 
     geoTags = List<String>.from(widget.destinationToBeAdded['geoTags']);
+  }
+
+  String capitalizeFirstChar(String input) {
+    if (input.isEmpty) {
+      return input;
+    }
+    return input[0].toUpperCase() + input.substring(1);
+  }
+
+  String getPlaceCategory(String placeCategory) {
+    if (placeCategory.toLowerCase() == "coastalareas") {
+      return "Coastal Areas";
+    } else if (placeCategory.toLowerCase() == "mountains") {
+      return "Mountains";
+    } else if (placeCategory.toLowerCase() == "nationalparks") {
+      return "National Parks";
+    } else if (placeCategory.toLowerCase() == "majorcities") {
+      return "Major Cities";
+    } else if (placeCategory.toLowerCase() == "countryside") {
+      return "Countryside";
+    } else if (placeCategory.toLowerCase() == "historicalsites") {
+      return "Historical Sites";
+    } else if (placeCategory.toLowerCase() == "religiouslandmarks") {
+      return "Religious Landmarks";
+    } else if (placeCategory.toLowerCase() == "aquariums") {
+      return "Aquariums";
+    } else if (placeCategory.toLowerCase() == "zoos") {
+      return "Zoos";
+    } else if (placeCategory.toLowerCase() == "others") {
+      return "Others";
+    } else {
+      return placeCategory;
+    }
+  }
+
+  String getBudgetLevel(String budgetLevel) {
+    if (budgetLevel.toLowerCase() == "midrange") {
+      return "Mid-Range";
+    } else if (budgetLevel.toLowerCase() == "budgetfriendly") {
+      return "Budget-Friendly";
+    } else if (budgetLevel.toLowerCase() == "luxurious") {
+      return "Luxurious";
+    } else {
+      return budgetLevel;
+    }
   }
 
   List<String> mapServicesNames(List<String?> selectedServices) {
