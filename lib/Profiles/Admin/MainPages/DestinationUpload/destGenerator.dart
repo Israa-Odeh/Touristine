@@ -157,6 +157,10 @@ class _AddDestTabState extends State<AddDestTab> {
     request.fields['ageCategories'] = selectedAgeCategoriesJson;
     String geoTagsJson = jsonEncode(geoTags);
     request.fields['geoTags'] = geoTagsJson;
+    request.fields['edited'] = widget.destinationToBeAdded.isNotEmpty &&
+            widget.destinationToBeAdded.containsKey('latitude')
+        ? "true"
+        : "false";
 
     print('date: ${request.fields['date']}');
     print('destinationName: ${request.fields['destinationName']}');
@@ -346,6 +350,9 @@ class _AddDestTabState extends State<AddDestTab> {
     selectedHours = widget.destinationToBeAdded['timeToSpend'];
     selectedMinutes = 0;
     downloadImages();
+    if (widget.destinationToBeAdded.containsKey('latitude')) {
+      setupOtherFieldsToEdit();
+    }
   }
 
   Future<void> downloadImages() async {
@@ -365,6 +372,60 @@ class _AddDestTabState extends State<AddDestTab> {
       selectedImages = downloadedImages;
     });
     print(selectedImages);
+  }
+
+  void setupOtherFieldsToEdit() {
+    destLatController.text = widget.destinationToBeAdded['latitude'];
+    destLngController.text = widget.destinationToBeAdded['longitude'];
+    startTimeController.text = widget.destinationToBeAdded['openingTime'];
+    endTimeController.text = widget.destinationToBeAdded['closingTime'];
+
+    selectedWorkingDays =
+        List<String>.from(widget.destinationToBeAdded['selectedWorkingDays']);
+
+    selectedVisitorTypes =
+        List<String>.from(widget.destinationToBeAdded['visitorTypes']);
+
+    selectedAgeCategories =
+        List<String>.from(widget.destinationToBeAdded['ageCategories']);
+
+    List<String> services =
+        List<String>.from(widget.destinationToBeAdded['selectedServices']);
+
+    selectedServices = mapServicesNames(services);
+
+    /// LOOOOOOOOOOOOOOOOOOOOOOOOOOOOOp
+
+    otherServices =
+        List<String>.from(widget.destinationToBeAdded['otherServices']);
+
+    addedActivities = List<Map<String, String>>.from(
+        widget.destinationToBeAdded['addedActivities']);
+
+    geoTags = List<String>.from(widget.destinationToBeAdded['geoTags']);
+  }
+
+  List<String> mapServicesNames(List<String?> selectedServices) {
+    // Map the selected services to the desired format.
+    final Map<String, String> serviceMapping = {
+      'restrooms': 'Restrooms',
+      'parking': 'Parking Areas',
+      'gasstations': 'Nearby Gas Stations',
+      'wheelchairramps': 'Wheel Chair Ramps',
+      'kidsarea': 'Kids Area',
+      'restaurants': 'Restaurants',
+      'photographers': 'Photographers',
+      'healthcenters': 'Nearby Health Centers',
+      'kiosks': 'Kiosks',
+    };
+
+    // Convert selected services to the desired format, filtering out null values.
+    return selectedServices
+        .where((service) => service != null)
+        .map((service) => serviceMapping[service!])
+        .where((formattedService) => formattedService != null)
+        .map((formattedService) => formattedService!)
+        .toList();
   }
 
   @override
