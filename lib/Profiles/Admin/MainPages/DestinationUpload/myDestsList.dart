@@ -190,13 +190,15 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
                   ),
                 ),
                 buildButton(
-                  FontAwesomeIcons.anglesRight,
-                  const Color.fromARGB(255, 231, 231, 231),
-                  const Color.fromARGB(255, 0, 0, 0),
                   () {
-                    // Israa, here navigate to the clicked destination page.
+                    // Handle trash button pressed
+                    print('Trash button pressed');
                   },
-                ),
+                  () {
+                    // Handle right arrow button pressed
+                    print('Right arrow button pressed');
+                  },
+                )
               ],
             ),
           ),
@@ -242,36 +244,42 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
   }
 
   Widget buildButton(
-    IconData buttonIcon,
-    Color btnColor,
-    Color btnTxtColor,
-    VoidCallback onPressedFunction,
+    VoidCallback onTrashPressed,
+    VoidCallback onViewPressed,
   ) {
-    return ElevatedButton(
-      onPressed: onPressedFunction,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: btnColor,
-        shape: const RoundedRectangleBorder(
+    return Material(
+      color: Colors.transparent,
+      child: Ink(
+        decoration: const BoxDecoration(
+          color: Color.fromARGB(255, 231, 231, 231),
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(15.0),
             bottomRight: Radius.circular(15.0),
           ),
         ),
-      ),
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 5,
-          vertical: 20,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Icon(
-              buttonIcon,
-              size: 24,
-              color: btnTxtColor,
-            ),
-          ],
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                icon: const FaIcon(
+                  FontAwesomeIcons.solidTrashCan,
+                  size: 24,
+                  color: Color.fromARGB(255, 0, 0, 0),
+                ),
+                onPressed: onTrashPressed,
+              ),
+              IconButton(
+                icon: const Icon(
+                  FontAwesomeIcons.anglesRight,
+                  size: 24,
+                  color: Color.fromARGB(255, 0, 0, 0),
+                ),
+                onPressed: onViewPressed,
+              ),
+            ],
+          ),
         ),
       ),
     );
