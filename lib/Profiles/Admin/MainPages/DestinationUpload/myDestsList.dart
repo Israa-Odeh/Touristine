@@ -78,6 +78,45 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
     }
   }
 
+  Future<void> deleteDestination(String destinationId) async {
+    if (!mounted) return;
+
+    final url = Uri.parse(
+        'https://touristine.onrender.com/delete-added-destination/$destinationId');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer ${widget.token}'
+        },
+      );
+
+      if (!mounted) return;
+
+      if (response.statusCode == 200) {
+        setState(() {
+          destinationsList
+              .removeWhere((destination) => destination['id'] == destinationId);
+        });
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'The destination has been deleted',
+            bottomMargin: 0);
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+      } else {
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'Error deleting the destination',
+            bottomMargin: 0);
+      }
+    } catch (error) {
+      print('Error deleting destination: $error');
+    }
+  }
+
   String getPlaceCategory(String placeCategory) {
     if (placeCategory.toLowerCase() == "coastalareas") {
       return "Coastal Area";
@@ -102,8 +141,8 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
     }
   }
 
-  Widget _buildCard(
-      String destinationName, String imagePath, String city, String category) {
+  Widget buildCard(String destinationId, String destinationName,
+      String imagePath, String city, String category) {
     return Card(
       elevation: 5,
       shape: RoundedRectangleBorder(
@@ -190,9 +229,8 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
                   ),
                 ),
                 buildButton(
-                  () {
-                    // Handle trash button pressed
-                    print('Trash button pressed');
+                  () async {
+                    await deleteDestination(destinationId);
                   },
                   () {
                     // Handle right arrow button pressed
@@ -376,14 +414,15 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
                             padding: const EdgeInsets.only(
                                 left: 16, right: 16, bottom: 16),
                             children: destinationsList.map((destinationData) {
+                              final destinationId = destinationData['id'];
                               final destinationName = destinationData['name'];
                               final imagePath = destinationData['image'];
                               final city = destinationData['city'];
                               final category = destinationData['category'];
                               return Column(
                                 children: [
-                                  _buildCard(destinationName, imagePath, city,
-                                      category),
+                                  buildCard(destinationId, destinationName,
+                                      imagePath, city, category),
                                   const SizedBox(height: 10),
                                 ],
                               );
