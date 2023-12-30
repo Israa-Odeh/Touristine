@@ -8,8 +8,10 @@ import 'package:touristine/Profiles/Tourist/MainPages/planMaker/customBottomShee
 
 class AddedDestinationsPage extends StatefulWidget {
   final String token;
+  final Function(int, Map<String, dynamic>) editDestinationCallback;
 
-  const AddedDestinationsPage({super.key, required this.token});
+  const AddedDestinationsPage(
+      {super.key, required this.token, required this.editDestinationCallback});
 
   @override
   _AddedDestinationsPageState createState() => _AddedDestinationsPageState();
@@ -18,6 +20,12 @@ class AddedDestinationsPage extends StatefulWidget {
 class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
   bool isLoading = true;
   List<Map<String, dynamic>> destinationsList = [];
+
+  // If there is any destination to be edited, navigate to the
+  // uploads interface and include the destination where needed.
+  void editDestinationInfo(int newIndex, Map<String, dynamic> destinationInfo) {
+    widget.editDestinationCallback(newIndex, destinationInfo);
+  }
 
   @override
   void initState() {
@@ -120,6 +128,71 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
     }
   }
 
+  Future<void> getDestinationInfo(String destinationId) async {
+    final url =
+        Uri.parse('https://touristine.onrender.com/get-destination-info');
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer ${widget.token}',
+        },
+        body: {
+          'destinationId': destinationId,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Jenan, here I need to retrieve a Map<String, dynamic>
+        // with exactly the following format:
+        /*
+        Map<String, dynamic> destinationMap = {
+          'destID': '657671f5bcadae9e44fc423e',
+          'imagesURLs': [
+            'https://firebasestorage.googleapis.com/v0/b/touristine-9a51a.appspot.com/o/destinations_images%2FiStock-917872674-1500x1000.jpg?alt=media&token=7f64c216-a8db-4bdf-8b6a-104a705cae20',
+            'https://firebasestorage.googleapis.com/v0/b/touristine-9a51a.appspot.com/o/destinations_images%2FGettyImages-1171678625.jpg?alt=media&token=94e2db08-f1d7-49d8-bb42-6295bd554252',
+            'https://firebasestorage.googleapis.com/v0/b/touristine-9a51a.appspot.com/o/destinations_images%2Fsaintsabbas-044645.jpg?alt=media&token=903c9b53-0bd8-4c7a-a09d-d78823ae1eac'
+          ],
+          'destinationName': 'Mar Saba',
+          'city': 'Bethlehem',
+          'category': 'Religious Landmarks',
+          'budget': 'Budget-Friendly',
+          'timeToSpend': 4,
+          'sheltered': true,
+          'about':
+              'The Holy Lavra of Saint Sabbas, known in Arabic and Syriac as Mar Saba and historically as the Great Laura of Saint Sabas, is a Greek Orthodox monastery overlooking the Kidron Valley in the Bethlehem Governorate of Palestine',
+          'latitude': 35.5,
+          'longitude': 35.5,
+          'openingTime': '12:00',
+          'closingTime': '20:00',
+          'selectedWorkingDays': ['Monday', 'Wednesday', 'Friday'],
+          'visitorTypes': ['Family', 'Friends', 'Solo'],
+          'ageCategories': ['Children', 'Teenagers', 'Adults', 'Elders'],
+          'selectedServices': ['restrooms', 'photographers', 'kiosks'];
+          'otherServices': ['Tour in place', 'Baby settes', 'Skydiving']; //might be empty
+          'addedActivities': [
+            {'title': 'Activity 1', 'description': 'Description for Activity 1'},
+            {'title': 'Activity 2', 'description': 'Description for Activity 2'},],
+          'geoTags': ['GeoTag1', GeoTag2', GeoTag3', GeoTag4'],
+        };
+        */
+        // Israa, handle the result data and send it to the callback.
+        // Handle all these stuff in the dest generator *O*.
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+      } else {
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'Error retrieving the destination',
+            bottomMargin: 0);
+      }
+    } catch (error) {
+      throw Exception('Error fetching destination details: $error');
+    }
+  }
+
   Future<bool?> showConfirmationDialog(
     BuildContext context, {
     String dialogMessage = 'Are you sure you want to delete this destination?',
@@ -217,6 +290,31 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
                   height: 200,
                   width: double.infinity,
                   fit: BoxFit.fill,
+                ),
+              ),
+              Positioned(
+                top: 10,
+                right: 10,
+                child: ClipOval(
+                  child: Material(
+                    color: Colors.transparent,
+                    child: Ink(
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color.fromARGB(69, 0, 0, 0),
+                      ),
+                      child: IconButton(
+                        icon: const Icon(
+                          FontAwesomeIcons.penToSquare,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                        onPressed: () async {
+                          await getDestinationInfo(destinationId);
+                        },
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ],

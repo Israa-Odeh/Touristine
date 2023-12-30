@@ -7,9 +7,13 @@ import 'package:touristine/Profiles/Admin/MainPages/DestinationUpload/myDestsLis
 class DestsUploadHomePage extends StatefulWidget {
   final String token;
   Map<String, dynamic> destinationToBeAdded;
+  final Function(int, Map<String, dynamic>) editDestinationCallback;
 
   DestsUploadHomePage(
-      {super.key, required this.token, this.destinationToBeAdded = const {}});
+      {super.key,
+      required this.token,
+      this.destinationToBeAdded = const {},
+      required this.editDestinationCallback});
 
   @override
   _DestsUploadHomePageState createState() => _DestsUploadHomePageState();
@@ -101,7 +105,10 @@ class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
                       AddDestTab(
                           token: widget.token,
                           destinationToBeAdded: destinationToBeAddedInfo),
-                      AddedDestinationsPage(token: widget.token),
+                      AddedDestinationsPage(
+                          token: widget.token,
+                          editDestinationCallback:
+                              widget.editDestinationCallback),
                     ],
                   ),
                 ),
