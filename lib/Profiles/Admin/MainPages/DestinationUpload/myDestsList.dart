@@ -1,10 +1,8 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:touristine/Notifications/SnackBar.dart';
-import 'package:touristine/Profiles/Admin/MainPages/DestinationUpload/destinationView.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/planMaker/customBottomSheet.dart';
 
 class AddedDestinationsPage extends StatefulWidget {
@@ -413,10 +411,10 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
                     await deleteDestination(destinationId);
                   },
                   () async {
-                    Map<String, dynamic> destination = {
-                      'name': destinationName,
-                      'image': imagePath
-                    };
+                    // Map<String, dynamic> destination = {
+                    //   'name': destinationName,
+                    //   'image': imagePath
+                    // };
                     await getDestinationDetails(destinationName);
                     // ignore: use_build_context_synchronously
                     // Navigator.push(
