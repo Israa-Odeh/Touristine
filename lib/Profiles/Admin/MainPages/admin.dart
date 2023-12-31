@@ -98,8 +98,7 @@ class _AdminAppState extends State<AdminProfile> {
         selectedCategory: 'By City',
         selectedStatisticsType: 'Visits Count',
       ),
-      DestsUploadHomePage(
-          token: widget.token, editDestinationCallback: changeTabIndex),
+      DestsUploadHomePage(token: widget.token),
       TabBarViewer(token: widget.token, changeTabIndex: changeTabIndex),
       CracksAnalysisPage(token: widget.token),
       ChattingPage(token: widget.token),
@@ -113,9 +112,7 @@ class _AdminAppState extends State<AdminProfile> {
     });
     // Pass destinationToBeAdded to DestsUploadHomePage.
     _children[newIndex] = DestsUploadHomePage(
-        token: widget.token,
-        destinationToBeAdded: destinationInfo,
-        editDestinationCallback: changeTabIndex);
+        token: widget.token, destinationToBeAdded: destinationInfo);
   }
 
   void moveToStep(int index) {
