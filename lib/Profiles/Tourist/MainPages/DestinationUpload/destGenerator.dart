@@ -891,7 +891,7 @@ class _AddDestTabState extends State<AddDestTab> {
                                   selectedImages[index],
                                   width: 145,
                                   height: 180,
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.fill,
                                 ),
                                 Positioned(
                                   top: -5,
@@ -940,7 +940,7 @@ class _AddDestTabState extends State<AddDestTab> {
                                 selectedImages[index],
                                 width: 145,
                                 height: 180,
-                                fit: BoxFit.cover,
+                                fit: BoxFit.fill,
                               ),
                               Positioned(
                                 top: -5,

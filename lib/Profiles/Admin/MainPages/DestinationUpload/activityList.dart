@@ -100,7 +100,7 @@ class _ActivityListPageState extends State<ActivityListPage> {
     String content,
     VoidCallback onDelete,
   ) {
-    int? maxLines = title.length > 25 ? 5 : 1;
+    int? maxLines = title.length > 25 ? 5 : 2;
 
     return Card(
       margin: const EdgeInsets.only(right: 10, left: 10, bottom: 10),

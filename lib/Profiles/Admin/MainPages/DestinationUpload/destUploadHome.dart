@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:touristine/Profiles/Admin/MainPages/DestinationUpload/destGenerator.dart';
@@ -8,20 +10,35 @@ class DestsUploadHomePage extends StatefulWidget {
   final String token;
   Map<String, dynamic> destinationToBeAdded;
   DestsUploadHomePage(
-      {super.key,
-      required this.token,
-      this.destinationToBeAdded = const {}});
+      {super.key, required this.token, this.destinationToBeAdded = const {}});
 
   @override
   _DestsUploadHomePageState createState() => _DestsUploadHomePageState();
 }
 
-class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
+class _DestsUploadHomePageState extends State<DestsUploadHomePage>
+    with SingleTickerProviderStateMixin {
+  late TabController tabController;
+
   Map<String, dynamic> destinationToBeAddedInfo = {};
+
+  // Callback function to be passed to AddedDestinationsPage.
+  void updateDestinationInfo(Map<String, dynamic> destinationInfo) {
+    setState(() {
+      destinationToBeAddedInfo = destinationInfo;
+      // print(destinationToBeAddedInfo);
+    });
+    // Using a Timer to delay the tab switching.
+    Timer(const Duration(milliseconds: 100), () {
+      tabController.animateTo(0); // 0 is the index of the AddDestTab.
+    });
+  }
 
   @override
   void initState() {
     super.initState();
+    tabController = TabController(length: 2, vsync: this);
+    tabController.index = 0; // Set the initial tab index to 0 (AddDestTab).
     destinationToBeAddedInfo = widget.destinationToBeAdded;
     widget.destinationToBeAdded = {};
   }
@@ -54,9 +71,10 @@ class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
               children: [
                 Container(
                   color: const Color.fromARGB(31, 30, 137, 158),
-                  child: const TabBar(
-                    unselectedLabelColor: Color(0xFF1E889E),
-                    tabs: [
+                  child: TabBar(
+                    controller: tabController,
+                    unselectedLabelColor: const Color(0xFF1E889E),
+                    tabs: const [
                       Tab(
                         height: 60,
                         icon: Row(
@@ -86,10 +104,10 @@ class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
                         ),
                       ),
                     ],
-                    indicator: BoxDecoration(
+                    indicator: const BoxDecoration(
                       color: Color(0xFF1E889E),
                     ),
-                    labelStyle: TextStyle(
+                    labelStyle: const TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.w500,
                       fontFamily: 'Times New Roman',
@@ -98,12 +116,14 @@ class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
                 ),
                 Expanded(
                   child: TabBarView(
+                    controller: tabController,
                     children: [
                       AddDestTab(
                           token: widget.token,
                           destinationToBeAdded: destinationToBeAddedInfo),
                       AddedDestinationsPage(
-                          token: widget.token),
+                          token: widget.token,
+                          onDestinationEdit: updateDestinationInfo),
                     ],
                   ),
                 ),

@@ -8,9 +8,10 @@ import 'package:touristine/Profiles/Tourist/MainPages/planMaker/customBottomShee
 
 class AddedDestinationsPage extends StatefulWidget {
   final String token;
+  final Function(Map<String, dynamic> destinationInfo) onDestinationEdit;
 
   const AddedDestinationsPage(
-      {super.key, required this.token});
+      {super.key, required this.token, required this.onDestinationEdit});
 
   @override
   _AddedDestinationsPageState createState() => _AddedDestinationsPageState();
@@ -145,7 +146,7 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
         print(destinationInfo);
 
         // Send the destination info to the callback.
-        // editDestinationInfo(1, destinationInfo);////////////////////////////////////////
+        widget.onDestinationEdit(destinationInfo);
 
         // Handle all these stuff in the dest generator *O*.
       } else if (response.statusCode == 500) {

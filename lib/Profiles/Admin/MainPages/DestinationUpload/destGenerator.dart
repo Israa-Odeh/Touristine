@@ -157,8 +157,8 @@ class _AddDestTabState extends State<AddDestTab> {
     request.fields['ageCategories'] = selectedAgeCategoriesJson;
     String geoTagsJson = jsonEncode(geoTags);
     request.fields['geoTags'] = geoTagsJson;
-    request.fields['edited'] = widget.destinationToBeAdded.isNotEmpty &&
-            widget.destinationToBeAdded.containsKey('latitude')
+    request.fields['edited'] = destinationInfo.isNotEmpty &&
+            destinationInfo.containsKey('latitude')
         ? "true"
         : "false";
 
@@ -323,44 +323,46 @@ class _AddDestTabState extends State<AddDestTab> {
     });
   }
 
+  Map<String, dynamic> destinationInfo = {};
   @override
   void initState() {
     super.initState();
     pageController = PageController();
     print("The destination to be added:");
     print(widget.destinationToBeAdded);
-    if (widget.destinationToBeAdded.isNotEmpty) {
+    destinationInfo = widget.destinationToBeAdded;
+    widget.destinationToBeAdded = {};
+    if (destinationInfo.isNotEmpty) {
       setupFieldsForNewDestination();
     }
   }
 
   void setupFieldsForNewDestination() {
-    destNameController.text = widget.destinationToBeAdded['destinationName'];
-    selectedCity = widget.destinationToBeAdded['city'];
-    print(widget.destinationToBeAdded['category']);
+    downloadImages();
+    destNameController.text = destinationInfo['destinationName'];
+    selectedCity = destinationInfo['city'];
     selectedCategory =
-        getPlaceCategory(widget.destinationToBeAdded['category']);
-    selectedBudget = getBudgetLevel(widget.destinationToBeAdded['budget']);
-    aboutController.text = widget.destinationToBeAdded['about'];
-    if (widget.destinationToBeAdded['sheltered'] == 'true') {
+        getPlaceCategory(destinationInfo['category']);
+    selectedBudget = getBudgetLevel(destinationInfo['budget']);
+    aboutController.text = destinationInfo['about'];
+    if (destinationInfo['sheltered'] == 'true') {
       yes = true;
       no = false;
     } else {
       no = true;
       yes = false;
     }
-    selectedHours = widget.destinationToBeAdded['timeToSpend'];
+    selectedHours = destinationInfo['timeToSpend'];
     selectedMinutes = 0;
-    downloadImages();
-    if (widget.destinationToBeAdded.containsKey('latitude')) {
+    if (destinationInfo.containsKey('latitude')) {
       setupOtherFieldsToEdit();
     }
   }
 
   Future<void> downloadImages() async {
     List<File> downloadedImages = [];
-
-    for (String imageUrl in widget.destinationToBeAdded['imagesURLs']) {
+    if (!mounted) return;
+    for (String imageUrl in destinationInfo['imagesURLs']) {
       final response = await http.get(Uri.parse(imageUrl));
       final documentDirectory = await getApplicationDocumentsDirectory();
       final file = File(
@@ -369,6 +371,7 @@ class _AddDestTabState extends State<AddDestTab> {
       await file.writeAsBytes(response.bodyBytes);
       downloadedImages.add(file);
     }
+    if (!mounted) return;
 
     setState(() {
       selectedImages = downloadedImages;
@@ -377,21 +380,21 @@ class _AddDestTabState extends State<AddDestTab> {
   }
 
   void setupOtherFieldsToEdit() {
-    destLatController.text = widget.destinationToBeAdded['latitude'];
-    destLngController.text = widget.destinationToBeAdded['longitude'];
-    startTimeController.text = widget.destinationToBeAdded['openingTime'];
-    endTimeController.text = widget.destinationToBeAdded['closingTime'];
+    destLatController.text = destinationInfo['latitude'];
+    destLngController.text = destinationInfo['longitude'];
+    startTimeController.text = destinationInfo['openingTime'];
+    endTimeController.text = destinationInfo['closingTime'];
 
     selectedWorkingDays =
-        List<String>.from(widget.destinationToBeAdded['selectedWorkingDays']);
+        List<String>.from(destinationInfo['selectedWorkingDays']);
 
     selectedVisitorTypes =
-        List<String>.from(widget.destinationToBeAdded['visitorTypes'])
+        List<String>.from(destinationInfo['visitorTypes'])
             .map((String type) => capitalizeFirstChar(type))
             .toList();
 
     selectedAgeCategories =
-        List<String>.from(widget.destinationToBeAdded['ageCategories']);
+        List<String>.from(destinationInfo['ageCategories']);
     List<String> services = [];
     List<String> possibleServicesSelections = [
       'restrooms',
@@ -404,7 +407,7 @@ class _AddDestTabState extends State<AddDestTab> {
       'healthcenters',
       'kiosks',
     ];
-    for (var service in widget.destinationToBeAdded['selectedServices']) {
+    for (var service in destinationInfo['selectedServices']) {
       if (service.containsKey('name')) {
         String serviceName = service['name'];
         if (possibleServicesSelections.contains(serviceName)) {
@@ -417,24 +420,21 @@ class _AddDestTabState extends State<AddDestTab> {
     selectedServices = mapServicesNames(services);
 
     List<dynamic> rawActivities =
-        widget.destinationToBeAdded['addedActivities'];
+        destinationInfo['addedActivities'];
 
-    // Iterate over the raw activities and convert them to Map<String, String>
+    // Iterate over the raw activities and convert them to Map<String, String>.
     for (var rawActivity in rawActivities) {
       if (rawActivity is Map<String, dynamic>) {
-        // Check if each activity is a Map<String, dynamic>
+        // Check if each activity is a Map<String, dynamic>.
         Map<String, String> activity = {};
-
-        // Convert dynamic values to strings if needed
+        // Convert dynamic values to strings if needed.
         rawActivity.forEach((key, value) {
           activity[key] = value.toString();
         });
-
         addedActivities.add(activity);
       }
     }
-
-    geoTags = List<String>.from(widget.destinationToBeAdded['geoTags']);
+    geoTags = List<String>.from(destinationInfo['geoTags']);
   }
 
   String capitalizeFirstChar(String input) {
@@ -2403,7 +2403,7 @@ class _AddDestTabState extends State<AddDestTab> {
                                   selectedImages[index],
                                   width: 145,
                                   height: 180,
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.fill,
                                 ),
                                 Positioned(
                                   top: -5,
@@ -2452,7 +2452,7 @@ class _AddDestTabState extends State<AddDestTab> {
                                 selectedImages[index],
                                 width: 145,
                                 height: 180,
-                                fit: BoxFit.cover,
+                                fit: BoxFit.fill,
                               ),
                               Positioned(
                                 top: -5,
