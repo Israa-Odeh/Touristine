@@ -1676,107 +1676,6 @@ class _DestinationDetailsState extends State<DestinationDetails> {
   }
 
   Widget _buildReviewsTab() {
-    // Sample data for reviews.
-    // final Map<String, int> ratings = {
-    //   'oneStar': 120,
-    //   'twoStars': 80,
-    //   'threeStars': 40,
-    //   'fourStars': 20,
-    //   'fiveStars': 10,
-    // };
-
-    // final List<Map<String, dynamic>> reviews = [
-    //   {
-    //     'firstName': 'Mohamed',
-    //     'lastName': 'Ali',
-    //     'stars': 5,
-    //     'commentTitle': 'Amazing Experience',
-    //     'commentContent':
-    //         'The place is breathtaking, and the staff is incredibly friendly. I highly recommend it!',
-    //     'date': '26/05/2001'
-    //   },
-    //   {
-    //     'firstName': 'Fatima',
-    //     'lastName': 'Khaled',
-    //     'stars': 4,
-    //     'commentTitle': 'Great Place',
-    //     'commentContent':
-    //         'A wonderful atmosphere and delicious food. I enjoyed every moment of my visit.',
-    //     'date': '07/07/2007'
-    //   },
-    //   {
-    //     'firstName': 'Yousef',
-    //     'lastName': 'Saleh',
-    //     'stars': 3,
-    //     'commentTitle': 'Excellent Experience',
-    //     'commentContent':
-    //         'The inspiration here is amazing, and I love it. Looking forward to coming back!',
-    //     'date': '15/05/2021'
-    //   },
-    //   {
-    //     'firstName': 'Layla',
-    //     'lastName': 'Mohamed',
-    //     'stars': 4,
-    //     'commentTitle': 'Beautiful Place',
-    //     'commentContent':
-    //         'You\'ll find success everywhere you go. The ambiance is truly remarkable.',
-    //     'date': '12/08/2023'
-    //   },
-    //   {
-    //     'firstName': 'Ali',
-    //     'lastName': 'Noor',
-    //     'stars': 2,
-    //     'commentTitle': 'Needs Improvement',
-    //     'commentContent':
-    //         'Service was slow, and the place needs some improvements. Hope to see changes.',
-    //     'date': '26/05/2023'
-    //   },
-    //   {
-    //     'firstName': 'Nourhan',
-    //     'lastName': 'Mustafa',
-    //     'stars': 5,
-    //     'commentTitle': 'Unique Experience',
-    //     'commentContent':
-    //         "I'm very happy with my experience here. Thank you for providing such a unique experience!",
-    //     'date': '09/11/2022'
-    //   },
-    //   {
-    //     'firstName': 'Hussein',
-    //     'lastName': 'Ali',
-    //     'stars': 3,
-    //     'commentTitle': 'Good Place',
-    //     'commentContent':
-    //         "Not bad, but there are some aspects that could be improved. Overall, it's a decent place.",
-    //     'date': '10/04/2011'
-    //   },
-    //   {
-    //     'firstName': 'Sara',
-    //     'lastName': 'Ahmed',
-    //     'stars': 4,
-    //     'commentTitle': 'Great View',
-    //     'commentContent':
-    //         'I love the stunning view and the peaceful atmosphere. It was a refreshing experience.',
-    //     'date': '22/08/2021'
-    //   },
-    //   {
-    //     'firstName': 'Omar',
-    //     'lastName': 'Salah',
-    //     'stars': 5,
-    //     'commentTitle': 'Fantastic Experience',
-    //     'commentContent':
-    //         'The best experience I ever had! The service, ambiance, and everything exceeded my expectations.',
-    //     'date': '16/05/2022'
-    //   },
-    //   {
-    //     'firstName': 'Hala',
-    //     'lastName': 'Hassan',
-    //     'stars': 4,
-    //     'commentTitle': 'Very Good',
-    //     'commentContent':
-    //         'A very good experience, I will definitely come back for another visit.',
-    //     'date': '26/10/2021'
-    //   },
-    // ];
     int reviewsCount =
         widget.ratings.values.fold<int>(0, (sum, value) => sum + value);
     return Padding(
@@ -2139,7 +2038,6 @@ class _DestinationDetailsState extends State<DestinationDetails> {
     );
   }
 }
-
 class ServiceDescription {
   final String description;
   final IconData icon;
