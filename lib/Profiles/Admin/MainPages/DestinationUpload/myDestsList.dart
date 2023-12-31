@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:touristine/Notifications/SnackBar.dart';
+import 'package:touristine/Profiles/Admin/MainPages/DestinationUpload/destinationView.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/planMaker/customBottomSheet.dart';
 
 class AddedDestinationsPage extends StatefulWidget {
@@ -160,6 +161,62 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
       }
     } catch (error) {
       throw Exception('Error fetching destination details: $error');
+    }
+  }
+
+  Map<String, dynamic> destinationDetails = {};
+  List<Map<String, dynamic>> destinationImages = [];
+  // A function to retrieve all of the destination details.
+  Future<void> getDestinationDetails(String destName) async {
+    final url =
+        Uri.parse('https://touristine.onrender.com/get-destination-details');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer ${widget.token}',
+        },
+        body: {
+          'destinationName': destName,
+        },
+      );
+      if (response.statusCode == 200) {
+        // Success.
+        // Parse the response body.
+        final Map<String, dynamic> responseData = json.decode(response.body);
+
+        // Extract destinationImages as List<Map<String, dynamic>>
+        destinationImages =
+            List<Map<String, dynamic>>.from(responseData['destinationImages']);
+
+        // Access destination details and other data.
+        destinationDetails = responseData['destinationDetails'];
+
+        // Now you can use the data as needed
+        print('Destination Images: $destinationImages');
+        print('Destination Details: $destinationDetails');
+      } else if (response.statusCode == 500) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        if (responseData.containsKey('error')) {
+          if (responseData['error'] ==
+              'Details for this destination are not available') {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, 'Place details aren\'t available',
+                bottomMargin: 0);
+          } else {
+            // ignore: use_build_context_synchronously
+            showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+          }
+        }
+      } else {
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'Error retrieving place details',
+            bottomMargin: 0);
+      }
+    } catch (error) {
+      print('Failed to fetch place details: $error');
     }
   }
 
@@ -355,9 +412,24 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
                   () async {
                     await deleteDestination(destinationId);
                   },
-                  () {
-                    // Handle right arrow button pressed
-                    print('Right arrow button pressed');
+                  () async {
+                    Map<String, dynamic> destination = {
+                      'name': destinationName,
+                      'image': imagePath
+                    };
+                    await getDestinationDetails(destinationName);
+                    // ignore: use_build_context_synchronously
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) => DestinationDetails(
+                    //       destination: destination,
+                    //       token: widget.token,
+                    //       destinationDetails: destinationDetails,
+                    //       destinationImages: destinationImages,
+                    //     ),
+                    //   ),
+                    // );
                   },
                 )
               ],
