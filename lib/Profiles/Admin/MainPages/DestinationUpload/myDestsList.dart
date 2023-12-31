@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:touristine/Notifications/SnackBar.dart';
+import 'package:touristine/Profiles/Admin/MainPages/DestinationUpload/destinationView.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/planMaker/customBottomSheet.dart';
 
 class AddedDestinationsPage extends StatefulWidget {
@@ -165,7 +166,7 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
   Map<String, dynamic> destinationDetails = {};
   List<Map<String, dynamic>> destinationImages = [];
   // A function to retrieve all of the destination details.
-  Future<void> getDestinationDetails(String destName) async {
+  Future<void> getDestinationDetails(Map<String, dynamic> destination) async {
     final url =
         Uri.parse('https://touristine.onrender.com/get-destination-details');
 
@@ -177,7 +178,7 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
           'Authorization': 'Bearer ${widget.token}',
         },
         body: {
-          'destinationName': destName,
+          'destinationName': destination['name'],
         },
       );
       if (response.statusCode == 200) {
@@ -192,9 +193,21 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
         // Access destination details and other data.
         destinationDetails = responseData['destinationDetails'];
 
-        // Now you can use the data as needed
         print('Destination Images: $destinationImages');
         print('Destination Details: $destinationDetails');
+
+        // ignore: use_build_context_synchronously
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DestinationDetails(
+              destination: destination,
+              token: widget.token,
+              destinationDetails: destinationDetails,
+              destinationImages: destinationImages,
+            ),
+          ),
+        );
       } else if (response.statusCode == 500) {
         final Map<String, dynamic> responseData = json.decode(response.body);
         if (responseData.containsKey('error')) {
@@ -411,23 +424,11 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
                     await deleteDestination(destinationId);
                   },
                   () async {
-                    // Map<String, dynamic> destination = {
-                    //   'name': destinationName,
-                    //   'image': imagePath
-                    // };
-                    await getDestinationDetails(destinationName);
-                    // ignore: use_build_context_synchronously
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => DestinationDetails(
-                    //       destination: destination,
-                    //       token: widget.token,
-                    //       destinationDetails: destinationDetails,
-                    //       destinationImages: destinationImages,
-                    //     ),
-                    //   ),
-                    // );
+                    Map<String, dynamic> destination = {
+                      'name': destinationName,
+                      'image': imagePath
+                    };
+                    await getDestinationDetails(destination);
                   },
                 )
               ],
