@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/DestinationUpload/DestUploadHome.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/profilePage.dart';
-import 'package:touristine/Profiles/Tourist/MainPages/chatting.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chattingList.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/home.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/PlanMaker/planMakerHome.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
