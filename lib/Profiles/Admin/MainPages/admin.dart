@@ -4,7 +4,7 @@ import 'package:touristine/Profiles/Admin/MainPages/DestinationUpload/destUpload
 import 'package:touristine/Profiles/Admin/MainPages/Home/home.dart';
 import 'package:touristine/Profiles/Admin/MainPages/UserInteractions/tabBarViewer.dart';
 import 'package:touristine/Profiles/Admin/MainPages/profilePage.dart';
-import 'package:touristine/Profiles/Admin/MainPages/chatting.dart';
+import 'package:touristine/Profiles/Admin/MainPages/Chatting/chattingList.dart';
 import 'package:touristine/Profiles/Admin/MainPages/cracksAnalysis.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
