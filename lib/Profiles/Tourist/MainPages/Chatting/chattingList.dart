@@ -14,16 +14,23 @@ class ChattingPage extends StatefulWidget {
 class _ChattingPageState extends State<ChattingPage> {
   List<Map<String, dynamic>> admins = [
     {
-      'email': 'admin1@example.com',
-      'firstName': 'Israa',
+      'email': 'NasserOdeh@gmail.com',
+      'firstName': 'Nasser',
       'lastName': 'Odeh',
       'image':
           'https://zamzam.com/blog/wp-content/uploads/2021/08/shutterstock_1745937893.jpg'
     },
     {
-      'email': 'admin2@example.com',
+      'email': 'AmalOdeh@gmail.com',
       'firstName': 'Jenan',
       'lastName': 'AbuAlrub',
+      'image':
+          'https://media.cntraveler.com/photos/639c6b27fe765cefd6b219b7/16:9/w_1920%2Cc_limit/Switzerland_GettyImages-1293043653.jpg'
+    },
+    {
+      'email': 'AmanyOdeh@gmail.com',
+      'firstName': 'Amany',
+      'lastName': 'Odeh',
       'image':
           'https://media.cntraveler.com/photos/639c6b27fe765cefd6b219b7/16:9/w_1920%2Cc_limit/Switzerland_GettyImages-1293043653.jpg'
     },
@@ -168,8 +175,10 @@ class _ChattingPageState extends State<ChattingPage> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => ChatPage(
-                                        adminName:
-                                            '${admin['firstName']} ${admin['lastName']}', adminImage: admin['image'],),
+                                      adminName:
+                                          '${admin['firstName']} ${admin['lastName']}',
+                                      adminImage: admin['image'],
+                                    ),
                                   ),
                                 );
                               },
