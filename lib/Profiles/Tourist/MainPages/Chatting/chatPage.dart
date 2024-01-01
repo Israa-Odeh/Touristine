@@ -139,7 +139,7 @@ class _ChatPageState extends State<ChatPage> {
       listKey.currentState?.insertItem(messages.length - 1);
 
       // Scroll to the end.
-      Future.delayed(const Duration(milliseconds: 300), () {
+      Future.delayed(const Duration(milliseconds: 100), () {
         scrollController.jumpTo(scrollController.position.maxScrollExtent);
       });
     }
