@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chatPage.dart';
 
-class ChattingPage extends StatefulWidget {
+class ChattingList extends StatefulWidget {
   final String token;
 
-  const ChattingPage({Key? key, required this.token}) : super(key: key);
+  const ChattingList({super.key, required this.token});
 
   @override
-  _ChattingPageState createState() => _ChattingPageState();
+  _ChattingListState createState() => _ChattingListState();
 }
 
-class _ChattingPageState extends State<ChattingPage> {
+class _ChattingListState extends State<ChattingList> {
   List<Map<String, dynamic>> admins = [
     {
       'email': 'IsraaOdeh@gmail.com',
@@ -31,22 +31,23 @@ class _ChattingPageState extends State<ChattingPage> {
   ];
 
   List<Map<String, dynamic>> filteredAdmins = [];
-  late FocusNode _focusNode;
+  late FocusNode focusNode;
   Color iconColor = Colors.grey;
 
   @override
   void initState() {
     super.initState();
+    // Retrieve list of admins.
     filteredAdmins = List.from(admins);
-    _focusNode = FocusNode();
-    _focusNode.addListener(() {
+    focusNode = FocusNode();
+    focusNode.addListener(() {
       setState(() {
-        iconColor = _focusNode.hasFocus ? const Color(0xFF1E889E) : Colors.grey;
+        iconColor = focusNode.hasFocus ? const Color(0xFF1E889E) : Colors.grey;
       });
     });
   }
 
-  void _filterAdmins(String query) {
+  void filterAdmins(String query) {
     setState(() {
       if (query.isEmpty) {
         filteredAdmins = List.from(admins);
@@ -66,7 +67,7 @@ class _ChattingPageState extends State<ChattingPage> {
 
   @override
   void dispose() {
-    _focusNode.dispose();
+    focusNode.dispose();
     super.dispose();
   }
 
@@ -75,10 +76,9 @@ class _ChattingPageState extends State<ChattingPage> {
     return Scaffold(
       body: Stack(
         children: [
-          // Background Image
           Positioned.fill(
             child: Image.asset(
-              'assets/Images/Profiles/Tourist/homeBackground.jpg', // Replace with your background image URL
+              'assets/Images/Profiles/Tourist/homeBackground.jpg',
               fit: BoxFit.cover,
             ),
           ),
@@ -89,10 +89,10 @@ class _ChattingPageState extends State<ChattingPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: TextField(
-                  focusNode: _focusNode,
-                  onChanged: _filterAdmins,
+                  focusNode: focusNode,
+                  onChanged: filterAdmins,
                   decoration: InputDecoration(
-                    hintText: 'Search an Admin',
+                    hintText: 'Search',
                     prefixIcon: Icon(
                       FontAwesomeIcons.magnifyingGlass,
                       color: iconColor,
@@ -119,8 +119,7 @@ class _ChattingPageState extends State<ChattingPage> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      color: const Color.fromARGB(
-                          240, 255, 255, 255), // Set the card color to white
+                      color: const Color.fromARGB(240, 255, 255, 255),
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Stack(
@@ -156,13 +155,11 @@ class _ChattingPageState extends State<ChattingPage> {
                             ),
                             IconButton(
                               icon: const FaIcon(
-                                FontAwesomeIcons
-                                    .facebookMessenger, // Replace with your desired chat icon
+                                FontAwesomeIcons.facebookMessenger,
                                 color: Color.fromARGB(255, 0, 0, 0),
                               ),
                               onPressed: () {
-                                // Add your logic for the chat button here
-                                // Navigate to the ChatPage passing the admin's name
+                                // Navigate to the ChatPage passing the admin's name.
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(

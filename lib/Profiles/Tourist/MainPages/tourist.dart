@@ -218,7 +218,7 @@ class _TouristAppState extends State<TouristProfile> {
       ),
       PlanMakerPage(token: widget.token),
       DestsUploadHomePage(token: widget.token),
-      ChattingPage(token: widget.token),
+      ChattingList(token: widget.token),
       ProfilePage(token: widget.token, googleAccount: widget.googleAccount)
     ];
 

@@ -5,8 +5,8 @@ class ChatPage extends StatefulWidget {
   final String adminName;
   final String adminImage;
 
-  const ChatPage({Key? key, required this.adminName, required this.adminImage})
-      : super(key: key);
+  const ChatPage(
+      {super.key, required this.adminName, required this.adminImage});
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -59,7 +59,7 @@ class _ChatPageState extends State<ChatPage> {
                 controller: scrollController,
                 initialItemCount: messages.length,
                 itemBuilder: (context, index, animation) {
-                  return _buildMessageItem(index, animation);
+                  return buildMessageItem(index, animation);
                 },
               ),
             ),
@@ -67,13 +67,13 @@ class _ChatPageState extends State<ChatPage> {
           const Divider(
             thickness: 1.5,
           ),
-          _buildInputField(),
+          buildInputField(),
         ],
       ),
     );
   }
 
-  Widget _buildInputField() {
+  Widget buildInputField() {
     return Padding(
       padding: const EdgeInsets.only(right: 20.0, left: 20.0, bottom: 30.0),
       child: Row(
@@ -104,7 +104,7 @@ class _ChatPageState extends State<ChatPage> {
               color: Color(0xFF1E889E),
             ),
             onPressed: () {
-              _sendMessage();
+              sendMessage();
             },
           ),
         ],
@@ -112,7 +112,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  Widget _buildMessageItem(int index, Animation<double> animation) {
+  Widget buildMessageItem(int index, Animation<double> animation) {
     return Padding(
       padding: const EdgeInsets.only(right: 8, left: 120, top: 8.0, bottom: 0),
       child: Card(
@@ -130,7 +130,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  void _sendMessage() {
+  void sendMessage() {
     String message = messageController.text;
     if (message.isNotEmpty) {
       messageController.clear();
@@ -138,7 +138,7 @@ class _ChatPageState extends State<ChatPage> {
 
       listKey.currentState?.insertItem(messages.length - 1);
 
-      // Scroll to the end
+      // Scroll to the end.
       Future.delayed(const Duration(milliseconds: 300), () {
         scrollController.jumpTo(scrollController.position.maxScrollExtent);
       });
