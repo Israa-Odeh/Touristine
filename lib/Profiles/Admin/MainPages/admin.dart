@@ -101,7 +101,7 @@ class _AdminAppState extends State<AdminProfile> {
       DestsUploadHomePage(token: widget.token),
       TabBarViewer(token: widget.token, changeTabIndex: changeTabIndex),
       CracksAnalysisPage(token: widget.token),
-      ChattingPage(token: widget.token),
+      ChattingList(token: widget.token),
       ProfilePage(token: widget.token)
     ];
   }

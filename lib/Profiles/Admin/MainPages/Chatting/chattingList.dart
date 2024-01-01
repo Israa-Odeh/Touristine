@@ -2,61 +2,69 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:touristine/Profiles/Admin/MainPages/Chatting/chatPage.dart';
 
-class ChattingPage extends StatefulWidget {
+class ChattingList extends StatefulWidget {
   final String token;
 
-  const ChattingPage({Key? key, required this.token}) : super(key: key);
+  const ChattingList({super.key, required this.token});
 
   @override
-  _ChattingPageState createState() => _ChattingPageState();
+  _ChattingListState createState() => _ChattingListState();
 }
 
-class _ChattingPageState extends State<ChattingPage> {
+class _ChattingListState extends State<ChattingList> {
   List<Map<String, dynamic>> tourists = [
     {
-      'email': 'admin1@example.com',
-      'firstName': 'Israa',
+      'email': 'NasserOdeh@hotmail.com',
+      'firstName': 'Nasser',
       'lastName': 'Odeh',
       'image':
           'https://zamzam.com/blog/wp-content/uploads/2021/08/shutterstock_1745937893.jpg'
     },
     {
-      'email': 'admin2@example.com',
-      'firstName': 'Jenan',
-      'lastName': 'AbuAlrub',
+      'email': 'AmalOdeh@stu.najah.edu',
+      'firstName': 'Amal',
+      'lastName': 'Odeh',
       'image':
           'https://media.cntraveler.com/photos/639c6b27fe765cefd6b219b7/16:9/w_1920%2Cc_limit/Switzerland_GettyImages-1293043653.jpg'
+    },
+    {
+      'email': 'AmanyOdeh@stu.najah.edu',
+      'firstName': 'Amany',
+      'lastName': 'Odeh',
+      'image':
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/OLD_JAFFA_PORT.jpg/1200px-OLD_JAFFA_PORT.jpg'
     },
     // Add more admins as needed
   ];
 
   List<Map<String, dynamic>> filteredTourists = [];
-  late FocusNode _focusNode;
+  late FocusNode focusNode;
   Color iconColor = Colors.grey;
 
   @override
   void initState() {
     super.initState();
+    // Retrieve list of tourists.
     filteredTourists = List.from(tourists);
-    _focusNode = FocusNode();
-    _focusNode.addListener(() {
+    focusNode = FocusNode();
+    focusNode.addListener(() {
       setState(() {
-        iconColor = _focusNode.hasFocus ? const Color(0xFF1E889E) : Colors.grey;
+        iconColor = focusNode.hasFocus ? const Color(0xFF1E889E) : Colors.grey;
       });
     });
   }
 
-  void _filterAdmins(String query) {
+  void filterAdmins(String query) {
     setState(() {
       if (query.isEmpty) {
         filteredTourists = List.from(tourists);
       } else {
-        filteredTourists = tourists.where((admin) {
-          final fullName = '${admin['firstName']} ${admin['lastName']}';
+        filteredTourists = tourists.where((tourist) {
+          final fullName = '${tourist['firstName']} ${tourist['lastName']}';
           final queryLowerCase = query.toLowerCase();
           return fullName.toLowerCase().contains(queryLowerCase) ||
-              admin['firstName'].toLowerCase().contains(queryLowerCase) ||
-              admin['lastName'].toLowerCase().contains(queryLowerCase) ||
+              tourist['firstName'].toLowerCase().contains(queryLowerCase) ||
+              tourist['lastName'].toLowerCase().contains(queryLowerCase) ||
               fullName.split(' ').every((namePart) =>
                   namePart.toLowerCase().startsWith(queryLowerCase));
         }).toList();
@@ -66,7 +74,7 @@ class _ChattingPageState extends State<ChattingPage> {
 
   @override
   void dispose() {
-    _focusNode.dispose();
+    focusNode.dispose();
     super.dispose();
   }
 
@@ -75,24 +83,22 @@ class _ChattingPageState extends State<ChattingPage> {
     return Scaffold(
       body: Stack(
         children: [
-          // Background Image
           Positioned.fill(
             child: Image.asset(
-              'assets/Images/Profiles/Tourist/homeBackground.jpg', // Replace with your background image URL
+              'assets/Images/Profiles/Tourist/homeBackground.jpg',
               fit: BoxFit.cover,
             ),
           ),
-          // Content
           Column(
             children: [
               const SizedBox(height: 40),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: TextField(
-                  focusNode: _focusNode,
-                  onChanged: _filterAdmins,
+                  focusNode: focusNode,
+                  onChanged: filterAdmins,
                   decoration: InputDecoration(
-                    hintText: 'Search an Admin',
+                    hintText: 'Search',
                     prefixIcon: Icon(
                       FontAwesomeIcons.magnifyingGlass,
                       color: iconColor,
@@ -113,14 +119,13 @@ class _ChattingPageState extends State<ChattingPage> {
                 child: ListView.builder(
                   itemCount: filteredTourists.length,
                   itemBuilder: (context, index) {
-                    final admin = filteredTourists[index];
+                    final tourist = filteredTourists[index];
                     return Card(
                       elevation: 5,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      color: const Color.fromARGB(
-                          240, 255, 255, 255), // Set the card color to white
+                      color: const Color.fromARGB(240, 255, 255, 255),
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Stack(
@@ -129,16 +134,16 @@ class _ChattingPageState extends State<ChattingPage> {
                             Row(
                               children: [
                                 CircleAvatar(
-                                  radius:
-                                      50, // Set the radius to 50 for a total diameter of 100
-                                  backgroundImage: NetworkImage(admin['image']),
+                                  radius: 50,
+                                  backgroundImage:
+                                      NetworkImage(tourist['image']),
                                 ),
                                 const SizedBox(width: 16),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      '${admin['firstName']} ${admin['lastName']}',
+                                      '${tourist['firstName']} ${tourist['lastName']}',
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 20,
@@ -146,7 +151,7 @@ class _ChattingPageState extends State<ChattingPage> {
                                     ),
                                     const SizedBox(height: 20),
                                     Text(
-                                      admin['email'],
+                                      tourist['email'],
                                       style: const TextStyle(
                                         color: Colors.grey,
                                       ),
@@ -157,19 +162,18 @@ class _ChattingPageState extends State<ChattingPage> {
                             ),
                             IconButton(
                               icon: const FaIcon(
-                                FontAwesomeIcons
-                                    .facebookMessenger, // Replace with your desired chat icon
+                                FontAwesomeIcons.facebookMessenger,
                                 color: Color.fromARGB(255, 0, 0, 0),
                               ),
                               onPressed: () {
-                                // Add your logic for the chat button here
-                                // Navigate to the ChatPage passing the admin's name
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => ChatPage(
-                                        adminName:
-                                            '${admin['firstName']} ${admin['lastName']}', adminImage: admin['image'],),
+                                      touristName:
+                                          '${tourist['firstName']} ${tourist['lastName']}',
+                                      touristImage: tourist['image'],
+                                    ),
                                   ),
                                 );
                               },

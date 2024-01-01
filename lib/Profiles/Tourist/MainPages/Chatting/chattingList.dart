@@ -129,8 +129,7 @@ class _ChattingPageState extends State<ChattingPage> {
                             Row(
                               children: [
                                 CircleAvatar(
-                                  radius:
-                                      50, // Set the radius to 50 for a total diameter of 100
+                                  radius: 50,
                                   backgroundImage: NetworkImage(admin['image']),
                                 ),
                                 const SizedBox(width: 16),
@@ -168,8 +167,10 @@ class _ChattingPageState extends State<ChattingPage> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => ChatPage(
-                                        adminName:
-                                            '${admin['firstName']} ${admin['lastName']}', adminImage: admin['image'],),
+                                      adminName:
+                                          '${admin['firstName']} ${admin['lastName']}',
+                                      adminImage: admin['image'],
+                                    ),
                                   ),
                                 );
                               },
