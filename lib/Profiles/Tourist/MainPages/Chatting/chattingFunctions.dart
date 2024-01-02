@@ -98,13 +98,15 @@ void addChatToUser(User user, String newReceiverEmail) {
     final Chat newChat = Chat(messages: []);
     user.addChat(newReceiverEmail, newChat);
     updateChatListInFirebase(user.email, user.chats);
-    print("Chat between $newReceiverEmail and ${user.email} has been added successfully.");
+    print(
+        "Chat between $newReceiverEmail and ${user.email} has been added successfully.");
   } else {
     print("Chat already exists between $newReceiverEmail and ${user.email}");
   }
 }
 
-Future<void> updateChatListInFirebase(String userEmail, Map<String, Chat> chats) async {
+Future<void> updateChatListInFirebase(
+    String userEmail, Map<String, Chat> chats) async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
@@ -118,7 +120,8 @@ Future<void> updateChatListInFirebase(String userEmail, Map<String, Chat> chats)
     if (userObject.exists) {
       Map<String, dynamic> existingChats = userObject.get('chats');
       // Merge existing chats with the new chats.
-      existingChats.addAll(chats.map((receiverEmail, chat) => MapEntry(receiverEmail, chat.toMap())));
+      existingChats.addAll(chats
+          .map((receiverEmail, chat) => MapEntry(receiverEmail, chat.toMap())));
       await userDocRef.update({'chats': existingChats});
       print("The chat has been updated successfully.");
     } else {
@@ -128,7 +131,6 @@ Future<void> updateChatListInFirebase(String userEmail, Map<String, Chat> chats)
     print("Failed to update the chat list: $error");
   }
 }
-
 
 void sendMessage(User user, String receiverEmail, String message) {
   final Chat? existingChat = user.chats[receiverEmail];
@@ -162,7 +164,6 @@ void sendMessage(User user, String receiverEmail, String message) {
   }
 }
 
-
 Future<void> updateChatInFirebase(
     String userEmail, String receiverEmail, Chat chat) async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -186,7 +187,8 @@ Future<void> updateChatInFirebase(
             List.from(existingMessagesData);
 
         // Append new messages to existing messages
-        existingMessages.addAll(chat.messages.map((message) => message.toMap()));
+        existingMessages
+            .addAll(chat.messages.map((message) => message.toMap()));
 
         // Update the chat in Firebase
         chats[receiverEmail]['messages'] = existingMessages;
@@ -205,7 +207,6 @@ Future<void> updateChatInFirebase(
     print("Failed to update the chat: $error");
   }
 }
-
 
 Future<List<Map<String, dynamic>>> getMessagesBetweenUsers(
     String userEmail, String receiverEmail) async {
