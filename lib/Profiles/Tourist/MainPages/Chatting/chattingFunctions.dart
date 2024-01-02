@@ -93,20 +93,18 @@ Future<void> addUserToFirebase(User user) async {
   }
 }
 
-void addChatToUser(User user, newReceiverEmail) {
+void addChatToUser(User user, String newReceiverEmail) {
   if (!user.chats.containsKey(newReceiverEmail)) {
     final Chat newChat = Chat(messages: []);
     user.addChat(newReceiverEmail, newChat);
     updateChatListInFirebase(user.email, user.chats);
-    print(
-        "Chat between $newReceiverEmail and ${user.email} has been added successfully.");
+    print("Chat between $newReceiverEmail and ${user.email} has been added successfully.");
   } else {
     print("Chat already exists between $newReceiverEmail and ${user.email}");
   }
 }
 
-Future<void> updateChatListInFirebase(
-    String userEmail, Map<String, Chat> chats) async {
+Future<void> updateChatListInFirebase(String userEmail, Map<String, Chat> chats) async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
@@ -114,15 +112,23 @@ Future<void> updateChatListInFirebase(
       FirebaseFirestore.instance.collection('users');
 
   try {
-    await usersCollection.doc(userEmail).update({
-      'chats': chats
-          .map((receiverEmail, chat) => MapEntry(receiverEmail, chat.toMap()))
-    });
-    print("The chat has been updated successfully.");
+    final DocumentReference userDocRef = usersCollection.doc(userEmail);
+    final DocumentSnapshot userObject = await userDocRef.get();
+
+    if (userObject.exists) {
+      Map<String, dynamic> existingChats = userObject.get('chats');
+      // Merge existing chats with the new chats.
+      existingChats.addAll(chats.map((receiverEmail, chat) => MapEntry(receiverEmail, chat.toMap())));
+      await userDocRef.update({'chats': existingChats});
+      print("The chat has been updated successfully.");
+    } else {
+      print("User not found in Firebase.");
+    }
   } catch (error) {
     print("Failed to update the chat list: $error");
   }
 }
+
 
 void sendMessage(User user, String receiverEmail) {
   final Chat chat = user.chats[receiverEmail]!;
