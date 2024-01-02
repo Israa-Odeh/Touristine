@@ -1,18 +1,17 @@
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:jwt_decode/jwt_decode.dart';
-import 'package:provider/provider.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chattingFunctions.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/DestinationUpload/DestUploadHome.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/profilePage.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chattingList.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Home/home.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/PlanMaker/planMakerHome.dart';
-import 'package:touristine/Notifications/SnackBar.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:touristine/UserData/userProvider.dart';
+import 'package:touristine/Notifications/SnackBar.dart';
+import 'package:jwt_decode/jwt_decode.dart';
+import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'package:flutter/material.dart';
+import 'dart:convert';
 
 class TouristProfile extends StatefulWidget {
   final String token;
@@ -46,6 +45,7 @@ class _TouristAppState extends State<TouristProfile> {
     // Extract the user email from the token.
     Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
     String userEmail = decodedToken['email'];
+
     // Retrieve the UserProvider from the context.
     final UserProvider userProvider = context.read<UserProvider>();
 
