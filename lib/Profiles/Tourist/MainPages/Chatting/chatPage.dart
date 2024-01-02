@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:jwt_decode/jwt_decode.dart';
+import 'package:provider/provider.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chattingFunctions.dart';
+import 'package:touristine/UserData/userProvider.dart';
 
 class ChatPage extends StatefulWidget {
+  final String token;
   final String adminName;
+  final String adminEmail;
   final String adminImage;
 
   const ChatPage(
-      {super.key, required this.adminName, required this.adminImage});
+      {super.key,
+      required this.adminName,
+      required this.adminEmail,
+      required this.adminImage,
+      required this.token});
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -104,7 +114,7 @@ class _ChatPageState extends State<ChatPage> {
               color: Color(0xFF1E889E),
             ),
             onPressed: () {
-              sendMessage();
+              sendUserMessage();
             },
           ),
         ],
@@ -130,7 +140,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  void sendMessage() {
+  void sendUserMessage() {
     String message = messageController.text;
     if (message.isNotEmpty) {
       messageController.clear();
@@ -142,6 +152,21 @@ class _ChatPageState extends State<ChatPage> {
       Future.delayed(const Duration(milliseconds: 100), () {
         scrollController.jumpTo(scrollController.position.maxScrollExtent);
       });
+
+      // Extract the user email from the token.
+      Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
+      String userEmail = decodedToken['email'];
+
+      // Retrieve the UserProvider from the context.
+      final UserProvider userProvider = context.read<UserProvider>();
+
+      final User user = User(
+          email: userEmail,
+          firstName: userProvider.firstName,
+          lastName: userProvider.lastName,
+          imagePath: userProvider.imageURL ?? "",
+          chats: {});
+      sendMessage(user, widget.adminEmail, message);
     }
   }
 }

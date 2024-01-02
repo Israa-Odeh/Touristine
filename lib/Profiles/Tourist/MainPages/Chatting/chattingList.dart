@@ -187,7 +187,9 @@ class _ChattingListState extends State<ChattingList> {
                                     builder: (context) => ChatPage(
                                       adminName:
                                           '${admin['firstName']} ${admin['lastName']}',
+                                      adminEmail: admin['email'],
                                       adminImage: admin['image'],
+                                      token: widget.token,
                                     ),
                                   ),
                                 );

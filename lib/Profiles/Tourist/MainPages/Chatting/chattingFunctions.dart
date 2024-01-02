@@ -130,16 +130,38 @@ Future<void> updateChatListInFirebase(String userEmail, Map<String, Chat> chats)
 }
 
 
-void sendMessage(User user, String receiverEmail) {
-  final Chat chat = user.chats[receiverEmail]!;
-  final Message newMessage = Message(
-    text: "New message sent at ${DateTime.now()}",
-    dateTime: DateTime.now(),
-    senderEmail: user.email,
-  );
-  chat.messages.add(newMessage);
-  updateChatInFirebase(user.email, receiverEmail, chat);
+void sendMessage(User user, String receiverEmail, String message) {
+  final Chat? existingChat = user.chats[receiverEmail];
+
+  if (existingChat != null) {
+    // Chat already exists, add a new message
+    final Message newMessage = Message(
+      text: message,
+      dateTime: DateTime.now(),
+      senderEmail: user.email,
+    );
+    existingChat.messages.add(newMessage);
+
+    // Update the chat in Firebase
+    updateChatInFirebase(user.email, receiverEmail, existingChat);
+  } else {
+    // Chat does not exist, create a new Chat with the initial message
+    final Chat newChat = Chat(messages: []);
+    final Message initialMessage = Message(
+      text: message,
+      dateTime: DateTime.now(),
+      senderEmail: user.email,
+    );
+    newChat.messages.add(initialMessage);
+
+    // Update the chat in Firebase
+    updateChatInFirebase(user.email, receiverEmail, newChat);
+
+    // Optionally, you can also update the local user object
+    user.addChat(receiverEmail, newChat);
+  }
 }
+
 
 Future<void> updateChatInFirebase(
     String userEmail, String receiverEmail, Chat chat) async {
@@ -155,9 +177,26 @@ Future<void> updateChatInFirebase(
 
     if (userObject.exists) {
       Map<String, dynamic> chats = userObject.get('chats');
-      chats[receiverEmail] = chat.toMap();
+      final Map<String, dynamic>? existingChatData = chats[receiverEmail];
 
-      await userDocRef.update({'chats': chats});
+      if (existingChatData != null) {
+        // If the chat exists, merge new messages with existing ones
+        List<dynamic> existingMessagesData = existingChatData['messages'];
+        List<Map<String, dynamic>> existingMessages =
+            List.from(existingMessagesData);
+
+        // Append new messages to existing messages
+        existingMessages.addAll(chat.messages.map((message) => message.toMap()));
+
+        // Update the chat in Firebase
+        chats[receiverEmail]['messages'] = existingMessages;
+        await userDocRef.update({'chats': chats});
+      } else {
+        // If the chat does not exist, create a new entry with new messages
+        chats[receiverEmail] = chat.toMap();
+        await userDocRef.update({'chats': chats});
+      }
+
       print("Message added successfully.");
     } else {
       print("User not found in Firebase.");
@@ -166,6 +205,7 @@ Future<void> updateChatInFirebase(
     print("Failed to update the chat: $error");
   }
 }
+
 
 Future<List<Map<String, dynamic>>> getMessagesBetweenUsers(
     String userEmail, String receiverEmail) async {
