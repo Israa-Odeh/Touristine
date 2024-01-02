@@ -16,7 +16,6 @@ class Chat {
     };
   }
 }
-
 class Message {
   final String text;
   final DateTime dateTime;

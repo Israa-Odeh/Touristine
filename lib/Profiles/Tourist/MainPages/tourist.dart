@@ -41,23 +41,6 @@ class _TouristAppState extends State<TouristProfile> {
   @override
   void initState() {
     super.initState();
-
-    // Extract the user email from the token.
-    Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
-    String userEmail = decodedToken['email'];
-
-    // Retrieve the UserProvider from the context.
-    final UserProvider userProvider = context.read<UserProvider>();
-
-    // Initiate a chatting document for the user.
-    final User user = User(
-        email: userEmail,
-        firstName: userProvider.firstName,
-        lastName: userProvider.lastName,
-        imagePath: userProvider.imageURL ?? "",
-        chats: {});
-    addUserToFirebase(user);
-
     fetchData = fetchAllData();
   }
 
