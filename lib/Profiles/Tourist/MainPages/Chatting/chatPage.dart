@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:jwt_decode/jwt_decode.dart';
-import 'package:provider/provider.dart';
-import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chattingFunctions.dart';
-import 'package:touristine/UserData/userProvider.dart';
 
 class ChatPage extends StatefulWidget {
   final String token;
@@ -152,21 +148,6 @@ class _ChatPageState extends State<ChatPage> {
       Future.delayed(const Duration(milliseconds: 100), () {
         scrollController.jumpTo(scrollController.position.maxScrollExtent);
       });
-
-      // Extract the user email from the token.
-      Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
-      String userEmail = decodedToken['email'];
-
-      // Retrieve the UserProvider from the context.
-      final UserProvider userProvider = context.read<UserProvider>();
-
-      final User user = User(
-          email: userEmail,
-          firstName: userProvider.firstName,
-          lastName: userProvider.lastName,
-          imagePath: userProvider.imageURL ?? "",
-          chats: {});
-      sendMessage(user, widget.adminEmail, message);
     }
   }
 }
