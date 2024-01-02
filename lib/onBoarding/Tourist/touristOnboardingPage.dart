@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:jwt_decode/jwt_decode.dart';
-import 'package:provider/provider.dart';
-import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chattingFunctions.dart';
-import 'package:touristine/UserData/userProvider.dart';
 import 'package:touristine/onBoarding/Page_Screen/onboardingPage.dart';
 
 class TouristOnBoardingPage extends StatefulWidget {
@@ -20,26 +16,6 @@ class TouristOnBoardingPage extends StatefulWidget {
 }
 
 class _TouristOnBoardingPageState extends State<TouristOnBoardingPage> {
-  @override
-  void initState() {
-    super.initState();
-    // Extract the user email from the token.
-    Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
-    String userEmail = decodedToken['email'];
-
-    // Retrieve the UserProvider from the context.
-    final UserProvider userProvider = context.read<UserProvider>();
-
-    // Initiate a chatting document for the user.
-    final User user = User(
-        email: userEmail,
-        firstName: userProvider.firstName,
-        lastName: userProvider.lastName,
-        imagePath: userProvider.imageURL ?? "",
-        chats: {});
-    addUserToFirebase(user);
-  }
-
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
