@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:provider/provider.dart';
+import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chatPage.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chattingFunctions.dart';
 import 'package:touristine/UserData/userProvider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class ChattingList extends StatefulWidget {
   final String token;
@@ -16,6 +19,7 @@ class ChattingList extends StatefulWidget {
 }
 
 class _ChattingListState extends State<ChattingList> {
+  bool isLoading = true;
   List<Map<String, dynamic>> admins = [
     {
       'email': 'IsraaOdeh@gmail.com',
@@ -31,8 +35,47 @@ class _ChattingListState extends State<ChattingList> {
       'image':
           'https://media.cntraveler.com/photos/639c6b27fe765cefd6b219b7/16:9/w_1920%2Cc_limit/Switzerland_GettyImages-1293043653.jpg'
     },
-    // Add more admins as needed
   ];
+
+  Future<void> getAdminsData() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    final url = Uri.parse('https://touristine.onrender.com/get-admins-Data');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Bearer ${widget.token}',
+        },
+      );
+      if (mounted) {
+        if (response.statusCode == 200) {
+        } else if (response.statusCode == 500) {
+          final Map<String, dynamic> responseData = json.decode(response.body);
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+        } else {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, 'Error fetching admins list',
+              bottomMargin: 0);
+        }
+      }
+    } catch (error) {
+      if (mounted) {
+        print('Error fetching plans: $error');
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
 
   List<Map<String, dynamic>> filteredAdmins = [];
   late FocusNode focusNode;
