@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chatPage.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chattingFunctions.dart';
+import 'package:touristine/UserData/userProvider.dart';
 
 class ChattingList extends StatefulWidget {
   final String token;
@@ -37,6 +40,18 @@ class _ChattingListState extends State<ChattingList> {
   @override
   void initState() {
     super.initState();
+    // Retrieve the UserProvider from the context.
+    final UserProvider userProvider = context.read<UserProvider>();
+
+    // Initiate a chatting document for the user.
+    final User user = User(
+        email: "Israa.K.Odeh@gmail.com",
+        firstName: userProvider.firstName,
+        lastName: userProvider.lastName,
+        imagePath: userProvider.imageURL ?? "",
+        chats: {});
+    addUserToFirebase(user);
+
     // Retrieve list of admins.
     filteredAdmins = List.from(admins);
     focusNode = FocusNode();
