@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:jwt_decode/jwt_decode.dart';
-import 'package:provider/provider.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chatPage.dart';
-import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chattingFunctions.dart';
-import 'package:touristine/UserData/userProvider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -207,22 +203,6 @@ class _ChattingListState extends State<ChattingList> {
                                 color: Color.fromARGB(255, 0, 0, 0),
                               ),
                               onPressed: () {
-                                // Extract the user email from the token.
-                                Map<String, dynamic> decodedToken =
-                                    Jwt.parseJwt(widget.token);
-                                String userEmail = decodedToken['email'];
-
-                                // Retrieve the UserProvider from the context.
-                                final UserProvider userProvider =
-                                    context.read<UserProvider>();
-
-                                final User user = User(
-                                    email: userEmail,
-                                    firstName: userProvider.firstName,
-                                    lastName: userProvider.lastName,
-                                    imagePath: userProvider.imageURL ?? "",
-                                    chats: {});
-                                addChatToUser(user, admin['email']);
                                 // Navigate to the ChatPage passing the admin's name.
                                 Navigator.push(
                                   context,
