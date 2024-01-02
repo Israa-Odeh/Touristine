@@ -173,7 +173,6 @@ class _ChattingListState extends State<ChattingList> {
                                 final UserProvider userProvider =
                                     context.read<UserProvider>();
 
-                                // Initiate a chatting document for the user.
                                 final User user = User(
                                     email: userEmail,
                                     firstName: userProvider.firstName,
