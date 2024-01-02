@@ -272,31 +272,6 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
                     ),
                   ),
                 ),
-                // hideResendBTN
-                //     ? const SizedBox(height: 60)
-                //     : const SizedBox(height: 15),
-
-                // Delete the return back BTN.
-                // Visibility(
-                //   visible: !hideResendBTN,
-                //   child: Padding(
-                //     padding: const EdgeInsets.only(right: 320.0),
-                //     child: IconButton(
-                //       icon: const FaIcon(
-                //         FontAwesomeIcons.arrowLeft,
-                //         color: Color(0xFF1E889E),
-                //         size: 30,
-                //       ),
-                //       onPressed: () {
-                //         Navigator.of(context).push(
-                //           MaterialPageRoute(
-                //             builder: (context) => SignupPage(),
-                //           ),
-                //         );
-                //       },
-                //     ),
-                //   ),
-                // ),
               ],
             ),
           ),
