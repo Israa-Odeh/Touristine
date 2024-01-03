@@ -21,16 +21,16 @@ class _ChattingListState extends State<ChattingList> {
   bool isLoading = true;
   List<Map<String, dynamic>> admins = [
     {
-      'email': 'IsraaOdeh@gmail.com',
-      'firstName': 'Israa',
-      'lastName': 'Odeh',
+      'email': 's11924400@stu.najah.edu',
+      'firstName': 'Jenan',
+      'lastName': 'AbuAlrub',
       'image':
           'https://zamzam.com/blog/wp-content/uploads/2021/08/shutterstock_1745937893.jpg'
     },
     {
-      'email': 'JenanAbuAlrub@gmail.com',
-      'firstName': 'Jenan',
-      'lastName': 'AbuAlrub',
+      'email': 's11927086@stu.najah.edu',
+      'firstName': 'Israa',
+      'lastName': 'Odeh',
       'image':
           'https://media.cntraveler.com/photos/639c6b27fe765cefd6b219b7/16:9/w_1920%2Cc_limit/Switzerland_GettyImages-1293043653.jpg'
     },

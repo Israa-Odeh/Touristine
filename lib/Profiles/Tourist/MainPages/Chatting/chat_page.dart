@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:jwt_decode/jwt_decode.dart';
-import 'package:image_picker/image_picker.dart';
 
 class ChatPage extends StatefulWidget {
   final String token;
@@ -47,20 +45,22 @@ class _ChatPageState extends State<ChatPage> {
     DocumentReference chatRef = _firestore.collection('chats').doc(chatId);
 
     chatSubscription = chatRef.snapshots().listen((chatSnapshot) {
-      List<dynamic>? fetchedMessages = (chatSnapshot.data()
-          as Map<String, dynamic>?)?['messages'] as List<dynamic>?;
+      List<dynamic>? fetchedMessages =
+          (chatSnapshot.data() as Map<String, dynamic>?)?['messages']
+              as List<dynamic>?;
 
       if (fetchedMessages != null) {
         List<Map<String, dynamic>> formattedMessages =
             List<Map<String, dynamic>>.from(
-          fetchedMessages.map((message) => Map<String, dynamic>.from(message)),
+          fetchedMessages.map((message) =>
+              Map<String, dynamic>.from(message)),
         );
         setState(() {
           chatMessages = formattedMessages;
         });
 
         // Scroll to the bottom after loading messages
-        WidgetsBinding.instance?.addPostFrameCallback((_) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
           Future.delayed(const Duration(milliseconds: 300), () {
             scrollController.animateTo(
               scrollController.position.maxScrollExtent,
@@ -136,24 +136,11 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Widget buildInputField() {
-    return Row(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 15.0, left: 5.0),
-          child: IconButton(
-            icon: const FaIcon(
-              FontAwesomeIcons.image,
-              color: Color(0xFF1E889E),
-            ),
-            onPressed: () {
-              pickImage();
-            },
-          ),
-        ),
-        Expanded(
-          child: Padding(
-            padding:
-                const EdgeInsets.only(right: 10.0, left: 10.0, bottom: 30.0),
+    return Padding(
+      padding: const EdgeInsets.only(right: 20.0, left: 20.0, bottom: 30.0),
+      child: Row(
+        children: [
+          Expanded(
             child: TextField(
               style: const TextStyle(
                 fontSize: 20,
@@ -173,10 +160,7 @@ class _ChatPageState extends State<ChatPage> {
               maxLines: 5,
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 15.0, right: 20.0),
-          child: IconButton(
+          IconButton(
             icon: const FaIcon(
               FontAwesomeIcons.paperPlane,
               color: Color(0xFF1E889E),
@@ -185,83 +169,9 @@ class _ChatPageState extends State<ChatPage> {
               sendUserMessage();
             },
           ),
-        ),
-      ],
+        ],
+      ),
     );
-  }
-
-  Future<void> pickImage() async {
-    final ImagePicker _picker = ImagePicker();
-    final XFile? image = await _picker.pickImage(
-      source: ImageSource.gallery,
-    );
-
-    if (image != null) {
-      sendImageMessage(File(image.path));
-    }
-  }
-
-  void sendUserMessage() {
-    String message = messageController.text;
-    if (message.isNotEmpty) {
-      messageController.clear();
-      sendMessage({'message': message});
-    }
-  }
-
-  void sendImageMessage(File imageFile) {
-    sendMessage({'image': imageFile.path});
-  }
-
-  void sendMessage(Map<String, dynamic> messageData) {
-    // Update the local state with the new message
-    setState(() {
-      chatMessages.add({
-        'sender': Jwt.parseJwt(widget.token)['email'],
-        'date': DateFormat('dd/MM/yyyy').format(DateTime.now().toLocal()),
-        'time': DateFormat('HH:mm:ss.SSS').format(DateTime.now().toLocal()),
-        ...messageData,
-      });
-    });
-
-    // Scroll to the bottom after adding a new message
-    Future.delayed(const Duration(milliseconds: 200), () {
-      scrollController.animateTo(
-        scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeOut,
-      );
-    });
-
-    // Store message in Firebase
-    storeMessageInFirebase(messageData);
-  }
-
-  Future<void> storeMessageInFirebase(Map<String, dynamic> messageData) async {
-    Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
-    String userEmail = decodedToken['email'];
-    String chatId = getChatId(widget.adminEmail, userEmail);
-
-    try {
-      // Create a reference to the chat document
-      DocumentReference chatRef = _firestore.collection('chats').doc(chatId);
-
-      // Update the 'messages' field in the document
-      await chatRef.update({
-        'messages': FieldValue.arrayUnion([
-          {
-            'sender': userEmail,
-            'date': DateFormat('dd/MM/yyyy').format(DateTime.now().toLocal()),
-            'time': DateFormat('HH:mm:ss.SSS').format(DateTime.now().toLocal()),
-            ...messageData,
-          },
-        ]),
-      });
-
-      print('Message stored in Firebase successfully!');
-    } catch (e) {
-      print('Error storing message in Firebase: $e');
-    }
   }
 
   Widget buildMessageItem(int index) {
@@ -282,20 +192,73 @@ class _ChatPageState extends State<ChatPage> {
           borderRadius: BorderRadius.circular(15.0),
         ),
         child: ListTile(
-          title: chatMessages[index]['image'] == null
-              ? Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text(
-                    chatMessages[index]['message'],
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: isTourist ? Colors.white : Colors.black),
-                  ),
-                )
-              : Image.file(File(chatMessages[index]['image'])),
+          title: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Text(
+              chatMessages[index]['message'],
+              style: TextStyle(
+                  fontSize: 20, color: isTourist ? Colors.white : Colors.black),
+            ),
+          ),
         ),
       ),
     );
+  }
+
+  void sendUserMessage() {
+    String message = messageController.text;
+    if (message.isNotEmpty) {
+      messageController.clear();
+
+      // Update the local state with the new message
+      setState(() {
+        chatMessages.add({
+          'sender': Jwt.parseJwt(widget.token)['email'],
+          'message': message,
+          'date': DateFormat('dd/MM/yyyy').format(DateTime.now().toLocal()),
+          'time': DateFormat('HH:mm:ss.SSS').format(DateTime.now().toLocal()),
+        });
+      });
+
+      // Scroll to the bottom after adding a new message
+      Future.delayed(const Duration(milliseconds: 200), () {
+        scrollController.animateTo(
+          scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeOut,
+        );
+      });
+
+      // Store message in Firebase
+      storeMessageInFirebase(message);
+    }
+  }
+
+  Future<void> storeMessageInFirebase(String message) async {
+    Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
+    String userEmail = decodedToken['email'];
+    String chatId = getChatId(widget.adminEmail, userEmail);
+
+    try {
+      // Create a reference to the chat document
+      DocumentReference chatRef = _firestore.collection('chats').doc(chatId);
+
+      // Update the 'messages' field in the document
+      await chatRef.update({
+        'messages': FieldValue.arrayUnion([
+          {
+            'sender': userEmail,
+            'message': message,
+            'date': DateFormat('dd/MM/yyyy').format(DateTime.now().toLocal()),
+            'time': DateFormat('HH:mm:ss.SSS').format(DateTime.now().toLocal()),
+          },
+        ]),
+      });
+
+      print('Message stored in Firebase successfully!');
+    } catch (e) {
+      print('Error storing message in Firebase: $e');
+    }
   }
 
   String getChatId(String user1, String user2) {
