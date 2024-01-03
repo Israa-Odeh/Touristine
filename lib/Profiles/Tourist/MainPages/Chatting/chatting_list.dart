@@ -1,8 +1,11 @@
-import 'package:flutter/material.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chat_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
-import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chatPage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:jwt_decode/jwt_decode.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chat_message.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
 import 'dart:convert';
 
 class ChattingList extends StatefulWidget {
@@ -25,13 +28,34 @@ class _ChattingListState extends State<ChattingList> {
           'https://zamzam.com/blog/wp-content/uploads/2021/08/shutterstock_1745937893.jpg'
     },
     {
-      'email': 'JenanAbuAlrub@gmailcom.com',
+      'email': 'JenanAbuAlrub@gmail.com',
       'firstName': 'Jenan',
       'lastName': 'AbuAlrub',
       'image':
           'https://media.cntraveler.com/photos/639c6b27fe765cefd6b219b7/16:9/w_1920%2Cc_limit/Switzerland_GettyImages-1293043653.jpg'
     },
   ];
+
+  late FocusNode focusNode;
+  Color iconColor = Colors.grey;
+  List<Map<String, dynamic>> filteredAdmins = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    focusNode = FocusNode();
+    focusNode.addListener(() {
+      setState(() {
+        iconColor = focusNode.hasFocus ? const Color(0xFF1E889E) : Colors.grey;
+      });
+    });
+
+    // Retrieve list of admins.
+    // getAdminsData();
+    // THis will be deleted.
+    filteredAdmins = List.from(admins);
+  }
 
   Future<void> getAdminsData() async {
     setState(() {
@@ -50,6 +74,12 @@ class _ChattingListState extends State<ChattingList> {
       );
       if (mounted) {
         if (response.statusCode == 200) {
+          // Process the response data if needed
+          setState(() {
+            admins =
+                List<Map<String, dynamic>>.from(json.decode(response.body));
+            filteredAdmins = List.from(admins);
+          });
         } else if (response.statusCode == 500) {
           final Map<String, dynamic> responseData = json.decode(response.body);
           // ignore: use_build_context_synchronously
@@ -62,7 +92,7 @@ class _ChattingListState extends State<ChattingList> {
       }
     } catch (error) {
       if (mounted) {
-        print('Error fetching plans: $error');
+        print('Error fetching admins: $error');
       }
     } finally {
       if (mounted) {
@@ -71,24 +101,6 @@ class _ChattingListState extends State<ChattingList> {
         });
       }
     }
-  }
-
-  List<Map<String, dynamic>> filteredAdmins = [];
-  late FocusNode focusNode;
-  Color iconColor = Colors.grey;
-
-  @override
-  void initState() {
-    super.initState();
-
-    // Retrieve list of admins.
-    filteredAdmins = List.from(admins);
-    focusNode = FocusNode();
-    focusNode.addListener(() {
-      setState(() {
-        iconColor = focusNode.hasFocus ? const Color(0xFF1E889E) : Colors.grey;
-      });
-    });
   }
 
   void filterAdmins(String query) {
@@ -109,6 +121,81 @@ class _ChattingListState extends State<ChattingList> {
     });
   }
 
+  void openChatWithAdmin(Map<String, dynamic> admin) async {
+    // Extract the tourist email from the token.
+    Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
+    String userEmail = decodedToken['email'];
+    String adminEmail = admin['email'];
+
+    DocumentSnapshot<Map<String, dynamic>> chatDoc =
+        await getChat(userEmail, adminEmail);
+
+    if (chatDoc.exists) {
+      // Chat exists, retrieve and print messages
+      List<dynamic> messages = chatDoc['messages'];
+      print('Chat already exists. Messages:');
+      for (var message in messages) {
+        ChatMessage chatMessage = ChatMessage(
+          sender: message['sender'],
+          message: message['message'],
+          date: message['date'],
+          time: message['time'],
+        );
+        print(
+            '${chatMessage.sender}: ${chatMessage.message} - Date: ${chatMessage.date}, Time: ${chatMessage.time}');
+      }
+    } else {
+      // Chat doesn't exist, initiate a new chat.
+      await createChatDocument(userEmail, adminEmail);
+      print('New chat created.');
+    }
+
+    // Navigate to the ChatPage passing the admin's name.
+    // ignore: use_build_context_synchronously
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChatPage(
+          adminName: '${admin['firstName']} ${admin['lastName']}',
+          adminEmail: admin['email'],
+          adminImage: admin['image'],
+          token: widget.token,
+        ),
+      ),
+    );
+  }
+
+  Future<DocumentSnapshot<Map<String, dynamic>>> getChat(
+      String tourist, String admin) async {
+    String chatId = getChatId(tourist, admin);
+    DocumentSnapshot<Map<String, dynamic>> chatDoc =
+        await FirebaseFirestore.instance.collection('chats').doc(chatId).get();
+
+    return chatDoc;
+  }
+
+  Future<void> createChatDocument(String user1, String user2) async {
+    String chatId = getChatId(user1, user2);
+
+    try {
+      await FirebaseFirestore.instance.collection('chats').doc(chatId).set({
+        'tourist': user1,
+        'admin': user2,
+        'messages': [], // Initialize with an empty list for messages
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+
+      print('Chat document created successfully.');
+    } catch (e) {
+      print('Error creating chat document: $e');
+    }
+  }
+
+  String getChatId(String user1, String user2) {
+    List<String> users = [user1, user2]..sort();
+    return "${users[0]}_${users[1]}";
+  }
+
   @override
   void dispose() {
     focusNode.dispose();
@@ -126,7 +213,6 @@ class _ChattingListState extends State<ChattingList> {
               fit: BoxFit.cover,
             ),
           ),
-          // Content
           Column(
             children: [
               const SizedBox(height: 40),
@@ -203,19 +289,7 @@ class _ChattingListState extends State<ChattingList> {
                                 color: Color.fromARGB(255, 0, 0, 0),
                               ),
                               onPressed: () {
-                                // Navigate to the ChatPage passing the admin's name.
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ChatPage(
-                                      adminName:
-                                          '${admin['firstName']} ${admin['lastName']}',
-                                      adminEmail: admin['email'],
-                                      adminImage: admin['image'],
-                                      token: widget.token,
-                                    ),
-                                  ),
-                                );
+                                openChatWithAdmin(admin);
                               },
                             ),
                           ],
