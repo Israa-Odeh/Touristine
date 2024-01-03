@@ -290,6 +290,22 @@ class _ChatPageState extends State<ChatPage> {
     String sender = chatMessages[index]['sender'];
     bool isTourist = sender == Jwt.parseJwt(widget.token)['email'];
 
+    DateTime messageDate =
+        DateFormat('dd/MM/yyyy').parse(chatMessages[index]['date']);
+    String formattedTime = DateFormat('HH:mm')
+        .format(DateFormat('HH:mm:ss.SSS').parse(chatMessages[index]['time']));
+
+    DateTime today = DateTime.now();
+
+    String formattedDate;
+    if (isSameDay(messageDate, today)) {
+      formattedDate = '';
+    } else {
+      formattedDate = DateFormat('dd/MM/yyyy').format(messageDate);
+    }
+
+    String formattedDateTime = '$formattedDate${formattedDate.isEmpty? "": " AT "}$formattedTime';
+
     if (chatMessages[index]['imageUrl'] != null) {
       return Padding(
         padding: EdgeInsets.only(
@@ -300,7 +316,11 @@ class _ChatPageState extends State<ChatPage> {
         ),
         child: InkWell(
           onTap: () {
-            showImageDialog(chatMessages[index]['imageUrl']);
+            String imageUrl = chatMessages[index]['imageUrl'];
+            String date = chatMessages[index]['date'];
+            String time = chatMessages[index]['time'];
+
+            showImageDialog(imageUrl, date, time);
           },
           child: SizedBox(
             height: 200,
@@ -331,15 +351,27 @@ class _ChatPageState extends State<ChatPage> {
             borderRadius: BorderRadius.circular(15.0),
           ),
           child: ListTile(
-            title: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(
-                chatMessages[index]['message'],
-                style: TextStyle(
-                  fontSize: 20,
-                  color: isTourist ? Colors.white : Colors.black,
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Text(
+                    chatMessages[index]['message'],
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: isTourist ? Colors.white : Colors.black,
+                    ),
+                  ),
                 ),
-              ),
+                Text(
+                  formattedDateTime,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: isTourist ? Colors.white70 : Colors.black54,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -347,10 +379,30 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  void showImageDialog(String imageUrl) {
+  bool isSameDay(DateTime date1, DateTime date2) {
+    return date1.year == date2.year &&
+        date1.month == date2.month &&
+        date1.day == date2.day;
+  }
+
+  void showImageDialog(String imageUrl, String date, String time) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        DateTime imageDateTime =
+            DateFormat('dd/MM/yyyy HH:mm:ss.SSS').parse('$date $time');
+        DateTime today = DateTime.now();
+
+        String formattedDate;
+        if (isSameDay(imageDateTime, today)) {
+          formattedDate = '';
+        } else {
+          formattedDate = DateFormat('dd/MM/yyyy').format(imageDateTime);
+        }
+
+        String formattedDateTime =
+            '$formattedDate${formattedDate.isEmpty? "": " AT "}${DateFormat('HH:mm').format(imageDateTime)}';
+
         return Dialog(
           child: Stack(
             children: [
@@ -383,6 +435,25 @@ class _ChatPageState extends State<ChatPage> {
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 8,
+                left: 8,
+                child: Container(
+                  padding: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    color: Colors.black54,
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: Text(
+                    formattedDateTime,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
