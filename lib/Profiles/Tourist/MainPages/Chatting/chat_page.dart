@@ -42,8 +42,7 @@ class _ChatPageState extends State<ChatPage> {
     DocumentSnapshot chatSnapshot =
         await _firestore.collection('chats').doc(chatId).get();
     List<dynamic> fetchedMessages = (chatSnapshot.data()
-            as Map<String, dynamic>?)?['messages'] as List<dynamic> ??
-        [];
+            as Map<String, dynamic>?)?['messages'] as List<dynamic>;
     List<Map<String, dynamic>> formattedMessages =
         List<Map<String, dynamic>>.from(
       fetchedMessages.map((message) => Map<String, dynamic>.from(message)),
@@ -53,7 +52,7 @@ class _ChatPageState extends State<ChatPage> {
     });
 
     // Scroll to the bottom after loading messages
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(const Duration(milliseconds: 300), () {
         scrollController.animateTo(
           scrollController.position.maxScrollExtent,
