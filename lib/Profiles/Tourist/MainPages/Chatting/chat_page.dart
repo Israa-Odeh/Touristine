@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -27,6 +29,7 @@ class _ChatPageState extends State<ChatPage> {
   List<Map<String, dynamic>> chatMessages = [];
   ScrollController scrollController = ScrollController();
   late FirebaseFirestore _firestore;
+  StreamSubscription<DocumentSnapshot>? chatSubscription;
 
   @override
   void initState() {
@@ -39,28 +42,42 @@ class _ChatPageState extends State<ChatPage> {
   Future<void> fetchMessages() async {
     String chatId =
         getChatId(widget.adminEmail, Jwt.parseJwt(widget.token)['email']);
-    DocumentSnapshot chatSnapshot =
-        await _firestore.collection('chats').doc(chatId).get();
-    List<dynamic> fetchedMessages = (chatSnapshot.data()
-            as Map<String, dynamic>?)?['messages'] as List<dynamic>;
-    List<Map<String, dynamic>> formattedMessages =
-        List<Map<String, dynamic>>.from(
-      fetchedMessages.map((message) => Map<String, dynamic>.from(message)),
-    );
-    setState(() {
-      chatMessages = formattedMessages;
-    });
+    DocumentReference chatRef = _firestore.collection('chats').doc(chatId);
 
-    // Scroll to the bottom after loading messages
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(const Duration(milliseconds: 300), () {
-        scrollController.animateTo(
-          scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeOut,
+    chatSubscription = chatRef.snapshots().listen((chatSnapshot) {
+      List<dynamic>? fetchedMessages =
+          (chatSnapshot.data() as Map<String, dynamic>?)?['messages']
+              as List<dynamic>?;
+
+      if (fetchedMessages != null) {
+        List<Map<String, dynamic>> formattedMessages =
+            List<Map<String, dynamic>>.from(
+          fetchedMessages.map((message) =>
+              Map<String, dynamic>.from(message)),
         );
-      });
+        setState(() {
+          chatMessages = formattedMessages;
+        });
+
+        // Scroll to the bottom after loading messages
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Future.delayed(const Duration(milliseconds: 300), () {
+            scrollController.animateTo(
+              scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeOut,
+            );
+          });
+        });
+      }
     });
+  }
+
+  @override
+  void dispose() {
+    // Cancel the subscription when the widget is disposed
+    chatSubscription?.cancel();
+    super.dispose();
   }
 
   @override
@@ -101,7 +118,7 @@ class _ChatPageState extends State<ChatPage> {
               controller: scrollController,
               child: ListView.builder(
                 controller: scrollController,
-                reverse: false, // Set reverse to false
+                reverse: false,
                 itemCount: chatMessages.length,
                 itemBuilder: (context, index) {
                   return buildMessageItem(index);
