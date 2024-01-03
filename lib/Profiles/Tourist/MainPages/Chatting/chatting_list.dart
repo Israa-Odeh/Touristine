@@ -135,12 +135,28 @@ class _ChattingListState extends State<ChattingList> {
       List<dynamic> messages = chatDoc['messages'];
       print('Chat already exists. Messages:');
       for (var message in messages) {
-        ChatMessage chatMessage = ChatMessage(
-          sender: message['sender'],
-          message: message['message'],
-          date: message['date'],
-          time: message['time'],
-        );
+        ChatMessage chatMessage;
+        if (message['image'] != null) {
+          // If the message contains an image, create a ChatMessage with the image
+          chatMessage = ChatMessage(
+            sender:
+                message['sender'] ?? '', // Provide a default value if it's null
+            message:
+                message['image'] ?? '', // Provide a default value if it's null
+            date: message['date'] ?? '', // Provide a default value if it's null
+            time: message['time'] ?? '', // Provide a default value if it's null
+          );
+        } else {
+          // If the message is text, create a ChatMessage with the text
+          chatMessage = ChatMessage(
+            sender:
+                message['sender'] ?? '', // Provide a default value if it's null
+            message: message['message'] ??
+                '', // Provide a default value if it's null
+            date: message['date'] ?? '', // Provide a default value if it's null
+            time: message['time'] ?? '', // Provide a default value if it's null
+          );
+        }
         print(
             '${chatMessage.sender}: ${chatMessage.message} - Date: ${chatMessage.date}, Time: ${chatMessage.time}');
       }
