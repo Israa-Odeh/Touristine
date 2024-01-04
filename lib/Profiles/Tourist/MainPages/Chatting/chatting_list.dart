@@ -1,9 +1,9 @@
+import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chat_message.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chat_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:jwt_decode/jwt_decode.dart';
-import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chat_message.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'dart:convert';
@@ -19,26 +19,10 @@ class ChattingList extends StatefulWidget {
 
 class _ChattingListState extends State<ChattingList> {
   bool isLoading = true;
-  List<Map<String, dynamic>> admins = [
-    {
-      'email': 's11924400@stu.najah.edu',
-      'firstName': 'Jenan',
-      'lastName': 'AbuAlrub',
-      'image':
-          'https://zamzam.com/blog/wp-content/uploads/2021/08/shutterstock_1745937893.jpg'
-    },
-    {
-      'email': 's11927086@stu.najah.edu',
-      'firstName': 'Israa',
-      'lastName': 'Odeh',
-      'image':
-          'https://media.cntraveler.com/photos/639c6b27fe765cefd6b219b7/16:9/w_1920%2Cc_limit/Switzerland_GettyImages-1293043653.jpg'
-    },
-  ];
-
   late FocusNode focusNode;
   Color iconColor = Colors.grey;
   List<Map<String, dynamic>> filteredAdmins = [];
+  List<Map<String, dynamic>> admins = [];
 
   @override
   void initState() {
@@ -51,11 +35,13 @@ class _ChattingListState extends State<ChattingList> {
       });
     });
 
-    // Retrieve list of admins.
+    // Retrieve available admins for chatting.
     getAdminsData();
   }
 
   Future<void> getAdminsData() async {
+    if (!mounted) return;
+
     setState(() {
       isLoading = true;
     });
@@ -72,13 +58,9 @@ class _ChattingListState extends State<ChattingList> {
       );
       if (mounted) {
         if (response.statusCode == 200) {
-          // Process the response data
           final Map<String, dynamic> responseData = json.decode(response.body);
-          final List<Map<String, dynamic>> adminsData =
-              List<Map<String, dynamic>>.from(responseData['admins']);
-
+          admins = List<Map<String, dynamic>>.from(responseData['admins']);
           setState(() {
-            admins = adminsData;
             filteredAdmins = List.from(admins);
           });
           print(admins);
@@ -88,7 +70,7 @@ class _ChattingListState extends State<ChattingList> {
           showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
         } else {
           // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, 'Error fetching admins list',
+          showCustomSnackBar(context, 'Error fetching available admins',
               bottomMargin: 0);
         }
       }
@@ -126,37 +108,33 @@ class _ChattingListState extends State<ChattingList> {
   void openChatWithAdmin(Map<String, dynamic> admin) async {
     // Extract the tourist email from the token.
     Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
-    String userEmail = decodedToken['email'];
+    String touristEmail = decodedToken['email'];
     String adminEmail = admin['email'];
 
     DocumentSnapshot<Map<String, dynamic>> chatDoc =
-        await getChat(userEmail, adminEmail);
+        await getChat(touristEmail, adminEmail);
 
     if (chatDoc.exists) {
-      // Chat exists, retrieve and print messages
+      // Chat exists, retrieve and print messages.
       List<dynamic> messages = chatDoc['messages'];
       print('Chat already exists. Messages:');
       for (var message in messages) {
         ChatMessage chatMessage;
         if (message['image'] != null) {
-          // If the message contains an image, create a ChatMessage with the image
+          // If the message contains an image, create a ChatMessage with the image.
           chatMessage = ChatMessage(
-            sender:
-                message['sender'] ?? '', // Provide a default value if it's null
-            message:
-                message['image'] ?? '', // Provide a default value if it's null
-            date: message['date'] ?? '', // Provide a default value if it's null
-            time: message['time'] ?? '', // Provide a default value if it's null
+            sender: message['sender'] ?? '',
+            message: message['image'] ?? '',
+            date: message['date'] ?? '',
+            time: message['time'] ?? '',
           );
         } else {
-          // If the message is text, create a ChatMessage with the text
+          // If the message is text, create a ChatMessage with the text.
           chatMessage = ChatMessage(
-            sender:
-                message['sender'] ?? '', // Provide a default value if it's null
-            message: message['message'] ??
-                '', // Provide a default value if it's null
-            date: message['date'] ?? '', // Provide a default value if it's null
-            time: message['time'] ?? '', // Provide a default value if it's null
+            sender: message['sender'] ?? '',
+            message: message['message'] ?? '',
+            date: message['date'] ?? '',
+            time: message['time'] ?? '',
           );
         }
         print(
@@ -164,11 +142,11 @@ class _ChattingListState extends State<ChattingList> {
       }
     } else {
       // Chat doesn't exist, initiate a new chat.
-      await createChatDocument(userEmail, adminEmail);
+      await createChatDocument(touristEmail, adminEmail);
       print('New chat created.');
     }
 
-    // Navigate to the ChatPage passing the admin's name.
+    // Navigate to the ChatPage.
     // ignore: use_build_context_synchronously
     Navigator.push(
       context,
@@ -192,17 +170,16 @@ class _ChattingListState extends State<ChattingList> {
     return chatDoc;
   }
 
-  Future<void> createChatDocument(String user1, String user2) async {
-    String chatId = getChatId(user1, user2);
-
+  Future<void> createChatDocument(
+      String touristEmail, String adminEmail) async {
+    String chatId = getChatId(touristEmail, adminEmail);
     try {
       await FirebaseFirestore.instance.collection('chats').doc(chatId).set({
-        'tourist': user1,
-        'admin': user2,
-        'messages': [], // Initialize with an empty list for messages
+        'tourist': touristEmail,
+        'admin': adminEmail,
+        'messages': [], // Initialize with an empty list of messages.
         'timestamp': FieldValue.serverTimestamp(),
       });
-
       print('Chat document created successfully.');
     } catch (e) {
       print('Error creating chat document: $e');
@@ -234,7 +211,7 @@ class _ChattingListState extends State<ChattingList> {
           Column(
             children: [
               if (!isLoading) const SizedBox(height: 40),
-              if (!isLoading)
+              if (!isLoading && filteredAdmins.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: TextField(
@@ -266,72 +243,93 @@ class _ChattingListState extends State<ChattingList> {
                               AlwaysStoppedAnimation<Color>(Color(0xFF1E889E)),
                         ),
                       )
-                    : ListView.builder(
-                        itemCount: filteredAdmins.length,
-                        itemBuilder: (context, index) {
-                          final admin = filteredAdmins[index];
-                          return Card(
-                            elevation: 5,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
+                    : filteredAdmins.isEmpty
+                        ? Center(
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 110),
+                                Image.asset(
+                                  'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
+                                  fit: BoxFit.cover,
+                                ),
+                                const Text(
+                                  'No chats found',
+                                  style: TextStyle(
+                                    fontSize: 40,
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: 'Gabriola',
+                                    color: Color.fromARGB(255, 23, 99, 114),
+                                  ),
+                                ),
+                              ],
                             ),
-                            color: const Color.fromARGB(240, 255, 255, 255),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Stack(
-                                alignment: Alignment.bottomRight,
-                                children: [
-                                  Row(
+                          )
+                        : ListView.builder(
+                            itemCount: filteredAdmins.length,
+                            itemBuilder: (context, index) {
+                              final admin = filteredAdmins[index];
+                              return Card(
+                                elevation: 5,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                color: const Color.fromARGB(240, 255, 255, 255),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Stack(
+                                    alignment: Alignment.bottomRight,
                                     children: [
-                                      CircleAvatar(
-                                        backgroundColor: Colors.white,
-                                        radius: 50,
-                                        backgroundImage: (admin['image'] !=
-                                                    null &&
-                                                admin['image'] != "")
-                                            ? NetworkImage(admin['image'])
-                                            : const AssetImage(
-                                                    "assets/Images/Profiles/Tourist/DefaultProfileImage.png")
-                                                as ImageProvider<Object>?,
-                                      ),
-                                      const SizedBox(width: 16),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                      Row(
                                         children: [
-                                          Text(
-                                            '${admin['firstName']} ${admin['lastName']}',
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20,
-                                            ),
+                                          CircleAvatar(
+                                            backgroundColor: Colors.white,
+                                            radius: 50,
+                                            backgroundImage: (admin['image'] !=
+                                                        null &&
+                                                    admin['image'] != "")
+                                                ? NetworkImage(admin['image'])
+                                                : const AssetImage(
+                                                        "assets/Images/Profiles/Tourist/DefaultProfileImage.png")
+                                                    as ImageProvider<Object>?,
                                           ),
-                                          const SizedBox(height: 20),
-                                          Text(
-                                            admin['email'],
-                                            style: const TextStyle(
-                                              color: Colors.grey,
-                                            ),
+                                          const SizedBox(width: 16),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                '${admin['firstName']} ${admin['lastName']}',
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 20,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 20),
+                                              Text(
+                                                admin['email'],
+                                                style: const TextStyle(
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ],
                                       ),
+                                      IconButton(
+                                        icon: const FaIcon(
+                                          FontAwesomeIcons.facebookMessenger,
+                                          color: Color.fromARGB(255, 0, 0, 0),
+                                        ),
+                                        onPressed: () {
+                                          openChatWithAdmin(admin);
+                                        },
+                                      ),
                                     ],
                                   ),
-                                  IconButton(
-                                    icon: const FaIcon(
-                                      FontAwesomeIcons.facebookMessenger,
-                                      color: Color.fromARGB(255, 0, 0, 0),
-                                    ),
-                                    onPressed: () {
-                                      openChatWithAdmin(admin);
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                                ),
+                              );
+                            },
+                          ),
               ),
             ],
           ),

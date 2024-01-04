@@ -1,13 +1,12 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:jwt_decode/jwt_decode.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'dart:async';
 import 'dart:io';
-
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
-import 'package:jwt_decode/jwt_decode.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 class ChatPage extends StatefulWidget {
   final String token;
@@ -15,13 +14,12 @@ class ChatPage extends StatefulWidget {
   final String adminEmail;
   final String? adminImage;
 
-  const ChatPage({
-    Key? key,
-    required this.adminName,
-    required this.adminEmail,
-    required this.adminImage,
-    required this.token,
-  }) : super(key: key);
+  const ChatPage(
+      {super.key,
+      required this.token,
+      required this.adminName,
+      required this.adminEmail,
+      this.adminImage});
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -31,24 +29,24 @@ class _ChatPageState extends State<ChatPage> {
   TextEditingController messageController = TextEditingController();
   List<Map<String, dynamic>> chatMessages = [];
   ScrollController scrollController = ScrollController();
-  late FirebaseFirestore _firestore;
-  late FirebaseStorage _storage;
-  late ImagePicker _imagePicker;
+  late FirebaseFirestore firestore;
+  late FirebaseStorage storage;
+  late ImagePicker imagePicker;
   StreamSubscription<DocumentSnapshot>? chatSubscription;
 
   @override
   void initState() {
     super.initState();
-    _firestore = FirebaseFirestore.instance;
-    _storage = FirebaseStorage.instance;
-    _imagePicker = ImagePicker();
+    firestore = FirebaseFirestore.instance;
+    storage = FirebaseStorage.instance;
+    imagePicker = ImagePicker();
     fetchMessages();
   }
 
   Future<void> fetchMessages() async {
     String chatId =
         getChatId(widget.adminEmail, Jwt.parseJwt(widget.token)['email']);
-    DocumentReference chatRef = _firestore.collection('chats').doc(chatId);
+    DocumentReference chatRef = firestore.collection('chats').doc(chatId);
 
     chatSubscription = chatRef.snapshots().listen((chatSnapshot) {
       List<dynamic>? fetchedMessages = (chatSnapshot.data()
@@ -62,7 +60,6 @@ class _ChatPageState extends State<ChatPage> {
         setState(() {
           chatMessages = formattedMessages;
         });
-
         WidgetsBinding.instance.addPostFrameCallback((_) {
           Future.delayed(const Duration(milliseconds: 300), () {
             scrollController.animateTo(
@@ -82,6 +79,7 @@ class _ChatPageState extends State<ChatPage> {
     super.dispose();
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
@@ -200,13 +198,11 @@ class _ChatPageState extends State<ChatPage> {
   void pickAndUploadImage() async {
     try {
       final XFile? pickedFile =
-          await _imagePicker.pickImage(source: ImageSource.gallery);
+          await imagePicker.pickImage(source: ImageSource.gallery);
 
       if (pickedFile != null) {
         File imageFile = File(pickedFile.path);
-
         String imageUrl = await uploadImage(imageFile);
-
         sendUserMessage(imageUrl);
       }
     } catch (e) {
@@ -218,7 +214,7 @@ class _ChatPageState extends State<ChatPage> {
     try {
       String fileName = DateTime.now().millisecondsSinceEpoch.toString();
       Reference storageReference =
-          _storage.ref().child('chat_images/$fileName.jpg');
+          storage.ref().child('chat_images/$fileName.jpg');
       UploadTask uploadTask = storageReference.putFile(imageFile);
 
       await uploadTask.whenComplete(() => null);
@@ -263,16 +259,16 @@ class _ChatPageState extends State<ChatPage> {
 
   Future<void> storeMessageInFirebase(String message, String? imageUrl) async {
     Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
-    String userEmail = decodedToken['email'];
-    String chatId = getChatId(widget.adminEmail, userEmail);
+    String touristEmail = decodedToken['email'];
+    String chatId = getChatId(widget.adminEmail, touristEmail);
 
     try {
-      DocumentReference chatRef = _firestore.collection('chats').doc(chatId);
+      DocumentReference chatRef = firestore.collection('chats').doc(chatId);
 
       await chatRef.update({
         'messages': FieldValue.arrayUnion([
           {
-            'sender': userEmail,
+            'sender': touristEmail,
             'message': message,
             'imageUrl': imageUrl,
             'date': DateFormat('dd/MM/yyyy').format(DateTime.now().toLocal()),
@@ -280,7 +276,6 @@ class _ChatPageState extends State<ChatPage> {
           },
         ]),
       });
-
       print('Message stored in Firebase successfully!');
     } catch (e) {
       print('Error storing message in Firebase: $e');
@@ -316,8 +311,8 @@ class _ChatPageState extends State<ChatPage> {
     if (chatMessages[index]['imageUrl'] != null) {
       return Padding(
         padding: EdgeInsets.only(
-          right: isTourist ? 8 : 120,
-          left: isTourist ? 120 : 8,
+          right: isTourist ? 12 : 124,
+          left: isTourist ? 124 : 12,
           top: 8.0,
           bottom: 0,
         ),
