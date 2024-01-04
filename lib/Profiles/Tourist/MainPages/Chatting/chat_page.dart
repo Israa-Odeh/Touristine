@@ -13,7 +13,7 @@ class ChatPage extends StatefulWidget {
   final String token;
   final String adminName;
   final String adminEmail;
-  final String adminImage;
+  final String? adminImage;
 
   const ChatPage({
     Key? key,
@@ -102,7 +102,13 @@ class _ChatPageState extends State<ChatPage> {
             child: Row(
               children: [
                 CircleAvatar(
-                  backgroundImage: NetworkImage(widget.adminImage),
+                  backgroundColor: Colors.white,
+                  backgroundImage: (widget.adminImage != null &&
+                          widget.adminImage != "")
+                      ? NetworkImage(widget.adminImage!)
+                      : const AssetImage(
+                              "assets/Images/Profiles/Tourist/DefaultProfileImage.png")
+                          as ImageProvider<Object>?,
                 ),
                 const SizedBox(width: 10),
                 Text(widget.adminName),
@@ -304,7 +310,8 @@ class _ChatPageState extends State<ChatPage> {
       formattedDate = DateFormat('dd/MM/yyyy').format(messageDate);
     }
 
-    String formattedDateTime = '$formattedDate${formattedDate.isEmpty? "": " AT "}$formattedTime';
+    String formattedDateTime =
+        '$formattedDate${formattedDate.isEmpty ? "" : " AT "}$formattedTime';
 
     if (chatMessages[index]['imageUrl'] != null) {
       return Padding(
@@ -401,7 +408,7 @@ class _ChatPageState extends State<ChatPage> {
         }
 
         String formattedDateTime =
-            '$formattedDate${formattedDate.isEmpty? "": " AT "}${DateFormat('HH:mm').format(imageDateTime)}';
+            '$formattedDate${formattedDate.isEmpty ? "" : " AT "}${DateFormat('HH:mm').format(imageDateTime)}';
 
         return Dialog(
           child: Stack(

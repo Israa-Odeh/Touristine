@@ -52,9 +52,7 @@ class _ChattingListState extends State<ChattingList> {
     });
 
     // Retrieve list of admins.
-    // getAdminsData();
-    // THis will be deleted.
-    filteredAdmins = List.from(admins);
+    getAdminsData();
   }
 
   Future<void> getAdminsData() async {
@@ -74,12 +72,16 @@ class _ChattingListState extends State<ChattingList> {
       );
       if (mounted) {
         if (response.statusCode == 200) {
-          // Process the response data if needed
+          // Process the response data
+          final Map<String, dynamic> responseData = json.decode(response.body);
+          final List<Map<String, dynamic>> adminsData =
+              List<Map<String, dynamic>>.from(responseData['admins']);
+
           setState(() {
-            admins =
-                List<Map<String, dynamic>>.from(json.decode(response.body));
+            admins = adminsData;
             filteredAdmins = List.from(admins);
           });
+          print(admins);
         } else if (response.statusCode == 500) {
           final Map<String, dynamic> responseData = json.decode(response.body);
           // ignore: use_build_context_synchronously
@@ -231,89 +233,105 @@ class _ChattingListState extends State<ChattingList> {
           ),
           Column(
             children: [
-              const SizedBox(height: 40),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: TextField(
-                  focusNode: focusNode,
-                  onChanged: filterAdmins,
-                  decoration: InputDecoration(
-                    hintText: 'Search',
-                    prefixIcon: Icon(
-                      FontAwesomeIcons.magnifyingGlass,
-                      color: iconColor,
+              if (!isLoading) const SizedBox(height: 40),
+              if (!isLoading)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: TextField(
+                    focusNode: focusNode,
+                    onChanged: filterAdmins,
+                    decoration: InputDecoration(
+                      hintText: 'Search',
+                      prefixIcon: Icon(
+                        FontAwesomeIcons.magnifyingGlass,
+                        color: iconColor,
+                      ),
+                      border: const UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.transparent),
+                      ),
+                      focusedBorder: const UnderlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFF1E889E)),
+                      ),
                     ),
-                    border: const UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.transparent),
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 20, 92, 107),
                     ),
-                    focusedBorder: const UnderlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFF1E889E)),
-                    ),
-                  ),
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 20, 92, 107),
                   ),
                 ),
-              ),
               Expanded(
-                child: ListView.builder(
-                  itemCount: filteredAdmins.length,
-                  itemBuilder: (context, index) {
-                    final admin = filteredAdmins[index];
-                    return Card(
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      color: const Color.fromARGB(240, 255, 255, 255),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Stack(
-                          alignment: Alignment.bottomRight,
-                          children: [
-                            Row(
-                              children: [
-                                CircleAvatar(
-                                  radius: 50,
-                                  backgroundImage: NetworkImage(admin['image']),
-                                ),
-                                const SizedBox(width: 16),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      '${admin['firstName']} ${admin['lastName']}',
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 20),
-                                    Text(
-                                      admin['email'],
-                                      style: const TextStyle(
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            IconButton(
-                              icon: const FaIcon(
-                                FontAwesomeIcons.facebookMessenger,
-                                color: Color.fromARGB(255, 0, 0, 0),
-                              ),
-                              onPressed: () {
-                                openChatWithAdmin(admin);
-                              },
-                            ),
-                          ],
+                child: isLoading
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Color(0xFF1E889E)),
                         ),
+                      )
+                    : ListView.builder(
+                        itemCount: filteredAdmins.length,
+                        itemBuilder: (context, index) {
+                          final admin = filteredAdmins[index];
+                          return Card(
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            color: const Color.fromARGB(240, 255, 255, 255),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Stack(
+                                alignment: Alignment.bottomRight,
+                                children: [
+                                  Row(
+                                    children: [
+                                      CircleAvatar(
+                                        backgroundColor: Colors.white,
+                                        radius: 50,
+                                        backgroundImage: (admin['image'] !=
+                                                    null &&
+                                                admin['image'] != "")
+                                            ? NetworkImage(admin['image'])
+                                            : const AssetImage(
+                                                    "assets/Images/Profiles/Tourist/DefaultProfileImage.png")
+                                                as ImageProvider<Object>?,
+                                      ),
+                                      const SizedBox(width: 16),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            '${admin['firstName']} ${admin['lastName']}',
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 20),
+                                          Text(
+                                            admin['email'],
+                                            style: const TextStyle(
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  IconButton(
+                                    icon: const FaIcon(
+                                      FontAwesomeIcons.facebookMessenger,
+                                      color: Color.fromARGB(255, 0, 0, 0),
+                                    ),
+                                    onPressed: () {
+                                      openChatWithAdmin(admin);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
               ),
             ],
           ),
