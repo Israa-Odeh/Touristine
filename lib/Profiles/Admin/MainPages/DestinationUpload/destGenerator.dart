@@ -157,10 +157,10 @@ class _AddDestTabState extends State<AddDestTab> {
     request.fields['ageCategories'] = selectedAgeCategoriesJson;
     String geoTagsJson = jsonEncode(geoTags);
     request.fields['geoTags'] = geoTagsJson;
-    request.fields['edited'] = destinationInfo.isNotEmpty &&
-            destinationInfo.containsKey('latitude')
-        ? "true"
-        : "false";
+    request.fields['edited'] =
+        destinationInfo.isNotEmpty && destinationInfo.containsKey('latitude')
+            ? "true"
+            : "false";
 
     print('date: ${request.fields['date']}');
     print('destinationName: ${request.fields['destinationName']}');
@@ -201,9 +201,16 @@ class _AddDestTabState extends State<AddDestTab> {
       final response = await http.Response.fromStream(await request.send());
 
       if (response.statusCode == 200) {
-        // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, 'The destination has been added',
-            bottomMargin: 0);
+        if (destinationInfo.isNotEmpty &&
+            destinationInfo.containsKey('latitude')) {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, 'The destination has been updated',
+              bottomMargin: 0);
+        } else {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, 'The destination has been added',
+              bottomMargin: 0);
+        }
       } else if (response.statusCode == 500) {
         final Map<String, dynamic> responseData = json.decode(response.body);
         if (responseData.containsKey('error')) {
@@ -341,8 +348,7 @@ class _AddDestTabState extends State<AddDestTab> {
     downloadImages();
     destNameController.text = destinationInfo['destinationName'];
     selectedCity = destinationInfo['city'];
-    selectedCategory =
-        getPlaceCategory(destinationInfo['category']);
+    selectedCategory = getPlaceCategory(destinationInfo['category']);
     selectedBudget = getBudgetLevel(destinationInfo['budget']);
     aboutController.text = destinationInfo['about'];
     if (destinationInfo['sheltered'] == 'true') {
@@ -388,13 +394,11 @@ class _AddDestTabState extends State<AddDestTab> {
     selectedWorkingDays =
         List<String>.from(destinationInfo['selectedWorkingDays']);
 
-    selectedVisitorTypes =
-        List<String>.from(destinationInfo['visitorTypes'])
-            .map((String type) => capitalizeFirstChar(type))
-            .toList();
+    selectedVisitorTypes = List<String>.from(destinationInfo['visitorTypes'])
+        .map((String type) => capitalizeFirstChar(type))
+        .toList();
 
-    selectedAgeCategories =
-        List<String>.from(destinationInfo['ageCategories']);
+    selectedAgeCategories = List<String>.from(destinationInfo['ageCategories']);
     List<String> services = [];
     List<String> possibleServicesSelections = [
       'restrooms',
@@ -419,8 +423,7 @@ class _AddDestTabState extends State<AddDestTab> {
     }
     selectedServices = mapServicesNames(services);
 
-    List<dynamic> rawActivities =
-        destinationInfo['addedActivities'];
+    List<dynamic> rawActivities = destinationInfo['addedActivities'];
 
     // Iterate over the raw activities and convert them to Map<String, String>.
     for (var rawActivity in rawActivities) {
