@@ -211,7 +211,7 @@ class _ChattingListState extends State<ChattingList> {
           Column(
             children: [
               if (!isLoading) const SizedBox(height: 40),
-              if (!isLoading && filteredAdmins.isNotEmpty)
+              if (!isLoading && admins.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: TextField(
@@ -244,24 +244,26 @@ class _ChattingListState extends State<ChattingList> {
                         ),
                       )
                     : filteredAdmins.isEmpty
-                        ? Center(
-                            child: Column(
-                              children: [
-                                const SizedBox(height: 110),
-                                Image.asset(
-                                  'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
-                                  fit: BoxFit.cover,
-                                ),
-                                const Text(
-                                  'No chats found',
-                                  style: TextStyle(
-                                    fontSize: 40,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: 'Gabriola',
-                                    color: Color.fromARGB(255, 23, 99, 114),
+                        ? SingleChildScrollView(
+                            child: Center(
+                              child: Column(
+                                children: [
+                                  const SizedBox(height: 110),
+                                  Image.asset(
+                                    'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
+                                    fit: BoxFit.cover,
                                   ),
-                                ),
-                              ],
+                                  const Text(
+                                    'No chats found',
+                                    style: TextStyle(
+                                      fontSize: 40,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: 'Gabriola',
+                                      color: Color.fromARGB(255, 23, 99, 114),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           )
                         : ListView.builder(
