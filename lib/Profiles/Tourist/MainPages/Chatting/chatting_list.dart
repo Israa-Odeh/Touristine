@@ -1,15 +1,14 @@
-import 'package:provider/provider.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chat_message.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chat_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
+import 'package:touristine/UserData/userProvider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
-
-import 'package:touristine/UserData/userProvider.dart';
 
 class ChattingList extends StatefulWidget {
   final String token;
@@ -123,11 +122,11 @@ class _ChattingListState extends State<ChattingList> {
       print('Chat already exists. Messages:');
       for (var message in messages) {
         ChatMessage chatMessage;
-        if (message['image'] != null) {
+        if (message['imageUrl'] != null) {
           // If the message contains an image, create a ChatMessage with the image.
           chatMessage = ChatMessage(
             sender: message['sender'] ?? '',
-            message: message['image'] ?? '',
+            message: message['imageUrl'] ?? '',
             date: message['date'] ?? '',
             time: message['time'] ?? '',
           );
@@ -145,7 +144,7 @@ class _ChattingListState extends State<ChattingList> {
       }
     } else {
       // Chat doesn't exist, initiate a new chat.
-      await createChatDocument(touristEmail, admin);
+      await createChatDocument(touristEmail, admin); //
       print('New chat created.');
     }
 
@@ -189,13 +188,11 @@ class _ChattingListState extends State<ChattingList> {
           'email': touristEmail,
           'firstName': touristFirstName,
           'lastName': touristLastName,
-          'isNotified': false,
         },
         'admin': {
           'email': adminEmail,
           'firstName': adminFirstName,
           'lastName': adminLastName,
-          'isNotified': false,
         },
         'messages': [], // Initialize with an empty list of messages.
         'timestamp': FieldValue.serverTimestamp(),
