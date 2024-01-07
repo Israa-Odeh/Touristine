@@ -1,3 +1,5 @@
+import 'package:jwt_decode/jwt_decode.dart';
+import 'package:touristine/Profiles/Tourist/ActiveStatus/active_status.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/DestinationUpload/DestUploadHome.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/profilePage.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chatting_list.dart';
@@ -45,6 +47,12 @@ class _TouristAppState extends State<TouristProfile> {
     await getPopularDestinations();
     await getOtherDestinations();
     initializeChildren();
+
+    // Extract the tourist email from the token.
+    Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
+    String touristEmail = decodedToken['email'];
+    // Set the tourist active status to true.
+    setUserActiveStatus(touristEmail, true);
   }
 
   // A function to retrieve a list of recommended destinations.
