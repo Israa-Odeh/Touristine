@@ -40,6 +40,12 @@ class _TouristAppState extends State<TouristProfile> {
   void initState() {
     super.initState();
     fetchData = fetchAllData();
+
+    // Extract the tourist email from the token.
+    Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
+    String touristEmail = decodedToken['email'];
+    // Set the tourist active status to true.
+    setTouristActiveStatus(touristEmail, true);
   }
 
   Future<void> fetchAllData() async {
@@ -47,12 +53,6 @@ class _TouristAppState extends State<TouristProfile> {
     await getPopularDestinations();
     await getOtherDestinations();
     initializeChildren();
-
-    // Extract the tourist email from the token.
-    Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
-    String touristEmail = decodedToken['email'];
-    // Set the tourist active status to true.
-    setTouristActiveStatus(touristEmail, true);
   }
 
   // A function to retrieve a list of recommended destinations.
