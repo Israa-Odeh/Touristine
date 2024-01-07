@@ -48,19 +48,17 @@ class _ChattingListState extends State<ChattingList> {
       QuerySnapshot<Map<String, dynamic>> querySnapshot =
           await FirebaseFirestore.instance
               .collection('chats')
-              .where('admin', isEqualTo: adminEmail)
+              .where('admin.email', isEqualTo: adminEmail)
               .where('messages', isGreaterThan: []).get();
 
       if (querySnapshot.docs.isEmpty) {
         print('No messages with the specified admin ($adminEmail) exist.');
-        setState(() {
-          isLoading = false;
-        });
       } else {
         List<String> touristEmails = [];
         for (QueryDocumentSnapshot<Map<String, dynamic>> document
             in querySnapshot.docs) {
-          String touristEmail = document['tourist'];
+          Map<String, dynamic> touristData = document['tourist'];
+          String touristEmail = touristData['email'];
           touristEmails.add(touristEmail);
         }
         print(touristEmails);
@@ -68,6 +66,12 @@ class _ChattingListState extends State<ChattingList> {
       }
     } catch (e) {
       print('Error getting tourists with emails: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
