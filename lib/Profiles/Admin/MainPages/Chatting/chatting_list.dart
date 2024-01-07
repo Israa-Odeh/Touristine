@@ -45,6 +45,7 @@ class _ChattingListState extends State<ChattingList> {
       setState(() {
         isLoading = true;
       });
+
       QuerySnapshot<Map<String, dynamic>> querySnapshot =
           await FirebaseFirestore.instance
               .collection('chats')
