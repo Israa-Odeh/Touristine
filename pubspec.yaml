@@ -93,10 +93,12 @@ flutter:
     - assets/Images/Profiles/Tourist/
     - assets/Images/Profiles/Tourist/PlanMaker/
     - assets/Images/Profiles/Tourist/DestUpload/
+    - assets/Images/Profiles/Tourist/Notifications/
     - assets/Images/Profiles/Admin/
     - assets/Images/Profiles/Admin/ProfilePage/
     - assets/Images/Profiles/Admin/AccountPage/
     - assets/Images/Profiles/Admin/DestUpload/
+    - assets/Images/Profiles/Admin/Notifications/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
