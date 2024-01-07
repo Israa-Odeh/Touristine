@@ -242,6 +242,7 @@ class _ChatPageState extends State<ChatPage> {
           'imageUrl': imageUrl,
           'date': DateFormat('dd/MM/yyyy').format(DateTime.now().toLocal()),
           'time': DateFormat('HH:mm:ss.SSS').format(DateTime.now().toLocal()),
+          'isNotified': false,
         });
       });
 
@@ -273,6 +274,7 @@ class _ChatPageState extends State<ChatPage> {
             'imageUrl': imageUrl,
             'date': DateFormat('dd/MM/yyyy').format(DateTime.now().toLocal()),
             'time': DateFormat('HH:mm:ss.SSS').format(DateTime.now().toLocal()),
+            'isNotified': false,
           },
         ]),
       });
