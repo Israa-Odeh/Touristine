@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-void setUserActiveStatus(String touristEmail, bool isActive) {
+void setTouristActiveStatus(String touristEmail, bool isActive) {
   FirebaseFirestore.instance
       .collection('tourists_active_status')
       .doc(touristEmail)

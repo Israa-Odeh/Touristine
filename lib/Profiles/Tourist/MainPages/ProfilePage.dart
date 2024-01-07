@@ -160,7 +160,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         Jwt.parseJwt(widget.token);
                     String touristEmail = decodedToken['email'];
                     // Set the tourist active status to false.
-                    setUserActiveStatus(touristEmail, false);
+                    setTouristActiveStatus(touristEmail, false);
                     if (widget.googleAccount) {
                       GoogleSignIn googleSignIn = GoogleSignIn();
                       googleSignIn.signOut();

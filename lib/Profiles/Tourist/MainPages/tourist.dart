@@ -52,7 +52,7 @@ class _TouristAppState extends State<TouristProfile> {
     Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
     String touristEmail = decodedToken['email'];
     // Set the tourist active status to true.
-    setUserActiveStatus(touristEmail, true);
+    setTouristActiveStatus(touristEmail, true);
   }
 
   // A function to retrieve a list of recommended destinations.
