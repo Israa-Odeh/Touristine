@@ -79,6 +79,10 @@ class _ChattingListState extends State<ChattingList> {
   Future<void> getTouristsInfo(List<String> touristEmails) async {
     if (!mounted) return;
 
+    setState(() {
+      isLoading = true;
+    });
+
     final url = Uri.parse('https://touristine.onrender.com/get-tourists-info');
 
     try {
@@ -149,11 +153,11 @@ class _ChattingListState extends State<ChattingList> {
       print('Chat already exists. Messages:');
       for (var message in messages) {
         ChatMessage chatMessage;
-        if (message['image'] != null) {
+        if (message['imageUrl'] != null) {
           // If the message contains an image, create a ChatMessage with the image.
           chatMessage = ChatMessage(
             sender: message['sender'] ?? '',
-            message: message['image'] ?? '',
+            message: message['imageUrl'] ?? '',
             date: message['date'] ?? '',
             time: message['time'] ?? '',
           );
@@ -169,25 +173,23 @@ class _ChattingListState extends State<ChattingList> {
         print(
             '${chatMessage.sender}: ${chatMessage.message} - Date: ${chatMessage.date}, Time: ${chatMessage.time}');
       }
-    } else {
-      // Chat doesn't exist, initiate a new chat.
-      await createChatDocument(adminEmail, touristEmail);
-      print('New chat created.');
-    }
-
-    // Navigate to the ChatPage.
-    // ignore: use_build_context_synchronously
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ChatPage(
-          touristName: '${tourist['firstName']} ${tourist['lastName']}',
-          touristEmail: tourist['email'],
-          touristImage: tourist['image'],
-          token: widget.token,
+      // Navigate to the ChatPage.
+      // ignore: use_build_context_synchronously
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChatPage(
+            touristName: '${tourist['firstName']} ${tourist['lastName']}',
+            touristEmail: tourist['email'],
+            touristImage: tourist['image'],
+            token: widget.token,
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      // Chat doesn't exist.
+      print('Chat does not exist.');
+    }
   }
 
   Future<DocumentSnapshot<Map<String, dynamic>>> getChat(
@@ -197,22 +199,6 @@ class _ChattingListState extends State<ChattingList> {
         await FirebaseFirestore.instance.collection('chats').doc(chatId).get();
 
     return chatDoc;
-  }
-
-  Future<void> createChatDocument(String user1, String user2) async {
-    String chatId = getChatId(user1, user2);
-
-    try {
-      await FirebaseFirestore.instance.collection('chats').doc(chatId).set({
-        'tourist': user1,
-        'admin': user2,
-        'messages': [], // Initialize with an empty list of messages.
-        'timestamp': FieldValue.serverTimestamp(),
-      });
-      print('Chat document created successfully.');
-    } catch (e) {
-      print('Error creating chat document: $e');
-    }
   }
 
   String getChatId(String user1, String user2) {
