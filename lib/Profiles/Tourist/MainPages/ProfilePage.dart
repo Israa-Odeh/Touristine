@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:jwt_decode/jwt_decode.dart';
 import 'package:touristine/LoginAndRegistration/MainPages/landingPage.dart';
+import 'package:touristine/Profiles/Tourist/ActiveStatus/active_status.dart';
 import 'package:touristine/Profiles/Tourist/Profile/Sections/MyAccount.dart';
 import 'package:touristine/Profiles/Tourist/Profile/Sections/Notifications/notifications.dart';
 import 'package:touristine/Profiles/Tourist/Profile/Sections/interestsFilling.dart';
@@ -153,6 +155,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   buildProfileTile(
                       "Log Out", "assets/Images/Profiles/Tourist/logOut.png",
                       () {
+                    // Extract the tourist email from the token.
+                    Map<String, dynamic> decodedToken =
+                        Jwt.parseJwt(widget.token);
+                    String touristEmail = decodedToken['email'];
+                    // Set the tourist active status to true.
+                    setUserActiveStatus(touristEmail, false);
                     if (widget.googleAccount) {
                       GoogleSignIn googleSignIn = GoogleSignIn();
                       googleSignIn.signOut();
