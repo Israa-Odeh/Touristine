@@ -28,13 +28,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       title: 'Touristine Notifications Interface',
-      home: NotificationsWidget(),
+      home: NotificationsWidget(token: "Test"),
     );
   }
 }
 
 class NotificationsWidget extends StatefulWidget {
-  const NotificationsWidget({super.key});
+  final String token;
+
+  const NotificationsWidget({super.key, required this.token});
+
   @override
   _NotificationsWidgetState createState() => _NotificationsWidgetState();
 }
@@ -72,7 +75,7 @@ class _NotificationsWidgetState extends State<NotificationsWidget> {
               right: 0,
               bottom: 0,
               child: Image.asset(
-                'assets/images/notificationsBackground.png',
+                'assets/Images/Profiles/Tourist/Notifications/notificationsBackground.png',
                 fit: BoxFit.cover,
               ),
             ),
@@ -80,7 +83,8 @@ class _NotificationsWidgetState extends State<NotificationsWidget> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset('assets/images/PushNotifications.gif',
+                  Image.asset(
+                      'assets/Images/Profiles/Tourist/Notifications/pushNotifications.gif',
                       fit: BoxFit.cover),
                   const SizedBox(height: 20.0),
                   Container(
