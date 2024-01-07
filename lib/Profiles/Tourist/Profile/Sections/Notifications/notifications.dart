@@ -1,37 +1,7 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'notification_controller.dart';
-
-void main() async {
-  await AwesomeNotifications().initialize(null, [
-    NotificationChannel(
-      channelGroupKey: "touristine_channel_group",
-      channelKey: "touristine_channel",
-      channelName: "Touristine Notification",
-      channelDescription: "Touristine notifications channel",
-    )
-  ], channelGroups: [
-    NotificationChannelGroup(
-        channelGroupKey: "touristine_channel_group",
-        channelGroupName: "Touristine Group")
-  ]);
-  bool isAllowedToSendNotification =
-      await AwesomeNotifications().isNotificationAllowed();
-  if (!isAllowedToSendNotification) {
-    AwesomeNotifications().requestPermissionToSendNotifications();
-  }
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'Touristine Notifications Interface',
-      home: NotificationsWidget(token: "Test"),
-    );
-  }
-}
 
 class NotificationsWidget extends StatefulWidget {
   final String token;
@@ -80,63 +50,88 @@ class _NotificationsWidgetState extends State<NotificationsWidget> {
               ),
             ),
             Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                      'assets/Images/Profiles/Tourist/Notifications/pushNotifications.gif',
-                      fit: BoxFit.cover),
-                  const SizedBox(height: 20.0),
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 40.0),
-                    padding: const EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1E889E).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(100.0),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 120.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                        'assets/Images/Profiles/Tourist/Notifications/pushNotifications.gif',
+                        fit: BoxFit.cover),
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 40.0),
+                      padding: const EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1E889E).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(100.0),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Enable Notifications',
+                            style: TextStyle(
+                                fontSize: 22.0,
+                                color: Color.fromARGB(255, 18, 82, 95)),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Switch(
+                            value: enableNotifications,
+                            onChanged: (value) {
+                              setState(() {
+                                enableNotifications = value;
+                                if (enableNotifications) {
+                                  List<Map<String, dynamic>> userComplaints = [
+                                    {
+                                      'title': 'Leaking Tank',
+                                      'destinationName': 'Palestine Aquarium',
+                                      'city': 'Ramallah',
+                                      'isNotified': 'true'
+                                      // seen true or false.
+                                    },
+                                  ];
+                                  List<Map<String, dynamic>> userUploads = [
+                                    {
+                                      'keywords': 'General',
+                                      'destinationName': 'Palestine Aquarium',
+                                      'city': 'Ramallah',
+                                      'status': 'Approved'
+                                    },
+                                  ];
+                                  List<Map<String, dynamic>> userSuggestions = [
+                                    {
+                                      'destinationName': 'Palestine Aquarium',
+                                      'city': 'Ramallah',
+                                    },
+                                  ];
+                                  // Suggestions status (Seen/Unseen).
+
+                                  sendNotification(userComplaints, userUploads,
+                                      userSuggestions);
+                                }
+                              });
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Enable Notifications',
-                          style: TextStyle(
-                              fontSize: 22.0,
-                              color: Color.fromARGB(255, 18, 82, 95)),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 320.0, top: 130),
+                      child: IconButton(
+                        icon: const FaIcon(
+                          FontAwesomeIcons.arrowLeft,
+                          color: Color(0xFF1E889E),
+                          size: 30,
                         ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Switch(
-                          value: enableNotifications,
-                          onChanged: (value) {
-                            setState(() {
-                              enableNotifications = value;
-                              if (enableNotifications) {
-                                List<Map<String, dynamic>> userComplaints = [
-                                  {
-                                    'title': 'Leaking Tank',
-                                    'destinationName': 'Palestine Aquarium',
-                                    'city': 'Ramallah',
-                                    'isNotified': 'true'
-                                  },
-                                ];
-                                List<Map<String, dynamic>> userUploads = [
-                                  {
-                                    'category': 'General',
-                                    'destinationName': 'Palestine Aquarium',
-                                    'city': 'Ramallah',
-                                    'status': 'Approved'
-                                  },
-                                ];
-                                sendNotification(userComplaints, userUploads);
-                              }
-                            });
-                          },
-                        ),
-                      ],
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],
@@ -145,8 +140,10 @@ class _NotificationsWidgetState extends State<NotificationsWidget> {
     );
   }
 
-  void sendNotification(List<Map<String, dynamic>> userComplaints,
-      List<Map<String, dynamic>> userUploads) {
+  void sendNotification(
+      List<Map<String, dynamic>> userComplaints,
+      List<Map<String, dynamic>> userUploads,
+      List<Map<String, dynamic>> userSuggestions) {
     for (var complaint in userComplaints) {
       String title = complaint['title'];
       String destinationName = complaint['destinationName'];
@@ -154,7 +151,7 @@ class _NotificationsWidgetState extends State<NotificationsWidget> {
 
       AwesomeNotifications().createNotification(
         content: NotificationContent(
-          id: userComplaints.indexOf(complaint) + 1,
+          id: userComplaints.indexOf(complaint) + 1000,
           channelKey: "touristine_channel",
           title: "Touristine Notification",
           body:
@@ -167,19 +164,35 @@ class _NotificationsWidgetState extends State<NotificationsWidget> {
     }
     // Loop through the user uploads and create notifications
     for (var uplaod in userUploads) {
-      String catgeory = uplaod['category'];
+      String keywords = uplaod['keywords'];
       String destinationName = uplaod['destinationName'];
       String city = uplaod['city'];
       String status = uplaod['status'];
 
       AwesomeNotifications().createNotification(
         content: NotificationContent(
-          id: userComplaints.indexOf(uplaod) + 1,
+          id: userUploads.indexOf(uplaod) + 2000,
           channelKey: "touristine_channel",
           title: "Touristine Notification",
           body: status.toLowerCase() == "Approved"
-              ? "Your uploaded images in the specified category $catgeory for $destinationName in $city has been officially approved. Your diligence in contributing valuable content is genuinely appreciated, and we anticipate more of your meaningful contributions in the future. Thank you for being a valuable member of our community!"
-              : "Your uploaded images in the specified category $catgeory for $destinationName in $city has not met our approval criteria and has been rejected. We appreciate your effort. Thank you for your understanding.",
+              ? "Your uploaded images in the specified category $keywords for $destinationName in $city has been officially approved. Your diligence in contributing valuable content is genuinely appreciated, and we anticipate more of your meaningful contributions in the future. Thank you for being a valuable member of our community!"
+              : "Your uploaded images in the specified category $keywords for $destinationName in $city has not met our approval criteria and has been rejected. We appreciate your effort. Thank you for your understanding.",
+        ),
+      );
+    }
+
+    // Loop through the user suggestions and create notifications.
+    for (var suggestion in userSuggestions) {
+      String destinationName = suggestion['destinationName'];
+      String city = suggestion['city'];
+
+      AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: userSuggestions.indexOf(suggestion) + 3000,
+          channelKey: "touristine_channel",
+          title: "Touristine Notification",
+          body: """Your suggested $destinationName in $city has been viewed,
+           and there is a comment for you to check.""",
         ),
       );
     }
