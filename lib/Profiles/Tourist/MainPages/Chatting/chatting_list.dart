@@ -1,3 +1,4 @@
+import 'package:provider/provider.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chat_message.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chat_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -7,6 +8,8 @@ import 'package:jwt_decode/jwt_decode.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'dart:convert';
+
+import 'package:touristine/UserData/userProvider.dart';
 
 class ChattingList extends StatefulWidget {
   final String token;
@@ -142,7 +145,7 @@ class _ChattingListState extends State<ChattingList> {
       }
     } else {
       // Chat doesn't exist, initiate a new chat.
-      await createChatDocument(touristEmail, adminEmail);
+      await createChatDocument(touristEmail, admin);
       print('New chat created.');
     }
 
@@ -171,12 +174,27 @@ class _ChattingListState extends State<ChattingList> {
   }
 
   Future<void> createChatDocument(
-      String touristEmail, String adminEmail) async {
+      String touristEmail, Map<String, dynamic> admin) async {
+    String touristFirstName = context.read<UserProvider>().firstName;
+    String touristLastName = context.read<UserProvider>().lastName;
+
+    String adminFirstName = admin['firstName'];
+    String adminLastName = admin['lastName'];
+    String adminEmail = admin['email'];
+
     String chatId = getChatId(touristEmail, adminEmail);
     try {
       await FirebaseFirestore.instance.collection('chats').doc(chatId).set({
-        'tourist': touristEmail,
-        'admin': adminEmail,
+        'tourist': {
+          'email': touristEmail,
+          'firstName': touristFirstName,
+          'lastName': touristLastName,
+        },
+        'admin': {
+          'email': adminEmail,
+          'firstName': adminFirstName,
+          'lastName': adminLastName,
+        },
         'messages': [], // Initialize with an empty list of messages.
         'timestamp': FieldValue.serverTimestamp(),
       });
