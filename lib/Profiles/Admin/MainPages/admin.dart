@@ -1,3 +1,5 @@
+import 'package:jwt_decode/jwt_decode.dart';
+import 'package:touristine/Profiles/Admin/ActiveStatus/active_status.dart';
 import 'package:touristine/Profiles/Admin/MainPages/DestinationUpload/destUploadHome.dart';
 import 'package:touristine/Profiles/Admin/MainPages/UserInteractions/tabBarViewer.dart';
 import 'package:touristine/Profiles/Admin/MainPages/Chatting/chatting_list.dart';
@@ -82,6 +84,12 @@ class _AdminAppState extends State<AdminProfile> {
   void initState() {
     super.initState();
     fetchData = fetchAllData();
+
+    // Extract the admin email from the token.
+    Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
+    String adminEmail = decodedToken['email'];
+    // Set the admin active status to true.
+    setAdminActiveStatus(adminEmail, true);
   }
 
   Future<void> fetchAllData() async {

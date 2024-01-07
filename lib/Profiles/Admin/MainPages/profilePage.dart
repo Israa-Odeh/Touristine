@@ -1,4 +1,6 @@
+import 'package:jwt_decode/jwt_decode.dart';
 import 'package:touristine/LoginAndRegistration/MainPages/landingPage.dart';
+import 'package:touristine/Profiles/Admin/ActiveStatus/active_status.dart';
 import 'package:touristine/Profiles/Admin/Profile/Sections/addingAdmins.dart';
 import 'package:touristine/Profiles/Admin/Profile/Sections/myAccount.dart';
 import 'package:touristine/components/profilePicture.dart';
@@ -124,6 +126,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   buildProfileTile("Log Out",
                       "assets/Images/Profiles/Admin/ProfilePage/logOut.png",
                       () {
+                    // Extract the admin email from the token.
+                    Map<String, dynamic> decodedToken =
+                        Jwt.parseJwt(widget.token);
+                    String adminEmail = decodedToken['email'];
+                    // Set the admin active status to false.
+                    setAdminActiveStatus(adminEmail, false);
+                    
                     Navigator.of(context).popUntil((route) => route.isFirst);
                     Navigator.of(context).pushReplacement(
                         MaterialPageRoute(builder: (context) => LandingPage()));
