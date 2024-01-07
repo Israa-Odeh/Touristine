@@ -189,11 +189,13 @@ class _ChattingListState extends State<ChattingList> {
           'email': touristEmail,
           'firstName': touristFirstName,
           'lastName': touristLastName,
+          'isNotified': false,
         },
         'admin': {
           'email': adminEmail,
           'firstName': adminFirstName,
           'lastName': adminLastName,
+          'isNotified': false,
         },
         'messages': [], // Initialize with an empty list of messages.
         'timestamp': FieldValue.serverTimestamp(),
