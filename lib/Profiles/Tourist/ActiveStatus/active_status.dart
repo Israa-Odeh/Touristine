@@ -9,7 +9,7 @@ void setUserActiveStatus(String touristEmail, bool isActive) {
     'lastUpdate': FieldValue.serverTimestamp(),
   }).catchError((_) {
     // If the document doesn't exist, it will be created.
-    FirebaseFirestore.instance.collection('user_status').doc(touristEmail).set({
+    FirebaseFirestore.instance.collection('tourists_active_status').doc(touristEmail).set({
       'active': isActive,
       'lastUpdate': FieldValue.serverTimestamp(),
     });
