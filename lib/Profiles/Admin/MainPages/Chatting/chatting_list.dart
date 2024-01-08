@@ -38,15 +38,15 @@ class _ChattingListState extends State<ChattingList> {
       });
     });
 
+    Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
+    String adminEmail = decodedToken['email'];
+    getTouristsEmails(adminEmail);
+
     // Start a timer to periodically update active status.
     statusUpdateTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       // Update active status for all tourists.
       if (mounted) updateTouristsActiveStatus();
     });
-
-    Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
-    String adminEmail = decodedToken['email'];
-    getTouristsEmails(adminEmail);
   }
 
   Future<void> getTouristsEmails(String adminEmail) async {
@@ -171,27 +171,25 @@ class _ChattingListState extends State<ChattingList> {
         print(
             'Tourist ${tourists[i]['firstName']} ${tourists[i]['lastName']} - Active Status: ${tourists[i]['activeStatus']}');
       }
-      // // Update the filtered tourists list.
-      // filterAdmins('');
 
-      // Trigger a UI update
+      // Trigger a UI update.
       if (mounted) setState(() {});
     } catch (e) {
       print('Error updating tourists active status: $e');
     }
   }
 
-  void filterAdmins(String query) {
+  void filterTourists(String query) {
     setState(() {
       if (query.isEmpty) {
         filteredTourists = List.from(tourists);
       } else {
-        filteredTourists = tourists.where((admin) {
-          final fullName = '${admin['firstName']} ${admin['lastName']}';
+        filteredTourists = tourists.where((tourist) {
+          final fullName = '${tourist['firstName']} ${tourist['lastName']}';
           final queryLowerCase = query.toLowerCase();
           return fullName.toLowerCase().contains(queryLowerCase) ||
-              admin['firstName'].toLowerCase().contains(queryLowerCase) ||
-              admin['lastName'].toLowerCase().contains(queryLowerCase) ||
+              tourist['firstName'].toLowerCase().contains(queryLowerCase) ||
+              tourist['lastName'].toLowerCase().contains(queryLowerCase) ||
               fullName.split(' ').every((namePart) =>
                   namePart.toLowerCase().startsWith(queryLowerCase));
         }).toList();
@@ -200,7 +198,7 @@ class _ChattingListState extends State<ChattingList> {
   }
 
   void openChatWithTourist(Map<String, dynamic> tourist) async {
-    // Extract the tourist email from the token.
+    // Extract the admin email from the token.
     Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
     String adminEmail = decodedToken['email'];
     String touristEmail = tourist['email'];
@@ -294,7 +292,7 @@ class _ChattingListState extends State<ChattingList> {
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: TextField(
                     focusNode: focusNode,
-                    onChanged: filterAdmins,
+                    onChanged: filterTourists,
                     decoration: InputDecoration(
                       hintText: 'Search',
                       prefixIcon: Icon(

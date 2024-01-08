@@ -101,7 +101,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     token: widget.token,
                   ),
                   const SizedBox(height: 40),
-
                   buildProfileTile(
                       "My Account", "assets/Images/Profiles/Tourist/user.png",
                       () {
@@ -114,9 +113,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     );
                   }),
-
                   const SizedBox(height: 15),
-
                   buildProfileTile("Interests Filling",
                       "assets/Images/Profiles/Tourist/form.png", () {
                     Navigator.of(context).push(
@@ -126,9 +123,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     );
                   }),
-
                   const SizedBox(height: 15),
-
                   buildProfileTile("Location Acquisiton",
                       "assets/Images/Profiles/Tourist/location.png", () {
                     Navigator.of(context).push(
@@ -137,9 +132,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     );
                   }),
-
                   const SizedBox(height: 15),
-
                   buildProfileTile("Notifications",
                       "assets/Images/Profiles/Tourist/notification.png", () {
                     Navigator.of(context).push(
@@ -149,9 +142,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     );
                   }),
-
                   const SizedBox(height: 15),
-
                   buildProfileTile(
                       "Log Out", "assets/Images/Profiles/Tourist/logOut.png",
                       () {
@@ -171,7 +162,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     Navigator.of(context).pushReplacement(
                         MaterialPageRoute(builder: (context) => LandingPage()));
                   }),
-                  // Add more tiles as needed...
                 ],
               ),
             ),

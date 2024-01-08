@@ -65,10 +65,10 @@ class _ChattingListState extends State<ChattingList> {
             'Admin ${admins[i]['firstName']} ${admins[i]['lastName']} - Active Status: ${admins[i]['activeStatus']}');
       }
 
-      // Trigger a UI update
+      // Trigger a UI update.
       if (mounted) setState(() {});
     } catch (e) {
-      print('Error updating tourists active status: $e');
+      print('Error updating admins active status: $e');
     }
   }
 
@@ -95,15 +95,15 @@ class _ChattingListState extends State<ChattingList> {
           List<Map<String, dynamic>> fetchedAdmins =
               List<Map<String, dynamic>>.from(responseData['admins']);
 
-          // Extract emails from fetchedAdmins
-          List<String> adminEmails =
+          // Extract emails from fetchedAdmins.
+          List<String> adminsEmails =
               fetchedAdmins.map((admin) => admin['email'] as String).toList();
 
-          // Fetch the active status for each admin by passing the list of emails
+          // Fetch the active status for each admin by passing the list of emails.
           List<bool> adminsActiveStatus =
-              await getAdminsActiveStatusList(adminEmails);
+              await getAdminsActiveStatusList(adminsEmails);
 
-          // Update the tourists map with active status.
+          // Update the admins map with active status.
           for (int i = 0; i < fetchedAdmins.length; i++) {
             fetchedAdmins[i]['activeStatus'] =
                 adminsActiveStatus.isNotEmpty && adminsActiveStatus.length > i
