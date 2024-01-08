@@ -1,4 +1,5 @@
 import 'package:touristine/Notifications/SnackBar.dart';
+import 'package:touristine/Profiles/Admin/ActiveStatus/active_status.dart';
 import 'package:touristine/Profiles/Admin/MainPages/Chatting/chat_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -98,9 +99,25 @@ class _ChattingListState extends State<ChattingList> {
       );
 
       if (response.statusCode == 200) {
-        tourists = List<Map<String, dynamic>>.from(
-            jsonDecode(response.body)['tourists']);
+        List<Map<String, dynamic>> fetchedTourists =
+            List<Map<String, dynamic>>.from(
+          jsonDecode(response.body)['tourists'],
+        );
+
+        // Fetch the active status for each tourist.
+        List<bool> touristsActiveStatus =
+            await getTouristsStatusList(touristEmails);
+
+        // Update the tourists map with active status.
+        for (int i = 0; i < fetchedTourists.length; i++) {
+          fetchedTourists[i]['activeStatus'] =
+              touristsActiveStatus.isNotEmpty && touristsActiveStatus.length > i
+                  ? touristsActiveStatus[i]
+                  : false;
+        }
+
         setState(() {
+          tourists = fetchedTourists;
           filteredTourists = List.from(tourists);
         });
         print(tourists);
@@ -118,6 +135,16 @@ class _ChattingListState extends State<ChattingList> {
         });
       }
     }
+  }
+
+  Future<List<bool>> getTouristsStatusList(List<String> touristsEmails) async {
+    List<bool> statusList = [];
+
+    for (String email in touristsEmails) {
+      bool? status = await getTouristActiveStatus(email);
+      statusList.add(status ?? false);
+    }
+    return statusList;
   }
 
   void filterAdmins(String query) {
@@ -285,6 +312,8 @@ class _ChattingListState extends State<ChattingList> {
                             itemCount: filteredTourists.length,
                             itemBuilder: (context, index) {
                               final tourist = filteredTourists[index];
+                              final bool isActive =
+                                  tourist['activeStatus'] ?? false;
                               return Card(
                                 elevation: 5,
                                 shape: RoundedRectangleBorder(
@@ -341,6 +370,21 @@ class _ChattingListState extends State<ChattingList> {
                                         onPressed: () {
                                           openChatWithTourist(tourist);
                                         },
+                                      ),
+                                      // Display the active status dot
+                                      Positioned(
+                                        top: 8,
+                                        right: 15,
+                                        child: Container(
+                                          width: 15,
+                                          height: 15,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: isActive
+                                                ? Colors.green
+                                                : Colors.red,
+                                          ),
+                                        ),
                                       ),
                                     ],
                                   ),
