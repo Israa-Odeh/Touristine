@@ -1,13 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:async';
+import 'package:jwt_decode/jwt_decode.dart';
 import 'package:touristine/Notifications/SnackBar.dart';
 import 'package:touristine/Profiles/Admin/ActiveStatus/active_status.dart';
 import 'package:touristine/Profiles/Admin/MainPages/Chatting/chat_page.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:jwt_decode/jwt_decode.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chat_message.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter/material.dart';
-import 'dart:convert';
 
 class ChattingList extends StatefulWidget {
   final String token;
@@ -24,6 +25,7 @@ class _ChattingListState extends State<ChattingList> {
   List<Map<String, dynamic>> tourists = [];
   late FocusNode focusNode;
   Color iconColor = Colors.grey;
+  late Timer _statusUpdateTimer;
 
   @override
   void initState() {
@@ -35,6 +37,13 @@ class _ChattingListState extends State<ChattingList> {
         iconColor = focusNode.hasFocus ? const Color(0xFF1E889E) : Colors.grey;
       });
     });
+
+    // Start a timer to periodically update active status
+    _statusUpdateTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      // Update active status for all tourists
+      if (mounted) updateTouristsStatus();
+    });
+
     Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
     String adminEmail = decodedToken['email'];
     getTouristsEmails(adminEmail);
@@ -147,6 +156,32 @@ class _ChattingListState extends State<ChattingList> {
     return statusList;
   }
 
+  void updateTouristsStatus() async {
+    try {
+      List<bool> touristsActiveStatus = await getTouristsStatusList(
+          tourists.map((tourist) => tourist['email'] as String).toList());
+
+      for (int i = 0; i < tourists.length; i++) {
+        tourists[i]['activeStatus'] =
+            touristsActiveStatus.isNotEmpty && touristsActiveStatus.length > i
+                ? touristsActiveStatus[i]
+                : false;
+
+        // Print the new active status
+        print(
+            'Tourist ${tourists[i]['firstName']} ${tourists[i]['lastName']} - Active Status: ${tourists[i]['activeStatus']}');
+      }
+
+      // Update the filtered tourists list
+      filterAdmins('');
+
+      // Trigger a UI update
+      if (mounted) setState(() {});
+    } catch (e) {
+      print('Error updating tourists active status: $e');
+    }
+  }
+
   void filterAdmins(String query) {
     setState(() {
       if (query.isEmpty) {
@@ -235,6 +270,9 @@ class _ChattingListState extends State<ChattingList> {
 
   @override
   void dispose() {
+    // Cancel the timer when the widget is disposed
+    _statusUpdateTimer.cancel();
+
     focusNode.dispose();
     super.dispose();
   }

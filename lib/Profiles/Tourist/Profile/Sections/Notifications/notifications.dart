@@ -338,7 +338,7 @@ class _NotificationsWidgetState extends State<NotificationsWidget> {
 
       if (response.statusCode == 200) {
         // Jenan, I need to retrieve a List<Map> of uploaded Images which have the status
-        // (Rejected, and Approved only) and aren't not (isNotified flag == false),
+        // (Rejected, and Approved only) and aren't not notified (isNotified flag == false),
         // the format will be as follows:
         /* 
         List<Map<String, dynamic>> userUploads = [
