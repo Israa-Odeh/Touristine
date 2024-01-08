@@ -1,14 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chat_message.dart';
+import 'package:touristine/Profiles/Admin/MainPages/Chatting/chat_page.dart';
+import 'package:touristine/Profiles/Admin/ActiveStatus/active_status.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:touristine/Notifications/SnackBar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:jwt_decode/jwt_decode.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:async';
-import 'package:jwt_decode/jwt_decode.dart';
-import 'package:touristine/Notifications/SnackBar.dart';
-import 'package:touristine/Profiles/Admin/ActiveStatus/active_status.dart';
-import 'package:touristine/Profiles/Admin/MainPages/Chatting/chat_page.dart';
-import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chat_message.dart';
 
 class ChattingList extends StatefulWidget {
   final String token;
