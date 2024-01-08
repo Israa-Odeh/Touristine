@@ -409,16 +409,18 @@ class _ChattingListState extends State<ChattingList> {
                                       ),
                                       // Display the active status dot.
                                       Positioned(
-                                        top: 8,
-                                        right: 15,
+                                        top: 4,
+                                        right: 16,
                                         child: Container(
                                           width: 15,
                                           height: 15,
                                           decoration: BoxDecoration(
                                             shape: BoxShape.circle,
                                             color: isActive
-                                                ? Colors.green
-                                                : Colors.red,
+                                                ? const Color.fromARGB(
+                                                    170, 76, 175, 79)
+                                                : const Color.fromARGB(
+                                                    174, 244, 67, 54),
                                           ),
                                         ),
                                       ),

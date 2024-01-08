@@ -1,3 +1,4 @@
+import 'package:touristine/Profiles/Tourist/ActiveStatus/active_status.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chat_message.dart';
 import 'package:touristine/Profiles/Tourist/MainPages/Chatting/chat_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -41,6 +42,34 @@ class _ChattingListState extends State<ChattingList> {
 
     // Retrieve available admins for chatting.
     getAdminsData();
+
+    // Start a timer to periodically update active status.
+    statusUpdateTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      // Update active status for all admins.
+      if (mounted) updateAdminsActiveStatus();
+    });
+  }
+
+  void updateAdminsActiveStatus() async {
+    try {
+      List<bool> adminsActiveStatus = await getAdminsActiveStatusList(
+          admins.map((admin) => admin['email'] as String).toList());
+
+      for (int i = 0; i < admins.length; i++) {
+        admins[i]['activeStatus'] =
+            adminsActiveStatus.isNotEmpty && adminsActiveStatus.length > i
+                ? adminsActiveStatus[i]
+                : false;
+        // Print the new active status.
+        print(
+            'Admin ${admins[i]['firstName']} ${admins[i]['lastName']} - Active Status: ${admins[i]['activeStatus']}');
+      }
+
+      // Trigger a UI update
+      if (mounted) setState(() {});
+    } catch (e) {
+      print('Error updating tourists active status: $e');
+    }
   }
 
   Future<void> getAdminsData() async {
@@ -63,8 +92,26 @@ class _ChattingListState extends State<ChattingList> {
       if (mounted) {
         if (response.statusCode == 200) {
           final Map<String, dynamic> responseData = json.decode(response.body);
-          admins = List<Map<String, dynamic>>.from(responseData['admins']);
+          List<Map<String, dynamic>> fetchedAdmins =
+              List<Map<String, dynamic>>.from(responseData['admins']);
+
+          // Extract emails from fetchedAdmins
+          List<String> adminEmails =
+              fetchedAdmins.map((admin) => admin['email'] as String).toList();
+
+          // Fetch the active status for each admin by passing the list of emails
+          List<bool> adminsActiveStatus =
+              await getAdminsActiveStatusList(adminEmails);
+
+          // Update the tourists map with active status.
+          for (int i = 0; i < fetchedAdmins.length; i++) {
+            fetchedAdmins[i]['activeStatus'] =
+                adminsActiveStatus.isNotEmpty && adminsActiveStatus.length > i
+                    ? adminsActiveStatus[i]
+                    : false;
+          }
           setState(() {
+            admins = fetchedAdmins;
             filteredAdmins = List.from(admins);
           });
           print(admins);
@@ -89,6 +136,17 @@ class _ChattingListState extends State<ChattingList> {
         });
       }
     }
+  }
+
+  Future<List<bool>> getAdminsActiveStatusList(
+      List<String> adminsEmails) async {
+    List<bool> statusList = [];
+
+    for (String email in adminsEmails) {
+      bool? status = await getAdminActiveStatus(email);
+      statusList.add(status ?? false);
+    }
+    return statusList;
   }
 
   void filterAdmins(String query) {
@@ -289,6 +347,8 @@ class _ChattingListState extends State<ChattingList> {
                             itemCount: filteredAdmins.length,
                             itemBuilder: (context, index) {
                               final admin = filteredAdmins[index];
+                              final bool isActive =
+                                  admin['activeStatus'] ?? false;
                               return Card(
                                 elevation: 5,
                                 shape: RoundedRectangleBorder(
@@ -344,6 +404,23 @@ class _ChattingListState extends State<ChattingList> {
                                         onPressed: () {
                                           openChatWithAdmin(admin);
                                         },
+                                      ),
+                                      // Display the active status dot.
+                                      Positioned(
+                                        top: 4,
+                                        right: 16,
+                                        child: Container(
+                                          width: 15,
+                                          height: 15,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: isActive
+                                                ? const Color.fromARGB(
+                                                    170, 76, 175, 79)
+                                                : const Color.fromARGB(
+                                                    174, 244, 67, 54),
+                                          ),
+                                        ),
                                       ),
                                     ],
                                   ),
