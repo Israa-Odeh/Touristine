@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'dart:async';
 
 class ChattingList extends StatefulWidget {
   final String token;
@@ -25,6 +26,7 @@ class _ChattingListState extends State<ChattingList> {
   Color iconColor = Colors.grey;
   List<Map<String, dynamic>> filteredAdmins = [];
   List<Map<String, dynamic>> admins = [];
+  late Timer statusUpdateTimer;
 
   @override
   void initState() {

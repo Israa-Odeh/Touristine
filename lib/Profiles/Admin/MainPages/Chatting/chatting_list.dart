@@ -20,12 +20,12 @@ class ChattingList extends StatefulWidget {
 }
 
 class _ChattingListState extends State<ChattingList> {
-  bool isLoading = true;
   List<Map<String, dynamic>> filteredTourists = [];
   List<Map<String, dynamic>> tourists = [];
-  late FocusNode focusNode;
   Color iconColor = Colors.grey;
-  late Timer _statusUpdateTimer;
+  late Timer statusUpdateTimer;
+  late FocusNode focusNode;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -38,10 +38,10 @@ class _ChattingListState extends State<ChattingList> {
       });
     });
 
-    // Start a timer to periodically update active status
-    _statusUpdateTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      // Update active status for all tourists
-      if (mounted) updateTouristsStatus();
+    // Start a timer to periodically update active status.
+    statusUpdateTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      // Update active status for all tourists.
+      if (mounted) updateTouristsActiveStatus();
     });
 
     Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
@@ -52,6 +52,7 @@ class _ChattingListState extends State<ChattingList> {
   Future<void> getTouristsEmails(String adminEmail) async {
     try {
       if (!mounted) return;
+
       setState(() {
         isLoading = true;
       });
@@ -115,7 +116,7 @@ class _ChattingListState extends State<ChattingList> {
 
         // Fetch the active status for each tourist.
         List<bool> touristsActiveStatus =
-            await getTouristsStatusList(touristEmails);
+            await getTouristsActiveStatusList(touristEmails);
 
         // Update the tourists map with active status.
         for (int i = 0; i < fetchedTourists.length; i++) {
@@ -124,7 +125,6 @@ class _ChattingListState extends State<ChattingList> {
                   ? touristsActiveStatus[i]
                   : false;
         }
-
         setState(() {
           tourists = fetchedTourists;
           filteredTourists = List.from(tourists);
@@ -146,7 +146,8 @@ class _ChattingListState extends State<ChattingList> {
     }
   }
 
-  Future<List<bool>> getTouristsStatusList(List<String> touristsEmails) async {
+  Future<List<bool>> getTouristsActiveStatusList(
+      List<String> touristsEmails) async {
     List<bool> statusList = [];
 
     for (String email in touristsEmails) {
@@ -156,9 +157,9 @@ class _ChattingListState extends State<ChattingList> {
     return statusList;
   }
 
-  void updateTouristsStatus() async {
+  void updateTouristsActiveStatus() async {
     try {
-      List<bool> touristsActiveStatus = await getTouristsStatusList(
+      List<bool> touristsActiveStatus = await getTouristsActiveStatusList(
           tourists.map((tourist) => tourist['email'] as String).toList());
 
       for (int i = 0; i < tourists.length; i++) {
@@ -166,14 +167,12 @@ class _ChattingListState extends State<ChattingList> {
             touristsActiveStatus.isNotEmpty && touristsActiveStatus.length > i
                 ? touristsActiveStatus[i]
                 : false;
-
-        // Print the new active status
+        // Print the new active status.
         print(
             'Tourist ${tourists[i]['firstName']} ${tourists[i]['lastName']} - Active Status: ${tourists[i]['activeStatus']}');
       }
-
-      // Update the filtered tourists list
-      filterAdmins('');
+      // // Update the filtered tourists list.
+      // filterAdmins('');
 
       // Trigger a UI update
       if (mounted) setState(() {});
@@ -270,9 +269,8 @@ class _ChattingListState extends State<ChattingList> {
 
   @override
   void dispose() {
-    // Cancel the timer when the widget is disposed
-    _statusUpdateTimer.cancel();
-
+    // Cancel the timer when the widget is disposed.
+    statusUpdateTimer.cancel();
     focusNode.dispose();
     super.dispose();
   }
@@ -284,7 +282,7 @@ class _ChattingListState extends State<ChattingList> {
         children: [
           Positioned.fill(
             child: Image.asset(
-              'assets/Images/Profiles/Tourist/homeBackground.jpg',
+              'assets/Images/Profiles/Admin/mainBackground.jpg',
               fit: BoxFit.cover,
             ),
           ),
@@ -409,7 +407,7 @@ class _ChattingListState extends State<ChattingList> {
                                           openChatWithTourist(tourist);
                                         },
                                       ),
-                                      // Display the active status dot
+                                      // Display the active status dot.
                                       Positioned(
                                         top: 8,
                                         right: 15,
