@@ -134,12 +134,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 15),
                   buildProfileTile("Notifications",
                       "assets/Images/Profiles/Tourist/notification.png", () {
-                    // Navigator.of(context).push(
-                    //   MaterialPageRoute(
-                    //     builder: (context) =>
-                    //         NotificationsWidget(token: widget.token),
-                    //   ),
-                    // );
+                    // Handle the callback.
                   }),
                   const SizedBox(height: 15),
                   buildProfileTile(
