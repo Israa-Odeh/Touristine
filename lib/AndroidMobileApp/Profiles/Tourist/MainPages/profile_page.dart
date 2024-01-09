@@ -5,7 +5,7 @@ import 'package:touristine/AndroidMobileApp/LoginAndRegistration/MainPages/landi
 import 'package:touristine/AndroidMobileApp/Profiles/Tourist/ActiveStatus/active_status.dart';
 import 'package:touristine/AndroidMobileApp/components/profile_picture.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:flutter/material.dart';
 
@@ -145,11 +145,11 @@ class _ProfilePageState extends State<ProfilePage> {
                       GoogleSignIn googleSignIn = GoogleSignIn();
                       googleSignIn.signOut();
                       googleSignIn.disconnect();
-                      FirebaseAuth.instance.signOut();
+                      // FirebaseAuth.instance.signOut();
                     }
                     Navigator.of(context).popUntil((route) => route.isFirst);
-                    Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => LandingPage()));
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) => const LandingPage()));
                   }),
                 ],
               ),
