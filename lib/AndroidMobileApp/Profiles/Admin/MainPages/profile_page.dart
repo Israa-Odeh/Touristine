@@ -117,12 +117,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     );
                   }),
                   const SizedBox(height: 15),
-                  buildProfileTile("Notifications",
-                      "assets/Images/Profiles/Admin/ProfilePage/notification.png",
-                      () {
-                    // Define the action for this tile.
-                  }),
-                  const SizedBox(height: 15),
                   buildProfileTile("Log Out",
                       "assets/Images/Profiles/Admin/ProfilePage/logOut.png",
                       () {

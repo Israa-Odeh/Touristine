@@ -132,11 +132,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     );
                   }),
                   const SizedBox(height: 15),
-                  buildProfileTile("Notifications",
-                      "assets/Images/Profiles/Tourist/notification.png", () {
-                    // Handle the callback.
-                  }),
-                  const SizedBox(height: 15),
                   buildProfileTile(
                       "Log Out", "assets/Images/Profiles/Tourist/logOut.png",
                       () {
