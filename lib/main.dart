@@ -1,7 +1,7 @@
-import 'package:flutter/foundation.dart';
-import 'package:touristine/LoginAndRegistration/MainPages/TopOuterScreen.dart';
-import 'package:touristine/UserData/userProvider.dart';
+import 'package:touristine/AndroidMobileApp/LoginAndRegistration/MainPages/top_outer_screen.dart';
+import 'package:touristine/AndroidMobileApp/UserData/user_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
