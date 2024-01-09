@@ -1,4 +1,4 @@
-import 'package:touristine/AndroidMobileApp/LoginAndRegistration/MainPages/landing_page.dart';
+import 'package:touristine/WebApplication/LoginAndRegistration/MainPages/landing_page.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 

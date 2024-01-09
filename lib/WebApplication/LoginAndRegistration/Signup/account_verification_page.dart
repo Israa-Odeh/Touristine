@@ -1,6 +1,6 @@
-import 'package:touristine/AndroidMobileApp/onBoarding/Tourist/tourist_onboarding_page.dart';
-import 'package:touristine/AndroidMobileApp/Notifications/snack_bar.dart';
-import 'package:touristine/AndroidMobileApp/UserData/user_provider.dart';
+import 'package:touristine/WebApplication/onBoarding/Tourist/tourist_onboarding_page.dart';
+import 'package:touristine/WebApplication/Notifications/snack_bar.dart';
+import 'package:touristine/WebApplication/UserData/user_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';

@@ -1,5 +1,5 @@
-import 'package:touristine/AndroidMobileApp/LoginAndRegistration/Login/login_page.dart';
-import 'package:touristine/AndroidMobileApp/LoginAndRegistration/Signup/signup_page.dart';
+import 'package:touristine/WebApplication/LoginAndRegistration/Login/login_page.dart';
+import 'package:touristine/WebApplication/LoginAndRegistration/Signup/signup_page.dart';
 import 'package:flutter/material.dart';
 
 

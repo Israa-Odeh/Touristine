@@ -1,6 +1,6 @@
-import 'package:touristine/AndroidMobileApp/LoginAndRegistration/Login/password_reset.dart';
-import 'package:touristine/AndroidMobileApp/Notifications/snack_bar.dart';
-import 'package:touristine/AndroidMobileApp/components/text_field.dart';
+import 'package:touristine/WebApplication/LoginAndRegistration/Login/password_reset.dart';
+import 'package:touristine/WebApplication/Notifications/snack_bar.dart';
+import 'package:touristine/WebApplication/components/text_field.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';

@@ -1,5 +1,5 @@
-import 'package:touristine/AndroidMobileApp/LoginAndRegistration/Login/login_page.dart';
-import 'package:touristine/AndroidMobileApp/Notifications/snack_bar.dart';
+import 'package:touristine/WebApplication/LoginAndRegistration/Login/login_page.dart';
+import 'package:touristine/WebApplication/Notifications/snack_bar.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'dart:convert';
