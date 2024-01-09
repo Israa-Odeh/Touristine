@@ -1,4 +1,3 @@
-import 'Profiles/Tourist/Profile/Sections/Notifications/notification_initializer.dart';
 import 'package:touristine/LoginAndRegistration/MainPages/TopOuterScreen.dart';
 import 'package:touristine/UserData/userProvider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -10,7 +9,7 @@ Future<void> main() async {
   await Firebase.initializeApp();
 
   // Initialize Touristine Notification Channel.
-  await initializeNotifications();
+  // await initializeNotifications();
 
   runApp(const MyApp());
 }

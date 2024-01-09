@@ -5,7 +5,6 @@ import 'package:jwt_decode/jwt_decode.dart';
 import 'package:touristine/LoginAndRegistration/MainPages/landingPage.dart';
 import 'package:touristine/Profiles/Tourist/ActiveStatus/active_status.dart';
 import 'package:touristine/Profiles/Tourist/Profile/Sections/MyAccount.dart';
-import 'package:touristine/Profiles/Tourist/Profile/Sections/Notifications/notifications.dart';
 import 'package:touristine/Profiles/Tourist/Profile/Sections/interestsFilling.dart';
 import 'package:touristine/Profiles/Tourist/Profile/Sections/locationAccquisition.dart';
 import 'package:touristine/components/profilePicture.dart';
@@ -135,12 +134,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 15),
                   buildProfileTile("Notifications",
                       "assets/Images/Profiles/Tourist/notification.png", () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            NotificationsWidget(token: widget.token),
-                      ),
-                    );
+                    // Navigator.of(context).push(
+                    //   MaterialPageRoute(
+                    //     builder: (context) =>
+                    //         NotificationsWidget(token: widget.token),
+                    //   ),
+                    // );
                   }),
                   const SizedBox(height: 15),
                   buildProfileTile(
