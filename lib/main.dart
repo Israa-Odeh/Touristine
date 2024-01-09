@@ -8,9 +8,6 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  // Initialize Touristine Notification Channel.
-  // await initializeNotifications();
-
   runApp(const MyApp());
 }
 
