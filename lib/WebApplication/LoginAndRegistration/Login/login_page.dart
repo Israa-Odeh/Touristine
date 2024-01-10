@@ -514,19 +514,40 @@ class _LoginPageState extends State<LoginPage>
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [        
-
+                  children: [
                     //A spacer
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 50),
 
-                    // A descriptive text.
-                    const Text(
-                      'Let\'s explore Palestine together!',
-                      style: TextStyle(
-                        color: Color(0xFF455a64),
-                        fontSize: 30,
-                        fontFamily: 'Gabriola',
-                        fontWeight: FontWeight.bold,
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 25.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Divider(
+                              thickness: 1,
+                              color: Color(0xFF1E889E),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            child: Text(
+                              'Let\'s explore Palestine together!',
+                              style: TextStyle(
+                                color: Color(0xFF455a64),
+                                fontSize: 30,
+                                fontFamily: 'Gabriola',
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Divider(
+                              thickness: 1,
+                              color: Color(0xFF1E889E),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
 
@@ -534,25 +555,30 @@ class _LoginPageState extends State<LoginPage>
                     const SizedBox(height: 25),
 
                     //Email Textfield.
-                    MyTextField(
-                      controller: emailController,
-                      hintText: 'Email',
-                      obscureText: false,
-                      fieldPrefixIcon: const FaIcon(
-                        FontAwesomeIcons.envelope,
-                        size: 30,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 100.0),
+                      child: MyTextField(
+                        controller: emailController,
+                        hintText: 'Email',
+                        obscureText: false,
+                        fieldPrefixIcon: const FaIcon(
+                          FontAwesomeIcons.envelope,
+                          size: 30,
+                        ),
                       ),
                     ),
-
-                    //Password Textfield.
                     const SizedBox(height: 10),
-                    MyTextField(
-                      controller: passwordController,
-                      hintText: 'Password',
-                      obscureText: true,
-                      fieldPrefixIcon: const FaIcon(
-                        FontAwesomeIcons.lock,
-                        size: 30,
+                    //Password Textfield.
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 100.0),
+                      child: MyTextField(
+                        controller: passwordController,
+                        hintText: 'Password',
+                        obscureText: true,
+                        fieldPrefixIcon: const FaIcon(
+                          FontAwesomeIcons.lock,
+                          size: 30,
+                        ),
                       ),
                     ),
 
@@ -561,7 +587,7 @@ class _LoginPageState extends State<LoginPage>
 
                     // A row containing options for "Remember Me" and "Forgot Password."
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 13),
+                      padding: const EdgeInsets.symmetric(horizontal: 120),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -578,12 +604,12 @@ class _LoginPageState extends State<LoginPage>
                             'Remember Me',
                             style: TextStyle(
                               color: Color(0xFF455a64),
-                              fontSize: 25,
+                              fontSize: 20,
                               fontFamily: 'Gabriola',
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const SizedBox(width: 80),
+                          const SizedBox(width: 165),
                           InkWell(
                             onTap: forgotPassword,
                             child: Text(
@@ -592,7 +618,7 @@ class _LoginPageState extends State<LoginPage>
                                 color: forgetPasswordTapped
                                     ? const Color(0xFF1E889E)
                                     : const Color(0xFF455a64),
-                                fontSize: 25,
+                                fontSize: 20,
                                 fontFamily: 'Gabriola',
                                 fontWeight: FontWeight.w600,
                               ),
@@ -610,12 +636,12 @@ class _LoginPageState extends State<LoginPage>
                       onPressed: signUserIn,
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 70,
-                          vertical: 13,
+                          horizontal: 50,
+                          vertical: 16,
                         ),
                         backgroundColor: const Color(0xFF1E889E),
                         textStyle: const TextStyle(
-                          fontSize: 30,
+                          fontSize: 25,
                           fontFamily: 'Zilla',
                           fontWeight: FontWeight.w300,
                         ),
@@ -624,7 +650,7 @@ class _LoginPageState extends State<LoginPage>
                     ),
 
                     // A spacer.
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 50),
 
                     // A row containing dividers and text.
                     Padding(
@@ -662,14 +688,14 @@ class _LoginPageState extends State<LoginPage>
 
                           // Google BTN animation.
                           Padding(
-                            padding: const EdgeInsets.only(bottom: 30.0, top: 20),
+                            padding:
+                                const EdgeInsets.only(bottom: 30.0, top: 20),
                             child: isLoading
                                 ? const Padding(
                                     padding: EdgeInsets.only(left: 20.0),
                                     child: CircularProgressIndicator(
-                                      valueColor:
-                                          AlwaysStoppedAnimation<Color>(
-                                              Color(0xFF1E889E)),
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Color(0xFF1E889E)),
                                     ),
                                   )
                                 : InkWell(
@@ -682,8 +708,8 @@ class _LoginPageState extends State<LoginPage>
                                       _animationController!.forward();
 
                                       // Simulate a delay before signing-in process.
-                                      await Future.delayed(const Duration(
-                                          milliseconds: 500));
+                                      await Future.delayed(
+                                          const Duration(milliseconds: 500));
 
                                       // Stop the button animation.
                                       _animationController!.reverse();
@@ -700,8 +726,8 @@ class _LoginPageState extends State<LoginPage>
                                           .value, // Apply the animation scale
                                       // Create a circular shape around the Google icon.
                                       child: Container(
-                                        width: 80,
-                                        height: 80,
+                                        width: 50,
+                                        height: 50,
                                         decoration: const BoxDecoration(
                                           color: Color(0xFFa5cfd8),
                                           shape: BoxShape.circle,
@@ -709,8 +735,8 @@ class _LoginPageState extends State<LoginPage>
                                         child: Center(
                                           child: Image.asset(
                                             'assets/Images/LoginPage/SignIn/google.png',
-                                            width: 50,
-                                            height: 50,
+                                            width: 30,
+                                            height: 30,
                                           ),
                                         ),
                                       ),

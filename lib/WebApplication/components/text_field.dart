@@ -91,19 +91,22 @@ class _MyTextFieldState extends State<MyTextField> {
               color: const Color(0xFF1E889E),
             ),
             suffixIcon: widget.obscureText
-                ? IconButton(
-                    onPressed: () {
-                      setState(() {
-                        isPasswordVisible = !isPasswordVisible;
-                      });
-                    },
-                    icon: FaIcon(
-                      isPasswordVisible
-                          ? FontAwesomeIcons.eye
-                          : FontAwesomeIcons.eyeSlash,
-                      color: const Color(0xFF1E889E),
+                ? Padding(
+                  padding: const EdgeInsets.only(right: 10.0),
+                  child: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          isPasswordVisible = !isPasswordVisible;
+                        });
+                      },
+                      icon: FaIcon(
+                        isPasswordVisible
+                            ? FontAwesomeIcons.eye
+                            : FontAwesomeIcons.eyeSlash,
+                        color: const Color(0xFF1E889E),
+                      ),
                     ),
-                  )
+                )
                 : null,
           ),
         ),
