@@ -116,6 +116,7 @@ class _LoginPageState extends State<LoginPage>
 
   Future<void> sendData() async {
     final url = Uri.parse('https://touristine.onrender.com/login');
+    print("Hi1");
     try {
       final response = await http.post(
         url,
@@ -127,6 +128,7 @@ class _LoginPageState extends State<LoginPage>
           'password': passwordController.text,
         },
       );
+      print("Hi2");
 
       // _____________________________________________________________________________________________
       // In the response......
@@ -301,7 +303,7 @@ class _LoginPageState extends State<LoginPage>
     } else if (!isEmailValid(emailController.text)) {
       showCustomSnackBar(context, 'Please enter a valid email address');
     } else if (!isPasswordValid(passwordController.text)) {
-      showCustomSnackBar(context, 'Password must contain 8-30 chars');
+      showCustomSnackBar(context, 'Password must contain 8-30 characters only');
     } else {
       sendData();
     }
@@ -552,7 +554,7 @@ class _LoginPageState extends State<LoginPage>
                     ),
 
                     //A spacer.
-                    const SizedBox(height: 25),
+                    const SizedBox(height: 40),
 
                     //Email Textfield.
                     Padding(
@@ -587,7 +589,7 @@ class _LoginPageState extends State<LoginPage>
 
                     // A row containing options for "Remember Me" and "Forgot Password."
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 120),
+                      padding: const EdgeInsets.symmetric(horizontal: 125),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -609,7 +611,7 @@ class _LoginPageState extends State<LoginPage>
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const SizedBox(width: 165),
+                          const Spacer(),
                           InkWell(
                             onTap: forgotPassword,
                             child: Text(
@@ -650,7 +652,7 @@ class _LoginPageState extends State<LoginPage>
                     ),
 
                     // A spacer.
-                    const SizedBox(height: 50),
+                    const SizedBox(height: 40),
 
                     // A row containing dividers and text.
                     Padding(
@@ -726,8 +728,8 @@ class _LoginPageState extends State<LoginPage>
                                           .value, // Apply the animation scale
                                       // Create a circular shape around the Google icon.
                                       child: Container(
-                                        width: 50,
-                                        height: 50,
+                                        width: 60,
+                                        height: 60,
                                         decoration: const BoxDecoration(
                                           color: Color(0xFFa5cfd8),
                                           shape: BoxShape.circle,
@@ -735,8 +737,8 @@ class _LoginPageState extends State<LoginPage>
                                         child: Center(
                                           child: Image.asset(
                                             'assets/Images/LoginPage/SignIn/google.png',
-                                            width: 30,
-                                            height: 30,
+                                            width: 40,
+                                            height: 40,
                                           ),
                                         ),
                                       ),

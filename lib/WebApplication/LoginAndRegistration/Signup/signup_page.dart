@@ -135,13 +135,11 @@ class _SignupPageState extends State<SignupPage> {
           if (responseData['message'] ==
               'User with this email already exists') {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, responseData['message'],
-                bottomMargin: 550.0);
+            showCustomSnackBar(context, responseData['message']);
           } else if (responseData['message'] ==
               'All mandatory fields must be filled') {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, 'Please fill in all the fields',
-                bottomMargin: 550.0);
+            showCustomSnackBar(context, 'Please fill in all the fields');
           }
         }
       } else if (response.statusCode == 500) {
@@ -149,18 +147,15 @@ class _SignupPageState extends State<SignupPage> {
           if (responseData['error'] ==
               'An error occurred sending the verification line') {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, 'Verification line sending error',
-                bottomMargin: 550.0);
+            showCustomSnackBar(context, 'Verification line sending error');
           } else {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, 'The verification process failed',
-                bottomMargin: 550.0);
+            showCustomSnackBar(context, 'The verification process failed');
           }
         }
       } else {
         // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, 'Failed to sign up, please try again',
-            bottomMargin: 550.0);
+        showCustomSnackBar(context, 'Failed to sign up, please try again');
       }
     } catch (e) {
       // Handle network or other exceptions here.
@@ -171,29 +166,21 @@ class _SignupPageState extends State<SignupPage> {
   // A Function for user registration.
   void signUserUp() {
     if (isInputEmpty()) {
-      showCustomSnackBar(context, 'Please fill in all the fields',
-          bottomMargin: 550.0);
+      showCustomSnackBar(context, 'Please fill in all the fields');
     } else if (!isNameValid(firstNameController.text)) {
-      showCustomSnackBar(context, 'Invalid first name: 2-20 characters only',
-          bottomMargin: 550.0);
+      showCustomSnackBar(context, 'Invalid first name: 2-20 characters only');
     } else if (!isNameValid(lastNameController.text)) {
-      showCustomSnackBar(context, 'Invalid last name: 2-20 characters only',
-          bottomMargin: 550.0);
+      showCustomSnackBar(context, 'Invalid last name: 2-20 characters only');
     } else if (!isEmailValid(emailController.text)) {
-      showCustomSnackBar(context, 'Please enter a valid email address',
-          bottomMargin: 550.0);
+      showCustomSnackBar(context, 'Please enter a valid email address');
     } else if (!isPasswordValid(passwordController.text)) {
-      showCustomSnackBar(context, 'Password must contain 8-30 chars',
-          bottomMargin: 550.0);
+      showCustomSnackBar(context, 'Password must contain 8-30 characters only');
     } else if (!isPasswordValid(passwordConfirmController.text)) {
-      showCustomSnackBar(context, 'Password must contain 8-30 chars',
-          bottomMargin: 550.0);
+      showCustomSnackBar(context, 'Password must contain 8-30 characters only');
     } else if (!doPasswordsMatch(
         passwordController.text, passwordConfirmController.text)) {
-      showCustomSnackBar(context, 'Passwords do not match',
-          bottomMargin: 550.0);
+      showCustomSnackBar(context, 'Passwords do not match');
     } else {
-      // showCustomSnackBar(context, 'Alright');
       // Proceed with user registration logic here.
       sendAndSaveData(); // Send data to the server.
       // Proceed with any additional logic after data is sent.
@@ -208,104 +195,139 @@ class _SignupPageState extends State<SignupPage> {
           true, // Disable resizing when the keyboard appears.
       body: SingleChildScrollView(
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Row(
             children: [
-              const SizedBox(height: 30),
-              Image.asset(
-                'assets/Images/SignupPage/SignUp.gif',
-                width: 200,
-                height: 200,
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'Register now and live the experience',
-                style: TextStyle(
-                  color: Color(0xFF455a64),
-                  fontSize: 31,
-                  fontFamily: 'Gabriola',
-                  fontWeight: FontWeight.bold,
+              const SizedBox(height: 70),
+              Expanded(
+                child: Column(
+                  children: [
+                    Image.asset(
+                      'assets/Images/SignupPage/SignUp.gif',
+                      fit: BoxFit.cover,
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 25),
-              MyTextField(
-                controller: firstNameController,
-                hintText: 'First Name',
-                obscureText: false,
-                fieldPrefixIcon: const FaIcon(
-                  FontAwesomeIcons.user,
-                  size: 30,
-                ),
-              ),
-              const SizedBox(height: 10),
-              MyTextField(
-                controller: lastNameController,
-                hintText: 'Last Name',
-                obscureText: false,
-                fieldPrefixIcon: const FaIcon(
-                  FontAwesomeIcons.user,
-                  size: 30,
-                ),
-              ),
-              const SizedBox(height: 10),
-              MyTextField(
-                controller: emailController,
-                hintText: 'Email',
-                obscureText: false,
-                fieldPrefixIcon: const FaIcon(
-                  FontAwesomeIcons.envelope,
-                  size: 30,
-                ),
-              ),
-              const SizedBox(height: 10),
-              MyTextField(
-                controller: passwordController,
-                hintText: 'Password',
-                obscureText: true,
-                fieldPrefixIcon: const FaIcon(
-                  FontAwesomeIcons.lock,
-                  size: 30,
-                ),
-              ),
-              const SizedBox(height: 10),
-              MyTextField(
-                controller: passwordConfirmController,
-                hintText: 'Confirm Password',
-                obscureText: true,
-                fieldPrefixIcon: const FaIcon(
-                  FontAwesomeIcons.lock,
-                  size: 30,
-                ),
-              ),
-              const SizedBox(height: 35),
-              ElevatedButton(
-                onPressed: signUserUp,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 70,
-                    vertical: 13,
-                  ),
-                  backgroundColor: const Color(0xFF1E889E),
-                  textStyle: const TextStyle(
-                    fontSize: 30,
-                    fontFamily: 'Zilla',
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-                child: const Text('Sign Up'),
-              ),
-              const SizedBox(height: 10),
-              Padding(
-                padding: const EdgeInsets.only(right: 320.0),
-                child: IconButton(
-                  icon: const FaIcon(
-                    FontAwesomeIcons.arrowLeft,
-                    color: Color(0xFF1E889E),
-                    size: 30,
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 50),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 25.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Divider(
+                              thickness: 1,
+                              color: Color(0xFF1E889E),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            child: Text(
+                              'Register now and live the experience',
+                              style: TextStyle(
+                                color: Color(0xFF455a64),
+                                fontSize: 31,
+                                fontFamily: 'Gabriola',
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Divider(
+                              thickness: 1,
+                              color: Color(0xFF1E889E),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 25),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 100.0),
+                      child: MyTextField(
+                        controller: firstNameController,
+                        hintText: 'First Name',
+                        obscureText: false,
+                        fieldPrefixIcon: const FaIcon(
+                          FontAwesomeIcons.user,
+                          size: 30,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 100.0),
+                      child: MyTextField(
+                        controller: lastNameController,
+                        hintText: 'Last Name',
+                        obscureText: false,
+                        fieldPrefixIcon: const FaIcon(
+                          FontAwesomeIcons.user,
+                          size: 30,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 100.0),
+                      child: MyTextField(
+                        controller: emailController,
+                        hintText: 'Email',
+                        obscureText: false,
+                        fieldPrefixIcon: const FaIcon(
+                          FontAwesomeIcons.envelope,
+                          size: 30,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 100.0),
+                      child: MyTextField(
+                        controller: passwordController,
+                        hintText: 'Password',
+                        obscureText: true,
+                        fieldPrefixIcon: const FaIcon(
+                          FontAwesomeIcons.lock,
+                          size: 30,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 100.0),
+                      child: MyTextField(
+                        controller: passwordConfirmController,
+                        hintText: 'Confirm Password',
+                        obscureText: true,
+                        fieldPrefixIcon: const FaIcon(
+                          FontAwesomeIcons.lock,
+                          size: 30,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 35),
+                    ElevatedButton(
+                      onPressed: signUserUp,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 50,
+                          vertical: 16,
+                        ),
+                        backgroundColor: const Color(0xFF1E889E),
+                        textStyle: const TextStyle(
+                          fontSize: 25,
+                          fontFamily: 'Zilla',
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      child: const Text('Sign Up'),
+                    ),
+                  ],
                 ),
               ),
             ],

@@ -5,7 +5,7 @@ void showCustomSnackBar(
   BuildContext context,
   String message, {
   Duration duration = const Duration(milliseconds: 3000),
-  double bottomMargin = 500.0, // Default margin value.
+  double bottomMargin = 550.0, // Default margin value.
 }) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
@@ -19,13 +19,6 @@ void showCustomSnackBar(
       duration: duration,
       behavior: SnackBarBehavior.floating,
       margin: EdgeInsets.only(bottom: bottomMargin, top: 0),
-      // action: SnackBarAction(
-      //   label: 'OK',
-      //   onPressed: () {
-      //     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      //   },
-      //   textColor: Colors.white,
-      // ),
     ),
   );
 }

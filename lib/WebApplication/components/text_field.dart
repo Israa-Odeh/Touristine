@@ -86,9 +86,13 @@ class _MyTextFieldState extends State<MyTextField> {
               fontSize: 20.0,
               fontWeight: FontWeight.w400,
             ),
-            prefixIcon: Icon(
-              widget.fieldPrefixIcon.icon,
-              color: const Color(0xFF1E889E),
+            prefixIcon: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Icon(
+                widget.fieldPrefixIcon.icon,
+                size: 20,
+                color: const Color(0xFF1E889E),
+              ),
             ),
             suffixIcon: widget.obscureText
                 ? Padding(
@@ -104,6 +108,7 @@ class _MyTextFieldState extends State<MyTextField> {
                             ? FontAwesomeIcons.eye
                             : FontAwesomeIcons.eyeSlash,
                         color: const Color(0xFF1E889E),
+                        size: 20,
                       ),
                     ),
                 )
