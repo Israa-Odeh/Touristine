@@ -79,14 +79,12 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
         if (responseData.containsKey('error')) {
           if (responseData['error'] == 'No email was given') {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, responseData['error'],
-                bottomMargin: 250);
+            showCustomSnackBar(context, responseData['error']);
           }
         }
       } else {
         // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, "The verification process failed",
-            bottomMargin: 250);
+        showCustomSnackBar(context, "The verification process failed");
       }
     } catch (e) {
       // Handle network or other exceptions here.
@@ -116,8 +114,7 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
           if (responseData['message'] ==
               'A verification email is sent to you') {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, responseData['message'],
-                bottomMargin: 250);
+            showCustomSnackBar(context, responseData['message']);
             // Update the token after clicking reset to the new token.
             setState(() {
               widget.token = responseData['token'];
@@ -129,13 +126,11 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
           if (responseData['message'] ==
               'User with this email already exists') {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, responseData['message'],
-                bottomMargin: 250);
+            showCustomSnackBar(context, responseData['message']);
           } else if (responseData['message'] ==
               'All mandatory fields must be filled') {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, 'Please fill in all the fields',
-                bottomMargin: 250);
+            showCustomSnackBar(context, 'Please fill in all the fields');
           }
         }
       } else if (response.statusCode == 500) {
@@ -143,18 +138,15 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
           if (responseData['error'] ==
               'An error occurred sending the verification line') {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, 'Verification line sending error',
-                bottomMargin: 250);
+            showCustomSnackBar(context, 'Verification line sending error');
           } else {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, 'The verification process failed',
-                bottomMargin: 250);
+            showCustomSnackBar(context, 'The verification process failed');
           }
         }
       } else {
         // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, 'Failed to sign up, please try again',
-            bottomMargin: 250);
+        showCustomSnackBar(context, 'Failed to sign up, please try again');
       }
     } catch (e) {
       // Handle network or other exceptions here.
@@ -172,98 +164,133 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
         child: Scaffold(
           backgroundColor: Colors.white,
           body: Center(
-            child: Column(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 40),
-                const Text(
-                  'Begin your adventure!',
-                  style: TextStyle(
-                    color: Color(0xFF455a64),
-                    fontSize: 45,
-                    fontFamily: 'Gabriola',
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 50),
+                      Image.asset('assets/Images/SignupPage/Launching.gif',
+                          fit: BoxFit.cover),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 25),
-                Image.asset(
-                  'assets/Images/SignupPage/Launching.gif',
-                  width: 330,
-                  height: 330,
-                ),
-
-                hideResendBTN
-                    ? const SizedBox(height: 40)
-                    : const SizedBox(height: 10),
-                Text(
-                  hideResendBTN
-                      ? 'Congratulations! You have been \n         successfully verified'
-                      : 'Please check your email to \n     verify your account',
-                  style: const TextStyle(
-                    fontSize: 35,
-                    fontFamily: 'Gabriola',
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF455a64),
-                  ),
-                ),
-
-                hideResendBTN
-                    ? const SizedBox(height: 35)
-                    : const SizedBox(height: 10),
-                // Get Started Button.
-                ElevatedButton(
-                  onPressed: () {
-                    if (hideResendBTN == true) {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => TouristOnBoardingPage(
-                                  token: widget.token,
-                                )),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 50,
-                      vertical: 13,
-                    ),
-                    backgroundColor: const Color(0xFF1E889E),
-                    textStyle: const TextStyle(
-                      fontSize: 30,
-                      fontFamily: 'Zilla',
-                      fontWeight: FontWeight.w300,
-                    ),
-                  ),
-                  child: const Text('Get Started'),
-                ),
-                // A spacer between the two BTNs.
-                const SizedBox(height: 15),
-
-                // Resend Email Button.
-                Visibility(
-                  visible: !hideResendBTN,
-                  child: ElevatedButton(
-                    onPressed: resendEmail,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 36,
-                        vertical: 13,
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 80),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 30),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Divider(
+                                thickness: 1,
+                                color: Color(0xFF1E889E),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              child: Text(
+                                'Begin your adventure!',
+                                style: TextStyle(
+                                  color: Color(0xFF455a64),
+                                  fontSize: 45,
+                                  fontFamily: 'Gabriola',
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Divider(
+                                thickness: 1,
+                                color: Color(0xFF1E889E),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      backgroundColor: const Color(0xFFe6e6e6),
-                      textStyle: const TextStyle(
-                        color: Color(0xFF455a64),
-                        fontSize: 30,
-                        fontFamily: 'Zilla',
-                        fontWeight: FontWeight.w300,
+                      hideResendBTN
+                          ? const SizedBox(height: 40)
+                          : const SizedBox(height: 10),
+                      Text(
+                        hideResendBTN
+                            ? 'Congratulations! You have been \n         successfully verified'
+                            : 'Please check your email to verify your account',
+                        style: const TextStyle(
+                          fontSize: 30,
+                          fontFamily: 'Gabriola',
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF455a64),
+                        ),
                       ),
-                    ),
-                    child: const Text(
-                      'Resend Email',
-                      style: TextStyle(
-                        color: Color(0xFF1e889e), // Text color here
+
+                      hideResendBTN
+                          ? const SizedBox(height: 45)
+                          : const SizedBox(height: 20),
+                      // Get Started Button.
+                      ElevatedButton(
+                        onPressed: () {
+                          if (hideResendBTN == true) {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TouristOnBoardingPage(
+                                        token: widget.token,
+                                      )),
+                            );
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 150,
+                            vertical: 20,
+                          ),
+                          backgroundColor: const Color(0xFF1E889E),
+                          textStyle: const TextStyle(
+                            fontSize: 25,
+                            fontFamily: 'Zilla',
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
+                        child: const Text('Get Started'),
                       ),
-                    ),
+                      // A spacer between the two BTNs.
+                      const SizedBox(height: 15),
+
+                      // Resend Email Button.
+                      Visibility(
+                        visible: !hideResendBTN,
+                        child: ElevatedButton(
+                          onPressed: resendEmail,
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 140,
+                              vertical: 20,
+                            ),
+                            backgroundColor: const Color(0xFFe6e6e6),
+                            textStyle: const TextStyle(
+                              color: Color(0xFF455a64),
+                              fontSize: 25,
+                              fontFamily: 'Zilla',
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                          child: const Text(
+                            'Resend Email',
+                            style: TextStyle(
+                              color: Color(0xFF1e889e), // Text color here
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],

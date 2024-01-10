@@ -320,7 +320,10 @@ class _LoginPageState extends State<LoginPage>
 
     try {
       // Trigger the authentication flow.
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final GoogleSignInAccount? googleUser = await GoogleSignIn(
+              clientId:
+                  "889464890314-mn76ka8e993ddustdfcuglbehh2igjs3.apps.googleusercontent.com")
+          .signIn();
 
       if (googleUser == null) {
         return;
@@ -499,11 +502,14 @@ class _LoginPageState extends State<LoginPage>
       body: SingleChildScrollView(
         child: Center(
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Left side: Image
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const SizedBox(height: 70),
                     Image.asset(
@@ -638,8 +644,8 @@ class _LoginPageState extends State<LoginPage>
                       onPressed: signUserIn,
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 50,
-                          vertical: 16,
+                          horizontal: 155,
+                          vertical: 20,
                         ),
                         backgroundColor: const Color(0xFF1E889E),
                         textStyle: const TextStyle(
@@ -656,7 +662,7 @@ class _LoginPageState extends State<LoginPage>
 
                     // A row containing dividers and text.
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
                       child: Column(
                         children: [
                           const Row(

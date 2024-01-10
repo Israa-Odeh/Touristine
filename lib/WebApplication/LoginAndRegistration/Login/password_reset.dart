@@ -41,36 +41,30 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
           if (responseData['message'] ==
               'Check your email for the new password') {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, 'Check your email for the password',
-                bottomMargin: 300.0);
+            showCustomSnackBar(context, 'Check your email for the password');
           }
         }
       } else if (response.statusCode == 500) {
         if (responseData.containsKey('error')) {
           if (responseData['error'] == 'User does not exist') {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, responseData['error'],
-                bottomMargin: 300.0);
+            showCustomSnackBar(context, responseData['error']);
           } else if (responseData['error'] == 'No email address was received') {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, responseData['error'],
-                bottomMargin: 300.0);
+            showCustomSnackBar(context, responseData['error']);
           } else if (responseData['error'] ==
               'An error occurred sending the new password') {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, 'Error sending a new password',
-                bottomMargin: 300.0);
+            showCustomSnackBar(context, 'Error sending a new password');
           } else {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, 'Reset Password Process Failed',
-                bottomMargin: 300.0);
+            showCustomSnackBar(context, 'Reset Password Process Failed');
           }
         }
       } else {
         // Password reset request failed.
-        // You can display an error message or handle it as needed.
-        showCustomSnackBar(context, 'Failed to send the reset email',
-            bottomMargin: 300.0);
+        // ignore: use_build_context_synchronously
+        showCustomSnackBar(context, 'Failed to send the reset email');
       }
     } catch (e) {
       // Handle network or other exceptions here.
@@ -83,78 +77,122 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: Column(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
-              'assets/Images/LoginPage/ForgotPassword/Mail.gif',
-              width: 410,
-              height: 410,
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              'Please check your email for the',
-              style: TextStyle(
-                color: Color(0xFF455a64),
-                fontSize: 35,
-                fontFamily: 'Gabriola',
-                fontWeight: FontWeight.w500,
+            Expanded(
+              child: Column(
+                children: [
+                  const SizedBox(height: 80),
+                  Image.asset('assets/Images/LoginPage/ForgotPassword/Mail.gif',
+                      fit: BoxFit.cover),
+                ],
               ),
             ),
-            const Text(
-              'newly generated password',
-              style: TextStyle(
-                color: Color(0xFF455a64),
-                fontSize: 35,
-                fontFamily: 'Gabriola',
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: resendPassword,
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 30,
-                  vertical: 13,
-                ),
-                backgroundColor: const Color(0xFF1E889E),
-                textStyle: const TextStyle(
-                  fontSize: 28,
-                  fontFamily: 'Zilla',
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
-              child: const Text('Resend Password'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Navigate back to the login page.
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const LoginPage(),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 100),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 50.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Divider(
+                            thickness: 1,
+                            color: Color(0xFF1E889E),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: Text(
+                            'Password Reset',
+                            style: TextStyle(
+                              color: Color(0xFF455a64),
+                              fontSize: 40,
+                              fontFamily: 'Gabriola',
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Divider(
+                            thickness: 1,
+                            color: Color(0xFF1E889E),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 100,
-                  vertical: 13,
-                ),
-                backgroundColor: const Color(0xFFe6e6e6),
-                textStyle: const TextStyle(
-                  color: Color(0xFF455a64),
-                  fontSize: 28,
-                  fontFamily: 'Zilla',
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
-              child: const Text(
-                'Log In',
-                style: TextStyle(
-                  color: Color(0xFF1e889e), // Text color here
-                ),
+                  const SizedBox(height: 50),
+                  const Text(
+                    'Please check your email for the newly',
+                    style: TextStyle(
+                      color: Color(0xFF455a64),
+                      fontSize: 35,
+                      fontFamily: 'Gabriola',
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const Text(
+                    'generated password',
+                    style: TextStyle(
+                      color: Color(0xFF455a64),
+                      fontSize: 35,
+                      fontFamily: 'Gabriola',
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  ElevatedButton(
+                    onPressed: resendPassword,
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 133,
+                        vertical: 20,
+                      ),
+                      backgroundColor: const Color(0xFF1E889E),
+                      textStyle: const TextStyle(
+                        fontSize: 28,
+                        fontFamily: 'Zilla',
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
+                    child: const Text('Resend Password'),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Navigate back to the login page.
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const LoginPage(),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 200,
+                        vertical: 20,
+                      ),
+                      backgroundColor: const Color(0xFFe6e6e6),
+                      textStyle: const TextStyle(
+                        color: Color(0xFF455a64),
+                        fontSize: 28,
+                        fontFamily: 'Zilla',
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
+                    child: const Text(
+                      'Log In',
+                      style: TextStyle(
+                        color: Color(0xFF1e889e), // Text color here
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

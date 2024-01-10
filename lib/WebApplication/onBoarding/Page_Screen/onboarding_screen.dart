@@ -23,55 +23,90 @@ class OnboardingScreen extends StatelessWidget {
           return Container(
             color: Colors.white,
             child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Row(
                 children: [
-                  // The page title.
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: titleSize,
-                      fontFamily: 'Gabriola',
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF455a64),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 20),
+                        Image.asset(
+                          imageAsset,
+                          fit: BoxFit.cover,
+                        ),
+                      ],
                     ),
-                    textAlign: TextAlign.center,
                   ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 100),
+                        // The page title.
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Expanded(
+                                child: Divider(
+                                  thickness: 1,
+                                  color: Color(0xFF1E889E),
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                                child: Text(
+                                  title,
+                                  style: TextStyle(
+                                    fontSize: titleSize,
+                                    fontFamily: 'Gabriola',
+                                    fontWeight: FontWeight.bold,
+                                    color: const Color(0xFF455a64),
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              const Expanded(
+                                child: Divider(
+                                  thickness: 1,
+                                  color: Color(0xFF1E889E),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
 
-                  // A spacer.
-                  const SizedBox(height: 20),
-                  Image.asset(
-                    imageAsset,
-                    fit: BoxFit.contain,
-                  ),
+                        // A spacer.
+                        const SizedBox(height: 20),
 
-                  // The first-line descriptive text.
-                  Text(
-                    firstText,
-                    style: const TextStyle(
-                      fontFamily: 'Gabriola',
-                      fontSize: 37,
-                      color: Color(0xFF455a64),
+                        // The first-line descriptive text.
+                        Text(
+                          firstText,
+                          style: const TextStyle(
+                            fontFamily: 'Gabriola',
+                            fontSize: 37,
+                            color: Color(0xFF455a64),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+
+                        // The second-line descriptive text.
+                        Text(
+                          secondText,
+                          style: const TextStyle(
+                            fontFamily: 'Gabriola',
+                            fontSize: 37,
+                            color: Color(0xFF455a64),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+
+                        // A spacer.
+                        const SizedBox(height: 32),
+                      ],
                     ),
-                    textAlign: TextAlign.center,
                   ),
-
-                  // A spacer.
-                  const SizedBox(height: 0),
-
-                  // The second-line descriptive text.
-                  Text(
-                    secondText,
-                    style: const TextStyle(
-                      fontFamily: 'Gabriola',
-                      fontSize: 37,
-                      color: Color(0xFF455a64),
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-
-                  // A spacer.
-                  const SizedBox(height: 32),
                 ],
               ),
             ),

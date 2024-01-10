@@ -196,11 +196,15 @@ class _SignupPageState extends State<SignupPage> {
       body: SingleChildScrollView(
         child: Center(
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 70),
               Expanded(
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    const SizedBox(height: 50),
                     Image.asset(
                       'assets/Images/SignupPage/SignUp.gif',
                       fit: BoxFit.cover,
@@ -315,8 +319,8 @@ class _SignupPageState extends State<SignupPage> {
                       onPressed: signUserUp,
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 50,
-                          vertical: 16,
+                          horizontal: 150,
+                          vertical: 20,
                         ),
                         backgroundColor: const Color(0xFF1E889E),
                         textStyle: const TextStyle(

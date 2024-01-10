@@ -49,9 +49,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         if (data.containsKey('message')) {
           if (data['message'] == 'Check your email for the new password') {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, 'Check your email for the password',
-                bottomMargin: 300.0);
+            showCustomSnackBar(context, 'Check your email for the password');
           }
+          // ignore: use_build_context_synchronously
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) =>
@@ -71,27 +71,22 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         if (errorData.containsKey('error')) {
           if (errorData['error'] == 'User does not exist') {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, errorData['error'],
-                bottomMargin: 300.0);
+            showCustomSnackBar(context, errorData['error']);
           } else if (errorData['error'] == 'No email address was received') {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, errorData['error'],
-                bottomMargin: 300.0);
+            showCustomSnackBar(context, errorData['error']);
           } else if (errorData['error'] ==
               'An error occurred sending the new password') {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, 'Error sending a new password',
-                bottomMargin: 300.0);
+            showCustomSnackBar(context, 'Error sending a new password');
           } else {
             // ignore: use_build_context_synchronously
-            showCustomSnackBar(context, 'Reset Password Process Failed',
-                bottomMargin: 300.0);
+            showCustomSnackBar(context, 'Reset Password Process Failed');
           }
         }
       } else {
         // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, 'Failed to send the reset email',
-            bottomMargin: 300.0);
+        showCustomSnackBar(context, 'Failed to send the reset email');
       }
     } catch (error) {
       print('Error sending the reset email: $error');
@@ -101,11 +96,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   void resetPassword() {
     // Check if the email is empty.
     if (isEmailEmpty()) {
-      showCustomSnackBar(context, 'Please fill in your email',
-          bottomMargin: 300.0);
+      showCustomSnackBar(context, 'Please fill in your email');
     } else if (!isEmailValid(emailController.text)) {
-      showCustomSnackBar(context, 'Please enter a valid email address',
-          bottomMargin: 300.0);
+      showCustomSnackBar(context, 'Please enter a valid email address');
     } else {
       // The email is not empty and is in a valid format,
       // so you can proceed with the reset password logic.
@@ -121,64 +114,90 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Center(
-            child: Column(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 80),
-                Image.asset(
-                  'assets/Images/LoginPage/ForgotPassword/ForgotPassword.gif',
-                  width: 380,
-                  height: 380,
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  'Forgot Your Password?',
-                  style: TextStyle(
-                    color: Color(0xFF455a64),
-                    fontSize: 30,
-                    fontFamily: 'Gabriola',
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 50),
+                      Image.asset(
+                        'assets/Images/LoginPage/ForgotPassword/ForgotPassword.gif',
+                        fit: BoxFit.cover,
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 25),
-                MyTextField(
-                  controller: emailController,
-                  hintText: 'Email',
-                  obscureText: false,
-                  fieldPrefixIcon: const FaIcon(
-                    FontAwesomeIcons.envelope,
-                    size: 30,
-                  ),
-                ),
-                const SizedBox(height: 30),
-                ElevatedButton(
-                  onPressed: resetPassword,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 30,
-                      vertical: 13,
-                    ),
-                    backgroundColor: const Color(0xFF1E889E),
-                    textStyle: const TextStyle(
-                      fontSize: 30,
-                      fontFamily: 'Zilla',
-                      fontWeight: FontWeight.w300,
-                    ),
-                  ),
-                  child: const Text('Reset Password'),
-                ),
-                const SizedBox(height: 40),
-                Padding(
-                  padding: const EdgeInsets.only(right: 320.0),
-                  child: IconButton(
-                    icon: const FaIcon(
-                      FontAwesomeIcons.arrowLeft,
-                      color: Color(0xFF1e889e),
-                      size: 30,
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 25.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Divider(
+                                thickness: 1,
+                                color: Color(0xFF1E889E),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              child: Text(
+                                'Forgot Your Password?',
+                                style: TextStyle(
+                                  color: Color(0xFF455a64),
+                                  fontSize: 30,
+                                  fontFamily: 'Gabriola',
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Divider(
+                                thickness: 1,
+                                color: Color(0xFF1E889E),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 25),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 100.0),
+                        child: MyTextField(
+                          controller: emailController,
+                          hintText: 'Email',
+                          obscureText: false,
+                          fieldPrefixIcon: const FaIcon(
+                            FontAwesomeIcons.envelope,
+                            size: 30,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      ElevatedButton(
+                        onPressed: resetPassword,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 109,
+                            vertical: 20,
+                          ),
+                          backgroundColor: const Color(0xFF1E889E),
+                          textStyle: const TextStyle(
+                            fontSize: 25,
+                            fontFamily: 'Zilla',
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
+                        child: const Text('Reset Password'),
+                      ),
+                    ],
                   ),
                 ),
               ],
