@@ -30,7 +30,7 @@ class _TopOuterScreenState extends State<TopOuterScreen> {
               pageBuilder: (context, animation, secondaryAnimation) {
                 return FadeTransition(
                   opacity: animation,
-                  child: LandingPage(),
+                  child: const LandingPage(),
                 );
               },
               transitionDuration: const Duration(seconds: 1),
@@ -48,21 +48,17 @@ class _TopOuterScreenState extends State<TopOuterScreen> {
       body: Stack(
         children: [
           // LandingPage (visible before fading effect)
-          if (!_isVisible) LandingPage(),
+          if (!_isVisible) const LandingPage(),
 
           // SplashScreen with fading effect
           AnimatedOpacity(
             opacity: _isVisible ? 1.0 : 0.0,
             duration: const Duration(seconds: 3),
             child: Center(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 24.0),
-                child: SizedBox(
-                  height: 820,
-                  child: Image.asset(
-                    'assets/Images/MainPages/Al-Aqsa.jpg',
-                    fit: BoxFit.fill,
-                  ),
+              child: SizedBox(
+                child: Image.asset(
+                  'assets/Images/MainPages/Al-Aqsa.jpg',
+                  fit: BoxFit.fill,
                 ),
               ),
             ),

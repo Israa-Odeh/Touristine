@@ -2,7 +2,6 @@ import 'package:touristine/WebApplication/LoginAndRegistration/Login/login_page.
 import 'package:touristine/WebApplication/LoginAndRegistration/Signup/signup_page.dart';
 import 'package:flutter/material.dart';
 
-
 class LandingPage extends StatelessWidget {
   const LandingPage({super.key});
 
@@ -39,6 +38,60 @@ class LandingPage extends StatelessWidget {
                         color: Color.fromARGB(255, 2, 63, 74),
                       ),
                     ),
+                    const SizedBox(width: 650),
+                    // Login Button.
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const LoginPage(),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 50,
+                          vertical: 13,
+                        ),
+                        backgroundColor: const Color.fromARGB(255, 184, 208, 213),
+                        textStyle: const TextStyle(
+                          fontSize: 25,
+                          fontFamily: 'Zilla',
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      child: const Text('Login', style: TextStyle(color: Color(0xFF455a64)),),
+                    ),
+                    const SizedBox(width: 10),
+                    // Signup Button.
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const SignupPage(),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 40,
+                          vertical: 13,
+                        ),
+                        backgroundColor: const Color.fromARGB(252, 230, 230, 230),
+                        textStyle: const TextStyle(
+                          color: Color(0xFF455a64),
+                          fontSize: 25,
+                          fontFamily: 'Zilla',
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      child: const Text(
+                        'Signup',
+                        style: TextStyle(
+                          color: Color(0xFF1e889e), // Text color here
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -51,89 +104,24 @@ class LandingPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // First part of the descriptive text.
-              const Text(
-                'Experience every moment of',
-                style: TextStyle(
-                  fontSize: 35,
-                  fontFamily: 'Gabriola',
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF455a64),
+              const Padding(
+                padding: EdgeInsets.only(top: 20.0),
+                child: Text(
+                  "Experience every moment of Palestine like it's your first!",
+                  style: TextStyle(
+                    fontSize: 35,
+                    fontFamily: 'Gabriola',
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF455a64),
+                  ),
                 ),
               ),
-
-              // Second part of the descriptive text.
-              const Text(
-                "Palestine like it's your first!",
-                style: TextStyle(
-                  fontSize: 35,
-                  fontFamily: 'Gabriola',
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF455a64),
-                ),
-              ),
-
               // The image used for the landing page.
               Image.asset(
                 'assets/Images/LandingPage/Landing.png',
-                width: 420,
-                height: 430,
-              ),
-
-              // Login Button.
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const LoginPage(),
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 100,
-                    vertical: 13,
-                  ),
-                  backgroundColor: const Color(0xFF1E889E),
-                  textStyle: const TextStyle(
-                    fontSize: 30,
-                    fontFamily: 'Zilla',
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-                child: const Text('Login'),
-              ),
-              // A spacer between the two BTNs.
-              const SizedBox(height: 15),
-
-              // Signup Button.
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => SignupPage(),
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 100,
-                    vertical: 13,
-                  ),
-                  backgroundColor: const Color(0xFFe6e6e6),
-                  textStyle: const TextStyle(
-                    color: Color(0xFF455a64),
-                    fontSize: 30,
-                    fontFamily: 'Zilla',
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-                child: const Text(
-                  'Sigup',
-                  style: TextStyle(
-                    color: Color(0xFF1e889e), // Text color here
-                  ),
-                ),
+                height: 400,
+                width: 400,
+                fit: BoxFit.cover,
               ),
             ],
           ),

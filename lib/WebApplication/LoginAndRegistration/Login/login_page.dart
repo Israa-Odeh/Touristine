@@ -505,8 +505,7 @@ class _LoginPageState extends State<LoginPage>
               // SignIn Image.
               Image.asset(
                 'assets/Images/LoginPage/SignIn/SignIn.gif',
-                width: 300,
-                height: 210,
+                fit: BoxFit.cover,
               ),
 
               //A spacer
