@@ -24,7 +24,7 @@ class _TopOuterScreenState extends State<TopOuterScreen> {
         });
 
         // Wait for the animation to complete and navigate to the landing page.
-        Future.delayed(const Duration(seconds: 1), () {
+        Future.delayed(const Duration(seconds: 3), () {
           Navigator.of(context).pushReplacement(
             PageRouteBuilder(
               pageBuilder: (context, animation, secondaryAnimation) {
@@ -56,8 +56,9 @@ class _TopOuterScreenState extends State<TopOuterScreen> {
             duration: const Duration(seconds: 3),
             child: Center(
               child: SizedBox(
+                width: 1300,
                 child: Image.asset(
-                  'assets/Images/MainPages/Al-Aqsa.jpg',
+                  'assets/Images/MainPages/DomeOfTheRock.jpg',
                   fit: BoxFit.fill,
                 ),
               ),
