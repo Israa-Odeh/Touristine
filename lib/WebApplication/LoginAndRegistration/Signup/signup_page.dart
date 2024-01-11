@@ -3,7 +3,6 @@ import 'package:touristine/WebApplication/Notifications/snack_bar.dart';
 import 'package:touristine/WebApplication/UserData/user_provider.dart';
 import 'package:touristine/WebApplication/components/text_field.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -63,8 +62,6 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   Future<void> sendAndSaveData() async {
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-    String? deviceToken = await messaging.getToken();
     final url = Uri.parse('https://touristine.onrender.com/signup');
     try {
       final response = await http.post(
@@ -77,7 +74,6 @@ class _SignupPageState extends State<SignupPage> {
           'lastName': lastNameController.text,
           'email': emailController.text,
           'password': passwordController.text,
-          'deviceToken': deviceToken,
         },
       );
 
