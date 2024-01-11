@@ -225,30 +225,32 @@ class _HomePageState extends State<HomePage> {
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(
-                    'assets/Images/Profiles/Tourist/homeBackground.jpg'),
+                    'assets/Images/Profiles/Tourist/homeBackground1.jpg'),
                 fit: BoxFit.cover,
               ),
             ),
           ),
 
-          // Search Box on top of the background.
-          Container(
-            margin: const EdgeInsets.only(top: 50),
-            child: buildSearchBox(),
-          ),
+          // // Search Box on top of the background.
+          // Container(
+          //   margin: const EdgeInsets.only(top: 50),
+          //   child: buildSearchBox(),
+          // ),
 
           Padding(
-            padding: const EdgeInsets.only(top: 115.0),
+            padding: const EdgeInsets.only(top: 10.0),
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
+              controller: ScrollController(),
               child: Column(
                 children: [
                   // Special For You Section.
                   DestinationList(
                     destinations: widget.recommendedDestinations,
-                    listTitle: 'Special For You',
+                    listTitle: 'Special Places For You',
                     token: widget.token,
                   ),
+                  const SizedBox(height: 20),
                   // Popular Places Section.
                   DestinationList(
                     destinations: widget.popularDestinations,

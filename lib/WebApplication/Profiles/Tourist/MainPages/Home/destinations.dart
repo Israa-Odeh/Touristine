@@ -163,97 +163,119 @@ class _DestinationListState extends State<DestinationList> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20.0,
-            ),
-            child: Text(
-              widget.listTitle,
-              style: const TextStyle(
-                fontSize: 38,
-                fontFamily: 'Gabriola',
-                color: Color(0xFF1E889E),
-                fontWeight: FontWeight.bold,
-              ),
+            padding: const EdgeInsets.symmetric(horizontal: 100.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Expanded(
+                  child: Divider(
+                    thickness: 1,
+                    color: Color(0xFF1E889E),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: Text(
+                    widget.listTitle,
+                    style: const TextStyle(
+                      fontSize: 38,
+                      fontFamily: 'Gabriola',
+                      color: Color(0xFF1E889E),
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.start,
+                  ),
+                ),
+                const Expanded(
+                  child: Divider(
+                    thickness: 1,
+                    color: Color(0xFF1E889E),
+                  ),
+                ),
+              ],
             ),
           ),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 10),
-            child: SizedBox(
-              height: 230,
-              width: 400,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  PageView.builder(
-                    controller: _pageController,
-                    itemCount: widget.destinations.length,
-                    onPageChanged: (int index) {
-                      setState(() {
-                        _currentPageIndex = index;
-                      });
-                    },
-                    itemBuilder: (BuildContext context, int index) {
-                      return InkWell(
-                        onTap: () {
-                          setState(() {
-                            _selectedTileIndex = index;
-                          });
-                          navigateToDetailsPage(index);
-                          print(
-                              'Clicked on ${widget.destinations[index]['name']}');
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.all(0),
-                          child: Card(
-                            color: _selectedTileIndex == index
-                                ? const Color.fromARGB(255, 231, 231, 231)
-                                : const Color.fromARGB(255, 255, 255, 255),
-                            shape: RoundedRectangleBorder(
-                              side: const BorderSide(
-                                  color: Color(0xFF1E889E), width: 3),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            clipBehavior: Clip.antiAlias,
-                            child: Column(
-                              children: [
-                                Image.network(
-                                  widget.destinations[index]['image'],
-                                  width: 400,
-                                  height: 165,
-                                  fit: BoxFit.fill,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8),
-                                  child: FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Text(
-                                      widget.destinations[index]['name'],
-                                      style: TextStyle(
-                                        color: _selectedTileIndex == index
-                                            ? const Color.fromARGB(
-                                                255, 25, 114, 132)
-                                            : const Color(0xFF1E889E),
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'Zilla',
+          const SizedBox(height: 10),
+          Center(
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 200),
+              child: SizedBox(
+                height: 400,
+                width: 800,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    PageView.builder(
+                      controller: _pageController,
+                      itemCount: widget.destinations.length,
+                      onPageChanged: (int index) {
+                        setState(() {
+                          _currentPageIndex = index;
+                        });
+                      },
+                      itemBuilder: (BuildContext context, int index) {
+                        return InkWell(
+                          onTap: () {
+                            setState(() {
+                              _selectedTileIndex = index;
+                            });
+                            navigateToDetailsPage(index);
+                            print(
+                                'Clicked on ${widget.destinations[index]['name']}');
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.all(0),
+                            child: Card(
+                              color: _selectedTileIndex == index
+                                  ? const Color.fromARGB(255, 231, 231, 231)
+                                  : const Color.fromARGB(255, 255, 255, 255),
+                              shape: RoundedRectangleBorder(
+                                side: const BorderSide(
+                                    color: Color(0xFF1E889E), width: 3),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              clipBehavior: Clip.antiAlias,
+                              child: Column(
+                                children: [
+                                  Image.network(
+                                    widget.destinations[index]['image'],
+                                    width: 800,
+                                    height: 335,
+                                    fit: BoxFit.fill,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8),
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Text(
+                                        widget.destinations[index]['name'],
+                                        style: TextStyle(
+                                          color: _selectedTileIndex == index
+                                              ? const Color.fromARGB(
+                                                  255, 25, 114, 132)
+                                              : const Color(0xFF1E889E),
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Zilla',
+                                        ),
+                                        maxLines: 1,
                                       ),
-                                      maxLines: 1,
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
-                  if (_isLoading)
-                    const CircularProgressIndicator(
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(Color(0xFF1E889E)),
+                        );
+                      },
                     ),
-                ],
+                    if (_isLoading)
+                      const CircularProgressIndicator(
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(Color(0xFF1E889E)),
+                      ),
+                  ],
+                ),
               ),
             ),
           ),
