@@ -494,272 +494,266 @@ class _LoginPageState extends State<LoginPage>
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        // To allow going back.
-        return true;
-      },
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        resizeToAvoidBottomInset: true, // Enable resizing when keyboard appears.
-        body: SingleChildScrollView(
-          child: Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Left side: Image.
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 70),
-                      Image.asset(
-                        'assets/Images/LoginPage/SignIn/SignIn.gif',
-                        fit: BoxFit.cover,
-                      ),
-                    ],
-                  ),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: true, // Enable resizing when keyboard appears.
+      body: SingleChildScrollView(
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Left side: Image.
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 70),
+                    Image.asset(
+                      'assets/Images/LoginPage/SignIn/SignIn.gif',
+                      fit: BoxFit.cover,
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const SizedBox(height: 50),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 40.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: Divider(
-                                thickness: 1,
-                                color: Color(0xFF1E889E),
-                              ),
+              ),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 50),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 40.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Divider(
+                              thickness: 1,
+                              color: Color(0xFF1E889E),
                             ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10),
-                              child: Text(
-                                'Let\'s explore Palestine together!',
-                                style: TextStyle(
-                                  color: Color(0xFF455a64),
-                                  fontSize: 30,
-                                  fontFamily: 'Gabriola',
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Divider(
-                                thickness: 1,
-                                color: Color(0xFF1E889E),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-    
-                      //A spacer.
-                      const SizedBox(height: 40),
-    
-                      //Email Textfield.
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 100.0),
-                        child: MyTextField(
-                          controller: emailController,
-                          hintText: 'Email',
-                          obscureText: false,
-                          fieldPrefixIcon: const FaIcon(
-                            FontAwesomeIcons.envelope,
-                            size: 30,
                           ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      //Password Textfield.
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 100.0),
-                        child: MyTextField(
-                          controller: passwordController,
-                          hintText: 'Password',
-                          obscureText: true,
-                          fieldPrefixIcon: const FaIcon(
-                            FontAwesomeIcons.lock,
-                            size: 30,
-                          ),
-                        ),
-                      ),
-    
-                      // A spacer.
-                      const SizedBox(height: 10),
-    
-                      // A row containing options for "Remember Me" and "Forgot Password."
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 125),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Checkbox(
-                              value: rememberPassword,
-                              onChanged: (value) {
-                                setState(() {
-                                  rememberPassword = value!;
-                                });
-                              },
-                              activeColor: const Color(0xFF1E889E),
-                            ),
-                            const Text(
-                              'Remember Me',
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            child: Text(
+                              'Let\'s explore Palestine together!',
                               style: TextStyle(
                                 color: Color(0xFF455a64),
+                                fontSize: 30,
+                                fontFamily: 'Gabriola',
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Divider(
+                              thickness: 1,
+                              color: Color(0xFF1E889E),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    //A spacer.
+                    const SizedBox(height: 40),
+
+                    //Email Textfield.
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 100.0),
+                      child: MyTextField(
+                        controller: emailController,
+                        hintText: 'Email',
+                        obscureText: false,
+                        fieldPrefixIcon: const FaIcon(
+                          FontAwesomeIcons.envelope,
+                          size: 30,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    //Password Textfield.
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 100.0),
+                      child: MyTextField(
+                        controller: passwordController,
+                        hintText: 'Password',
+                        obscureText: true,
+                        fieldPrefixIcon: const FaIcon(
+                          FontAwesomeIcons.lock,
+                          size: 30,
+                        ),
+                      ),
+                    ),
+
+                    // A spacer.
+                    const SizedBox(height: 10),
+
+                    // A row containing options for "Remember Me" and "Forgot Password."
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 125),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Checkbox(
+                            value: rememberPassword,
+                            onChanged: (value) {
+                              setState(() {
+                                rememberPassword = value!;
+                              });
+                            },
+                            activeColor: const Color(0xFF1E889E),
+                          ),
+                          const Text(
+                            'Remember Me',
+                            style: TextStyle(
+                              color: Color(0xFF455a64),
+                              fontSize: 20,
+                              fontFamily: 'Gabriola',
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const Spacer(),
+                          InkWell(
+                            onTap: forgotPassword,
+                            child: Text(
+                              'Forgot Password?',
+                              style: TextStyle(
+                                color: forgetPasswordTapped
+                                    ? const Color(0xFF1E889E)
+                                    : const Color(0xFF455a64),
                                 fontSize: 20,
                                 fontFamily: 'Gabriola',
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            const Spacer(),
-                            InkWell(
-                              onTap: forgotPassword,
-                              child: Text(
-                                'Forgot Password?',
-                                style: TextStyle(
-                                  color: forgetPasswordTapped
-                                      ? const Color(0xFF1E889E)
-                                      : const Color(0xFF455a64),
-                                  fontSize: 20,
-                                  fontFamily: 'Gabriola',
-                                  fontWeight: FontWeight.w600,
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // A spacer.
+                    const SizedBox(height: 25),
+
+                    // Log in BTN.
+                    ElevatedButton(
+                      onPressed: signUserIn,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 155,
+                          vertical: 20,
+                        ),
+                        backgroundColor: const Color(0xFF1E889E),
+                        textStyle: const TextStyle(
+                          fontSize: 25,
+                          fontFamily: 'Zilla',
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      child: const Text('Sign In'),
+                    ),
+
+                    // A spacer.
+                    const SizedBox(height: 40),
+
+                    // A row containing dividers and text.
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 45),
+                      child: Column(
+                        children: [
+                          const Row(
+                            children: [
+                              Expanded(
+                                child: Divider(
+                                  thickness: 1,
+                                  color: Color(0xFF1E889E),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-    
-                      // A spacer.
-                      const SizedBox(height: 25),
-    
-                      // Log in BTN.
-                      ElevatedButton(
-                        onPressed: signUserIn,
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 155,
-                            vertical: 20,
-                          ),
-                          backgroundColor: const Color(0xFF1E889E),
-                          textStyle: const TextStyle(
-                            fontSize: 25,
-                            fontFamily: 'Zilla',
-                            fontWeight: FontWeight.w300,
-                          ),
-                        ),
-                        child: const Text('Sign In'),
-                      ),
-    
-                      // A spacer.
-                      const SizedBox(height: 40),
-    
-                      // A row containing dividers and text.
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 45),
-                        child: Column(
-                          children: [
-                            const Row(
-                              children: [
-                                Expanded(
-                                  child: Divider(
-                                    thickness: 1,
-                                    color: Color(0xFF1E889E),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                child: Text(
+                                  'Or continue with',
+                                  style: TextStyle(
+                                    color: Color(0xFF455a64),
+                                    fontSize: 30,
+                                    fontFamily: 'Gabriola',
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 10),
-                                  child: Text(
-                                    'Or continue with',
-                                    style: TextStyle(
-                                      color: Color(0xFF455a64),
-                                      fontSize: 30,
-                                      fontFamily: 'Gabriola',
-                                      fontWeight: FontWeight.w500,
+                              ),
+                              Expanded(
+                                child: Divider(
+                                  thickness: 1,
+                                  color: Color(0xFF1E889E),
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          // Google BTN animation.
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(bottom: 30.0, top: 20),
+                            child: isLoading
+                                ? const Padding(
+                                    padding: EdgeInsets.only(left: 20.0),
+                                    child: CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Color(0xFF1E889E)),
                                     ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Divider(
-                                    thickness: 1,
-                                    color: Color(0xFF1E889E),
-                                  ),
-                                ),
-                              ],
-                            ),
-    
-                            // Google BTN animation.
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(bottom: 30.0, top: 20),
-                              child: isLoading
-                                  ? const Padding(
-                                      padding: EdgeInsets.only(left: 20.0),
-                                      child: CircularProgressIndicator(
-                                        valueColor: AlwaysStoppedAnimation<Color>(
-                                            Color(0xFF1E889E)),
-                                      ),
-                                    )
-                                  : InkWell(
-                                      onTap: () async {
-                                        setState(() {
-                                          isLoading = true;
-                                        });
-    
-                                        // Start the button animation.
-                                        _animationController!.forward();
-    
-                                        // Simulate a delay before signing-in process.
-                                        await Future.delayed(
-                                            const Duration(milliseconds: 500));
-    
-                                        // Stop the button animation.
-                                        _animationController!.reverse();
-    
-                                        // Perform the Google sign-in action.
-                                        await signInWithGoogle();
-    
-                                        setState(() {
-                                          isLoading = false;
-                                        });
-                                      },
-                                      child: Transform.scale(
-                                        scale: _scaleAnimation
-                                            .value, // Apply the animation scale
-                                        // Create a circular shape around the Google icon.
-                                        child: Container(
-                                          width: 60,
-                                          height: 60,
-                                          decoration: const BoxDecoration(
-                                            color: Color(0xFFa5cfd8),
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: Center(
-                                            child: Image.asset(
-                                              'assets/Images/LoginPage/SignIn/google.png',
-                                              width: 40,
-                                              height: 40,
-                                            ),
+                                  )
+                                : InkWell(
+                                    onTap: () async {
+                                      setState(() {
+                                        isLoading = true;
+                                      });
+
+                                      // Start the button animation.
+                                      _animationController!.forward();
+
+                                      // Simulate a delay before signing-in process.
+                                      await Future.delayed(
+                                          const Duration(milliseconds: 500));
+
+                                      // Stop the button animation.
+                                      _animationController!.reverse();
+
+                                      // Perform the Google sign-in action.
+                                      await signInWithGoogle();
+
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                    },
+                                    child: Transform.scale(
+                                      scale: _scaleAnimation
+                                          .value, // Apply the animation scale
+                                      // Create a circular shape around the Google icon.
+                                      child: Container(
+                                        width: 60,
+                                        height: 60,
+                                        decoration: const BoxDecoration(
+                                          color: Color(0xFFa5cfd8),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(
+                                          child: Image.asset(
+                                            'assets/Images/LoginPage/SignIn/google.png',
+                                            width: 40,
+                                            height: 40,
                                           ),
                                         ),
                                       ),
                                     ),
-                            ),
-                          ],
-                        ),
+                                  ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
