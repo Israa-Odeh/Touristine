@@ -108,6 +108,7 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
           'email': widget.email,
           // ignore: use_build_context_synchronously
           'password': context.read<UserProvider>().password,
+          'deviceToken': '',
         },
       );
       final Map<String, dynamic> responseData = json.decode(response.body);
