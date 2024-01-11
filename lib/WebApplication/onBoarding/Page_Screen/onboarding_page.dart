@@ -20,7 +20,7 @@ class OnBoardingPage extends StatefulWidget {
   const OnBoardingPage(
       {super.key,
       required this.token,
-      this.googleAccount = false, // Set default value to false
+      this.googleAccount = false, // Set default value to false.
       required this.title,
       required this.imageAsset,
       required this.firstText,

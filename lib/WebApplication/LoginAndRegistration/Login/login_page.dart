@@ -9,6 +9,7 @@ import 'package:touristine/WebApplication/onBoarding/Admin/admin_onboarding_page
 import 'package:touristine/WebApplication/onBoarding/Tourist/tourist_onboarding_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -115,8 +116,9 @@ class _LoginPageState extends State<LoginPage>
   }
 
   Future<void> sendData() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    String? deviceToken = await messaging.getToken();
     final url = Uri.parse('https://touristine.onrender.com/login');
-    print("Hi1");
     try {
       final response = await http.post(
         url,
@@ -126,10 +128,9 @@ class _LoginPageState extends State<LoginPage>
         body: {
           'email': emailController.text,
           'password': passwordController.text,
+          'deviceToken': deviceToken,
         },
       );
-      print("Hi2");
-
       // _____________________________________________________________________________________________
       // In the response......
       /* Jenan, return additional data that confirms the user's existence (maybe a flag).
@@ -505,7 +506,7 @@ class _LoginPageState extends State<LoginPage>
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Left side: Image
+              // Left side: Image.
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -523,11 +524,9 @@ class _LoginPageState extends State<LoginPage>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    //A spacer
                     const SizedBox(height: 50),
-
                     const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 25.0),
+                      padding: EdgeInsets.symmetric(horizontal: 40.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -662,7 +661,7 @@ class _LoginPageState extends State<LoginPage>
 
                     // A row containing dividers and text.
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      padding: const EdgeInsets.symmetric(horizontal: 45),
                       child: Column(
                         children: [
                           const Row(

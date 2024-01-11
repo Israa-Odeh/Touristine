@@ -58,9 +58,9 @@ class _TouristOnBoardingPageState extends State<TouristOnBoardingPage> {
             'visited destination admin',
             'to your selected destination',
           ],
-          titleSize: 50, // Set your desired title size to be 50.
+          titleSize: 50, // Set the desired title size to be 50.
           numOfPages: 6, // The number of pages in the onboarding Page.
-          profileType: 100, // 100 for tourist profile.
+          profileType: 100, // 100 is for the tourist profile.
         ));
   }
 }

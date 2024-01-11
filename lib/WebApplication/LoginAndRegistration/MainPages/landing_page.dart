@@ -1,5 +1,5 @@
-import 'package:touristine/WebApplication/LoginAndRegistration/Login/login_page.dart';
 import 'package:touristine/WebApplication/LoginAndRegistration/Signup/signup_page.dart';
+import 'package:touristine/WebApplication/LoginAndRegistration/Login/login_page.dart';
 import 'package:flutter/material.dart';
 
 class LandingPage extends StatelessWidget {
@@ -47,14 +47,16 @@ class LandingPage extends StatelessWidget {
                             horizontal: 40,
                             vertical: 15,
                           ),
-                          backgroundColor: const Color.fromARGB(255, 184, 208, 213),
+                          backgroundColor:
+                              const Color.fromARGB(255, 184, 208, 213),
                           textStyle: TextStyle(
                             fontSize: constraints.maxWidth < 600 ? 15 : 25,
                             fontFamily: 'Zilla',
                             fontWeight: FontWeight.w300,
                           ),
                         ),
-                        child: const Text('Login', style: TextStyle(color: Color(0xFF455a64))),
+                        child: const Text('Login',
+                            style: TextStyle(color: Color(0xFF455a64))),
                       ),
                       const SizedBox(width: 10),
                       ElevatedButton(
@@ -70,15 +72,17 @@ class LandingPage extends StatelessWidget {
                             horizontal: 40,
                             vertical: 15,
                           ),
-                          backgroundColor: const Color.fromARGB(252, 230, 230, 230),
-                          textStyle:  TextStyle(
+                          backgroundColor:
+                              const Color.fromARGB(252, 230, 230, 230),
+                          textStyle: TextStyle(
                             color: const Color(0xFF455a64),
                             fontSize: constraints.maxWidth < 600 ? 15 : 25,
                             fontFamily: 'Zilla',
                             fontWeight: FontWeight.w300,
                           ),
                         ),
-                        child: const Text('Signup', style: TextStyle(color: Color(0xFF1e889e))),
+                        child: const Text('Signup',
+                            style: TextStyle(color: Color(0xFF1e889e))),
                       ),
                     ],
                   ),

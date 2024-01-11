@@ -29,8 +29,6 @@ class _ProfilePictureState extends State<ProfilePicture> {
 
   @override
   Widget build(BuildContext context) {
-    // var touristProvider = context.read<UserProvider>();
-
     return Column(
       children: [
         SizedBox(

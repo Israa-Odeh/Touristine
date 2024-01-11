@@ -93,7 +93,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 100),
+                  const SizedBox(height: 95),
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 50.0),
                     child: Row(

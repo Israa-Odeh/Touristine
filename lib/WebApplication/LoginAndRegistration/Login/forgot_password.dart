@@ -136,7 +136,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 25.0),
+                        padding: EdgeInsets.symmetric(horizontal: 40.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [

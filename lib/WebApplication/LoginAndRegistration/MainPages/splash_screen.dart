@@ -5,7 +5,7 @@ class SplashScreen extends StatefulWidget {
   final Widget profileType;
 
   const SplashScreen(
-      {super.key, required this.profileType}); // Updated constructor
+      {super.key, required this.profileType}); // Updated constructor.
 
   @override
   _SplashScreenState createState() => _SplashScreenState();
@@ -13,7 +13,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   bool _isVisible = true;
-  late Timer _timer; // Declare a Timer variable
+  late Timer _timer; // Declare a Timer variable.
 
   @override
   void initState() {
@@ -23,15 +23,15 @@ class _SplashScreenState extends State<SplashScreen> {
       const Duration(seconds: 2),
       () {
         if (mounted) {
-          // Check if the widget is still in the tree before calling setState
+          // Check if the widget is still in the tree before calling setState.
           setState(() {
-            _isVisible = false; // Hide the splash screen
+            _isVisible = false; // Hide the splash screen.
           });
 
           // Wait for the animation to complete and navigate to the landing page.
           Future.delayed(const Duration(milliseconds: 1500), () {
             if (mounted) {
-              // Check if the widget is still in the tree before navigating
+              // Check if the widget is still in the tree before navigating.
               Navigator.of(context).pushReplacement(
                 PageRouteBuilder(
                   pageBuilder: (context, animation, secondaryAnimation) {
@@ -83,27 +83,34 @@ class _SplashScreenState extends State<SplashScreen> {
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 110),
-                  Image.asset('assets/Images/MainPages/Logo.png',
-                      fit: BoxFit.contain),
-                  const SizedBox(height: 0),
-                  Stack(
-                    alignment: Alignment.center,
+                  const SizedBox(height: 50),
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.asset('assets/Images/MainPages/Logo.png',
+                            fit: BoxFit.cover),
+                      ],
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 103.0),
-                        child: Image.asset(
-                          'assets/Images/MainPages/OliveOilTree.png',
-                          fit: BoxFit.contain,
-                        ),
+                      const SizedBox(width: 120),
+                      Image.asset(
+                        'assets/Images/MainPages/FullCamel.png',
+                        height: 250,
+                        width: 250,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 369, right: 330.0),
-                        child: Image.asset(
-                          'assets/Images/MainPages/Camel.png',
-                          fit: BoxFit.contain,
-                        ),
+                      const SizedBox(width: 100),
+                      Image.asset(
+                        'assets/Images/MainPages/OliveOilTree.png',
+                        height: 350,
+                        width: 350,
                       ),
                     ],
                   ),

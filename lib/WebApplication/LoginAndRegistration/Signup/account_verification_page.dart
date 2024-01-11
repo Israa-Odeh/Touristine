@@ -1,6 +1,7 @@
 import 'package:touristine/WebApplication/onBoarding/Tourist/tourist_onboarding_page.dart';
 import 'package:touristine/WebApplication/Notifications/snack_bar.dart';
 import 'package:touristine/WebApplication/UserData/user_provider.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -42,8 +43,8 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
   }
 
   Future<void> checkVerificationStatus() async {
-    final url = Uri.parse(
-        'https://touristine.onrender.com/check-verification-status'); // Replace this with your Node.js server URL.
+    final url =
+        Uri.parse('https://touristine.onrender.com/check-verification-status');
     try {
       final response = await http.post(
         url,
@@ -93,6 +94,8 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
   }
 
   Future<void> resendEmail() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    String? deviceToken = await messaging.getToken();
     final url = Uri.parse('https://touristine.onrender.com/signup');
     try {
       final response = await http.post(
@@ -101,10 +104,14 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: {
+          // ignore: use_build_context_synchronously
           'firstName': context.read<UserProvider>().firstName,
+          // ignore: use_build_context_synchronously
           'lastName': context.read<UserProvider>().lastName,
           'email': widget.email,
+          // ignore: use_build_context_synchronously
           'password': context.read<UserProvider>().password,
+          'deviceToken': deviceToken,
         },
       );
       final Map<String, dynamic> responseData = json.decode(response.body);
@@ -185,35 +192,39 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
                     children: [
                       const SizedBox(height: 80),
                       const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 30),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: Divider(
-                                thickness: 1,
-                                color: Color(0xFF1E889E),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10),
-                              child: Text(
-                                'Begin your adventure!',
-                                style: TextStyle(
-                                  color: Color(0xFF455a64),
-                                  fontSize: 45,
-                                  fontFamily: 'Gabriola',
-                                  fontWeight: FontWeight.bold,
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 25.0, vertical: 30),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 30),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: Divider(
+                                  thickness: 1,
+                                  color: Color(0xFF1E889E),
                                 ),
                               ),
-                            ),
-                            Expanded(
-                              child: Divider(
-                                thickness: 1,
-                                color: Color(0xFF1E889E),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                child: Text(
+                                  'Begin your adventure!',
+                                  style: TextStyle(
+                                    color: Color(0xFF455a64),
+                                    fontSize: 45,
+                                    fontFamily: 'Gabriola',
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ],
+                              Expanded(
+                                child: Divider(
+                                  thickness: 1,
+                                  color: Color(0xFF1E889E),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       hideResendBTN

@@ -20,7 +20,7 @@ class _TopOuterScreenState extends State<TopOuterScreen> {
       const Duration(seconds: 3),
       () {
         setState(() {
-          _isVisible = false; // Hide the splash screen
+          _isVisible = false; // Hide the splash screen.
         });
 
         // Wait for the animation to complete and navigate to the landing page.

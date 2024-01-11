@@ -40,10 +40,10 @@ class OnboardingScreen extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 100),
+                        const SizedBox(height: 80),
                         // The page title.
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 40.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
