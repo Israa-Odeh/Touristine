@@ -125,7 +125,7 @@ class _LoginPageState extends State<LoginPage>
         body: {
           'email': emailController.text,
           'password': passwordController.text,
-          'deviceToken': '',
+          'deviceToken': '0',
         },
       );
       // _____________________________________________________________________________________________

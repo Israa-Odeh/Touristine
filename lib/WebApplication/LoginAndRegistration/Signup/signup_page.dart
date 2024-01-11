@@ -74,7 +74,7 @@ class _SignupPageState extends State<SignupPage> {
           'lastName': lastNameController.text,
           'email': emailController.text,
           'password': passwordController.text,
-          'deviceToken': '',
+          'deviceToken': '0',
         },
       );
 
