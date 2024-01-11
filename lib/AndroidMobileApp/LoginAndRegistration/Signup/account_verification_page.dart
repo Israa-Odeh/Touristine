@@ -1,6 +1,7 @@
 import 'package:touristine/AndroidMobileApp/onBoarding/Tourist/tourist_onboarding_page.dart';
 import 'package:touristine/AndroidMobileApp/Notifications/snack_bar.dart';
 import 'package:touristine/AndroidMobileApp/UserData/user_provider.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -95,6 +96,8 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
   }
 
   Future<void> resendEmail() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    String? deviceToken = await messaging.getToken();
     final url = Uri.parse('https://touristine.onrender.com/signup');
     try {
       final response = await http.post(
@@ -103,10 +106,14 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: {
+          // ignore: use_build_context_synchronously
           'firstName': context.read<UserProvider>().firstName,
+          // ignore: use_build_context_synchronously
           'lastName': context.read<UserProvider>().lastName,
           'email': widget.email,
+          // ignore: use_build_context_synchronously
           'password': context.read<UserProvider>().password,
+          'deviceToken': deviceToken,
         },
       );
       final Map<String, dynamic> responseData = json.decode(response.body);

@@ -3,6 +3,7 @@ import 'package:touristine/AndroidMobileApp/Notifications/snack_bar.dart';
 import 'package:touristine/AndroidMobileApp/UserData/user_provider.dart';
 import 'package:touristine/AndroidMobileApp/components/text_field.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -62,8 +63,10 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   Future<void> sendAndSaveData() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    String? deviceToken = await messaging.getToken();
     final url = Uri.parse(
-        'https://touristine.onrender.com/signup'); // Replace this with your Node.js server URL.
+        'https://touristine.onrender.com/signup');
     try {
       final response = await http.post(
         url,
@@ -75,6 +78,7 @@ class _SignupPageState extends State<SignupPage> {
           'lastName': lastNameController.text,
           'email': emailController.text,
           'password': passwordController.text,
+          'deviceToken': deviceToken,
         },
       );
 
@@ -193,10 +197,8 @@ class _SignupPageState extends State<SignupPage> {
       showCustomSnackBar(context, 'Passwords do not match',
           bottomMargin: 550.0);
     } else {
-      // showCustomSnackBar(context, 'Alright');
       // Proceed with user registration logic here.
       sendAndSaveData(); // Send data to the server.
-      // Proceed with any additional logic after data is sent.
     }
   }
 

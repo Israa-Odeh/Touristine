@@ -9,6 +9,7 @@ import 'package:touristine/AndroidMobileApp/onBoarding/Admin/admin_onboarding_pa
 import 'package:touristine/AndroidMobileApp/onBoarding/Tourist/tourist_onboarding_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -115,6 +116,8 @@ class _LoginPageState extends State<LoginPage>
   }
 
   Future<void> sendData() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    String? deviceToken = await messaging.getToken();
     final url = Uri.parse('https://touristine.onrender.com/login');
     try {
       final response = await http.post(
@@ -125,6 +128,7 @@ class _LoginPageState extends State<LoginPage>
         body: {
           'email': emailController.text,
           'password': passwordController.text,
+          'deviceToken': deviceToken,
         },
       );
 
