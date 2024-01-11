@@ -249,56 +249,70 @@ class _TouristAppState extends State<TouristProfile> {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
-          body: FutureBuilder(
-            future: fetchData,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                return _children[_currentIndex];
-              } else {
-                return const Center(
-                  child: CircularProgressIndicator(
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(Color(0xFF1E889E)),
+          body: Column(
+            children: [
+              Container(
+                color: const Color(0xFF1E889E),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 0.0),
+                  child: BottomNavigationBar(
+                    currentIndex: _currentIndex,
+                    onTap: onTabTapped,
+                    items: [
+                      _buildBottomNavigationBarItem(
+                        FontAwesomeIcons.house,
+                        'Home Page',
+                        0,
+                      ),
+                      _buildBottomNavigationBarItem(
+                        FontAwesomeIcons.clock,
+                        'Plan Maker',
+                        1,
+                      ),
+                      _buildBottomNavigationBarItem(
+                        FontAwesomeIcons.mapLocationDot,
+                        'Upload Places',
+                        2,
+                      ),
+                      _buildBottomNavigationBarItem(
+                        FontAwesomeIcons.comment,
+                        'Chatting',
+                        3,
+                      ),
+                      _buildBottomNavigationBarItem(
+                        FontAwesomeIcons.user,
+                        'Profile',
+                        4,
+                      ),
+                    ],
+                    selectedItemColor: const Color.fromARGB(255, 255, 255, 255),
+                    unselectedItemColor:
+                        const Color.fromARGB(255, 255, 255, 255),
+                    selectedLabelStyle: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                    backgroundColor: const Color(0xFF1E889E),
                   ),
-                );
-              }
-            },
-          ),
-          bottomNavigationBar: BottomNavigationBar(
-            currentIndex: _currentIndex,
-            onTap: onTabTapped,
-            items: [
-              _buildBottomNavigationBarItem(
-                FontAwesomeIcons.house,
-                'Home Page',
-                0,
+                ),
               ),
-              _buildBottomNavigationBarItem(
-                FontAwesomeIcons.clock,
-                'Plan Maker',
-                1,
-              ),
-              _buildBottomNavigationBarItem(
-                FontAwesomeIcons.mapLocationDot,
-                'Upload Places',
-                2,
-              ),
-              _buildBottomNavigationBarItem(
-                FontAwesomeIcons.comment,
-                'Chatting',
-                3,
-              ),
-              _buildBottomNavigationBarItem(
-                FontAwesomeIcons.user,
-                'Profile',
-                4,
+              Expanded(
+                child: FutureBuilder(
+                  future: fetchData,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return _children[_currentIndex];
+                    } else {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Color(0xFF1E889E)),
+                        ),
+                      );
+                    }
+                  },
+                ),
               ),
             ],
-            selectedItemColor: const Color.fromARGB(255, 255, 255, 255),
-            unselectedItemColor: const Color.fromARGB(255, 255, 255, 255),
-            selectedLabelStyle: const TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
           ),
         ),
       ),
