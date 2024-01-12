@@ -113,7 +113,7 @@ class _AddDestTabState extends State<AddDestTab> {
 
       if (response.statusCode == 200) {
         // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, 'Thanks for sharing your experience',
+        showCustomSnackBar(context, 'Thanks for suggesting a new place',
             bottomMargin: 0);
       } else if (response.statusCode == 500) {
         final Map<String, dynamic> responseData = json.decode(response.body);
