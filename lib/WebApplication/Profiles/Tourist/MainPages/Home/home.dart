@@ -1,8 +1,6 @@
-import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/Home/custom_search_bar.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/Home/destination_view.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/Home/destinations.dart';
 import 'package:touristine/WebApplication/Notifications/snack_bar.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'dart:convert';
@@ -108,60 +106,11 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // A Function to build a search box.
-  Widget buildSearchBox() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFF1E889E),
-          borderRadius: BorderRadius.circular(50),
-        ),
-        child: ListTile(
-          tileColor: Colors.transparent,
-          contentPadding: EdgeInsets.zero,
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => CustomSearchBar(token: widget.token)),
-            );
-          },
-          title: Container(
-            padding:
-                const EdgeInsets.only(top: 13, bottom: 13, right: 18, left: 18),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.only(right: 15),
-                  child: const Icon(
-                    FontAwesomeIcons.magnifyingGlass,
-                    color: Color.fromARGB(255, 252, 252, 252),
-                  ),
-                ),
-                const Expanded(
-                  child: Text(
-                    "Search Places",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      color: Color.fromARGB(255, 255, 255, 255),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   // A Function to build a profile tile with a title, image, and onTap action.
   Widget buildPlaceTile(
       String title, String imagePath, VoidCallback onTapAction) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 240),
       child: Card(
         color: const Color.fromARGB(71, 111, 228, 252),
         shape: RoundedRectangleBorder(
@@ -187,8 +136,8 @@ class _HomePageState extends State<HomePage> {
                     borderRadius: BorderRadius.circular(20),
                     child: Image.network(
                       imagePath,
-                      width: 140,
-                      height: 140,
+                      width: 300,
+                      height: 200,
                       fit: BoxFit.fill,
                     ),
                   ),
@@ -225,17 +174,11 @@ class _HomePageState extends State<HomePage> {
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(
-                    'assets/Images/Profiles/Tourist/homeBackground1.jpg'),
-                fit: BoxFit.cover,
+                    'assets/Images/Profiles/Tourist/homeBackground.jpg'),
+                fit: BoxFit.fill,
               ),
             ),
           ),
-
-          // // Search Box on top of the background.
-          // Container(
-          //   margin: const EdgeInsets.only(top: 50),
-          //   child: buildSearchBox(),
-          // ),
 
           Padding(
             padding: const EdgeInsets.only(top: 10.0),
@@ -259,19 +202,37 @@ class _HomePageState extends State<HomePage> {
                   ),
 
                   // Other Places Section.
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SizedBox(height: 30),
                   const Padding(
-                    padding: EdgeInsets.only(right: 230),
-                    child: Text(
-                      "Other Places",
-                      style: TextStyle(
-                        fontSize: 38,
-                        fontFamily: 'Gabriola',
-                        color: Color(0xFF1E889E),
-                        fontWeight: FontWeight.bold,
-                      ),
+                    padding: EdgeInsets.symmetric(horizontal: 100.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Divider(
+                            thickness: 1,
+                            color: Color(0xFF1E889E),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 40),
+                          child: Text(
+                            "Other Places",
+                            style: TextStyle(
+                              fontSize: 38,
+                              fontFamily: 'Gabriola',
+                              color: Color(0xFF1E889E),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Divider(
+                            thickness: 1,
+                            color: Color(0xFF1E889E),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   // Adding others section using a loop.

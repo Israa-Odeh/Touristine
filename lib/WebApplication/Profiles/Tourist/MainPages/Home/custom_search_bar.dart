@@ -98,11 +98,11 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
       } else if (response.statusCode == 500) {
         final Map<String, dynamic> responseData = json.decode(response.body);
         // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, responseData['error'], bottomMargin: 350);
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
       } else {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'Failed to retrieve search results',
-            bottomMargin: 350);
+            bottomMargin: 0);
       }
     } catch (error) {
       print('Failed to send search request: $error');
@@ -122,10 +122,10 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
         sendSearchRequest(query);
       } else {
         showCustomSnackBar(context, 'Invalid characters in search query!',
-            bottomMargin: 300);
+            bottomMargin: 0);
       }
     } else {
-      showCustomSnackBar(context, 'Enter a search query!', bottomMargin: 300);
+      showCustomSnackBar(context, 'Enter a search query!', bottomMargin: 0);
     }
   }
 
@@ -282,12 +282,12 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
         children: [
           Image.asset(
             'assets/Images/Profiles/Tourist/homeBackground.jpg',
-            fit: BoxFit.cover,
+            fit: BoxFit.fill,
             width: double.infinity,
             height: double.infinity,
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(16.0, 50.0, 16.0, 16.0),
+            padding: const EdgeInsets.fromLTRB(16.0, 20.0, 16.0, 16.0),
             child: Column(
               children: [
                 Container(
@@ -349,7 +349,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                 ),
                 const SizedBox(height: 16),
                 buildSuggestionsList(),
-                const SizedBox(height: 16),
+                if (isSearching) const SizedBox(height: 16),
                 if (isSearching)
                   const CircularProgressIndicator(
                     valueColor:
@@ -360,16 +360,6 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'BackToHome',
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
-        backgroundColor: const Color(0xFF1E889E),
-        elevation: 0,
-        child: const Icon(FontAwesomeIcons.arrowLeft),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
     );
   }
 

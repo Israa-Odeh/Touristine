@@ -1,6 +1,7 @@
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/Chatting/chatting_list.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/ActiveStatus/active_status.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/DestinationUpload/dest_upload_home.dart';
+import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/Home/custom_search_bar.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/planMaker/plan_maker_home.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/profile_page.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/Home/home.dart';
@@ -239,6 +240,55 @@ class _TouristAppState extends State<TouristProfile> {
     });
   }
 
+  // A Function to build a search box.
+  Widget buildSearchBox() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFF1E889E),
+          borderRadius: BorderRadius.circular(50),
+        ),
+        child: ListTile(
+          tileColor: Colors.transparent,
+          contentPadding: EdgeInsets.zero,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => CustomSearchBar(token: widget.token)),
+            );
+          },
+          title: Container(
+            padding:
+                const EdgeInsets.only(top: 13, bottom: 13, right: 18, left: 18),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.only(right: 15),
+                  child: const Icon(
+                    FontAwesomeIcons.magnifyingGlass,
+                    color: Color.fromARGB(255, 252, 252, 252),
+                  ),
+                ),
+                const Expanded(
+                  child: Text(
+                    "Search Places",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: Color.fromARGB(255, 255, 255, 255),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -255,43 +305,56 @@ class _TouristAppState extends State<TouristProfile> {
                 color: const Color(0xFF1E889E),
                 child: Padding(
                   padding: const EdgeInsets.only(top: 0.0),
-                  child: BottomNavigationBar(
-                    currentIndex: _currentIndex,
-                    onTap: onTabTapped,
-                    items: [
-                      _buildBottomNavigationBarItem(
-                        FontAwesomeIcons.house,
-                        'Home Page',
-                        0,
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 250,
+                        child: buildSearchBox(),
                       ),
-                      _buildBottomNavigationBarItem(
-                        FontAwesomeIcons.clock,
-                        'Plan Maker',
-                        1,
-                      ),
-                      _buildBottomNavigationBarItem(
-                        FontAwesomeIcons.mapLocationDot,
-                        'Upload Places',
-                        2,
-                      ),
-                      _buildBottomNavigationBarItem(
-                        FontAwesomeIcons.comment,
-                        'Chatting',
-                        3,
-                      ),
-                      _buildBottomNavigationBarItem(
-                        FontAwesomeIcons.user,
-                        'Profile',
-                        4,
+                      SizedBox(
+                        width: 800,
+                        child: BottomNavigationBar(
+                          currentIndex: _currentIndex,
+                          onTap: onTabTapped,
+                          items: [
+                            _buildBottomNavigationBarItem(
+                              FontAwesomeIcons.house,
+                              'Home Page',
+                              0,
+                            ),
+                            _buildBottomNavigationBarItem(
+                              FontAwesomeIcons.clock,
+                              'Plan Maker',
+                              1,
+                            ),
+                            _buildBottomNavigationBarItem(
+                              FontAwesomeIcons.mapLocationDot,
+                              'Upload Places',
+                              2,
+                            ),
+                            _buildBottomNavigationBarItem(
+                              FontAwesomeIcons.comment,
+                              'Chatting',
+                              3,
+                            ),
+                            _buildBottomNavigationBarItem(
+                              FontAwesomeIcons.user,
+                              'Profile',
+                              4,
+                            ),
+                          ],
+                          selectedItemColor:
+                              const Color.fromARGB(255, 255, 255, 255),
+                          unselectedItemColor:
+                              const Color.fromARGB(255, 255, 255, 255),
+                          selectedLabelStyle: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                          backgroundColor: Colors.transparent,
+                          elevation: 0,
+                        ),
                       ),
                     ],
-                    selectedItemColor: const Color.fromARGB(255, 255, 255, 255),
-                    unselectedItemColor:
-                        const Color.fromARGB(255, 255, 255, 255),
-                    selectedLabelStyle: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                    backgroundColor: const Color(0xFF1E889E),
                   ),
                 ),
               ),
@@ -338,7 +401,7 @@ class _TouristAppState extends State<TouristProfile> {
             )
           : Icon(icon),
       label: label,
-      backgroundColor: const Color(0xFF1E889E),
+      backgroundColor: Colors.transparent,
     );
   }
 }

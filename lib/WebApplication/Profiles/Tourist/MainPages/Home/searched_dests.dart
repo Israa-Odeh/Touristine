@@ -1,5 +1,4 @@
 import 'package:touristine/WebApplication/Notifications/snack_bar.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'destination_view.dart';
@@ -94,108 +93,114 @@ class _SearchedDestinationsState extends State<SearchedDestinations> {
         builder: (context) {
           if (widget.destinationsList.isEmpty) {
             return Center(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 24.0),
-                child: Container(
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(
-                          'assets/Images/Profiles/Tourist/emptyListBackground.png'),
-                      fit: BoxFit.cover,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Positioned(
+                    top: 0,
+                    child: Image.asset(
+                      'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
+                      fit: BoxFit.fill,
                     ),
                   ),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 150),
-                      Image.asset(
-                        'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
-                        fit: BoxFit.cover,
+                  const Positioned(
+                    top: 450,
+                    child: Text(
+                      'No results found',
+                      style: TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Gabriola',
+                        color: Color.fromARGB(255, 23, 99, 114),
                       ),
-                      const Text(
-                        'No results found',
-                        style: TextStyle(
-                          fontSize: 40,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'Gabriola',
-                          color: Color.fromARGB(255, 23, 99, 114),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
             );
           } else {
-            return Padding(
-              padding: const EdgeInsets.only(top: 24.0),
-              child: Container(
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(
-                        'assets/Images/Profiles/Tourist/homeBackground.jpg'),
-                    fit: BoxFit.cover,
+            return Stack(
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(
+                        'assets/Images/Profiles/Tourist/homeBackground.jpg',
+                      ),
+                      fit: BoxFit.fill,
+                    ),
                   ),
                 ),
-                child: widget.destinationsList.length > 5
-                    ? Scrollbar(
-                        thickness: 5,
-                        trackVisibility: true,
-                        thumbVisibility: true,
-                        controller: scrollController,
-                        child: ListView.builder(
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: widget.destinationsList.length > 6
+                      ? Scrollbar(
+                          thickness: 3,
+                          trackVisibility: true,
+                          thumbVisibility: true,
                           controller: scrollController,
-                          itemCount: widget.destinationsList.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            final destinationName =
-                                widget.destinationsList[index]['name'];
-                            return Stack(
-                              children: [
-                                buildPlaceTile(
-                                  destinationName,
-                                  widget.destinationsList[index]['imagePath'],
-                                  () async {
-                                    setState(() {
-                                      isLoadingMap[destinationName] = true;
-                                    });
-                                    await getDestinationDetails(
-                                        destinationName);
-                                    setState(() {
-                                      isLoadingMap[destinationName] = false;
-                                    });
-                                    // ignore: use_build_context_synchronously
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            DestinationDetails(
-                                          destination:
-                                              widget.destinationsList[index],
-                                          token: widget.token,
-                                          destinationDetails:
-                                              destinationDetails,
-                                          destinationImages: destinationImages,
-                                          ratings: ratings,
-                                        ),
-                                      ),
-                                    );
-                                    print(
-                                        'Tapped on ${widget.destinationsList[index]['name']}');
-                                  },
-                                  isLoadingMap[destinationName] ?? false,
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      )
-                    : ListView.builder(
-                        itemCount: widget.destinationsList.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final destinationName =
-                              widget.destinationsList[index]['name'];
-                          return Stack(
+                          child: ListView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            controller: scrollController,
                             children: [
-                              buildPlaceTile(
+                              Wrap(
+                                spacing: 10.0,
+                                runSpacing: 10.0,
+                                children: List.generate(
+                                  widget.destinationsList.length,
+                                  (index) {
+                                    final destinationName =
+                                        widget.destinationsList[index]['name'];
+                                    return buildPlaceTile(
+                                      destinationName,
+                                      widget.destinationsList[index]
+                                          ['imagePath'],
+                                      () async {
+                                        setState(() {
+                                          isLoadingMap[destinationName] = true;
+                                        });
+                                        await getDestinationDetails(
+                                            destinationName);
+                                        setState(() {
+                                          isLoadingMap[destinationName] = false;
+                                        });
+                                        // ignore: use_build_context_synchronously
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                DestinationDetails(
+                                              destination: widget
+                                                  .destinationsList[index],
+                                              token: widget.token,
+                                              destinationDetails:
+                                                  destinationDetails,
+                                              destinationImages:
+                                                  destinationImages,
+                                              ratings: ratings,
+                                            ),
+                                          ),
+                                        );
+                                        print(
+                                            'Tapped on ${widget.destinationsList[index]['name']}');
+                                      },
+                                      isLoadingMap[destinationName] ?? false,
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : Wrap(
+                          spacing: 10.0,
+                          runSpacing: 10.0,
+                          children: List.generate(
+                            widget.destinationsList.length,
+                            (index) {
+                              final destinationName =
+                                  widget.destinationsList[index]['name'];
+                              return buildPlaceTile(
                                 destinationName,
                                 widget.destinationsList[index]['imagePath'],
                                 () async {
@@ -224,32 +229,16 @@ class _SearchedDestinationsState extends State<SearchedDestinations> {
                                       'Tapped on ${widget.destinationsList[index]['name']}');
                                 },
                                 isLoadingMap[destinationName] ?? false,
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-              ),
+                              );
+                            },
+                          ),
+                        ),
+                ),
+              ],
             );
           }
         },
       ),
-      floatingActionButton: Padding(
-        padding: EdgeInsets.only(
-            bottom: widget.destinationsList.isNotEmpty ? 0.0 : 10.0),
-        child: FloatingActionButton(
-          heroTag: 'BackToHome',
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          backgroundColor: widget.destinationsList.isNotEmpty
-              ? const Color.fromARGB(129, 30, 137, 158)
-              : const Color(0xFF1E889E),
-          elevation: 0,
-          child: const Icon(FontAwesomeIcons.arrowLeft),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
     );
   }
 }
@@ -268,34 +257,32 @@ Widget buildPlaceTile(
         ),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Stack(
-        children: [
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            onTap: onTapAction,
-            title: Container(
-              height: 140,
-              padding: const EdgeInsets.only(left: 0, right: 25),
-              child: Row(
+      child: SizedBox(
+        height: 280,
+        width: 400,
+        child: Stack(
+          children: [
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              onTap: onTapAction,
+              title: Column(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.only(right: 15),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Image.network(
-                        imagePath,
-                        width: 140,
-                        height: 140,
-                        fit: BoxFit.fill,
-                      ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.network(
+                      imagePath,
+                      height: 200,
+                      width: 400,
+                      fit: BoxFit.fill,
                     ),
                   ),
-                  Expanded(
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
                     child: Center(
                       child: Text(
                         title,
                         style: const TextStyle(
-                          fontSize: 25,
+                          fontSize: 22,
                           fontFamily: 'Zilla',
                           color: Color.fromARGB(159, 0, 0, 0),
                           fontWeight: FontWeight.bold,
@@ -307,18 +294,19 @@ Widget buildPlaceTile(
                 ],
               ),
             ),
-          ),
-          // Circular progress indicator.
-          if (isLoading)
-            const Positioned.fill(
-              child: Align(
-                alignment: Alignment.center,
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1E889E)),
+            // Circular progress indicator.
+            if (isLoading)
+              const Positioned.fill(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: CircularProgressIndicator(
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(Color(0xFF1E889E)),
+                  ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     ),
   );
