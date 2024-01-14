@@ -15,6 +15,7 @@ class DestinationCardGenerator extends StatefulWidget {
 }
 
 class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
+  double mainAxisExtent = 540; // Default height value for unseen destinations.
   int uploadedDestsLength = 0;
   List<Map<String, dynamic>> uploadedDestinations = [];
   bool isLoading = true;
@@ -98,75 +99,56 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
       );
     } else if (uploadedDestinations.isEmpty) {
       return Center(
-        child: Column(
+        child: Stack(
+          alignment: Alignment.center,
           children: [
-            const SizedBox(height: 80),
-            Image.asset(
-              'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
-              fit: BoxFit.cover,
+            Positioned(
+              top: -20,
+              child: Image.asset(
+                'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
+                fit: BoxFit.fill,
+              ),
             ),
-            const Text(
-              'No places found',
-              style: TextStyle(
+            const Positioned(
+              top: 420,
+              child: Text(
+                'No places found',
+                style: TextStyle(
                   fontSize: 40,
                   fontWeight: FontWeight.w600,
                   fontFamily: 'Gabriola',
-                  color: Color.fromARGB(255, 23, 99, 114)),
+                  color: Color.fromARGB(255, 23, 99, 114),
+                ),
+              ),
             ),
           ],
         ),
       );
     } else {
-      ScrollController pageScrollController = ScrollController();
-
-      return uploadedDestinations.length > 1
-          ? ScrollbarTheme(
-              data: ScrollbarThemeData(
-                thumbColor: MaterialStateProperty.all(
-                    const Color.fromARGB(255, 131, 131, 131)),
-                radius: const Radius.circular(0),
-              ),
-              child: Scrollbar(
-                thumbVisibility: true,
-                trackVisibility: true,
-                thickness: 6.0,
-                controller: pageScrollController,
-                child: ListView.builder(
-                  controller: pageScrollController,
-                  itemCount: uploadedDestinations.length,
-                  itemBuilder: (context, index) {
-                    return DestinationCard(
-                      token: widget.token,
-                      destination: uploadedDestinations[index],
-                      onDelete: () {
-                        setState(() {
-                          uploadedDestinations.removeAt(index);
-                        });
-                      },
-                      uploadedDestsLength: uploadedDestsLength,
-                    );
-                  },
-                ),
-              ),
-            )
-          : Padding(
-              padding: const EdgeInsets.symmetric(vertical: 0.0),
-              child: ListView.builder(
-                itemCount: uploadedDestinations.length,
-                itemBuilder: (context, index) {
-                  return DestinationCard(
-                    token: widget.token,
-                    destination: uploadedDestinations[index],
-                    onDelete: () {
-                      setState(() {
-                        uploadedDestinations.removeAt(index);
-                      });
-                    },
-                    uploadedDestsLength: uploadedDestsLength,
-                  );
-                },
-              ),
+      return Padding(
+        padding: const EdgeInsets.only(top: 15.0, right: 5.0, left: 5.0),
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4, // # of destinations in each row.
+            mainAxisExtent: 520, // Height of each card.
+            crossAxisSpacing: 2.0, // Horizontal spacing between destinations.
+            mainAxisSpacing: 8.0, // Vertical spacing between rows.
+          ),
+          itemCount: uploadedDestinations.length,
+          itemBuilder: (context, index) {
+            return DestinationCard(
+              token: widget.token,
+              destination: uploadedDestinations[index],
+              onDelete: () {
+                setState(() {
+                  uploadedDestinations.removeAt(index);
+                });
+              },
+              uploadedDestsLength: uploadedDestsLength,
             );
+          },
+        ),
+      );
     }
   }
 }
@@ -238,7 +220,7 @@ class _DestinationCardState extends State<DestinationCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.all(16.0),
+      margin: const EdgeInsets.only(right: 5.0, left: 5.0, bottom: 10),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
         side: const BorderSide(
@@ -253,11 +235,11 @@ class _DestinationCardState extends State<DestinationCard> {
           children: [
             // Status icon and button row.
             Container(
-              height: 55,
+              height: 45,
               color: const Color.fromARGB(94, 195, 195, 195),
               child: Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10.0),
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 5.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -268,7 +250,7 @@ class _DestinationCardState extends State<DestinationCard> {
                               ? FontAwesomeIcons.circleCheck
                               : FontAwesomeIcons.circleXmark,
                           color: const Color(0xFF7F7F7F),
-                          size: 23,
+                          size: 18,
                         ),
                         const SizedBox(width: 8.0),
                         Text(
@@ -279,7 +261,7 @@ class _DestinationCardState extends State<DestinationCard> {
                               color: Color(0xFF7F7F7F),
                               fontFamily: 'Calibri',
                               fontWeight: FontWeight.bold,
-                              fontSize: 25),
+                              fontSize: 20),
                         ),
                       ],
                     ),
@@ -302,8 +284,8 @@ class _DestinationCardState extends State<DestinationCard> {
                               child: Image.asset(
                                   'assets/Images/Profiles/Tourist/DestUpload/adminIcon.png',
                                   color: Colors.black,
-                                  width: 32,
-                                  height: 32,
+                                  width: 25,
+                                  height: 25,
                                   fit: BoxFit.cover),
                             ),
                           ),
@@ -316,13 +298,12 @@ class _DestinationCardState extends State<DestinationCard> {
             ),
             // Horizontal ListView of images.
             SizedBox(
-              height: widget.uploadedDestsLength == 1 &&
-                      widget.destination['status'].toLowerCase() == "seen"
-                  ? 175
-                  : 220,
+              height: widget.destination['status'].toLowerCase() == "seen"
+                  ? 140
+                  : 180,
               child: Scrollbar(
-                trackVisibility: true,
-                thumbVisibility: true,
+                trackVisibility: widget.destination['imagesURLs'].length > 1,
+                thumbVisibility: widget.destination['imagesURLs'].length > 1,
                 thickness: 5,
                 controller: imagesScrollController,
                 child: ListView.builder(
@@ -331,11 +312,15 @@ class _DestinationCardState extends State<DestinationCard> {
                   itemCount: widget.destination['imagesURLs'].length,
                   itemBuilder: (context, index) {
                     return SizedBox(
-                      width: 400,
+                      width: 310,
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 10.0),
                         child: Image.network(
                           widget.destination['imagesURLs'][index],
+                          height: widget.destination['status'].toLowerCase() ==
+                                  "seen"
+                              ? 150
+                              : 190,
                           fit: BoxFit.fill,
                         ),
                       ),
@@ -361,7 +346,7 @@ class _DestinationCardState extends State<DestinationCard> {
                             color: Color.fromARGB(255, 12, 53, 61),
                             fontFamily: 'Zilla Slab Light',
                             fontWeight: FontWeight.bold,
-                            fontSize: 23,
+                            fontSize: 18,
                           ),
                         ),
                       ),
@@ -374,7 +359,7 @@ class _DestinationCardState extends State<DestinationCard> {
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 10.0),
               child:
-                  Divider(thickness: 3, color: Color.fromARGB(80, 19, 83, 96)),
+                  Divider(thickness: 2, color: Color.fromARGB(80, 19, 83, 96)),
             ),
             Padding(
               padding: const EdgeInsets.only(
@@ -388,7 +373,7 @@ class _DestinationCardState extends State<DestinationCard> {
                         color: Color.fromARGB(255, 12, 53, 61),
                         fontFamily: 'Zilla Slab Light',
                         fontWeight: FontWeight.bold,
-                        fontSize: 18),
+                        fontSize: 16),
                   ),
                   Text(
                     widget.destination['city'],
@@ -396,7 +381,7 @@ class _DestinationCardState extends State<DestinationCard> {
                         color: Color.fromARGB(255, 12, 53, 61),
                         fontFamily: 'Zilla Slab Light',
                         fontWeight: FontWeight.bold,
-                        fontSize: 18),
+                        fontSize: 16),
                   ),
                 ],
               ),
@@ -405,7 +390,7 @@ class _DestinationCardState extends State<DestinationCard> {
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 10.0),
               child:
-                  Divider(thickness: 3, color: Color.fromARGB(80, 19, 83, 96)),
+                  Divider(thickness: 2, color: Color.fromARGB(80, 19, 83, 96)),
             ),
             // About destination text.
             Scrollbar(
@@ -414,7 +399,7 @@ class _DestinationCardState extends State<DestinationCard> {
               trackVisibility: true,
               controller: aboutScrollController,
               child: SizedBox(
-                height: 130.0,
+                height: 90.0,
                 child: SingleChildScrollView(
                   controller: aboutScrollController,
                   child: Padding(
@@ -425,7 +410,7 @@ class _DestinationCardState extends State<DestinationCard> {
                       style: const TextStyle(
                         fontFamily: 'Andalus',
                         color: Color(0xFF595959),
-                        fontSize: 25,
+                        fontSize: 18,
                       ),
                     ),
                   ),
@@ -440,20 +425,20 @@ class _DestinationCardState extends State<DestinationCard> {
             // Budget and sheltered status row.
             Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 15, vertical: 8.0),
+                  const EdgeInsets.symmetric(horizontal: 15, vertical: 4.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     widget.destination['budget'] ?? '',
-                    style: const TextStyle(fontFamily: 'Calibri', fontSize: 20),
+                    style: const TextStyle(fontFamily: 'Calibri', fontSize: 17),
                   ),
                   Text(
                       widget.destination['sheltered'] == "true"
                           ? 'Sheltered'
                           : 'Unsheltered',
                       style:
-                          const TextStyle(fontFamily: 'Calibri', fontSize: 20)),
+                          const TextStyle(fontFamily: 'Calibri', fontSize: 17)),
                 ],
               ),
             ),
@@ -467,17 +452,17 @@ class _DestinationCardState extends State<DestinationCard> {
               padding: widget.destination['status'].toLowerCase() == "seen"
                   ? const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10)
                   : const EdgeInsets.only(
-                      left: 15.0, right: 15, top: 10, bottom: 20),
+                      left: 15.0, right: 15, top: 5, bottom: 5),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                       '${widget.destination['timeToSpend']} ${widget.destination['timeToSpend'] > 1 ? 'hours' : 'hour'}',
                       style:
-                          const TextStyle(fontFamily: 'Calibri', fontSize: 20)),
+                          const TextStyle(fontFamily: 'Calibri', fontSize: 17)),
                   Text(widget.destination['date'] ?? '',
                       style:
-                          const TextStyle(fontFamily: 'Calibri', fontSize: 20)),
+                          const TextStyle(fontFamily: 'Calibri', fontSize: 17)),
                 ],
               ),
             ),
@@ -503,11 +488,11 @@ class _DestinationCardState extends State<DestinationCard> {
                           },
                           borderRadius: BorderRadius.circular(30.0),
                           child: const Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 20.0, vertical: 10),
+                            padding: EdgeInsets.symmetric(horizontal: 10.0),
                             child: FaIcon(
                               FontAwesomeIcons.solidTrashCan,
                               color: Colors.black,
+                              size: 20,
                             ),
                           ),
                         ),

@@ -53,7 +53,7 @@ class _NumericStepButtonState extends State<NumericStepButton> {
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: Color.fromARGB(196, 14, 62, 71),
-              fontSize: 25.0,
+              fontSize: 24.0,
               fontWeight: FontWeight.w500,
             ),
           ),

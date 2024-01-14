@@ -1,8 +1,10 @@
+import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/DestinationUpload/dest_generator.dart';
+import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/DestinationUpload/my_dests_list.dart';
+import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/planMaker/plan_generator.dart';
+import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/planMaker/my_plans_list.dart';
+import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/Home/custom_search_bar.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/Chatting/chatting_list.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/ActiveStatus/active_status.dart';
-import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/DestinationUpload/dest_upload_home.dart';
-import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/Home/custom_search_bar.dart';
-import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/planMaker/plan_maker_home.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/profile_page.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/Home/home.dart';
 import 'package:touristine/WebApplication/Notifications/snack_bar.dart';
@@ -225,13 +227,45 @@ class _TouristAppState extends State<TouristProfile> {
         popularDestinations: popularDestinations,
         otherDestinations: otherDestinations,
       ),
-      PlanMakerPage(token: widget.token),
-      DestsUploadHomePage(token: widget.token),
+      Container(),
+      Container(),
       ChattingList(token: widget.token),
       ProfilePage(token: widget.token, googleAccount: widget.googleAccount)
     ];
 
     moveToStep(widget.stepNum);
+  }
+
+  String planMenuOption = "Make a Plan";
+  String destinationMenuOption = "Add a Place";
+
+  Widget getCurrentTab() {
+    if (_currentIndex == 0) {
+      // Home Page.
+      return _children[0];
+    } else if (_currentIndex == 1) {
+      // Plan Maker Tab.
+      if (planMenuOption == "Make a Plan") {
+        return MakePlanTab(token: widget.token);
+      } else if (planMenuOption == "My Plans") {
+        return MyPlansTab(token: widget.token);
+      }
+    } else if (_currentIndex == 2) {
+      // Upload Places Tab.
+      if (destinationMenuOption == "Add a Place") {
+        return AddDestTab(token: widget.token);
+      } else if (destinationMenuOption == "My Places") {
+        return DestinationCardGenerator(token: widget.token);
+      }
+    } else if (_currentIndex == 3) {
+      // Chatting Tab.
+      return _children[3];
+    } else if (_currentIndex == 4) {
+      // Profile Tab.
+      return _children[4];
+    }
+    // Return a default widget if the index doesn't match any tab.
+    return Container();
   }
 
   void moveToStep(int index) {
@@ -246,7 +280,7 @@ class _TouristAppState extends State<TouristProfile> {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF1E889E),
+          color: const Color.fromARGB(255, 231, 231, 231),
           borderRadius: BorderRadius.circular(50),
         ),
         child: ListTile(
@@ -261,23 +295,24 @@ class _TouristAppState extends State<TouristProfile> {
           },
           title: Container(
             padding:
-                const EdgeInsets.only(top: 13, bottom: 13, right: 18, left: 18),
+                const EdgeInsets.only(top: 5, bottom: 5, right: 18, left: 18),
             child: Row(
               children: [
                 Container(
                   padding: const EdgeInsets.only(right: 15),
                   child: const Icon(
                     FontAwesomeIcons.magnifyingGlass,
-                    color: Color.fromARGB(255, 252, 252, 252),
+                    color: Color.fromARGB(163, 0, 0, 0),
+                    size: 20,
                   ),
                 ),
                 const Expanded(
                   child: Text(
                     "Search Places",
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 18,
                       fontWeight: FontWeight.w500,
-                      color: Color.fromARGB(255, 255, 255, 255),
+                      color: Color.fromARGB(163, 0, 0, 0),
                     ),
                   ),
                 ),
@@ -308,7 +343,8 @@ class _TouristAppState extends State<TouristProfile> {
                   child: Row(
                     children: [
                       SizedBox(
-                        width: 250,
+                        height: 50,
+                        width: 300,
                         child: buildSearchBox(),
                       ),
                       SizedBox(
@@ -324,12 +360,16 @@ class _TouristAppState extends State<TouristProfile> {
                             ),
                             _buildBottomNavigationBarItem(
                               FontAwesomeIcons.clock,
-                              'Plan Maker',
+                              planMenuOption == "Make a Plan"
+                                  ? 'Plan Maker'
+                                  : 'My Plans',
                               1,
                             ),
                             _buildBottomNavigationBarItem(
                               FontAwesomeIcons.mapLocationDot,
-                              'Upload Places',
+                              destinationMenuOption == "Add a Place"
+                                  ? 'Upload Places'
+                                  : 'My Places',
                               2,
                             ),
                             _buildBottomNavigationBarItem(
@@ -363,7 +403,7 @@ class _TouristAppState extends State<TouristProfile> {
                   future: fetchData,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
-                      return _children[_currentIndex];
+                      return getCurrentTab();
                     } else {
                       return const Center(
                         child: CircularProgressIndicator(
@@ -382,12 +422,6 @@ class _TouristAppState extends State<TouristProfile> {
     );
   }
 
-  void onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
-
   BottomNavigationBarItem _buildBottomNavigationBarItem(
     IconData icon,
     String label,
@@ -403,5 +437,63 @@ class _TouristAppState extends State<TouristProfile> {
       label: label,
       backgroundColor: Colors.transparent,
     );
+  }
+
+  void onTabTapped(int index) async {
+    if (index == 1) {
+      final selectedOption = await showMenu(
+        context: context,
+        position: _currentIndex == 1
+            ? const RelativeRect.fromLTRB(470, 65, 470, 0)
+            : _currentIndex == 0
+                ? const RelativeRect.fromLTRB(510, 65, 510, 0)
+                : const RelativeRect.fromLTRB(440, 65, 440, 0),
+        items: <PopupMenuEntry>[
+          const PopupMenuItem<String>(
+            value: "Make a Plan",
+            child: Text("Make a Plan"),
+          ),
+          const PopupMenuItem<String>(
+            value: "My Plans",
+            child: Text("My Plans"),
+          ),
+        ],
+      );
+      if (selectedOption != null) {
+        setState(() {
+          planMenuOption = selectedOption;
+          _currentIndex = index;
+        });
+      }
+    } else if (index == 2) {
+      final selectedOption = await showMenu(
+        context: context,
+        position: _currentIndex == 2
+            ? const RelativeRect.fromLTRB(620, 65, 620, 0)
+            : _currentIndex <= 1
+                ? const RelativeRect.fromLTRB(660, 65, 660, 0)
+                : const RelativeRect.fromLTRB(580, 65, 580, 0),
+        items: <PopupMenuEntry>[
+          const PopupMenuItem<String>(
+            value: "Add a Place",
+            child: Text("Add a Place"),
+          ),
+          const PopupMenuItem<String>(
+            value: "My Places",
+            child: Text("My Places"),
+          ),
+        ],
+      );
+      if (selectedOption != null) {
+        setState(() {
+          destinationMenuOption = selectedOption;
+          _currentIndex = index;
+        });
+      }
+    } else {
+      setState(() {
+        _currentIndex = index;
+      });
+    }
   }
 }

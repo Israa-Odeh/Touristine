@@ -6,7 +6,7 @@ class CustomBottomSheet extends StatefulWidget {
   final double height;
 
   const CustomBottomSheet(
-      {super.key, required this.itemsList, this.height = 400});
+      {super.key, required this.itemsList, this.height = 280});
 
   @override
   _CustomBottomSheetState createState() => _CustomBottomSheetState();

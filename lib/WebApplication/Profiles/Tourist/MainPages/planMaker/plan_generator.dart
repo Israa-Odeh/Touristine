@@ -205,7 +205,7 @@ class _MakePlanTabState extends State<MakePlanTab> {
   }
 
   void nextPage() {
-    if (currentPage < 4) {
+    if (currentPage < 3) {
       pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
@@ -267,7 +267,6 @@ class _MakePlanTabState extends State<MakePlanTab> {
         updateStartTimeColors();
         if (endTimeController.text.isNotEmpty) {
           calculateDuration();
-          durationFocusNode.requestFocus();
         }
       });
     } else {
@@ -295,7 +294,6 @@ class _MakePlanTabState extends State<MakePlanTab> {
             '${pickedEndTime.hour.toString().padLeft(2, '0')}:${pickedEndTime.minute.toString().padLeft(2, '0')}';
         if (startTimeController.text.isNotEmpty) {
           calculateDuration();
-          durationFocusNode.requestFocus();
         }
         updateEndTimeColors();
       });
@@ -345,7 +343,6 @@ class _MakePlanTabState extends State<MakePlanTab> {
 
       setState(() {
         durationController.text = '$hours hours $minutes minutes';
-        durationFocusNode.requestFocus();
       });
     } else {
       showCustomSnackBar(
@@ -354,7 +351,6 @@ class _MakePlanTabState extends State<MakePlanTab> {
         bottomMargin: 0,
       );
       durationController.text = '';
-      durationFocusNode.requestFocus();
     }
   }
 
@@ -365,6 +361,7 @@ class _MakePlanTabState extends State<MakePlanTab> {
       builder: (BuildContext context) {
         return CustomBottomSheet(
           itemsList: destinationsList,
+          height: 260,
         );
       },
     ).then((value) {
@@ -409,13 +406,12 @@ class _MakePlanTabState extends State<MakePlanTab> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              height: 580,
+              height: 450,
               child: PageView(
                 controller: pageController,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
                   buildInterestsPage(),
-                  buildDestinationSelectionButton(),
                   Container(
                     margin: const EdgeInsets.all(10),
                     padding: const EdgeInsets.all(20),
@@ -431,81 +427,122 @@ class _MakePlanTabState extends State<MakePlanTab> {
                         ),
                       ],
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.start,
+                    child: Row(
                       children: [
-                        Image.asset(
-                          'assets/Images/Profiles/Tourist/PlanMaker/TimeDate.gif',
-                          height: 170,
-                          width: 170,
-                        ),
-                        const SizedBox(height: 20),
-                        buildDateTimeInput(
-                          'Date Selection',
-                          dateController,
-                          dateBorderIconColor,
-                          FontAwesomeIcons.calendarDays,
-                          () => selectDate(context),
-                        ),
-                        SizedBox(
-                            height:
-                                startTimeController.text.isNotEmpty ? 25 : 10),
-                        buildDateTimeInput(
-                          'Start Time',
-                          startTimeController,
-                          startTimeBorderIconColor,
-                          FontAwesomeIcons.clock,
-                          () => selectStartTime(context),
-                        ),
-                        SizedBox(
-                            height:
-                                endTimeController.text.isNotEmpty ? 25 : 10),
-                        buildDateTimeInput(
-                          'End Time',
-                          endTimeController,
-                          endTimeBorderIconColor,
-                          FontAwesomeIcons.clock,
-                          () => selectEndTime(context),
-                        ),
-                        SizedBox(
-                            height: durationController.text.isEmpty &&
-                                    durationFocusNode.hasFocus
-                                ? 25
-                                : durationController.text.isNotEmpty &&
-                                        durationFocusNode.hasFocus
-                                    ? 25
-                                    : durationFocusNode.hasFocus
-                                        ? 25
-                                        : 20),
-                        TextFormField(
-                          controller: durationController,
-                          focusNode: durationFocusNode,
-                          onTap: () {
-                            setState(() {
-                              durationFocusNode.requestFocus();
-                            });
-                          },
-                          style: const TextStyle(
-                              fontSize: 22,
-                              color: Color.fromARGB(192, 0, 0, 0)),
-                          decoration: const InputDecoration(
-                            labelText: 'Trip Duration',
-                            labelStyle: TextStyle(
-                              fontSize: 22,
-                            ),
-                            floatingLabelStyle: TextStyle(
-                              fontSize: 26,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xFF1E889E),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Color(0xFF1E889E),
-                              ),
-                            ),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Image.asset(
+                                  'assets/Images/Profiles/Tourist/PlanMaker/TimeDate.gif',
+                                  height: 390,
+                                  fit: BoxFit.cover),
+                            ],
                           ),
-                          readOnly: true,
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 50.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: Divider(
+                                        thickness: 1,
+                                        color: Color(0xFF1E889E),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 20),
+                                      child: Text(
+                                        "Plan Your Day",
+                                        style: TextStyle(
+                                          fontSize: 30,
+                                          fontFamily: 'Gabriola',
+                                          color:
+                                              Color.fromARGB(255, 19, 87, 100),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Divider(
+                                        thickness: 1,
+                                        color: Color(0xFF1E889E),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              buildDateTimeInput(
+                                'Date Selection',
+                                dateController,
+                                dateBorderIconColor,
+                                FontAwesomeIcons.calendarDays,
+                                () => selectDate(context),
+                              ),
+                              SizedBox(
+                                  height: startTimeController.text.isNotEmpty
+                                      ? 20
+                                      : 10),
+                              buildDateTimeInput(
+                                'Start Time',
+                                startTimeController,
+                                startTimeBorderIconColor,
+                                FontAwesomeIcons.clock,
+                                () => selectStartTime(context),
+                              ),
+                              SizedBox(
+                                  height: endTimeController.text.isNotEmpty
+                                      ? 20
+                                      : 10),
+                              buildDateTimeInput(
+                                'End Time',
+                                endTimeController,
+                                endTimeBorderIconColor,
+                                FontAwesomeIcons.clock,
+                                () => selectEndTime(context),
+                              ),
+                              SizedBox(
+                                  height: durationFocusNode.hasFocus ? 20 : 10),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 110.0),
+                                child: TextFormField(
+                                  controller: durationController,
+                                  focusNode: durationFocusNode,
+                                  onTap: () {
+                                    setState(() {
+                                      durationFocusNode.requestFocus();
+                                    });
+                                  },
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      color: Color.fromARGB(192, 0, 0, 0)),
+                                  decoration: const InputDecoration(
+                                    labelText: 'Trip Duration',
+                                    labelStyle: TextStyle(fontSize: 18),
+                                    floatingLabelStyle: TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.w400,
+                                      color: Color(0xFF1E889E),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Color(0xFF1E889E),
+                                      ),
+                                    ),
+                                  ),
+                                  readOnly: true,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -521,7 +558,7 @@ class _MakePlanTabState extends State<MakePlanTab> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Visibility(
-                    visible: currentPage > 0 ? true : false,
+                    visible: currentPage > 0,
                     child: ElevatedButton(
                       onPressed: () {
                         previousPage();
@@ -529,7 +566,7 @@ class _MakePlanTabState extends State<MakePlanTab> {
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 20,
-                          vertical: 8,
+                          vertical: 20,
                         ),
                         backgroundColor: const Color(0xFF1E889E),
                         textStyle: const TextStyle(
@@ -545,10 +582,10 @@ class _MakePlanTabState extends State<MakePlanTab> {
                   ),
                   const SizedBox(width: 10),
                   Visibility(
-                    visible: currentPage == 4 ? false : true,
+                    visible: currentPage < 3,
                     child: ElevatedButton(
                       onPressed: () {
-                        if (currentPage == 1) {
+                        if (currentPage == 0) {
                           if (selectedDest.isEmpty) {
                             showCustomSnackBar(
                                 context, 'Please select a destination',
@@ -556,11 +593,11 @@ class _MakePlanTabState extends State<MakePlanTab> {
                           } else {
                             nextPage();
                           }
-                        } else if (currentPage == 2) {
+                        } else if (currentPage == 1) {
                           if (validateForm()) {
                             nextPage();
                           }
-                        } else if (currentPage == 3) {
+                        } else if (currentPage == 2) {
                           int groupCount = int.parse(
                               groupSizeController.text.isEmpty
                                   ? "1"
@@ -597,7 +634,7 @@ class _MakePlanTabState extends State<MakePlanTab> {
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 40,
-                          vertical: 8,
+                          vertical: 20,
                         ),
                         backgroundColor: const Color(0xFF1E889E),
                         textStyle: const TextStyle(
@@ -642,132 +679,142 @@ class _MakePlanTabState extends State<MakePlanTab> {
 
   Widget buildInterestsPage() {
     return buildPageContent(
-      Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+      Row(
         children: [
-          const Text(
-            'For a better experience, fill\nout your interests',
-            style: TextStyle(
-              fontFamily: 'Gabriola',
-              fontSize: 33,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF455a64),
+          Expanded(
+            child: Column(
+              children: [
+                Image.asset(
+                  'assets/Images/Profiles/Tourist/PlanMaker/Checklist.gif',
+                  height: 390,
+                  fit: BoxFit.cover,
+                ),
+              ],
             ),
-            textAlign: TextAlign.center,
           ),
-          Image.asset(
-            'assets/Images/Profiles/Tourist/PlanMaker/Checklist.gif',
-            fit: BoxFit.cover,
-          ),
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 60.0),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        InterestsFillingPage(token: widget.token),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 50.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          "Customize Your Adventure",
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontFamily: 'Gabriola',
+                            color: Color.fromARGB(255, 19, 87, 100),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                    ],
                   ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 13,
                 ),
-                backgroundColor: const Color(0xFF1E889E),
-                textStyle: const TextStyle(
-                  fontSize: 27,
-                  fontFamily: 'Zilla',
-                  fontWeight: FontWeight.w300,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  FaIcon(
-                    FontAwesomeIcons.listCheck,
-                    size: 27,
-                    color: Colors.white,
+                const SizedBox(height: 20),
+                const Text(
+                  'For a journey of discovery and unforgettable moments,\n select a destination and specify your interests',
+                  style: TextStyle(
+                    fontFamily: 'Gabriola',
+                    fontSize: 25,
+                    color: Color(0xFF455a64),
                   ),
-                  SizedBox(width: 10),
-                  Text('Fill Now'),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildDestinationSelectionButton() {
-    return Container(
-      margin: const EdgeInsets.all(10),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          const Text(
-            'A journey of discovery and unforgettable moments!',
-            style: TextStyle(
-              fontFamily: 'Gabriola',
-              fontSize: 33,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF455a64),
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 10),
-          Image.asset(
-              'assets/Images/Profiles/Tourist/PlanMaker/destinationList.png',
-              fit: BoxFit.cover),
-          const SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: showBottomSheet,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF1E889E),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-            ),
-            child: SizedBox(
-              height: 50,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 5.0),
-                    child: Text(
-                      selectedDest.isEmpty
-                          ? 'Select Destination'
-                          : selectedDest,
-                      style: const TextStyle(color: Colors.white, fontSize: 22),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 40),
+                ElevatedButton(
+                  onPressed: showBottomSheet,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 231, 231, 231),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
                     ),
                   ),
-                  const FaIcon(
-                    FontAwesomeIcons.compass,
-                    color: Colors.white,
-                    size: 28,
+                  child: SizedBox(
+                    height: 50,
+                    width: 350,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 5.0),
+                          child: Text(
+                            selectedDest.isEmpty
+                                ? 'Select Destination'
+                                : selectedDest,
+                            style: const TextStyle(
+                                color: Color.fromARGB(163, 0, 0, 0),
+                                fontSize: 18),
+                          ),
+                        ),
+                        const FaIcon(
+                          FontAwesomeIcons.compass,
+                          color: Color.fromARGB(163, 0, 0, 0),
+                          size: 28,
+                        ),
+                      ],
+                    ),
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 106.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              InterestsFillingPage(token: widget.token),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 20,
+                      ),
+                      backgroundColor: const Color(0xFF1E889E),
+                      textStyle: const TextStyle(
+                        fontSize: 25,
+                        fontFamily: 'Zilla',
+                        fontWeight: FontWeight.w300,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        FaIcon(
+                          FontAwesomeIcons.listCheck,
+                          size: 22,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 10),
+                        Text('Fill Now'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -784,25 +831,23 @@ class _MakePlanTabState extends State<MakePlanTab> {
   ) {
     return SizedBox(
       height: 60,
+      width: 380,
       child: InkWell(
         onTap: onTap,
         child: IgnorePointer(
           child: TextFormField(
             controller: controller,
             style: const TextStyle(
-                fontSize: 22, color: Color.fromARGB(192, 0, 0, 0)),
+                fontSize: 18, color: Color.fromARGB(192, 0, 0, 0)),
             decoration: InputDecoration(
-              labelStyle: const TextStyle(fontSize: 22),
+              labelStyle: const TextStyle(fontSize: 18),
               labelText: labelText,
               floatingLabelStyle: const TextStyle(
-                fontSize: 26,
+                fontSize: 22,
                 fontWeight: FontWeight.w400,
                 color: Color(0xFF1E889E),
               ),
-              suffixIcon: Icon(
-                icon,
-                color: borderIconColor,
-              ),
+              suffixIcon: Icon(icon, color: borderIconColor, size: 24),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
                 borderSide: BorderSide(
@@ -827,118 +872,168 @@ class _MakePlanTabState extends State<MakePlanTab> {
 
   Widget buildGroupDetailsPage() {
     return buildPageContent(
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
+      Row(
         children: [
-          const Text(
-            'Gather as a group and create great journey memories.',
-            style: TextStyle(
-              fontFamily: 'Gabriola',
-              fontSize: 33,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF455a64),
+          Expanded(
+            child: Column(
+              children: [
+                Image.asset(
+                    'assets/Images/Profiles/Tourist/PlanMaker/destinationList.png',
+                    height: 390,
+                    fit: BoxFit.cover),
+              ],
             ),
-            textAlign: TextAlign.center,
           ),
-          const SizedBox(
-            height: 20,
-          ),
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1E889E),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.all(6.0),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.0),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      FaIcon(
-                        FontAwesomeIcons.listOl,
-                        color: Colors.white,
-                        size: 24,
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
                       ),
-                      SizedBox(width: 8),
-                      Text(
-                        'Group Count',
-                        style: TextStyle(
-                          fontSize: 21,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          'Create Memorable Journeys Together',
+                          style: TextStyle(
+                            fontFamily: 'Gabriola',
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF455a64),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(child: groupSizeStepper),
-            ],
-          ),
-          const SizedBox(height: 30),
-          const Text(
-            'Select age categories',
-            style: TextStyle(
-              fontFamily: 'Gabriola',
-              fontSize: 30,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF455a64),
-            ),
-            textAlign: TextAlign.center,
-          ),
-          Expanded(
-            child: buildCheckboxListTile(
-              titleText: 'Children (0-12 years)',
-              value: children,
-              onChanged: (newValue) {
-                setState(() {
-                  children = newValue!;
-                });
-              },
-              assetImagePath:
-                  'assets/Images/Profiles/Tourist/PlanMaker/childrenIcon.png',
-            ),
-          ),
-          Expanded(
-            child: buildCheckboxListTile(
-              titleText: 'Teenagers (13-17 years)',
-              value: teenagers,
-              onChanged: (newValue) {
-                setState(() {
-                  teenagers = newValue!;
-                });
-              },
-              assetImagePath:
-                  'assets/Images/Profiles/Tourist/PlanMaker/teenagersIcon.png',
-            ),
-          ),
-          Expanded(
-            child: buildCheckboxListTile(
-              titleText: 'Adults (18-59 years)',
-              value: adults,
-              onChanged: (newValue) {
-                setState(() {
-                  adults = newValue!;
-                });
-              },
-              assetImagePath:
-                  'assets/Images/Profiles/Tourist/PlanMaker/adultsIcon.png',
-            ),
-          ),
-          Expanded(
-            child: buildCheckboxListTile(
-              titleText: 'Elders (60+ years)',
-              value: elders,
-              onChanged: (newValue) {
-                setState(() {
-                  elders = newValue!;
-                });
-              },
-              assetImagePath:
-                  'assets/Images/Profiles/Tourist/PlanMaker/seniorsIcon.png',
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 100),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF1E889E),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.all(6.0),
+                          child: Row(
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.listOl,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                              SizedBox(width: 8),
+                              Text(
+                                'Group Count',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      SizedBox(height: 52, width: 200, child: groupSizeStepper),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 25),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 100),
+                  child: Text(
+                    'Select age categories',
+                    style: TextStyle(
+                      fontFamily: 'Gabriola',
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF455a64),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 100),
+                  child: buildCheckboxListTile(
+                    leftPadding: 145,
+                    titleText: 'Children (0-12 years)',
+                    value: children,
+                    onChanged: (newValue) {
+                      setState(() {
+                        children = newValue!;
+                      });
+                    },
+                    assetImagePath:
+                        'assets/Images/Profiles/Tourist/PlanMaker/childrenIcon.png',
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 100),
+                  child: buildCheckboxListTile(
+                    leftPadding: 134,
+                    titleText: 'Teenagers (13-17 years)',
+                    value: teenagers,
+                    onChanged: (newValue) {
+                      setState(() {
+                        teenagers = newValue!;
+                      });
+                    },
+                    assetImagePath:
+                        'assets/Images/Profiles/Tourist/PlanMaker/teenagersIcon.png',
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 100),
+                  child: buildCheckboxListTile(
+                    leftPadding: 155,
+                    titleText: 'Adults (18-59 years)',
+                    value: adults,
+                    onChanged: (newValue) {
+                      setState(() {
+                        adults = newValue!;
+                      });
+                    },
+                    assetImagePath:
+                        'assets/Images/Profiles/Tourist/PlanMaker/adultsIcon.png',
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 100),
+                  child: buildCheckboxListTile(
+                    leftPadding: 165,
+                    titleText: 'Elders (60+ years)',
+                    value: elders,
+                    onChanged: (newValue) {
+                      setState(() {
+                        elders = newValue!;
+                      });
+                    },
+                    assetImagePath:
+                        'assets/Images/Profiles/Tourist/PlanMaker/seniorsIcon.png',
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -949,6 +1044,7 @@ class _MakePlanTabState extends State<MakePlanTab> {
   ListTileTheme buildCheckboxListTile({
     required String titleText,
     required bool value,
+    required double leftPadding,
     required Function(bool?) onChanged,
     required String assetImagePath,
   }) {
@@ -960,20 +1056,21 @@ class _MakePlanTabState extends State<MakePlanTab> {
         activeColor: const Color(0xFF1E889E),
         title: Row(
           children: [
-            Expanded(
-              child: Text(
-                titleText,
-                style: const TextStyle(
-                  fontSize: 30,
-                  fontFamily: 'Gabriola',
-                  color: Color.fromARGB(255, 0, 0, 0),
-                ),
+            Text(
+              titleText,
+              style: const TextStyle(
+                fontSize: 24,
+                fontFamily: 'Gabriola',
+                color: Color.fromARGB(255, 0, 0, 0),
               ),
             ),
-            Image.asset(
-              assetImagePath,
-              width: 45,
-              height: 45,
+            Padding(
+              padding: EdgeInsets.only(left: leftPadding),
+              child: Image.asset(
+                assetImagePath,
+                width: 35,
+                height: 35,
+              ),
             ),
           ],
         ),
@@ -985,148 +1082,114 @@ class _MakePlanTabState extends State<MakePlanTab> {
 
   Widget buildSummaryPage() {
     return buildPageContent(
-      Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+      Row(
         children: [
-          const Text(
-            'Create the plan and begin \nyour journey!',
-            style: TextStyle(
-              fontFamily: 'Gabriola',
-              fontSize: 33,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF455a64),
+          Expanded(
+            child: Column(
+              children: [
+                Image.asset(
+                    'assets/Images/Profiles/Tourist/PlanMaker/Confirmed.gif',
+                    height: 390,
+                    fit: BoxFit.cover),
+              ],
             ),
-            textAlign: TextAlign.center,
           ),
-          Image.asset('assets/Images/Profiles/Tourist/PlanMaker/Confirmed.gif',
-              fit: BoxFit.cover),
-          const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50.0),
-            child: ElevatedButton(
-              onPressed: () async {
-                await storePlan();
-                // ignore: use_build_context_synchronously
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => PlanPlacesPage(
-                      token: widget.token,
-                      planContents: planContents,
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 50.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          "Begin Your Adventure",
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontFamily: 'Gabriola',
+                            color: Color.fromARGB(255, 19, 87, 100),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 40),
+                const Text(
+                  'Create the plan and begin \nyour journey!',
+                  style: TextStyle(
+                    fontFamily: 'Gabriola',
+                    fontSize: 28,
+                    color: Color(0xFF455a64),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 60),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 160.0),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      await storePlan();
+                      // ignore: use_build_context_synchronously
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => PlanPlacesPage(
+                            token: widget.token,
+                            planContents: planContents,
+                          ),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 20,
+                      ),
+                      backgroundColor: const Color(0xFF1E889E),
+                      textStyle: const TextStyle(
+                        fontSize: 25,
+                        fontFamily: 'Zilla',
+                        fontWeight: FontWeight.w300,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        FaIcon(
+                          FontAwesomeIcons.circleCheck,
+                          size: 22,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 10),
+                        Text('Create Plan'),
+                      ],
                     ),
                   ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 13,
                 ),
-                backgroundColor: const Color(0xFF1E889E),
-                textStyle: const TextStyle(
-                  fontSize: 27,
-                  fontFamily: 'Zilla',
-                  fontWeight: FontWeight.w300,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  FaIcon(
-                    FontAwesomeIcons.circleCheck,
-                    size: 27,
-                    color: Colors.white,
-                  ),
-                  SizedBox(width: 10),
-                  Text('Create Plan'),
-                ],
-              ),
+              ],
             ),
           ),
         ],
       ),
     );
   }
-
-  ////////////////////////////////// Israa Delete these once finished //////////////////////////////////////
-  // The first list..............
-  // Map<String, dynamic> planDescription = {
-  //   'planID': 1, // Plan ID --> required.
-  //   'destName': 'Jerusalem', // I already have it --> no need.
-  //   'numOfPlaces': 5, // # Of suggested places in the dest --> required.
-  //   'totalTime':
-  //       5, // total estimated time to spend at the destination --> I already have it --> no need.
-  //   'startTime': '10:00', // I already have it --> no need.
-  //   'endTime': '15:00', // I already have it --> no need.
-  //   'imagePath':
-  //       'assets/Images/Profiles/Tourist/1T.png', // An image indicating the destination --> required.
-  //   'date':
-  //       '26/05/2023', // The creation date of the plan --> I already have it --> no need.
-  // };
-
-  // The second list............
-//   final List<Map<String, dynamic>> planContents = [
-//     {
-//       'placeName': 'Al-Aqsa Mosque',
-//       'startTime': '06:00',
-//       'endTime': '08:00',
-//       'activityList': [
-//         {
-//           'title': 'Praying at Al-Aqsa',
-//           'description':
-//               'Praying at Al-Aqsa Mosque and making a tour at the museum.'
-//         },
-//       ],
-//       'imagePath': 'assets/Images/Profiles/Tourist/1T.png',
-//       'latitude': 32.0846676,
-//       'longitude': 35.3296158,
-//     },
-//     {
-//       'placeName': 'The old Town',
-//       'startTime': '08:30',
-//       'endTime': '10:30',
-//       'activityList': [
-//         {
-//           'title': 'Falafel Restaurant',
-//           'description':
-//               'Eating breakfast at Al-Quds traditional falafel Restaurant.'
-//         },
-//         {
-//           'title': 'Tour in the Souq',
-//           'description':
-//               'Making a tour and buying from the traditional souq of Al-Quds.'
-//         },
-//       ],
-//       'imagePath': 'assets/Images/Profiles/Tourist/2T.jpg',
-//       'latitude': 32.0846676,
-//       'longitude': 35.3296158,
-//     },
-//     {
-//       'placeName': 'Sepulchre Church',
-//       'startTime': '11:00',
-//       'endTime': '13:00',
-//       'activityList': [
-//         {
-//           'title': 'Explore the Chapels',
-//           'description':
-//               'Explore these chapels, each with its unique details and history.'
-//         },
-//         {
-//           'title': 'Learn about the History',
-//           'description':
-//               'Take the time to learn about the rich history of the church.'
-//         },
-//         {
-//           'title': 'Learn about the History',
-//           'description':
-//               'Take the time to learn about the rich history of the church.'
-//         },
-//       ],
-//       'imagePath': 'assets/Images/Profiles/Tourist/3T.jpg',
-//       'latitude': 32.0846676,
-//       'longitude': 35.3296158,
-//     },
-//   ];
 }

@@ -1,3 +1,4 @@
+import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/planMaker/custom_bottom_sheet.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/DestinationUpload/time_picker.dart';
 import 'package:touristine/WebApplication/Notifications/snack_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -5,10 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'dart:typed_data';
 import 'dart:convert';
-import 'dart:io';
-
-import '../planMaker/custom_bottom_sheet.dart';
 
 class AddDestTab extends StatefulWidget {
   final String token;
@@ -25,7 +24,7 @@ class _AddDestTabState extends State<AddDestTab> {
 
   TextEditingController destNameController = TextEditingController();
   TextEditingController aboutController = TextEditingController();
-  List<File> selectedImages = []; // List to store selected images.
+  List<Uint8List> selectedImages = []; // List to store selected images.
 
   Color destBorderIconColor = Colors.grey;
 
@@ -92,12 +91,12 @@ class _AddDestTabState extends State<AddDestTab> {
     print("$formattedHours:$formattedMinutes");
     print("Sheltered ${yes ? yes.toString() : false}");
     print(aboutController.text);
-    print(selectedImages);
+    // print(selectedImages);
 
     // Add images to the request.
     for (int i = 0; i < selectedImages.length; i++) {
-      List<int> imageBytes = selectedImages[i].readAsBytesSync();
-      String fileName = selectedImages[i].path.split('/').last;
+      Uint8List imageBytes = selectedImages[i];
+      String fileName = 'image_$i.jpg';
 
       final image = http.MultipartFile.fromBytes(
         'images',
@@ -147,7 +146,7 @@ class _AddDestTabState extends State<AddDestTab> {
   }
 
   void nextPage() {
-    if (currentPage < 5) {
+    if (currentPage < 4) {
       pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
@@ -177,6 +176,7 @@ class _AddDestTabState extends State<AddDestTab> {
       builder: (BuildContext context) {
         return CustomBottomSheet(
           itemsList: categoriesList,
+          height: 540,
         );
       },
     ).then((value) {
@@ -194,7 +194,7 @@ class _AddDestTabState extends State<AddDestTab> {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return CustomBottomSheet(itemsList: budgetsList, height: 250);
+        return CustomBottomSheet(itemsList: budgetsList, height: 220);
       },
     ).then((value) {
       // Handle the selected item from the bottom sheet.
@@ -211,7 +211,10 @@ class _AddDestTabState extends State<AddDestTab> {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return CustomBottomSheet(itemsList: citiesList, height: 300);
+        return CustomBottomSheet(
+          itemsList: citiesList,
+          height: 260,
+        );
       },
     ).then((value) {
       // Handle the selected item from the bottom sheet.
@@ -229,8 +232,9 @@ class _AddDestTabState extends State<AddDestTab> {
         await ImagePicker().pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
+      var image = await pickedFile.readAsBytes();
       setState(() {
-        selectedImages.add(File(pickedFile.path));
+        selectedImages.add(image);
       });
     }
   }
@@ -267,13 +271,14 @@ class _AddDestTabState extends State<AddDestTab> {
       return false;
     }
 
-    if (selectedHours == 0 && selectedMinutes < 10) {
-      showCustomSnackBar(context, 'Minimum allowed time is 10 mins',
+    if (selectedHours < 1 && selectedMinutes == 0) {
+      showCustomSnackBar(context, 'The minimum allowed time is an hour',
           bottomMargin: 0);
       return false;
     }
     if (yes == false && no == false) {
-      showCustomSnackBar(context, 'Specify whether the dest. is sheltered',
+      showCustomSnackBar(
+          context, 'Specify whether the destination is sheltered',
           bottomMargin: 0);
       return false;
     }
@@ -289,13 +294,12 @@ class _AddDestTabState extends State<AddDestTab> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              height: 580,
+              height: 450,
               child: PageView(
                 controller: pageController,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
                   buildIntroPage(),
-                  buildDestNameCatPage(),
                   Container(
                     margin: const EdgeInsets.all(10),
                     padding: const EdgeInsets.all(20),
@@ -311,153 +315,207 @@ class _AddDestTabState extends State<AddDestTab> {
                         ),
                       ],
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.start,
+                    child: Row(
                       children: [
-                        const Text(
-                          'More details matter to others!',
-                          style: TextStyle(
-                            fontFamily: 'Gabriola',
-                            fontSize: 33,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF455a64),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Image.asset(
+                                  'assets/Images/Profiles/Tourist/DestUpload/Timer.gif',
+                                  height: 390,
+                                  fit: BoxFit.cover),
+                            ],
                           ),
-                          textAlign: TextAlign.center,
                         ),
-                        Image.asset(
-                            'assets/Images/Profiles/Tourist/DestUpload/Timer.gif',
-                            height: 260,
-                            width: 260),
-                        ElevatedButton(
-                          onPressed: showBudgetBottomSheet,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                const Color.fromARGB(255, 231, 231, 231),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                          ),
-                          child: SizedBox(
-                            height: 50,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 5.0),
-                                  child: Text(
-                                    selectedBudget.isEmpty
-                                        ? 'Select Budget'
-                                        : selectedBudget,
-                                    style: const TextStyle(
-                                        color: Color.fromARGB(163, 0, 0, 0),
-                                        fontSize: 22),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 50.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: Divider(
+                                        thickness: 1,
+                                        color: Color(0xFF1E889E),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 20),
+                                      child: Text(
+                                        'More details matter to others!',
+                                        style: TextStyle(
+                                          fontFamily: 'Gabriola',
+                                          fontSize: 30,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF455a64),
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Divider(
+                                        thickness: 1,
+                                        color: Color(0xFF1E889E),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 40),
+                              ElevatedButton(
+                                onPressed: showBudgetBottomSheet,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 231, 231, 231),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
                                   ),
                                 ),
-                                const FaIcon(
-                                  FontAwesomeIcons.dollarSign,
-                                  color: Color.fromARGB(100, 0, 0, 0),
-                                  size: 28,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 15),
-                        Row(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: const Color.fromARGB(146, 0, 0, 0),
-                                  width: 1,
-                                ),
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              child: Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color:
-                                      const Color.fromARGB(255, 231, 231, 231),
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: const Padding(
-                                  padding: EdgeInsets.all(6.0),
+                                child: SizedBox(
+                                  height: 50,
+                                  width: 350,
                                   child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Row(
-                                        children: [
-                                          FaIcon(
-                                            FontAwesomeIcons.clock,
-                                            color: Color.fromARGB(163, 0, 0, 0),
-                                            size: 24,
-                                          ),
-                                          SizedBox(width: 8),
-                                          Text(
-                                            'Time to spend',
-                                            style: TextStyle(
-                                                fontSize: 22,
-                                                color: Color.fromARGB(
-                                                    163, 0, 0, 0),
-                                                fontWeight: FontWeight.bold,
-                                                fontFamily: 'Times New Roman'),
-                                          ),
-                                        ],
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 5.0),
+                                        child: Text(
+                                          selectedBudget.isEmpty
+                                              ? 'Select Budget'
+                                              : selectedBudget,
+                                          style: const TextStyle(
+                                              color:
+                                                  Color.fromARGB(163, 0, 0, 0),
+                                              fontSize: 18),
+                                        ),
+                                      ),
+                                      const FaIcon(
+                                        FontAwesomeIcons.dollarSign,
+                                        color: Color.fromARGB(100, 0, 0, 0),
+                                        size: 24,
                                       ),
                                     ],
                                   ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                                child: TimeWheelPicker(
-                                    initialHours: selectedHours,
-                                    initialMins: selectedMinutes,
-                                    onTimeChanged: handleTimeChanged)),
-                          ],
-                        ),
-                        const SizedBox(height: 15),
-                        Row(
-                          children: [
-                            const SizedBox(width: 10),
-                            const Text(
-                              'Sheltered?',
-                              style: TextStyle(
-                                fontFamily: 'Gabriola',
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF455a64),
+                              const SizedBox(height: 15),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 105.0),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: const Color.fromARGB(
+                                              146, 0, 0, 0),
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                      child: Container(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: const Color.fromARGB(
+                                              255, 231, 231, 231),
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                        ),
+                                        child: const Padding(
+                                          padding: EdgeInsets.all(6.0),
+                                          child: Row(
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  FaIcon(
+                                                    FontAwesomeIcons.clock,
+                                                    color: Color.fromARGB(
+                                                        163, 0, 0, 0),
+                                                    size: 20,
+                                                  ),
+                                                  SizedBox(width: 8),
+                                                  Text(
+                                                    'Time to spend',
+                                                    style: TextStyle(
+                                                        fontSize: 18,
+                                                        color: Color.fromARGB(
+                                                            163, 0, 0, 0),
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontFamily:
+                                                            'Times New Roman'),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                        child: TimeWheelPicker(
+                                            initialHours: selectedHours,
+                                            initialMins: selectedMinutes,
+                                            onTimeChanged: handleTimeChanged)),
+                                  ],
+                                ),
                               ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(width: 30),
-                            Expanded(
-                              child: buildCheckboxListTile(
-                                titleText: 'Yes',
-                                value: yes,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    yes = newValue!;
-                                    no = false;
-                                  });
-                                },
+                              const SizedBox(height: 15),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 105.0),
+                                child: Row(
+                                  children: [
+                                    const SizedBox(width: 10),
+                                    const Text(
+                                      'Sheltered?',
+                                      style: TextStyle(
+                                        fontFamily: 'Gabriola',
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF455a64),
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    const SizedBox(width: 30),
+                                    Expanded(
+                                      child: buildCheckboxListTile(
+                                        titleText: 'Yes',
+                                        value: yes,
+                                        onChanged: (newValue) {
+                                          setState(() {
+                                            yes = newValue!;
+                                            no = false;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(width: 130),
+                                    Expanded(
+                                      child: buildCheckboxListTile(
+                                        titleText: 'No',
+                                        value: no,
+                                        onChanged: (newValue) {
+                                          setState(() {
+                                            no = newValue!;
+                                            yes = false;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 35),
-                            Expanded(
-                              child: buildCheckboxListTile(
-                                titleText: 'No',
-                                value: no,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    no = newValue!;
-                                    yes = false;
-                                  });
-                                },
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -482,7 +540,7 @@ class _AddDestTabState extends State<AddDestTab> {
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 20,
-                          vertical: 8,
+                          vertical: 20,
                         ),
                         backgroundColor: const Color(0xFF1E889E),
                         textStyle: const TextStyle(
@@ -498,10 +556,10 @@ class _AddDestTabState extends State<AddDestTab> {
                   ),
                   const SizedBox(width: 10),
                   Visibility(
-                    visible: currentPage < 5,
+                    visible: currentPage < 4,
                     child: ElevatedButton(
                       onPressed: () {
-                        if (currentPage == 1) {
+                        if (currentPage == 0) {
                           if (destNameController.text.isEmpty) {
                             showCustomSnackBar(
                                 context, 'Please enter a destination name',
@@ -513,7 +571,7 @@ class _AddDestTabState extends State<AddDestTab> {
                           } else if (!RegExp(r'^[a-zA-Z0-9_-\s]+$')
                               .hasMatch(destNameController.text)) {
                             showCustomSnackBar(context,
-                                'Invalid characters in destination name',
+                                'Invalid characters in the destination name',
                                 bottomMargin: 0);
                           } else if (selectedCity.isEmpty) {
                             showCustomSnackBar(
@@ -526,23 +584,23 @@ class _AddDestTabState extends State<AddDestTab> {
                           } else {
                             nextPage();
                           }
-                        } else if (currentPage == 2) {
+                        } else if (currentPage == 1) {
                           if (validateForm()) {
                             nextPage();
                           }
-                        } else if (currentPage == 3) {
+                        } else if (currentPage == 2) {
                           if (aboutController.text.isEmpty) {
-                            showCustomSnackBar(
-                                context, 'Provide information about the place',
+                            showCustomSnackBar(context,
+                                'Please provide information about the place',
                                 bottomMargin: 0);
                           } else if (aboutController.text.length < 160) {
-                            showCustomSnackBar(
-                                context, 'Content must have at least 160 chars',
+                            showCustomSnackBar(context,
+                                'The about content must have at least 160 chars',
                                 bottomMargin: 0);
                           } else {
                             nextPage();
                           }
-                        } else if (currentPage == 4) {
+                        } else if (currentPage == 3) {
                           if (selectedImages.isEmpty) {
                             showCustomSnackBar(
                                 context, 'Destination images are needed',
@@ -557,7 +615,7 @@ class _AddDestTabState extends State<AddDestTab> {
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 40,
-                          vertical: 8,
+                          vertical: 20,
                         ),
                         backgroundColor: const Color(0xFF1E889E),
                         textStyle: const TextStyle(
@@ -602,141 +660,142 @@ class _AddDestTabState extends State<AddDestTab> {
 
   Widget buildIntroPage() {
     return buildPageContent(
-      Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+      Row(
         children: [
-          const Text(
-            'Share your unique experiences!',
-            style: TextStyle(
-              fontFamily: 'Gabriola',
-              fontSize: 33,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF455a64),
+          Expanded(
+            child: Column(
+              children: [
+                Image.asset(
+                  'assets/Images/Profiles/Tourist/DestUpload/CableCar.gif',
+                  height: 390,
+                  fit: BoxFit.cover,
+                ),
+              ],
             ),
-            textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 10),
-          Image.asset(
-            'assets/Images/Profiles/Tourist/DestUpload/CableCar.gif',
-            fit: BoxFit.cover,
-          ),
-          const SizedBox(height: 22.57),
-          const Text(
-            'Contribute by adding your destinations to inspire others',
-            style: TextStyle(
-              fontFamily: 'Gabriola',
-              fontSize: 33,
-              color: Color(0xFF455a64),
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildDestNameCatPage() {
-    return Container(
-      margin: const EdgeInsets.all(10),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          const Text(
-            'Add your destination details',
-            style: TextStyle(
-              fontFamily: 'Gabriola',
-              fontSize: 33,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF455a64),
-            ),
-            textAlign: TextAlign.center,
-          ),
-          Image.asset(
-              'assets/Images/Profiles/Tourist/DestUpload/DestUpload.gif',
-              height: 270,
-              width: 270,
-              fit: BoxFit.cover),
-          buildDestInput(
-            'Destination Name',
-            destNameController,
-            destBorderIconColor,
-            FontAwesomeIcons.locationDot,
-          ),
-          const SizedBox(height: 15),
-          ElevatedButton(
-            onPressed: showCityBottomSheet,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(255, 231, 231, 231),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-            ),
-            child: SizedBox(
-              height: 50,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 5.0),
-                    child: Text(
-                      selectedCity.isEmpty ? 'Select City' : selectedCity,
-                      style: const TextStyle(
-                          color: Color.fromARGB(163, 0, 0, 0), fontSize: 22),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 50.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          'Share your unique experiences',
+                          style: TextStyle(
+                            fontFamily: 'Gabriola',
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF455a64),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Contribute by adding your destinations to inspire others',
+                  style: TextStyle(
+                    fontFamily: 'Gabriola',
+                    fontSize: 25,
+                    color: Color(0xFF455a64),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 30),
+                buildDestInput(
+                  'Destination Name',
+                  destNameController,
+                  destBorderIconColor,
+                  FontAwesomeIcons.locationDot,
+                ),
+                const SizedBox(height: 15),
+                ElevatedButton(
+                  onPressed: showCityBottomSheet,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 231, 231, 231),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
                     ),
                   ),
-                  const FaIcon(
-                    FontAwesomeIcons.city,
-                    color: Color.fromARGB(100, 0, 0, 0),
-                    size: 25,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 15),
-          ElevatedButton(
-            onPressed: showCategorisBottomSheet,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(255, 231, 231, 231),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-            ),
-            child: SizedBox(
-              height: 50,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 5.0),
-                    child: Text(
-                      selectedCategory.isEmpty
-                          ? 'Select Category'
-                          : selectedCategory,
-                      style: const TextStyle(
-                          color: Color.fromARGB(163, 0, 0, 0), fontSize: 22),
+                  child: SizedBox(
+                    height: 50,
+                    width: 350,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 5.0),
+                          child: Text(
+                            selectedCity.isEmpty ? 'Select City' : selectedCity,
+                            style: const TextStyle(
+                                color: Color.fromARGB(163, 0, 0, 0),
+                                fontSize: 18),
+                          ),
+                        ),
+                        const FaIcon(
+                          FontAwesomeIcons.city,
+                          color: Color.fromARGB(100, 0, 0, 0),
+                          size: 24,
+                        ),
+                      ],
                     ),
                   ),
-                  const FaIcon(
-                    FontAwesomeIcons.mountainCity,
-                    color: Color.fromARGB(100, 0, 0, 0),
-                    size: 28,
+                ),
+                const SizedBox(height: 15),
+                ElevatedButton(
+                  onPressed: showCategorisBottomSheet,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 231, 231, 231),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
                   ),
-                ],
-              ),
+                  child: SizedBox(
+                    height: 50,
+                    width: 350,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 5.0),
+                          child: Text(
+                            selectedCategory.isEmpty
+                                ? 'Select Category'
+                                : selectedCategory,
+                            style: const TextStyle(
+                                color: Color.fromARGB(163, 0, 0, 0),
+                                fontSize: 18),
+                          ),
+                        ),
+                        const FaIcon(
+                          FontAwesomeIcons.mountainCity,
+                          color: Color.fromARGB(100, 0, 0, 0),
+                          size: 24,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -751,24 +810,22 @@ class _AddDestTabState extends State<AddDestTab> {
     IconData icon,
   ) {
     return SizedBox(
-      height: 60,
+      height: 55,
+      width: 380,
       child: InkWell(
         child: TextFormField(
           controller: controller,
           style: const TextStyle(
-              fontSize: 22, color: Color.fromARGB(192, 0, 0, 0)),
+              fontSize: 18, color: Color.fromARGB(192, 0, 0, 0)),
           decoration: InputDecoration(
-            labelStyle: const TextStyle(fontSize: 22),
+            labelStyle: const TextStyle(fontSize: 18),
             labelText: labelText,
             floatingLabelStyle: const TextStyle(
-              fontSize: 26,
+              fontSize: 22,
               fontWeight: FontWeight.w400,
               color: Color(0xFF1E889E),
             ),
-            suffixIcon: Icon(
-              icon,
-              color: borderIconColor,
-            ),
+            suffixIcon: Icon(icon, color: borderIconColor, size: 24),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20.0),
               borderSide: BorderSide(
@@ -791,53 +848,81 @@ class _AddDestTabState extends State<AddDestTab> {
   }
 
   Widget buildAboutPage() {
-    double imageDimensions = 360;
-    setState(() {
-      imageDimensions = aboutController.text.isEmpty ? 360 : 280;
-    });
     return buildPageContent(
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.start,
+      Row(
         children: [
-          const Text(
-            'Inform others about this place',
-            style: TextStyle(
-              fontFamily: 'Gabriola',
-              fontSize: 33,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF455a64),
+          Expanded(
+            child: Column(
+              children: [
+                Image.asset(
+                    'assets/Images/Profiles/Tourist/DestUpload/Notes.gif',
+                    height: 390,
+                    fit: BoxFit.cover),
+              ],
             ),
-            textAlign: TextAlign.center,
           ),
-          Image.asset('assets/Images/Profiles/Tourist/DestUpload/Notes.gif',
-              height: imageDimensions, width: imageDimensions),
-          TextFormField(
-            controller: aboutController,
-            onChanged: (text) {
-              setState(() {
-                if (text.isEmpty) {
-                  imageDimensions = 360;
-                } else {
-                  imageDimensions = 280;
-                }
-              });
-            },
-            decoration: const InputDecoration(
-              labelText: 'About Destination',
-              labelStyle: TextStyle(
-                fontSize: 22,
-                color: Color(0xFF1E889E),
-                fontWeight: FontWeight.bold,
-              ),
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF1E889E)),
-              ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 50.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          'Inform others about this place',
+                          style: TextStyle(
+                            fontFamily: 'Gabriola',
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF455a64),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 80.0),
+                  child: TextFormField(
+                    controller: aboutController,
+                    decoration: const InputDecoration(
+                      labelText: 'About Destination',
+                      labelStyle: TextStyle(
+                        fontSize: 18,
+                        color: Color(0xFF1E889E),
+                        fontWeight: FontWeight.bold,
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFF1E889E)),
+                      ),
+                    ),
+                    minLines: 1,
+                    maxLines: 12,
+                    maxLength: 1000,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ),
+              ],
             ),
-            minLines: 1,
-            maxLines: 5,
-            maxLength: 1000,
-            style: const TextStyle(fontSize: 20),
           ),
         ],
       ),
@@ -848,162 +933,201 @@ class _AddDestTabState extends State<AddDestTab> {
     final ScrollController scrollController = ScrollController();
 
     return buildPageContent(
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.start,
+      Row(
         children: [
-          Text(
-            selectedImages.isEmpty
-                ? 'Make the destination more appealing by adding images'
-                : 'Enrich the place with Images',
-            style: const TextStyle(
-              fontFamily: 'Gabriola',
-              fontSize: 33,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF455a64),
+          Expanded(
+            child: Column(
+              children: [
+                Image.asset(
+                    'assets/Images/Profiles/Tourist/DestUpload/ImagesSection.gif',
+                    height: 390,
+                    fit: BoxFit.cover),
+              ],
             ),
-            textAlign: TextAlign.center,
           ),
-          Visibility(
-              visible: selectedImages.isEmpty,
-              child: const SizedBox(height: 50)),
-          Image.asset(
-              'assets/Images/Profiles/Tourist/DestUpload/ImagesSection.gif',
-              fit: BoxFit.cover),
-          if (selectedImages.isNotEmpty)
-            SizedBox(
-              height: 200,
-              child: selectedImages.length >= 3
-                  ? Scrollbar(
-                      trackVisibility: true,
-                      thumbVisibility: true,
-                      thickness: 5,
-                      controller: scrollController,
-                      child: ListView.builder(
-                        controller: scrollController,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: selectedImages.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Stack(
-                              children: [
-                                Image.file(
-                                  selectedImages[index],
-                                  width: 145,
-                                  height: 180,
-                                  fit: BoxFit.fill,
-                                ),
-                                Positioned(
-                                  top: -5,
-                                  right: -5,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: const Color.fromARGB(
-                                                  255, 20, 94, 108)
-                                              .withOpacity(1),
-                                          blurRadius: 1,
-                                          spreadRadius: -10,
-                                          offset: const Offset(0, 0),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 50.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          'Enrich the place with Images',
+                          style: TextStyle(
+                            fontFamily: 'Gabriola',
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF455a64),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (selectedImages.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 60),
+                    child: SizedBox(
+                      height: 250,
+                      child: selectedImages.length >= 3
+                          ? Scrollbar(
+                              trackVisibility: true,
+                              thumbVisibility: true,
+                              thickness: 5,
+                              controller: scrollController,
+                              child: ListView.builder(
+                                controller: scrollController,
+                                scrollDirection: Axis.horizontal,
+                                itemCount: selectedImages.length,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Stack(
+                                      children: [
+                                        Image.memory(
+                                          selectedImages[index],
+                                          width: 220,
+                                          height: 250,
+                                          fit: BoxFit.fill,
                                         ),
+                                        Positioned(
+                                          top: -5,
+                                          right: -5,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: const Color.fromARGB(
+                                                          255, 20, 94, 108)
+                                                      .withOpacity(1),
+                                                  blurRadius: 1,
+                                                  spreadRadius: -10,
+                                                  offset: const Offset(0, 0),
+                                                ),
+                                              ],
+                                            ),
+                                            child: IconButton(
+                                              icon: const FaIcon(
+                                                FontAwesomeIcons.xmark,
+                                                color: Color.fromARGB(
+                                                    255, 255, 255, 255),
+                                                size: 20.0,
+                                              ),
+                                              onPressed: () =>
+                                                  deleteImage(index),
+                                            ),
+                                          ),
+                                        )
                                       ],
                                     ),
-                                    child: IconButton(
-                                      icon: const FaIcon(
-                                        FontAwesomeIcons.xmark,
-                                        color:
-                                            Color.fromARGB(255, 255, 255, 255),
-                                        size: 20.0,
-                                      ),
-                                      onPressed: () => deleteImage(index),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    )
-                  : ListView.builder(
-                      controller: scrollController,
-                      scrollDirection: Axis.horizontal,
-                      itemCount: selectedImages.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Stack(
-                            children: [
-                              Image.file(
-                                selectedImages[index],
-                                width: 145,
-                                height: 180,
-                                fit: BoxFit.fill,
+                                  );
+                                },
                               ),
-                              Positioned(
-                                top: -5,
-                                right: -5,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: const Color.fromARGB(
-                                                255, 20, 94, 108)
-                                            .withOpacity(1),
-                                        blurRadius: 1,
-                                        spreadRadius: -10,
-                                        offset: const Offset(0, 0),
+                            )
+                          : ListView.builder(
+                              controller: scrollController,
+                              scrollDirection: Axis.horizontal,
+                              itemCount: selectedImages.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Stack(
+                                    children: [
+                                      Image.memory(
+                                        selectedImages[index],
+                                        width: 220,
+                                        height: 250,
+                                        fit: BoxFit.fill,
                                       ),
+                                      Positioned(
+                                        top: -5,
+                                        right: -5,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: const Color.fromARGB(
+                                                        255, 20, 94, 108)
+                                                    .withOpacity(1),
+                                                blurRadius: 1,
+                                                spreadRadius: -10,
+                                                offset: const Offset(0, 0),
+                                              ),
+                                            ],
+                                          ),
+                                          child: IconButton(
+                                            icon: const FaIcon(
+                                              FontAwesomeIcons.xmark,
+                                              color: Color.fromARGB(
+                                                  255, 255, 255, 255),
+                                              size: 20.0,
+                                            ),
+                                            onPressed: () => deleteImage(index),
+                                          ),
+                                        ),
+                                      )
                                     ],
                                   ),
-                                  child: IconButton(
-                                    icon: const FaIcon(
-                                      FontAwesomeIcons.xmark,
-                                      color: Color.fromARGB(255, 255, 255, 255),
-                                      size: 20.0,
-                                    ),
-                                    onPressed: () => deleteImage(index),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        );
-                      },
+                                );
+                              },
+                            ),
                     ),
-            ),
-          SizedBox(height: selectedImages.isEmpty ? 50 : 7.5),
-          ElevatedButton(
-            onPressed: pickImage,
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 10,
-              ),
-              backgroundColor: const Color(0xFF1E889E),
-              textStyle: const TextStyle(
-                fontSize: 27,
-                fontFamily: 'Zilla',
-                fontWeight: FontWeight.w300,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-            ),
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FaIcon(
-                  FontAwesomeIcons.photoFilm,
-                  size: 27,
-                  color: Colors.white,
+                  ),
+                SizedBox(height: selectedImages.isEmpty ? 100 : 7.5),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 60.0),
+                  child: ElevatedButton(
+                    onPressed: pickImage,
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 20,
+                      ),
+                      backgroundColor: const Color(0xFF1E889E),
+                      textStyle: const TextStyle(
+                        fontSize: 25,
+                        fontFamily: 'Zilla',
+                        fontWeight: FontWeight.w300,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        FaIcon(
+                          FontAwesomeIcons.photoFilm,
+                          size: 25,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 10),
+                        Text('Add Image'),
+                      ],
+                    ),
+                  ),
                 ),
-                SizedBox(width: 10),
-                Text('Add Image'),
               ],
             ),
           ),
@@ -1014,55 +1138,102 @@ class _AddDestTabState extends State<AddDestTab> {
 
   Widget buildSummaryPage() {
     return buildPageContent(
-      Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+      Row(
         children: [
-          const Text(
-            'Submit the destination and encourage others to explore!',
-            style: TextStyle(
-              fontFamily: 'Gabriola',
-              fontSize: 33,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF455a64),
+          Expanded(
+            child: Column(
+              children: [
+                Image.asset(
+                    'assets/Images/Profiles/Tourist/PlanMaker/Confirmed.gif',
+                    height: 390,
+                    fit: BoxFit.cover),
+              ],
             ),
-            textAlign: TextAlign.center,
           ),
-          Image.asset('assets/Images/Profiles/Tourist/PlanMaker/Confirmed.gif',
-              fit: BoxFit.cover),
-          const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 60.0),
-            child: ElevatedButton(
-              onPressed: () async {
-                await storeDestination();
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 13,
-                ),
-                backgroundColor: const Color(0xFF1E889E),
-                textStyle: const TextStyle(
-                  fontSize: 27,
-                  fontFamily: 'Zilla',
-                  fontWeight: FontWeight.w300,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  FaIcon(
-                    FontAwesomeIcons.circleCheck,
-                    size: 27,
-                    color: Colors.white,
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 50.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          'Encourage Adventure',
+                          style: TextStyle(
+                            fontFamily: 'Gabriola',
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF455a64),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(width: 10),
-                  Text('Submit'),
-                ],
-              ),
+                ),
+                const SizedBox(height: 40),
+                const Text(
+                  'Submit the destination and encourage\n others to explore!',
+                  style: TextStyle(
+                    fontFamily: 'Gabriola',
+                    fontSize: 28,
+                    color: Color(0xFF455a64),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 60),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 160.0),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      await storeDestination();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 20,
+                      ),
+                      backgroundColor: const Color(0xFF1E889E),
+                      textStyle: const TextStyle(
+                        fontSize: 25,
+                        fontFamily: 'Zilla',
+                        fontWeight: FontWeight.w300,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        FaIcon(
+                          FontAwesomeIcons.circleCheck,
+                          size: 22,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 10),
+                        Text('Submit'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -1087,7 +1258,7 @@ class _AddDestTabState extends State<AddDestTab> {
               child: Text(
                 titleText,
                 style: const TextStyle(
-                  fontSize: 30,
+                  fontSize: 24,
                   fontFamily: 'Gabriola',
                   color: Color.fromARGB(255, 0, 0, 0),
                 ),

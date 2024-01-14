@@ -176,37 +176,46 @@ class _MyPlansTabState extends State<MyPlansTab> {
       );
     } else if (userPlans.isEmpty) {
       return Center(
-        child: Column(
+        child: Stack(
+          alignment: Alignment.center,
           children: [
-            const SizedBox(height: 80),
-            Image.asset(
-              'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
-              fit: BoxFit.cover,
+            Positioned(
+              top: -20,
+              child: Image.asset(
+                'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
+                fit: BoxFit.fill,
+              ),
             ),
-            const Text(
-              'No plans found',
-              style: TextStyle(
+            const Positioned(
+              top: 420,
+              child: Text(
+                'No plans found',
+                style: TextStyle(
                   fontSize: 40,
                   fontWeight: FontWeight.w600,
                   fontFamily: 'Gabriola',
-                  color: Color.fromARGB(255, 23, 99, 114)),
+                  color: Color.fromARGB(255, 23, 99, 114),
+                ),
+              ),
             ),
           ],
         ),
       );
     } else {
-      return ListView.builder(
+      return GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3, // Number of cards in each row
+          mainAxisExtent: 260, // Height of each card.
+          crossAxisSpacing: 8.0, // Adjust spacing between cards horizontally
+          mainAxisSpacing: 8.0, // Adjust spacing between rows vertically
+        ),
         itemCount: userPlans.length,
         itemBuilder: (context, index) {
           final plan = userPlans[index];
           return PlanCard(
             plan: plan,
             onTap: () async {
-              // print(plan['places']);
-              // Handle the card click event.......................
               print(plan['planId']);
-
-              print('Card clicked: ${plan['destination']}');
               await fetchPlanContents(plan['planId']);
               // ignore: use_build_context_synchronously
               Navigator.of(context).push(
@@ -248,7 +257,7 @@ class PlanCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(5.0),
         child: Container(
-          height: 297,
+          height: 260,
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey),
           ),
@@ -264,7 +273,7 @@ class PlanCard extends StatelessWidget {
                       child: Text(
                         plan['destination'],
                         style: const TextStyle(
-                          fontSize: 28,
+                          fontSize: 25,
                           fontWeight: FontWeight.bold,
                           fontFamily: 'Zilla',
                         ),
@@ -283,7 +292,7 @@ class PlanCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(top: 25.0, left: 8),
+                      padding: const EdgeInsets.only(top: 10.0, left: 8),
                       child: Container(
                         decoration: BoxDecoration(
                           border: Border.all(color: Colors.grey),
@@ -293,7 +302,7 @@ class PlanCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(15.0),
                           child: Image.network(
                             plan['imagePath'],
-                            height: 195,
+                            height: 155,
                             width: 155,
                             fit: BoxFit.fill,
                           ),
@@ -301,8 +310,10 @@ class PlanCard extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.only(
+                          right: 16.0, left: 16.0, top: 8),
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
@@ -310,7 +321,7 @@ class PlanCard extends StatelessWidget {
                             child: RichText(
                               text: TextSpan(
                                 style: const TextStyle(
-                                  fontSize: 32,
+                                  fontSize: 24,
                                   fontFamily: 'Gabriola',
                                   color: Colors.black,
                                 ),
@@ -318,7 +329,7 @@ class PlanCard extends StatelessWidget {
                                   TextSpan(
                                     text: '${plan['numOfPlaces']}',
                                     style: const TextStyle(
-                                      fontSize: 22,
+                                      fontSize: 14,
                                       fontFamily: 'Time New Roman',
                                     ),
                                   ),
@@ -332,7 +343,7 @@ class PlanCard extends StatelessWidget {
                             child: RichText(
                               text: TextSpan(
                                 style: const TextStyle(
-                                  fontSize: 32,
+                                  fontSize: 24,
                                   fontFamily: 'Gabriola',
                                   color: Colors.black,
                                 ),
@@ -340,7 +351,7 @@ class PlanCard extends StatelessWidget {
                                   TextSpan(
                                     text: '${plan['totalTime']}h',
                                     style: const TextStyle(
-                                      fontSize: 22,
+                                      fontSize: 14,
                                       fontFamily: 'Time New Roman',
                                     ),
                                   ),
@@ -349,18 +360,18 @@ class PlanCard extends StatelessWidget {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 15),
+                          const SizedBox(height: 10),
                           Padding(
                             padding: const EdgeInsets.only(left: 5.0),
                             child: Text(
                               '${plan['startTime']} - ${plan['endTime']}',
                               style: const TextStyle(
-                                fontSize: 23,
+                                fontSize: 16,
                                 fontFamily: 'Times New Roman',
                               ),
                             ),
                           ),
-                          const SizedBox(height: 30),
+                          const SizedBox(height: 20),
                           Row(
                             children: [
                               Padding(
@@ -368,12 +379,12 @@ class PlanCard extends StatelessWidget {
                                 child: Text(
                                   plan['date'],
                                   style: const TextStyle(
-                                    fontSize: 23,
+                                    fontSize: 16,
                                     fontFamily: 'Times New Roman',
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: 70),
+                              const SizedBox(width: 100),
                               GestureDetector(
                                 onTap: onDelete,
                                 child: const FaIcon(
