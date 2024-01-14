@@ -89,12 +89,11 @@ class _PlanPlacesPageState extends State<PlanPlacesPage> {
         body: Stack(
           children: [
             Container(
-              // margin: const EdgeInsets.only(top: 24),
               decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage(
                       'assets/Images/Profiles/Tourist/homeBackground.jpg'),
-                  fit: BoxFit.cover,
+                  fit: BoxFit.fill,
                 ),
               ),
               child: Center(
@@ -106,7 +105,7 @@ class _PlanPlacesPageState extends State<PlanPlacesPage> {
             ),
             Positioned(
               bottom: 26.0,
-              left: 230.0,
+              left: 870.0,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(100),
                 child: ElevatedButton(
@@ -134,11 +133,11 @@ class _PlanPlacesPageState extends State<PlanPlacesPage> {
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 20,
-                      vertical: 13,
+                      vertical: 20,
                     ),
                     backgroundColor: const Color.fromARGB(203, 30, 137, 158),
                     textStyle: const TextStyle(
-                      fontSize: 25,
+                      fontSize: 22,
                       fontFamily: 'Zilla',
                       fontWeight: FontWeight.w300,
                     ),
@@ -205,6 +204,7 @@ class _PlanPlacesCardsState extends State<PlanPlacesCards> {
                   ? 380
                   : 500
               : 0,
+          width: 800,
           child: PageView.builder(
             controller: _pageController,
             itemCount: widget.places.length,
@@ -224,7 +224,6 @@ class _PlanPlacesCardsState extends State<PlanPlacesCards> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 150),
               ClipRRect(
                 borderRadius: BorderRadius.circular(30),
                 child: ElevatedButton(
@@ -369,61 +368,32 @@ class _PlaceCardState extends State<PlaceCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (widget.details['placeName'].length <= 20)
-            Container(
-              color: const Color(0xFF1E889E),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      widget.details['placeName'],
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 23.0,
-                        color: Colors.white,
-                      ),
+          Container(
+            color: const Color(0xFF1E889E),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    widget.details['placeName'],
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20.0,
+                      color: Colors.white,
                     ),
-                    Text(
-                      '${widget.details['startTime']} - ${widget.details['endTime']}',
-                      style: const TextStyle(
-                        color: Color.fromARGB(255, 255, 255, 255),
-                        fontSize: 19,
-                      ),
+                  ),
+                  Text(
+                    '${widget.details['startTime']} - ${widget.details['endTime']}',
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 255, 255, 255),
+                      fontSize: 19,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          if (widget.details['placeName'].length > 20)
-            Container(
-              color: const Color(0xFF1E889E),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.details['placeName'],
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 23.0,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 8.0),
-                    Text(
-                      '${widget.details['startTime']} - ${widget.details['endTime']}',
-                      style: const TextStyle(
-                        color: Color.fromARGB(255, 255, 255, 255),
-                        fontSize: 19,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          ),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
@@ -440,7 +410,7 @@ class _PlaceCardState extends State<PlaceCard> {
                   controller: scrollController,
                   thumbVisibility: true,
                   trackVisibility: true,
-                  thickness: 6.0,
+                  thickness: 3.0,
                   radius: const Radius.circular(20.0),
                   child: CustomScrollView(
                     controller: scrollController,
@@ -489,19 +459,20 @@ class _PlaceCardState extends State<PlaceCard> {
                                       Text(
                                         data['title']!,
                                         style: const TextStyle(
-                                          fontSize: 22.0,
+                                          fontSize: 18.0,
                                           fontWeight: FontWeight.bold,
                                           fontFamily: 'Times New Roman',
                                         ),
                                       ),
-                                      const SizedBox(height: 8.0),
+                                      const SizedBox(height: 14.0),
                                       SizedBox(
-                                        height: 46.0,
+                                        height: 40.0,
                                         child: SingleChildScrollView(
+                                          controller: ScrollController(),
                                           child: Text(
                                             data['description']!,
                                             style: const TextStyle(
-                                              fontSize: 20,
+                                              fontSize: 16,
                                               fontFamily: 'Time New Roman',
                                               color: Color.fromARGB(
                                                   255, 91, 91, 91),
@@ -574,11 +545,11 @@ class _PlaceCardState extends State<PlaceCard> {
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 20,
-                          vertical: 13,
+                          vertical: 20,
                         ),
                         backgroundColor: const Color(0xFF1E889E),
                         textStyle: const TextStyle(
-                          fontSize: 25,
+                          fontSize: 22,
                           fontFamily: 'Zilla',
                           fontWeight: FontWeight.w300,
                         ),

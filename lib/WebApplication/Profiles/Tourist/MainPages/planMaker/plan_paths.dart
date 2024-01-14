@@ -188,20 +188,17 @@ class _PlanPathsState extends State<PlanPaths> {
     return Scaffold(
       body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 22.0),
-            child: GoogleMap(
-              polylines: polylines,
-              markers: markers.toSet(),
-              initialCameraPosition: cameraPosition,
-              mapType: MapType.normal,
-              onMapCreated: (mapcontroller) {
-                googleMapController = mapcontroller;
-              },
-            ),
+          GoogleMap(
+            polylines: polylines,
+            markers: markers.toSet(),
+            initialCameraPosition: cameraPosition,
+            mapType: MapType.normal,
+            onMapCreated: (mapcontroller) {
+              googleMapController = mapcontroller;
+            },
           ),
           Positioned(
-            top: 26.0,
+            top: 10.0,
             left: 5.0,
             child: FloatingActionButton(
               heroTag: 'BackToPlanPlaces',
