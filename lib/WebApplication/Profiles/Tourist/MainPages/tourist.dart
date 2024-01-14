@@ -1,14 +1,18 @@
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/DestinationUpload/dest_generator.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/DestinationUpload/my_dests_list.dart';
+import 'package:touristine/WebApplication/Profiles/Tourist/Profile/Sections/location_accquisition.dart';
+import 'package:touristine/WebApplication/Profiles/Tourist/Profile/Sections/interests_filling.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/planMaker/plan_generator.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/planMaker/my_plans_list.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/Home/custom_search_bar.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/Chatting/chatting_list.dart';
+import 'package:touristine/WebApplication/Profiles/Tourist/Profile/Sections/my_account.dart';
+import 'package:touristine/WebApplication/LoginAndRegistration/MainPages/landing_page.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/ActiveStatus/active_status.dart';
-import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/profile_page.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/Home/home.dart';
 import 'package:touristine/WebApplication/Notifications/snack_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -230,9 +234,8 @@ class _TouristAppState extends State<TouristProfile> {
       Container(),
       Container(),
       ChattingList(token: widget.token),
-      ProfilePage(token: widget.token, googleAccount: widget.googleAccount)
+      Container()
     ];
-
     moveToStep(widget.stepNum);
   }
 
@@ -262,10 +265,46 @@ class _TouristAppState extends State<TouristProfile> {
       return _children[3];
     } else if (_currentIndex == 4) {
       // Profile Tab.
-      return _children[4];
+      return openProfilePageOption();
     }
     // Return a default widget if the index doesn't match any tab.
     return Container();
+  }
+
+  String profileMenuOption = "My Account";
+
+  Widget openProfilePageOption() {
+    if (profileMenuOption == 'My Account') {
+      return AccountPage(
+        token: widget.token,
+        googleAccount: widget.googleAccount,
+      );
+    } else if (profileMenuOption == 'Interests Filling') {
+      return InterestsFillingPage(token: widget.token);
+    } else if (profileMenuOption == 'Location Acquisiton') {
+      return LocationPage(token: widget.token);
+    }
+    // Log Out Option.
+    else {
+      // Extract the tourist email from the token.
+      Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
+      String touristEmail = decodedToken['email'];
+
+      // Set the tourist active status to false and perform logout.
+      setTouristActiveStatus(touristEmail, false).then((_) {
+        if (widget.googleAccount) {
+          GoogleSignIn googleSignIn = GoogleSignIn();
+          googleSignIn.signOut();
+          googleSignIn.disconnect();
+        }
+        Navigator.of(context).popUntil((route) => route.isFirst);
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const LandingPage()));
+      });
+
+      // Return a placeholder widget while the logout operation completes.
+      return Container();
+    }
   }
 
   void moveToStep(int index) {
@@ -324,6 +363,18 @@ class _TouristAppState extends State<TouristProfile> {
     );
   }
 
+  String getProfileBarTitle() {
+    if (profileMenuOption == 'My Account') {
+      return 'My Account';
+    } else if (profileMenuOption == 'Interests Filling') {
+      return 'Interests Filling';
+    } else if (profileMenuOption == 'Location Acquisiton') {
+      return 'Location Acquisiton';
+    } else {
+      return 'Log Out';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -379,7 +430,7 @@ class _TouristAppState extends State<TouristProfile> {
                             ),
                             _buildBottomNavigationBarItem(
                               FontAwesomeIcons.user,
-                              'Profile',
+                              getProfileBarTitle(),
                               4,
                             ),
                           ],
@@ -487,6 +538,37 @@ class _TouristAppState extends State<TouristProfile> {
       if (selectedOption != null) {
         setState(() {
           destinationMenuOption = selectedOption;
+          _currentIndex = index;
+        });
+      }
+    } else if (index == 4) {
+      final selectedOption = await showMenu(
+        context: context,
+        position: _currentIndex == 4
+            ? const RelativeRect.fromLTRB(880, 65, 880, 0)
+            : const RelativeRect.fromLTRB(920, 65, 920, 0),
+        items: <PopupMenuEntry>[
+          const PopupMenuItem<String>(
+            value: "My Account",
+            child: Text("My Account"),
+          ),
+          const PopupMenuItem<String>(
+            value: "Interests Filling",
+            child: Text("Interests Filling"),
+          ),
+          const PopupMenuItem<String>(
+            value: "Location Acquisiton",
+            child: Text("Location Acquisiton"),
+          ),
+          const PopupMenuItem<String>(
+            value: "Log Out",
+            child: Text("Log Out"),
+          ),
+        ],
+      );
+      if (selectedOption != null) {
+        setState(() {
+          profileMenuOption = selectedOption;
           _currentIndex = index;
         });
       }

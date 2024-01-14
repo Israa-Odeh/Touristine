@@ -68,95 +68,81 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        // Background image
-        Positioned(
-          top: -120,
-          bottom: 0,
-          right: 0,
-          left: 0,
-          child: Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                    'assets/Images/Profiles/Tourist/ProfileBackground.jpg'),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-        ),
-
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          resizeToAvoidBottomInset: true,
-          body: SingleChildScrollView(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 80),
-                  ProfilePicture(
-                    token: widget.token,
+    return Center(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 100.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Column(
+                    children: [
+                      ProfilePicture(
+                        token: widget.token,
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 40),
-                  buildProfileTile(
-                      "My Account", "assets/Images/Profiles/Tourist/user.png",
-                      () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => AccountPage(
-                          token: widget.token,
-                          googleAccount: widget.googleAccount,
-                        ),
-                      ),
-                    );
-                  }),
-                  const SizedBox(height: 15),
-                  buildProfileTile("Interests Filling",
-                      "assets/Images/Profiles/Tourist/form.png", () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            InterestsFillingPage(token: widget.token),
-                      ),
-                    );
-                  }),
-                  const SizedBox(height: 15),
-                  buildProfileTile("Location Acquisiton",
-                      "assets/Images/Profiles/Tourist/location.png", () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => LocationPage(token: widget.token),
-                      ),
-                    );
-                  }),
-                  const SizedBox(height: 15),
-                  buildProfileTile(
-                      "Log Out", "assets/Images/Profiles/Tourist/logOut.png",
-                      () {
-                    // Extract the tourist email from the token.
-                    Map<String, dynamic> decodedToken =
-                        Jwt.parseJwt(widget.token);
-                    String touristEmail = decodedToken['email'];
-                    // Set the tourist active status to false.
-                    setTouristActiveStatus(touristEmail, false);
-                    if (widget.googleAccount) {
-                      GoogleSignIn googleSignIn = GoogleSignIn();
-                      googleSignIn.signOut();
-                      googleSignIn.disconnect();
-                      // FirebaseAuth.instance.signOut();
-                    }
-                    Navigator.of(context).popUntil((route) => route.isFirst);
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (context) => const LandingPage()));
-                  }),
-                ],
-              ),
+                ),
+                Expanded(
+                  child: Column(
+                    children: [
+                      buildProfileTile(
+                          "My Account", "assets/Images/Profiles/Tourist/user.png",
+                          () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => AccountPage(
+                              token: widget.token,
+                              googleAccount: widget.googleAccount,
+                            ),
+                          ),
+                        );
+                      }),
+                      const SizedBox(height: 15),
+                      buildProfileTile("Interests Filling",
+                          "assets/Images/Profiles/Tourist/form.png", () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                InterestsFillingPage(token: widget.token),
+                          ),
+                        );
+                      }),
+                      const SizedBox(height: 15),
+                      buildProfileTile("Location Acquisiton",
+                          "assets/Images/Profiles/Tourist/location.png", () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => LocationPage(token: widget.token),
+                          ),
+                        );
+                      }),
+                      const SizedBox(height: 15),
+                      buildProfileTile(
+                          "Log Out", "assets/Images/Profiles/Tourist/logOut.png",
+                          () {
+                        // Extract the tourist email from the token.
+                        Map<String, dynamic> decodedToken =
+                            Jwt.parseJwt(widget.token);
+                        String touristEmail = decodedToken['email'];
+                        // Set the tourist active status to false.
+                        setTouristActiveStatus(touristEmail, false);
+                        if (widget.googleAccount) {
+                          GoogleSignIn googleSignIn = GoogleSignIn();
+                          googleSignIn.signOut();
+                          googleSignIn.disconnect();
+                          // FirebaseAuth.instance.signOut();
+                        }
+                        Navigator.of(context).popUntil((route) => route.isFirst);
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context) => const LandingPage()));
+                      }),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-        ),
-      ],
     );
   }
 }
