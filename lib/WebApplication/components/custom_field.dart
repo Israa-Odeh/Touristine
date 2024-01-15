@@ -64,8 +64,8 @@ class _CustomFieldState extends State<CustomField> {
           controller: widget.controller,
           obscureText: widget.obscureText && !isPasswordVisible,
           style: const TextStyle(
-            color: Color(0xFF37474f), // Set text color to #37474f
-            fontSize: 20.0,
+            color: Color(0xFF37474f),
+            fontSize: 18.0,
             fontWeight: FontWeight.w400,
           ),
           focusNode: focusNode,
@@ -85,8 +85,8 @@ class _CustomFieldState extends State<CustomField> {
             filled: true,
             hintText: '',
             hintStyle: const TextStyle(
-              color: Color(0xFF37474f), // Set hint text color to #37474f
-              fontSize: 20.0,
+              color: Color(0xFF37474f),
+              fontSize: 18.0,
               fontWeight: FontWeight.w400,
             ),
             prefixIcon: Icon(
@@ -94,26 +94,29 @@ class _CustomFieldState extends State<CustomField> {
               color: const Color(0xFF1E889E),
             ),
             suffixIcon: widget.obscureText
-                ? IconButton(
-                    onPressed: () {
-                      setState(() {
-                        isPasswordVisible = !isPasswordVisible;
-                      });
-                    },
-                    icon: FaIcon(
-                      isPasswordVisible
-                          ? FontAwesomeIcons.eye
-                          : FontAwesomeIcons.eyeSlash,
-                      color: const Color(0xFF1E889E),
+                ? Padding(
+                    padding: const EdgeInsets.only(right: 15.0),
+                    child: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          isPasswordVisible = !isPasswordVisible;
+                        });
+                      },
+                      icon: FaIcon(
+                        isPasswordVisible
+                            ? FontAwesomeIcons.eye
+                            : FontAwesomeIcons.eyeSlash,
+                        color: const Color(0xFF1E889E),
+                      ),
                     ),
                   )
                 : null,
-            labelText: isFocused ? widget.hintText : widget.hintText,
+            labelText: widget.hintText,
             labelStyle: TextStyle(
               color: isFocused
                   ? const Color(0xFF1E889E)
                   : const Color(0xFF37474f), // Set label text color
-              fontSize: isFocused ? 25 : 20,
+              fontSize: isFocused ? 20 : 18,
               fontWeight: isFocused ? FontWeight.w500 : FontWeight.normal,
             ),
           ),

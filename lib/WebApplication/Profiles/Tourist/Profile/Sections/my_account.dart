@@ -1,14 +1,14 @@
+import 'package:touristine/WebApplication/components/custom_field.dart';
 import 'package:touristine/WebApplication/Notifications/snack_bar.dart';
 import 'package:touristine/WebApplication/UserData/user_provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:touristine/WebApplication/components/custom_field.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
+import 'dart:typed_data';
 import 'dart:convert';
-import 'dart:io';
 
 class AccountPage extends StatefulWidget {
   final String token;
@@ -33,7 +33,7 @@ class _AccountPageState extends State<AccountPage> {
 
   bool isImageChanged = false;
 
-  File? _image;
+  Uint8List? _image;
 
   @override
   void initState() {
@@ -83,11 +83,10 @@ class _AccountPageState extends State<AccountPage> {
 
     // Add the image to the request if it exists.
     if (_image != null) {
-      List<int> imageBytes = _image!.readAsBytesSync(); // Read file as bytes.
-      String fileName = _image!.path.split('/').last; // Extract file name
+      String fileName = 'file_${DateTime.now().millisecondsSinceEpoch}.jpg';
       final imageFile = http.MultipartFile.fromBytes(
-        'profileImage', // Field name for the image on the server.
-        imageBytes,
+        'profileImage',
+        _image!,
         filename: fileName,
       );
       request.files.add(imageFile);
@@ -118,8 +117,7 @@ class _AccountPageState extends State<AccountPage> {
                 );
           }
           // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, "Your information has been edited",
-              bottomMargin: 457);
+          showCustomSnackBar(context, "Your information has been edited", bottomMargin: 0);
           // ignore: use_build_context_synchronously
           context.read<UserProvider>().updateData(
                 newFirstName: firstNameController.text,
@@ -133,17 +131,14 @@ class _AccountPageState extends State<AccountPage> {
         if (parsedResponse.containsKey('message') &&
             parsedResponse['message'] == 'Unable to upload') {
           // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, "Unable to upload the image",
-              bottomMargin: 457);
+          showCustomSnackBar(context, "Unable to upload the image", bottomMargin: 0);
         } else {
           // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, "An error has occurred",
-              bottomMargin: 457);
+          showCustomSnackBar(context, "An error has occurred", bottomMargin: 0);
         }
       } else {
         // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, 'Failed to update, please try again',
-            bottomMargin: 457);
+        showCustomSnackBar(context, 'Failed to update, please try again', bottomMargin: 0);
       }
     } catch (e) {
       print('Error: $e');
@@ -160,23 +155,18 @@ class _AccountPageState extends State<AccountPage> {
 
     if (isDataChanged) {
       if (isInputEmpty()) {
-        showCustomSnackBar(context, 'Please fill in all the fields',
-            bottomMargin: 457);
+        showCustomSnackBar(context, 'Please fill in all the fields', bottomMargin: 0);
       } else if (!isNameValid(firstNameController.text)) {
-        showCustomSnackBar(context, 'Invalid first name: 2-20 characters only',
-            bottomMargin: 457);
+        showCustomSnackBar(context, 'Invalid first name: 2-20 characters only', bottomMargin: 0);
       } else if (!isNameValid(lastNameController.text)) {
-        showCustomSnackBar(context, 'Invalid last name: 2-20 characters only',
-            bottomMargin: 457);
+        showCustomSnackBar(context, 'Invalid last name: 2-20 characters only', bottomMargin: 0);
       } else if (!isPasswordValid(passwordController.text)) {
-        showCustomSnackBar(context, 'Password must contain 8-30 chars',
-            bottomMargin: 457);
+        showCustomSnackBar(context, 'Password must contain 8-30 chars', bottomMargin: 0);
       } else {
         sendAndSaveData();
       }
     } else {
-      showCustomSnackBar(context, 'No modifications detected',
-          bottomMargin: 457);
+      showCustomSnackBar(context, 'No modifications detected', bottomMargin: 0);
     }
   }
 
@@ -185,15 +175,15 @@ class _AccountPageState extends State<AccountPage> {
     return Stack(
       children: [
         Positioned(
-          top: -110,
-          bottom: 0,
-          left: -110,
-          right: -110,
+          top: -50,
+          bottom: -50,
+          left: 0,
+          right: 0,
           child: Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(
-                    'assets/Images/Profiles/Tourist/AccountBackground.png'),
+                    'assets/Images/Profiles/Tourist/WebAccountBackground.png'),
                 fit: BoxFit.fill,
               ),
             ),
@@ -204,108 +194,121 @@ class _AccountPageState extends State<AccountPage> {
           resizeToAvoidBottomInset: true,
           body: SingleChildScrollView(
             child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Row(
                 children: [
-                  const SizedBox(height: 80),
-                  ProfileImage(
-                    image: _image,
-                    onImageChanged: (File? newImage) {
-                      setState(() {
-                        _image = newImage;
-                        // Update the isImageChanged value when the image changes.
-                        updateIsImageChanged(true);
-                      });
-                    },
-                    googleAccount: widget.googleAccount,
-                  ),
-                  const SizedBox(height: 65),
-                  Visibility(
-                    visible: widget.googleAccount,
-                    child: CustomField(
-                      controller: emailController,
-                      hintText: 'Email',
-                      obscureText: false,
-                      fieldPrefixIcon: const FaIcon(
-                        FontAwesomeIcons.envelope,
-                        size: 30,
-                      ),
-                      readOnly: true,
-                    ),
-                  ),
-                  Visibility(
-                      visible: widget.googleAccount,
-                      child: const SizedBox(height: 15)),
-                  CustomField(
-                    controller: firstNameController,
-                    hintText: 'First Name',
-                    obscureText: false,
-                    fieldPrefixIcon: const FaIcon(
-                      FontAwesomeIcons.user,
-                      size: 30,
-                    ),
-                    readOnly: !widget.googleAccount ? false : true,
-                  ),
-                  const SizedBox(height: 15),
-                  CustomField(
-                    controller: lastNameController,
-                    hintText: 'Last Name',
-                    obscureText: false,
-                    fieldPrefixIcon: const FaIcon(
-                      FontAwesomeIcons.user,
-                      size: 30,
-                    ),
-                    readOnly: !widget.googleAccount ? false : true,
-                  ),
-                  Visibility(
-                      visible: !widget.googleAccount,
-                      child: const SizedBox(height: 15)),
-                  Visibility(
-                    visible: !widget.googleAccount,
-                    child: CustomField(
-                      controller: passwordController,
-                      hintText: 'Password',
-                      obscureText: true,
-                      fieldPrefixIcon: const FaIcon(
-                        FontAwesomeIcons.lock,
-                        size: 30,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 40),
-                  Visibility(
-                    visible: !widget.googleAccount,
-                    child: ElevatedButton(
-                      onPressed: editProfileInfo,
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 40,
-                          vertical: 13,
+                  Expanded(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 50),
+                        ProfileImage(
+                          image: _image,
+                          onImageChanged: (Uint8List? newImage) {
+                            setState(() {
+                              _image = newImage;
+                              // Update the isImageChanged value when the image changes.
+                              updateIsImageChanged(true);
+                            });
+                          },
+                          googleAccount: widget.googleAccount,
                         ),
-                        backgroundColor: const Color(0xFF1E889E),
-                        textStyle: const TextStyle(
-                          fontSize: 30,
-                          fontFamily: 'Zilla',
-                          fontWeight: FontWeight.w300,
-                        ),
-                      ),
-                      child: const Text('Save Changes'),
+                      ],
                     ),
                   ),
-                  widget.googleAccount == false
-                      ? const SizedBox(height: 50)
-                      : const SizedBox(height: 100),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 320.0),
-                    child: IconButton(
-                      icon: const FaIcon(
-                        FontAwesomeIcons.arrowLeft,
-                        color: Color(0xFF1E889E),
-                        size: 30,
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(height: widget.googleAccount ? 160 : 120),
+                        Visibility(
+                          visible: widget.googleAccount,
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 70.0),
+                            child: CustomField(
+                              controller: emailController,
+                              hintText: 'Email',
+                              obscureText: false,
+                              fieldPrefixIcon: const FaIcon(
+                                FontAwesomeIcons.envelope,
+                                size: 30,
+                              ),
+                              readOnly: true,
+                            ),
+                          ),
+                        ),
+                        Visibility(
+                            visible: widget.googleAccount,
+                            child: const SizedBox(height: 15)),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 70.0),
+                          child: CustomField(
+                            controller: firstNameController,
+                            hintText: 'First Name',
+                            obscureText: false,
+                            fieldPrefixIcon: const FaIcon(
+                              FontAwesomeIcons.user,
+                              size: 30,
+                            ),
+                            readOnly: !widget.googleAccount ? false : true,
+                          ),
+                        ),
+                        const SizedBox(height: 15),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 70.0),
+                          child: CustomField(
+                            controller: lastNameController,
+                            hintText: 'Last Name',
+                            obscureText: false,
+                            fieldPrefixIcon: const FaIcon(
+                              FontAwesomeIcons.user,
+                              size: 30,
+                            ),
+                            readOnly: !widget.googleAccount ? false : true,
+                          ),
+                        ),
+                        Visibility(
+                            visible: !widget.googleAccount,
+                            child: const SizedBox(height: 15)),
+                        Visibility(
+                          visible: !widget.googleAccount,
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 70.0),
+                            child: CustomField(
+                              controller: passwordController,
+                              hintText: 'Password',
+                              obscureText: true,
+                              fieldPrefixIcon: const FaIcon(
+                                FontAwesomeIcons.lock,
+                                size: 30,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 40),
+                        Visibility(
+                          visible: !widget.googleAccount,
+                          child: ElevatedButton(
+                            onPressed: editProfileInfo,
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 50,
+                                vertical: 20,
+                              ),
+                              backgroundColor: const Color(0xFF1E889E),
+                              textStyle: const TextStyle(
+                                fontSize: 25,
+                                fontFamily: 'Zilla',
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                            child: const Text('Save Changes'),
+                          ),
+                        ),
+                        widget.googleAccount == false
+                            ? const SizedBox(height: 50)
+                            : const SizedBox(height: 100),
+                      ],
                     ),
                   ),
                 ],
@@ -319,16 +322,16 @@ class _AccountPageState extends State<AccountPage> {
 }
 
 class ProfileImage extends StatefulWidget {
-  final File? image;
-  final void Function(File? newImage) onImageChanged;
+  final Uint8List? image;
+  final void Function(Uint8List? newImage) onImageChanged;
   final bool googleAccount;
 
   const ProfileImage({
-    Key? key,
-    required this.image,
+    super.key,
+    this.image,
     required this.onImageChanged,
     this.googleAccount = false, // Set default value to false.
-  }) : super(key: key);
+  });
 
   @override
   _ProfileImageState createState() => _ProfileImageState();
@@ -340,7 +343,7 @@ class _ProfileImageState extends State<ProfileImage> {
     final pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
-      final newImage = File(pickedFile.path);
+      var newImage = await pickedFile.readAsBytes();
       widget.onImageChanged(newImage);
     }
   }
@@ -370,7 +373,7 @@ class _ProfileImageState extends State<ProfileImage> {
                       widget.image == null)
                   ? NetworkImage(context.watch<UserProvider>().imageURL!)
                   : widget.image != null
-                      ? Image.file(widget.image!).image
+                      ? Image.memory(widget.image!).image
                       : const AssetImage(
                           "assets/Images/Profiles/Tourist/DefaultProfileImage.png"),
             ),
