@@ -1295,7 +1295,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                             Padding(
                               padding: const EdgeInsets.only(right: 30.0),
                               child: Text(
-                                '${widget.destinationDetails['EstimatedTime']} hours',
+                                '${widget.destinationDetails['EstimatedTime']} ${widget.destinationDetails['EstimatedTime'] == 1 ? 'hour' : 'hours'}',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontFamily: 'Time New Roman',
