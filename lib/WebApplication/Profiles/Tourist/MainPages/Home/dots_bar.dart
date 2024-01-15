@@ -3,13 +3,18 @@ import 'package:flutter/material.dart';
 class DotsBar extends StatelessWidget {
   final int itemCount;
   final int currentIndex;
+  final MainAxisAlignment alignment;
 
-  const DotsBar({super.key, required this.itemCount, required this.currentIndex});
+  const DotsBar(
+      {super.key,
+      required this.itemCount,
+      required this.currentIndex,
+      required this.alignment});
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: alignment,
       children: List.generate(itemCount, (index) {
         return Container(
           margin: const EdgeInsets.all(4),

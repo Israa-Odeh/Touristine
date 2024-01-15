@@ -669,7 +669,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
               "assets/Images/Profiles/Tourist/homeBackground.jpg",
               width: double.infinity,
               height: double.infinity,
-              fit: BoxFit.cover,
+              fit: BoxFit.fill,
             ),
             SingleChildScrollView(
               child: Column(
@@ -678,9 +678,9 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                   SizedBox(height: MediaQuery.of(context).padding.top),
                   Image.network(
                     selectedImage,
-                    width: 500,
-                    height: 300,
-                    fit: BoxFit.cover,
+                    width: 1280,
+                    height: 400,
+                    fit: BoxFit.fill,
                   ),
                   const SizedBox(height: 8),
                   if (widget.destinationImages.isNotEmpty)
@@ -689,7 +689,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                       onImageSelected: updateSelectedImage,
                     ),
                   if (widget.destinationImages.isEmpty)
-                    const SizedBox(height: 130),
+                    const SizedBox(height: 150),
                   const SizedBox(height: 8),
                   const TabBar(
                     isScrollable: true,
@@ -698,9 +698,9 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                     indicatorWeight: 3,
                     labelColor: Color(0xFF1E889E),
                     unselectedLabelColor: Color.fromARGB(182, 30, 137, 158),
-                    labelStyle: TextStyle(fontSize: 30.0, fontFamily: 'Zilla'),
+                    labelStyle: TextStyle(fontSize: 25.0, fontFamily: 'Zilla'),
                     unselectedLabelStyle:
-                        TextStyle(fontSize: 25.0, fontFamily: 'Zilla'),
+                        TextStyle(fontSize: 20.0, fontFamily: 'Zilla'),
                     tabs: [
                       Tab(text: 'About'),
                       Tab(text: 'Description'),
@@ -730,7 +730,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
             ),
             // Floating Action Button
             Positioned(
-              top: 26.0,
+              top: 0.0,
               left: 5.0,
               child: FloatingActionButton(
                 heroTag: 'BackHome',
@@ -773,6 +773,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
   }
 
   Widget _buildAboutTab() {
+    ScrollController aboutController = ScrollController();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: SingleChildScrollView(
@@ -791,17 +792,13 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                 String category =
                     getPlaceCategory(widget.destinationDetails['Category']);
 
-                int totalLength = destinationName.length + category.length;
-
-                bool displayInSameRow = totalLength <= 32;
-
                 return Padding(
                   padding: EdgeInsets.only(bottom: 5.0 + additionalMargin),
                   child: Container(
                     constraints: const BoxConstraints(
                       minHeight: 295,
                     ),
-                    width: 400,
+                    width: 1280,
                     decoration: BoxDecoration(
                       color: const Color.fromARGB(33, 20, 89, 121),
                       borderRadius: BorderRadius.circular(15.0),
@@ -812,89 +809,53 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (displayInSameRow)
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 2.0),
-                                    child: Text(
-                                      destinationName,
-                                      style: const TextStyle(
-                                        fontSize: 35,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'Gabriola',
-                                        color: Color.fromARGB(195, 18, 83, 96),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  decoration: BoxDecoration(
-                                    color: const Color.fromARGB(
-                                        125, 255, 255, 255),
-                                    borderRadius: BorderRadius.circular(15.0),
-                                  ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 2.0),
                                   child: Text(
-                                    category,
+                                    destinationName,
                                     style: const TextStyle(
-                                      fontSize: 23,
+                                      fontSize: 26,
                                       fontWeight: FontWeight.bold,
                                       fontFamily: 'Gabriola',
                                       color: Color.fromARGB(195, 18, 83, 96),
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
-                          if (!displayInSameRow)
-                            Padding(
-                              padding: const EdgeInsets.only(left: 2.0),
-                              child: Text(
-                                destinationName,
-                                style: const TextStyle(
-                                  fontSize: 35,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'Gabriola',
-                                  color: Color.fromARGB(195, 18, 83, 96),
+                              ),
+                              Container(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                                decoration: BoxDecoration(
+                                  color:
+                                      const Color.fromARGB(125, 255, 255, 255),
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
+                                child: Text(
+                                  category,
+                                  style: const TextStyle(
+                                    fontSize: 23,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Gabriola',
+                                    color: Color.fromARGB(195, 18, 83, 96),
+                                  ),
                                 ),
                               ),
-                            ),
-                          if (!displayInSameRow)
-                            Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
-                              decoration: BoxDecoration(
-                                color: const Color.fromARGB(125, 255, 255, 255),
-                                borderRadius: BorderRadius.circular(15.0),
-                              ),
-                              child: Text(
-                                category,
-                                style: const TextStyle(
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'Gabriola',
-                                  color: Color.fromARGB(195, 18, 83, 96),
-                                ),
-                              ),
-                            ),
-                          SizedBox(height: totalLength <= 32 ? 10 : 20),
+                            ],
+                          ),
+
+                          const SizedBox(height: 10),
                           Text(
-                            displayInSameRow
-                                ? widget.destinationDetails['About']
-                                    .split('\n')
-                                    .take(2)
-                                    .join('\n')
-                                : widget.destinationDetails['About']
-                                    .split('\n')
-                                    .take(3)
-                                    .join('\n'),
-                            maxLines: displayInSameRow ? 3 : 2,
+                            widget.destinationDetails['About']
+                                .split('\n')
+                                .take(4)
+                                .join('\n'),
+                            maxLines: 4,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
-                              fontSize: 31,
+                              fontSize: 25,
                               fontFamily: 'Gabriola',
                               color: Color.fromARGB(255, 23, 103, 120),
                             ),
@@ -907,11 +868,11 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                                 style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 20,
-                                    vertical: 10,
+                                    vertical: 20,
                                   ),
                                   backgroundColor: const Color(0xFF1E889E),
                                   textStyle: const TextStyle(
-                                    fontSize: 22,
+                                    fontSize: 20,
                                     fontFamily: 'Zilla',
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -923,15 +884,19 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                                       return AlertDialog(
                                         title: Text('About $destinationName',
                                             style: const TextStyle(
+                                                fontSize: 18,
                                                 color: Color.fromARGB(
                                                     255, 11, 57, 66))),
                                         content: Scrollbar(
+                                          controller: aboutController,
                                           thickness: 5,
                                           trackVisibility: true,
                                           thumbVisibility: true,
                                           child: SizedBox(
-                                            height: 350,
+                                            // height: 350,
+                                            width: 800,
                                             child: SingleChildScrollView(
+                                              controller: aboutController,
                                               child: Padding(
                                                 padding: const EdgeInsets.only(
                                                     right: 10.0),
@@ -939,7 +904,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                                                   widget.destinationDetails[
                                                       'About'],
                                                   style: const TextStyle(
-                                                    fontSize: 27,
+                                                    fontSize: 22,
                                                     fontFamily: 'Gabriola',
                                                     color: Color.fromARGB(
                                                         255, 23, 103, 120),
@@ -1018,296 +983,351 @@ class _DestinationDetailsState extends State<DestinationDetails> {
               thickness: 10,
               child: Container(
                 height: 295,
-                width: 400,
+                width: 1280,
                 decoration: BoxDecoration(
                   color: const Color.fromARGB(33, 20, 89, 121),
                   borderRadius: BorderRadius.circular(15.0),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 13.0, right: 20),
+                  padding:
+                      const EdgeInsets.only(left: 13.0, right: 20, top: 10),
                   child: ListView(
                     controller: scrollController,
                     children: [
                       Row(
                         children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                              color: const Color(0xFF1E889E),
-                            ),
-                            width: 174.0,
-                            height: 65.0,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const FaIcon(
-                                  FontAwesomeIcons.cloudSunRain,
-                                  color: Colors.white,
-                                  size: 38,
-                                ),
-                                const SizedBox(width: 25.0),
-                                Text(
-                                  '${widget.destinationDetails['Weather'][0]}°C',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: 'Time New Roman',
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold,
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                color: const Color(0xFF1E889E),
+                              ),
+                              width: 370.0,
+                              height: 60.0,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 30.0),
+                                    child: FaIcon(
+                                      FontAwesomeIcons.dollarSign,
+                                      color: Colors.white,
+                                      size: 38,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 30.0),
+                                    child: Text(
+                                      getBudgetLevel(widget
+                                          .destinationDetails['CostLevel']),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'Time New Roman',
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                          const SizedBox(width: 10.0),
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                              color: const Color(0xFF1E889E),
-                            ),
-                            width: 174.0,
-                            height: 65.0,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const FaIcon(
-                                  FontAwesomeIcons.rankingStar,
-                                  color: Colors.white,
-                                  size: 38,
-                                ),
-                                const SizedBox(width: 25.0),
-                                Text(
-                                  widget.destinationDetails['Rating'] != null
-                                      ? '${widget.destinationDetails['Rating']}'
-                                      : '0.0',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: 'Time New Roman',
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold,
+                          const SizedBox(width: 15),
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                color: const Color(0xFF1E889E),
+                              ),
+                              width: 370.0,
+                              height: 60.0,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 30.0),
+                                    child: FaIcon(
+                                      FontAwesomeIcons.rankingStar,
+                                      color: Colors.white,
+                                      size: 38,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 30.0),
+                                    child: Text(
+                                      widget.destinationDetails['Rating'] !=
+                                              null
+                                          ? '${widget.destinationDetails['Rating']}'
+                                          : '0.0',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'Time New Roman',
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 10.0),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          color: const Color(0xFF1E889E),
-                        ),
-                        width: 370.0,
-                        height: 60.0,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(left: 30.0),
-                              child: FaIcon(
-                                FontAwesomeIcons.cloudSun,
-                                color: Colors.white,
-                                size: 38,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                color: const Color(0xFF1E889E),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 30.0),
-                              child: Text(
-                                widget.destinationDetails['WeatherDescription']
-                                    [0],
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontFamily: 'Time New Roman',
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 10.0),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          color: const Color(0xFF1E889E),
-                        ),
-                        width: 370.0,
-                        height: 60.0,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            const FaIcon(
-                              FontAwesomeIcons.clock,
-                              color: Colors.white,
-                              size: 38,
-                            ),
-                            const SizedBox(width: 0.0),
-                            Text(
-                              '${widget.destinationDetails['OpeningTime']} - ${widget.destinationDetails['ClosingTime']}',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontFamily: 'Time New Roman',
-                                fontSize: 25,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 10.0),
-                      GestureDetector(
-                        onTap: () {
-                          showWDDialog(context);
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            color: const Color(0xFF1E889E),
-                          ),
-                          width: 370.0,
-                          height: 60.0,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.only(left: 30.0),
-                                child: FaIcon(
-                                  FontAwesomeIcons.calendar,
-                                  color: Colors.white,
-                                  size: 38,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(right: 30.0),
-                                child: Text(
-                                  getFormattedDays(widget.destinationDetails[
-                                                  'WorkingDays'])
-                                              .length <=
-                                          20
-                                      ? getFormattedDays(widget
-                                          .destinationDetails['WorkingDays'])
-                                      : "Workings Days",
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: 'Time New Roman',
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.w500,
+                              width: 370.0,
+                              height: 60.0,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 30.0),
+                                    child: FaIcon(
+                                      FontAwesomeIcons.cloudSunRain,
+                                      color: Colors.white,
+                                      size: 38,
+                                    ),
                                   ),
-                                ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 30.0),
+                                    child: Text(
+                                      '${widget.destinationDetails['Weather'][0]}°C',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'Time New Roman',
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
-                        ),
-                      ),
-                      const SizedBox(height: 10.0),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          color: const Color(0xFF1E889E),
-                        ),
-                        width: 370.0,
-                        height: 60.0,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(left: 30.0),
-                              child: FaIcon(
-                                FontAwesomeIcons.dollarSign,
-                                color: Colors.white,
-                                size: 38,
+                          const SizedBox(width: 15),
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                color: const Color(0xFF1E889E),
+                              ),
+                              width: 370.0,
+                              height: 60.0,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 30.0),
+                                    child: FaIcon(
+                                      FontAwesomeIcons.cloudSun,
+                                      color: Colors.white,
+                                      size: 38,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 30.0),
+                                    child: Text(
+                                      widget.destinationDetails[
+                                          'WeatherDescription'][0],
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'Time New Roman',
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 30.0),
-                              child: Text(
-                                getBudgetLevel(
-                                    widget.destinationDetails['CostLevel']),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontFamily: 'Time New Roman',
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.w500,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10.0),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                color: const Color(0xFF1E889E),
+                              ),
+                              width: 370.0,
+                              height: 60.0,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 30.0),
+                                    child: FaIcon(
+                                      FontAwesomeIcons.clock,
+                                      color: Colors.white,
+                                      size: 38,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 30.0),
+                                    child: Text(
+                                      '${widget.destinationDetails['OpeningTime']} - ${widget.destinationDetails['ClosingTime']}',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'Time New Roman',
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 15),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                showWDDialog(context);
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  color: const Color(0xFF1E889E),
+                                ),
+                                width: 370.0,
+                                height: 60.0,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Padding(
+                                      padding: EdgeInsets.only(left: 30.0),
+                                      child: FaIcon(
+                                        FontAwesomeIcons.calendar,
+                                        color: Colors.white,
+                                        size: 38,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(right: 30.0),
+                                      child: Text(
+                                        getFormattedDays(widget
+                                                            .destinationDetails[
+                                                        'WorkingDays'])
+                                                    .length <=
+                                                20
+                                            ? getFormattedDays(
+                                                widget.destinationDetails[
+                                                    'WorkingDays'])
+                                            : "Workings Days",
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: 'Time New Roman',
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 10.0),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          color: const Color(0xFF1E889E),
-                        ),
-                        width: 370.0,
-                        height: 60.0,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(left: 30.0),
-                              child: FaIcon(
-                                FontAwesomeIcons.personShelter,
-                                color: Colors.white,
-                                size: 38,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                color: const Color(0xFF1E889E),
+                              ),
+                              width: 370.0,
+                              height: 60.0,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 30.0),
+                                    child: FaIcon(
+                                      FontAwesomeIcons.personShelter,
+                                      color: Colors.white,
+                                      size: 38,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 30.0),
+                                    child: Text(
+                                      widget.destinationDetails['sheltered']
+                                                  .toLowerCase() ==
+                                              ("true")
+                                          ? 'Sheltered'
+                                          : 'Unsheltered',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'Time New Roman',
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 30.0),
-                              child: Text(
-                                widget.destinationDetails['sheltered']
-                                            .toLowerCase() ==
-                                        ("true")
-                                    ? 'Sheltered'
-                                    : 'Unsheltered',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontFamily: 'Time New Roman',
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                          ),
+                          const SizedBox(width: 15),
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                color: const Color(0xFF1E889E),
+                              ),
+                              width: 370.0,
+                              height: 60.0,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 30.0),
+                                    child: FaIcon(
+                                      FontAwesomeIcons.hourglass,
+                                      color: Colors.white,
+                                      size: 38,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 30.0),
+                                    child: Text(
+                                      '${widget.destinationDetails['EstimatedTime']} ${widget.destinationDetails['EstimatedTime'] == 1 ? 'hour' : 'hours'}',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'Time New Roman',
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 10.0),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          color: const Color(0xFF1E889E),
-                        ),
-                        width: 370.0,
-                        height: 60.0,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(left: 30.0),
-                              child: FaIcon(
-                                FontAwesomeIcons.hourglass,
-                                color: Colors.white,
-                                size: 38,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 30.0),
-                              child: Text(
-                                '${widget.destinationDetails['EstimatedTime']} hours',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontFamily: 'Time New Roman',
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 20.0),
                     ],
                   ),
                 ),

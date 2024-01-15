@@ -282,6 +282,7 @@ class _DestinationListState extends State<DestinationList> {
           DotsBar(
             itemCount: widget.destinations.length,
             currentIndex: _currentPageIndex,
+            alignment: MainAxisAlignment.center,
           ),
         ],
       ),

@@ -60,7 +60,8 @@ class _OtherPlacesState extends State<ImagesList> {
         children: [
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 5),
-            height: 95,
+            height: 140,
+            width: 1200,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: widget.listOfImages.length,
@@ -87,8 +88,8 @@ class _OtherPlacesState extends State<ImagesList> {
                         borderRadius: BorderRadius.circular(20),
                         child: Image.network(
                           widget.listOfImages[index]['image'],
-                          width: 83,
-                          height: 83,
+                          width: 150,
+                          height: 150,
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -99,9 +100,13 @@ class _OtherPlacesState extends State<ImagesList> {
             ),
           ),
           const SizedBox(height: 10),
-          DotsBar(
-            itemCount: widget.listOfImages.length,
-            currentIndex: _currentPageIndex,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 200.0),
+            child: DotsBar(
+              itemCount: widget.listOfImages.length,
+              currentIndex: _currentPageIndex,
+              alignment: MainAxisAlignment.center,
+            ),
           ),
         ],
       ),
