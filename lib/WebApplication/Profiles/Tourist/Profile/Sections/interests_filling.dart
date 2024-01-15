@@ -934,7 +934,7 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
                     child: Text(
                       'Are you sure about keeping the choices\n you\'ve selected?',
                       style: TextStyle(
-                        fontSize: 28,
+                        fontSize: 26,
                         fontFamily: 'Gabriola',
                         color: Color.fromARGB(255, 39, 51, 57),
                       ),
