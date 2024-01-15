@@ -1,5 +1,4 @@
 import 'package:touristine/WebApplication/Notifications/snack_bar.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
@@ -189,114 +188,113 @@ class _LocationPageState extends State<LocationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Positioned(
-          top: -24,
-          bottom: 0,
-          left: -100,
-          right: -100,
-          child: Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                    'assets/Images/Profiles/Tourist/locationBackground.png'),
-                fit: BoxFit.fill,
-              ),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              children: [
+                const SizedBox(height: 30),
+                Image.asset(
+                  'assets/Images/Profiles/Tourist/Address.gif',
+                  fit: BoxFit.cover,
+                ),
+              ],
             ),
           ),
-        ),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          resizeToAvoidBottomInset: true,
-          body: SingleChildScrollView(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 120),
-                  Image.asset('assets/Images/Profiles/Tourist/Address.gif'),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(height: 80),
 
-                  const SizedBox(height: 15),
-
-                  // Address Information.
-                  Container(
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.15),
-                          spreadRadius: 8,
-                          blurRadius: 20,
-                          offset: const Offset(0, 0),
-                        )
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Location:',
+                // Address Information.
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 50.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 100),
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          'Determine Your Location',
                           style: TextStyle(
                             fontSize: 30,
                             fontWeight: FontWeight.bold,
-                            fontFamily: 'Times New Roman',
-                            color: Color.fromARGB(255, 61, 80, 89),
+                            fontFamily: 'Gabriola',
+                            color: Color.fromARGB(255, 39, 51, 57),
                           ),
                         ),
-                        Text(
-                          isLocDetermined
-                              ? ' ${_currentAddress ?? ""}'
-                              : " Undetermined",
-                          style: const TextStyle(
-                            fontSize: 30,
-                            fontFamily: 'Times New Roman',
-                            color: Color.fromARGB(255, 35, 154, 178),
-                          ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
+                ),
+                const SizedBox(height: 50),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Location:',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Times New Roman',
+                        color: Color.fromARGB(255, 61, 80, 89),
+                      ),
+                    ),
+                    Text(
+                      isLocDetermined
+                          ? ' ${_currentAddress ?? ""}'
+                          : " Undetermined",
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontFamily: 'Times New Roman',
+                        color: Color.fromARGB(255, 35, 154, 178),
+                      ),
+                    ),
+                  ],
+                ),
 
-                  const SizedBox(height: 50),
-                  ElevatedButton(
-                    onPressed: () {
-                      _getCurrentPosition(); // Trigger obtaining the current location.
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 40,
-                        vertical: 13,
-                      ),
-                      backgroundColor: const Color(0xFF1E889E),
-                      textStyle: const TextStyle(
-                        fontSize: 30,
-                        fontFamily: 'Zilla',
-                        fontWeight: FontWeight.w300,
-                      ),
+                const SizedBox(height: 50),
+                ElevatedButton(
+                  onPressed: () {
+                    _getCurrentPosition(); // Trigger obtaining the current location.
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 100,
+                      vertical: 20,
                     ),
-                    child: const Text('Get Location'),
-                  ),
-                  // const SizedBox(height: 50),
-                  const SizedBox(height: 65),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 320.0),
-                    child: IconButton(
-                      icon: const FaIcon(
-                        FontAwesomeIcons.arrowLeft,
-                        color: Color(0xFF1E889E),
-                        size: 30,
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
+                    backgroundColor: const Color(0xFF1E889E),
+                    textStyle: const TextStyle(
+                      fontSize: 25,
+                      fontFamily: 'Zilla',
+                      fontWeight: FontWeight.w300,
                     ),
                   ),
-                ],
-              ),
+                  child: const Text('Get Location'),
+                ),
+              ],
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
