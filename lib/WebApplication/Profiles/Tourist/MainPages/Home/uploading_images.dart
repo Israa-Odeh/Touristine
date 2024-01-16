@@ -308,7 +308,7 @@ class _UploadingImagesPageState extends State<UploadingImagesPage> {
                           ),
                           backgroundColor: const Color(0xFF1E889E),
                           textStyle: const TextStyle(
-                            fontSize: 25,
+                            fontSize: 20,
                             fontFamily: 'Zilla',
                             fontWeight: FontWeight.bold,
                           ),
@@ -318,7 +318,7 @@ class _UploadingImagesPageState extends State<UploadingImagesPage> {
                           children: [
                             FaIcon(
                               FontAwesomeIcons.photoFilm,
-                              size: 30,
+                              size: 25,
                             ),
                             SizedBox(width: 20),
                             Text('Add Image'),
