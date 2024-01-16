@@ -108,15 +108,15 @@ class _DestinationDetailsState extends State<DestinationDetails> {
             'Reviews are not available for this destination') {
           // ignore: use_build_context_synchronously
           showCustomSnackBar(context, 'Reviews are not available',
-              bottomMargin: 310);
+              bottomMargin: 0);
         } else {
           // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, responseData['error'], bottomMargin: 310);
+          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
         }
       } else {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'Error retrieving destination reviews',
-            bottomMargin: 310);
+            bottomMargin: 0);
       }
     } catch (error) {
       print('Failed to fetch destination reviews: $error');
@@ -160,11 +160,11 @@ class _DestinationDetailsState extends State<DestinationDetails> {
       } else if (response.statusCode == 500) {
         final Map<String, dynamic> responseData = json.decode(response.body);
         // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, responseData['error'], bottomMargin: 310);
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
       } else if (response.statusCode == 404) {
         final Map<String, dynamic> responseData = json.decode(response.body);
         // ignore: use_build_context_synchronously
-        // showCustomSnackBar(context, responseData['message'], bottomMargin: 310);
+        // showCustomSnackBar(context, responseData['message'], bottomMargin: 0);
         print(responseData['message']);
         // ignore: use_build_context_synchronously
         Navigator.push(
@@ -182,7 +182,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
       } else {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'Error fetching your review',
-            bottomMargin: 310);
+            bottomMargin: 0);
       }
     } catch (error) {
       print('Failed to fetch your review: $error');
@@ -275,12 +275,12 @@ class _DestinationDetailsState extends State<DestinationDetails> {
         final Map<String, dynamic> responseData = json.decode(response.body);
         if (responseData.containsKey('error')) {
           // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, responseData['error'], bottomMargin: 310);
+          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
         }
       } else {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'Error retrieving place location',
-            bottomMargin: 310);
+            bottomMargin: 0);
       }
     } catch (error) {
       print('Failed to fetch the destination lat and lng: $error');
@@ -320,11 +320,11 @@ class _DestinationDetailsState extends State<DestinationDetails> {
       } else if (response.statusCode == 500) {
         final Map<String, dynamic> responseData = json.decode(response.body);
         // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, responseData['error'], bottomMargin: 310);
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
       } else {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'Error retrieving your complaints',
-            bottomMargin: 310);
+            bottomMargin: 0);
       }
     } catch (error) {
       print('Error fetching complaints: $error');
@@ -362,13 +362,13 @@ class _DestinationDetailsState extends State<DestinationDetails> {
       } else if (response.statusCode == 500) {
         final Map<String, dynamic> responseData = json.decode(response.body);
         // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, responseData['error'], bottomMargin: 310);
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
       } else if (response.statusCode == 404) {
         print("Uploaded images list is empty");
       } else {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'Error retrieving your uploads',
-            bottomMargin: 310);
+            bottomMargin: 0);
       }
     } catch (error) {
       print('Error fetching uploads: $error');
@@ -493,7 +493,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
     if (!serviceEnabled) {
       // ignore: use_build_context_synchronously
       showCustomSnackBar(context, "Location services are disabled",
-          bottomMargin: 310);
+          bottomMargin: 0);
       return false;
     }
     permission = await Geolocator.checkPermission();
@@ -502,7 +502,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
       if (permission == LocationPermission.denied) {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, "Location permissions are denied",
-            bottomMargin: 310);
+            bottomMargin: 0);
         return false;
       }
     }
@@ -510,12 +510,12 @@ class _DestinationDetailsState extends State<DestinationDetails> {
       // Location permissions are permanently denied, we cannot request permissions,
       // ignore: use_build_context_synchronously
       showCustomSnackBar(context, "Location permissions permanently denied",
-          bottomMargin: 310);
+          bottomMargin: 0);
 
       return false;
     }
     // ignore: use_build_context_synchronously
-    showCustomSnackBar(context, "Please wait for a moment", bottomMargin: 310);
+    showCustomSnackBar(context, "Please wait for a moment", bottomMargin: 0);
     return true;
   }
 
@@ -675,7 +675,6 @@ class _DestinationDetailsState extends State<DestinationDetails> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: MediaQuery.of(context).padding.top),
                   Image.network(
                     selectedImage,
                     width: 1280,
@@ -689,7 +688,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                       onImageSelected: updateSelectedImage,
                     ),
                   if (widget.destinationImages.isEmpty)
-                    const SizedBox(height: 150),
+                    const SizedBox(height: 10),
                   const SizedBox(height: 8),
                   const TabBar(
                     isScrollable: true,
@@ -783,21 +782,14 @@ class _DestinationDetailsState extends State<DestinationDetails> {
             const SizedBox(height: 8),
             LayoutBuilder(
               builder: (context, constraints) {
-                double additionalMargin = 0;
-                if (constraints.maxHeight > 295) {
-                  additionalMargin = 10.0;
-                }
-
                 String destinationName = widget.destination['name'];
                 String category =
                     getPlaceCategory(widget.destinationDetails['Category']);
 
                 return Padding(
-                  padding: EdgeInsets.only(bottom: 5.0 + additionalMargin),
+                  padding: const EdgeInsets.only(bottom: 5.0),
                   child: Container(
-                    constraints: const BoxConstraints(
-                      minHeight: 295,
-                    ),
+                    height: 295,
                     width: 1280,
                     decoration: BoxDecoration(
                       color: const Color.fromARGB(33, 20, 89, 121),
@@ -978,7 +970,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
               borderRadius: BorderRadius.circular(15.0),
             ),
             child: Padding(
-              padding: const EdgeInsets.only(left: 13.0, right: 20, top: 20),
+              padding: const EdgeInsets.only(left: 13.0, right: 20, top: 12),
               child: ListView(
                 controller: scrollController,
                 children: [
@@ -1988,7 +1980,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                                   ),
                                   backgroundColor: const Color(0xFF1E889E),
                                   textStyle: const TextStyle(
-                                    fontSize: 25,
+                                    fontSize: 22,
                                     fontFamily: 'Zilla',
                                     fontWeight: FontWeight.bold,
                                   ),

@@ -50,18 +50,19 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
           });
           // ignore: use_build_context_synchronously
           showCustomSnackBar(context, "The upload has been deleted",
-              bottomMargin: 320);
+              bottomMargin: 0);
         } else {
           print('No message keyword found in the response');
         }
       } else if (response.statusCode == 500) {
         final Map<String, dynamic> responseData = json.decode(response.body);
         // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, responseData['error'], bottomMargin: 320);
+        showCustomSnackBar(context, responseData['error'],
+            bottomMargin: 0);
       } else {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'Error deleting your upload',
-            bottomMargin: 320);
+            bottomMargin: 0);
       }
     } catch (error) {
       print('Error deleting the upload: $error');
@@ -82,234 +83,230 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: widget.uploadedImages.isEmpty ? Colors.white : null,
-      body: Padding(
-        padding:
-            EdgeInsets.only(top: widget.uploadedImages.isNotEmpty ? 0.0 : 24),
-        child: Container(
-          decoration: BoxDecoration(
-              image: widget.uploadedImages.isNotEmpty
-                  ? const DecorationImage(
-                      image: AssetImage(
-                          "assets/Images/Profiles/Tourist/homeBackground.jpg"),
-                      fit: BoxFit.fill,
-                    )
-                  : null),
-          child: widget.uploadedImages.isEmpty
-              ? Center(
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Positioned(
-                        top: -50,
-                        child: Image.asset(
-                          'assets/Images/Profiles/Tourist/emptyList.gif',
-                          fit: BoxFit.fill,
+      body: Container(
+        decoration: BoxDecoration(
+            image: widget.uploadedImages.isNotEmpty
+                ? const DecorationImage(
+                    image: AssetImage(
+                        "assets/Images/Profiles/Tourist/homeBackground.jpg"),
+                    fit: BoxFit.fill,
+                  )
+                : null),
+        child: widget.uploadedImages.isEmpty
+            ? Center(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Positioned(
+                      top: -50,
+                      child: Image.asset(
+                        'assets/Images/Profiles/Tourist/emptyList.gif',
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                    const Positioned(
+                      top: 420,
+                      child: Text(
+                        'No uploads found',
+                        style: TextStyle(
+                          fontSize: 40,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'Gabriola',
+                          color: Color.fromARGB(255, 23, 99, 114),
                         ),
                       ),
-                      const Positioned(
-                        top: 420,
-                        child: Text(
-                          'No uploads found',
-                          style: TextStyle(
-                            fontSize: 40,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: 'Gabriola',
-                            color: Color.fromARGB(255, 23, 99, 114),
+                    ),
+                  ],
+                ),
+              )
+            : Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ListView.builder(
+                  itemCount: widget.uploadedImages.length,
+                  itemBuilder: (context, index) {
+                    final imageInfo = widget.uploadedImages[index];
+                    final List<String> keywords =
+                        List<String>.from(imageInfo['keywords']);
+                    final String uploadingDate = imageInfo['date'];
+                    final List<String> imageUrls =
+                        List<String>.from(imageInfo['images']);
+                    return Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 0,
+                            blurRadius: 10,
+                            offset: const Offset(0, 0),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
-                  ),
-                )
-              : Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: ListView.builder(
-                    itemCount: widget.uploadedImages.length,
-                    itemBuilder: (context, index) {
-                      final imageInfo = widget.uploadedImages[index];
-                      final List<String> keywords =
-                          List<String>.from(imageInfo['keywords']);
-                      final String uploadingDate = imageInfo['date'];
-                      final List<String> imageUrls =
-                          List<String>.from(imageInfo['images']);
-                      return Container(
-                        decoration: BoxDecoration(
+                      child: Card(
+                        color: const Color.fromARGB(61, 141, 148, 149),
+                        elevation: 0,
+                        margin: const EdgeInsets.symmetric(vertical: 10),
+                        shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              spreadRadius: 0,
-                              blurRadius: 10,
-                              offset: const Offset(0, 0),
-                            ),
-                          ],
                         ),
-                        child: Card(
-                          color: const Color.fromARGB(61, 141, 148, 149),
-                          elevation: 0,
-                          margin: const EdgeInsets.symmetric(vertical: 10),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    const Text(
-                                      'Categories: ',
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w100,
-                                          fontFamily: 'Zilla',
-                                          color:
-                                              Color.fromARGB(255, 14, 63, 73)),
-                                    ),
-                                    Text(
-                                      keywords.join(', '),
-                                      style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w100,
-                                          fontFamily: 'Zilla',
-                                          color:
-                                              Color.fromARGB(255, 14, 63, 73)),
-                                    ),
-                                  ],
-                                ),
-                                const Divider(
-                                  color: Color.fromARGB(126, 14, 63, 73),
-                                  thickness: 2,
-                                ),
-                                SizedBox(
-                                  height: 225,
-                                  child: imageUrls.length >=
-                                          widget.minImagesToShowScrollbar
-                                      ? Scrollbar(
-                                          trackVisibility: true,
-                                          thumbVisibility: true,
-                                          controller:
-                                              imageScrollControllers[index],
-                                          child: ListView.builder(
-                                            controller:
-                                                imageScrollControllers[index],
-                                            scrollDirection: Axis.horizontal,
-                                            itemCount: imageUrls.length,
-                                            itemBuilder: (context, index) {
-                                              return Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 8.0,
-                                                    left: 8.0,
-                                                    top: 8.0,
-                                                    bottom: 15.0),
-                                                child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          12.0),
-                                                  child: Image.network(
-                                                    imageUrls[index],
-                                                    width: 225,
-                                                    height: 225,
-                                                    fit: BoxFit.fill,
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        )
-                                      : ListView.builder(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  const Text(
+                                    'Categories: ',
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w100,
+                                        fontFamily: 'Zilla',
+                                        color:
+                                            Color.fromARGB(255, 14, 63, 73)),
+                                  ),
+                                  Text(
+                                    keywords.join(', '),
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w100,
+                                        fontFamily: 'Zilla',
+                                        color:
+                                            Color.fromARGB(255, 14, 63, 73)),
+                                  ),
+                                ],
+                              ),
+                              const Divider(
+                                color: Color.fromARGB(126, 14, 63, 73),
+                                thickness: 2,
+                              ),
+                              SizedBox(
+                                height: 226,
+                                child: imageUrls.length >=
+                                        widget.minImagesToShowScrollbar
+                                    ? Scrollbar(
+                                        trackVisibility: true,
+                                        thumbVisibility: true,
+                                        controller:
+                                            imageScrollControllers[index],
+                                        child: ListView.builder(
                                           controller:
                                               imageScrollControllers[index],
                                           scrollDirection: Axis.horizontal,
                                           itemCount: imageUrls.length,
                                           itemBuilder: (context, index) {
                                             return Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
+                                              padding: const EdgeInsets.only(
+                                                  right: 8.0,
+                                                  left: 8.0,
+                                                  top: 8.0,
+                                                  bottom: 15.0),
                                               child: ClipRRect(
                                                 borderRadius:
-                                                    BorderRadius.circular(12.0),
+                                                    BorderRadius.circular(
+                                                        12.0),
                                                 child: Image.network(
                                                   imageUrls[index],
-                                                  width: 225,
-                                                  height: 225,
+                                                  width: 226,
+                                                  height: 226,
                                                   fit: BoxFit.fill,
                                                 ),
                                               ),
                                             );
                                           },
                                         ),
-                                ),
-                                const Divider(
+                                      )
+                                    : ListView.builder(
+                                        controller:
+                                            imageScrollControllers[index],
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: imageUrls.length,
+                                        itemBuilder: (context, index) {
+                                          return Padding(
+                                            padding:
+                                                const EdgeInsets.all(8.0),
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
+                                              child: Image.network(
+                                                imageUrls[index],
+                                                width: 226,
+                                                height: 226,
+                                                fit: BoxFit.fill,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                              ),
+                              const Divider(
+                                color: Color.fromARGB(126, 14, 63, 73),
+                                thickness: 2,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    uploadingDate,
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        fontFamily: 'Time New Roman',
+                                        color:
+                                            Color.fromARGB(255, 14, 63, 73)),
+                                  ),
+                                  Text(
+                                    imageInfo['status'],
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        fontFamily: 'Time New Roman',
+                                        color:
+                                            Color.fromARGB(255, 14, 63, 73)),
+                                  ),
+                                ],
+                              ),
+                              Visibility(
+                                visible: imageInfo['status'].toLowerCase() ==
+                                        'approved'
+                                    ? false
+                                    : true,
+                                child: const Divider(
                                   color: Color.fromARGB(126, 14, 63, 73),
                                   thickness: 2,
                                 ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                              ),
+                              Visibility(
+                                visible: imageInfo['status'].toLowerCase() ==
+                                        'approved'
+                                    ? false
+                                    : true,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    Text(
-                                      uploadingDate,
-                                      style: const TextStyle(
-                                          fontSize: 16,
-                                          fontFamily: 'Time New Roman',
-                                          color:
-                                              Color.fromARGB(255, 14, 63, 73)),
-                                    ),
-                                    Text(
-                                      imageInfo['status'],
-                                      style: const TextStyle(
-                                          fontSize: 16,
-                                          fontFamily: 'Time New Roman',
-                                          color:
-                                              Color.fromARGB(255, 14, 63, 73)),
+                                    IconButton(
+                                      color: const Color(0xFF1E889E),
+                                      icon: const FaIcon(
+                                          FontAwesomeIcons.trash),
+                                      onPressed: () async {
+                                        print(widget.uploadedImages[index]
+                                            ['_id']);
+                                        await deleteUploadedImages(
+                                            widget.uploadedImages[index]
+                                                ['_id'],
+                                            index);
+                                      },
                                     ),
                                   ],
                                 ),
-                                Visibility(
-                                  visible: imageInfo['status'].toLowerCase() ==
-                                          'approved'
-                                      ? false
-                                      : true,
-                                  child: const Divider(
-                                    color: Color.fromARGB(126, 14, 63, 73),
-                                    thickness: 2,
-                                  ),
-                                ),
-                                Visibility(
-                                  visible: imageInfo['status'].toLowerCase() ==
-                                          'approved'
-                                      ? false
-                                      : true,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      IconButton(
-                                        color: const Color(0xFF1E889E),
-                                        icon: const FaIcon(
-                                            FontAwesomeIcons.trash),
-                                        onPressed: () async {
-                                          print(widget.uploadedImages[index]
-                                              ['_id']);
-                                          await deleteUploadedImages(
-                                              widget.uploadedImages[index]
-                                                  ['_id'],
-                                              index);
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
                 ),
-        ),
+              ),
       ),
       floatingActionButton: Padding(
         padding: EdgeInsets.only(

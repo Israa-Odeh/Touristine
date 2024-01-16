@@ -24,31 +24,31 @@ class AddingComplaintsPage extends StatefulWidget {
 class _AddingComplaintsPageState extends State<AddingComplaintsPage> {
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
-  List<Uint8List> selectedImages = []; // List to store selected images
+  List<Uint8List> selectedImages = []; // List to store selected images.
 
   // Function to validate the form.
   bool validateForm() {
     if (titleController.text.isEmpty) {
       showCustomSnackBar(context, 'Please enter the complaint title',
-          bottomMargin: 410);
+          bottomMargin: 0);
       return false;
     }
 
     if (contentController.text.isEmpty) {
       showCustomSnackBar(context, 'Please enter the complaint content',
-          bottomMargin: 410);
+          bottomMargin: 0);
       return false;
     }
 
     if (titleController.text.length < 5) {
       showCustomSnackBar(context, 'Title must have at least 5 characters',
-          bottomMargin: 410);
+          bottomMargin: 0);
       return false;
     }
 
     if (contentController.text.length < 20) {
       showCustomSnackBar(context, 'Content must have at least 20 chars',
-          bottomMargin: 410);
+          bottomMargin: 0);
       return false;
     }
     // Form is valid.
@@ -167,9 +167,6 @@ class _AddingComplaintsPageState extends State<AddingComplaintsPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // SizedBox(height: !selectedImages.isNotEmpty ? 50 : 30),
-
-                    // SizedBox(height: !selectedImages.isNotEmpty ? 60 : 20),
                     TextField(
                       controller: titleController,
                       decoration: const InputDecoration(
@@ -199,7 +196,7 @@ class _AddingComplaintsPageState extends State<AddingComplaintsPage> {
                         ),
                       ),
                       minLines: 1,
-                      maxLines: !selectedImages.isNotEmpty ? 7 : 4,
+                      maxLines: !selectedImages.isNotEmpty ? 9 : 3,
                       maxLength: 1000,
                       style: const TextStyle(fontSize: 18),
                     ),
@@ -207,7 +204,7 @@ class _AddingComplaintsPageState extends State<AddingComplaintsPage> {
                     // Display selected images.
                     if (selectedImages.isNotEmpty)
                       SizedBox(
-                        height: 200,
+                        height: 180,
                         child: selectedImages.length >= 3
                             ? Scrollbar(
                                 trackVisibility: true,
@@ -225,7 +222,7 @@ class _AddingComplaintsPageState extends State<AddingComplaintsPage> {
                                         children: [
                                           Image.memory(
                                             selectedImages[index],
-                                            width: 174,
+                                            width: 190,
                                             height: 174,
                                             fit: BoxFit.cover,
                                           ),
@@ -274,7 +271,7 @@ class _AddingComplaintsPageState extends State<AddingComplaintsPage> {
                                       children: [
                                         Image.memory(
                                           selectedImages[index],
-                                          width: 174,
+                                          width: 190,
                                           height: 174,
                                           fit: BoxFit.cover,
                                         ),

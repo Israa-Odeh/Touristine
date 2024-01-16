@@ -12,7 +12,7 @@ void showCustomSnackBar(
       content: Center(
         child: Text(
           message,
-          style: const TextStyle(fontSize: 22),
+          style: const TextStyle(fontSize: 20),
         ),
       ),
       backgroundColor: const Color(0xFF1E889E),

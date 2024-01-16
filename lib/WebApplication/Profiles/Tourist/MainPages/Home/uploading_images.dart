@@ -144,111 +144,60 @@ class _UploadingImagesPageState extends State<UploadingImagesPage> {
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  children: [
-                    Center(
-                      child: Image.asset(
-                          'assets/Images/Profiles/Tourist/ImagesUpload.gif',
-                          fit: BoxFit.cover),
-                    ),
-                  ],
-                ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                children: [
+                  Center(
+                    child: Image.asset(
+                        'assets/Images/Profiles/Tourist/ImagesUpload.gif',
+                        fit: BoxFit.cover),
+                  ),
+                ],
               ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Wrap(
-                        children: availableKeywords.map((keyword) {
-                          return Padding(
-                            padding: const EdgeInsets.only(left: 4.0, right: 4),
-                            child: FilterChip(
-                              label: Text(
-                                keyword,
-                                style: const TextStyle(
-                                    color: Colors.black, fontSize: 15),
-                              ),
-                              selected: selectedKeywords.contains(keyword),
-                              onSelected: (_) => onChipSelected(keyword),
-                              selectedColor:
-                                  const Color.fromARGB(31, 151, 151, 151),
-                              shape: RoundedRectangleBorder(
-                                side: const BorderSide(
-                                    color: Color(0xFF1E889E)), // Border color
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Wrap(
+                      children: availableKeywords.map((keyword) {
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 4.0, right: 4),
+                          child: FilterChip(
+                            label: Text(
+                              keyword,
+                              style: const TextStyle(
+                                  color: Colors.black, fontSize: 15),
                             ),
-                          );
-                        }).toList(),
-                      ),
+                            selected: selectedKeywords.contains(keyword),
+                            onSelected: (_) => onChipSelected(keyword),
+                            selectedColor:
+                                const Color.fromARGB(31, 151, 151, 151),
+                            shape: RoundedRectangleBorder(
+                              side: const BorderSide(
+                                  color: Color(0xFF1E889E)), // Border color
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
+                        );
+                      }).toList(),
                     ),
-                    const SizedBox(height: 20),
-                    if (selectedImages.isNotEmpty)
-                      SizedBox(
-                        height: 200,
-                        child: selectedImages.length >= 3
-                            ? Scrollbar(
-                                trackVisibility: true,
-                                thumbVisibility: true,
-                                thickness: 5,
+                  ),
+                  const SizedBox(height: 20),
+                  if (selectedImages.isNotEmpty)
+                    SizedBox(
+                      height: 200,
+                      child: selectedImages.length >= 3
+                          ? Scrollbar(
+                              trackVisibility: true,
+                              thumbVisibility: true,
+                              thickness: 5,
+                              controller: scrollController,
+                              child: ListView.builder(
                                 controller: scrollController,
-                                child: ListView.builder(
-                                  controller: scrollController,
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: selectedImages.length,
-                                  itemBuilder: (context, index) {
-                                    return Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Stack(
-                                        children: [
-                                          Image.memory(
-                                            selectedImages[index],
-                                            width: 174,
-                                            height: 174,
-                                            fit: BoxFit.cover,
-                                          ),
-                                          Positioned(
-                                            top: -5,
-                                            right: -5,
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: const Color.fromARGB(
-                                                            255, 20, 94, 108)
-                                                        .withOpacity(1),
-                                                    blurRadius: 1,
-                                                    spreadRadius: -10,
-                                                    offset: const Offset(0, 0),
-                                                  ),
-                                                ],
-                                              ),
-                                              child: IconButton(
-                                                icon: const FaIcon(
-                                                  FontAwesomeIcons.xmark,
-                                                  color: Color.fromARGB(
-                                                      255, 255, 255, 255),
-                                                  size: 20.0,
-                                                ),
-                                                onPressed: () =>
-                                                    deleteImage(index),
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
-                              )
-                            : ListView.builder(
                                 scrollDirection: Axis.horizontal,
                                 itemCount: selectedImages.length,
                                 itemBuilder: (context, index) {
@@ -258,8 +207,8 @@ class _UploadingImagesPageState extends State<UploadingImagesPage> {
                                       children: [
                                         Image.memory(
                                           selectedImages[index],
-                                          width: 174,
-                                          height: 174,
+                                          width: 190,
+                                          height: 190,
                                           fit: BoxFit.cover,
                                         ),
                                         Positioned(
@@ -296,15 +245,65 @@ class _UploadingImagesPageState extends State<UploadingImagesPage> {
                                   );
                                 },
                               ),
-                      ),
-                    const SizedBox(height: 10),
-                    Center(
+                            )
+                          : ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: selectedImages.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Stack(
+                                    children: [
+                                      Image.memory(
+                                        selectedImages[index],
+                                        width: 190,
+                                        height: 190,
+                                        fit: BoxFit.cover,
+                                      ),
+                                      Positioned(
+                                        top: -5,
+                                        right: -5,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: const Color.fromARGB(
+                                                        255, 20, 94, 108)
+                                                    .withOpacity(1),
+                                                blurRadius: 1,
+                                                spreadRadius: -10,
+                                                offset: const Offset(0, 0),
+                                              ),
+                                            ],
+                                          ),
+                                          child: IconButton(
+                                            icon: const FaIcon(
+                                              FontAwesomeIcons.xmark,
+                                              color: Color.fromARGB(
+                                                  255, 255, 255, 255),
+                                              size: 20.0,
+                                            ),
+                                            onPressed: () => deleteImage(index),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
+                  const SizedBox(height: 10),
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 20.0),
                       child: ElevatedButton(
                         onPressed: pickImage,
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 10,
-                            vertical: 10,
+                            vertical: 20,
                           ),
                           backgroundColor: const Color(0xFF1E889E),
                           textStyle: const TextStyle(
@@ -326,11 +325,11 @@ class _UploadingImagesPageState extends State<UploadingImagesPage> {
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
       persistentFooterButtons: [

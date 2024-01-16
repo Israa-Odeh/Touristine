@@ -22,59 +22,56 @@ class _ComplaintsListPageState extends State<ComplaintsListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: widget.complaints.isEmpty ? Colors.white : null,
-      body: Padding(
-        padding: EdgeInsets.only(top: widget.complaints.isNotEmpty ? 0.0 : 24),
-        child: Container(
-          decoration: BoxDecoration(
-              color: Colors.white,
-              image: widget.complaints.isNotEmpty
-                  ? const DecorationImage(
-                      image: AssetImage(
-                          "assets/Images/Profiles/Tourist/homeBackground.jpg"),
-                      fit: BoxFit.fill,
-                    )
-                  : null),
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              Expanded(
-                child: widget.complaints.isEmpty
-                    ? Center(
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Positioned(
-                              top: -50,
-                              child: Image.asset(
-                                'assets/Images/Profiles/Tourist/emptyList.gif',
-                                fit: BoxFit.fill,
+      body: Container(
+        decoration: BoxDecoration(
+            color: Colors.white,
+            image: widget.complaints.isNotEmpty
+                ? const DecorationImage(
+                    image: AssetImage(
+                        "assets/Images/Profiles/Tourist/homeBackground.jpg"),
+                    fit: BoxFit.fill,
+                  )
+                : null),
+        child: Column(
+          children: [
+            const SizedBox(height: 20),
+            Expanded(
+              child: widget.complaints.isEmpty
+                  ? Center(
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Positioned(
+                            top: -50,
+                            child: Image.asset(
+                              'assets/Images/Profiles/Tourist/emptyList.gif',
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                          const Positioned(
+                            top: 420,
+                            child: Text(
+                              'No complaints found',
+                              style: TextStyle(
+                                fontSize: 40,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'Gabriola',
+                                color: Color.fromARGB(255, 23, 99, 114),
                               ),
                             ),
-                            const Positioned(
-                              top: 420,
-                              child: Text(
-                                'No complaints found',
-                                style: TextStyle(
-                                  fontSize: 40,
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: 'Gabriola',
-                                  color: Color.fromARGB(255, 23, 99, 114),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : ListView.builder(
-                        itemCount: widget.complaints.length,
-                        itemBuilder: (context, index) {
-                          return ComplaintCard(
-                              complaint: widget.complaints[index]);
-                        },
+                          ),
+                        ],
                       ),
-              ),
-            ],
-          ),
+                    )
+                  : ListView.builder(
+                      itemCount: widget.complaints.length,
+                      itemBuilder: (context, index) {
+                        return ComplaintCard(
+                            complaint: widget.complaints[index]);
+                      },
+                    ),
+            ),
+          ],
         ),
       ),
       floatingActionButton: Padding(

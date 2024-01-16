@@ -20,57 +20,54 @@ class _AllReviewsPageState extends State<AllReviewsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: widget.reviews.isEmpty ? Colors.white : null,
-      body: Padding(
-        padding: EdgeInsets.only(top: widget.reviews.isNotEmpty ? 0.0 : 24),
-        child: Container(
-          decoration: BoxDecoration(
-              image: widget.reviews.isNotEmpty
-                  ? const DecorationImage(
-                      image: AssetImage(
-                          "assets/Images/Profiles/Tourist/homeBackground.jpg"),
-                      fit: BoxFit.cover,
-                    )
-                  : null),
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              Expanded(
-                child: widget.reviews.isEmpty
-                    ? Center(
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Positioned(
-                              top: -50,
-                              child: Image.asset(
-                                'assets/Images/Profiles/Tourist/emptyList.gif',
-                                fit: BoxFit.fill,
+      body: Container(
+        decoration: BoxDecoration(
+            image: widget.reviews.isNotEmpty
+                ? const DecorationImage(
+                    image: AssetImage(
+                        "assets/Images/Profiles/Tourist/homeBackground.jpg"),
+                    fit: BoxFit.fill,
+                  )
+                : null),
+        child: Column(
+          children: [
+            const SizedBox(height: 20),
+            Expanded(
+              child: widget.reviews.isEmpty
+                  ? Center(
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Positioned(
+                            top: -50,
+                            child: Image.asset(
+                              'assets/Images/Profiles/Tourist/emptyList.gif',
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                          const Positioned(
+                            top: 420,
+                            child: Text(
+                              'No reviews found',
+                              style: TextStyle(
+                                fontSize: 40,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'Gabriola',
+                                color: Color.fromARGB(255, 23, 99, 114),
                               ),
                             ),
-                            const Positioned(
-                              top: 420,
-                              child: Text(
-                                'No reviews found',
-                                style: TextStyle(
-                                  fontSize: 40,
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: 'Gabriola',
-                                  color: Color.fromARGB(255, 23, 99, 114),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : ListView.builder(
-                        itemCount: widget.reviews.length,
-                        itemBuilder: (context, index) {
-                          return _buildReviewCard(widget.reviews[index]);
-                        },
+                          ),
+                        ],
                       ),
-              ),
-            ],
-          ),
+                    )
+                  : ListView.builder(
+                      itemCount: widget.reviews.length,
+                      itemBuilder: (context, index) {
+                        return _buildReviewCard(widget.reviews[index]);
+                      },
+                    ),
+            ),
+          ],
         ),
       ),
       floatingActionButton: Padding(

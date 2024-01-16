@@ -109,7 +109,7 @@ class _AddingReviewPageState extends State<AddingReviewPage> {
         final Map<String, dynamic> responseData = json.decode(response.body);
         if (responseData.containsKey('error')) {
           // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, responseData['error'], bottomMargin: 370);
+          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
         } else {
           // ignore: use_build_context_synchronously
           showCustomSnackBar(context, responseData['message'],
