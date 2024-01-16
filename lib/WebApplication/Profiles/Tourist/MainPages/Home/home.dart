@@ -282,7 +282,7 @@ class _HomePageState extends State<HomePage> {
                           if (isLoadingPlaceDetails)
                             const Center(
                               child: Padding(
-                                padding: EdgeInsets.symmetric(vertical: 50.0),
+                                padding: EdgeInsets.symmetric(vertical: 80.0),
                                 child: CircularProgressIndicator(
                                   valueColor: AlwaysStoppedAnimation<Color>(
                                       Color(0xFF1E889E)),

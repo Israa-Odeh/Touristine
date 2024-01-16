@@ -775,171 +775,167 @@ class _DestinationDetailsState extends State<DestinationDetails> {
     ScrollController aboutController = ScrollController();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 8),
-            LayoutBuilder(
-              builder: (context, constraints) {
-                String destinationName = widget.destination['name'];
-                String category =
-                    getPlaceCategory(widget.destinationDetails['Category']);
+      child: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 8),
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    String destinationName = widget.destination['name'];
+                    String category =
+                        getPlaceCategory(widget.destinationDetails['Category']);
 
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 5.0),
-                  child: Container(
-                    height: 295,
-                    width: 1280,
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(33, 20, 89, 121),
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 13.0, vertical: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 5.0),
+                      child: Container(
+                        height: 295,
+                        width: 1280,
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(33, 20, 89, 121),
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 13.0, vertical: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 2.0),
-                                  child: Text(
-                                    destinationName,
-                                    style: const TextStyle(
-                                      fontSize: 26,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'Gabriola',
-                                      color: Color.fromARGB(195, 18, 83, 96),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 2.0),
+                                      child: Text(
+                                        destinationName,
+                                        style: const TextStyle(
+                                          fontSize: 26,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Gabriola',
+                                          color:
+                                              Color.fromARGB(195, 18, 83, 96),
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
-                              Container(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 10),
-                                decoration: BoxDecoration(
-                                  color:
-                                      const Color.fromARGB(125, 255, 255, 255),
-                                  borderRadius: BorderRadius.circular(15.0),
-                                ),
-                                child: Text(
-                                  category,
-                                  style: const TextStyle(
-                                    fontSize: 23,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Gabriola',
-                                    color: Color.fromARGB(195, 18, 83, 96),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    decoration: BoxDecoration(
+                                      color: const Color.fromARGB(
+                                          125, 255, 255, 255),
+                                      borderRadius: BorderRadius.circular(15.0),
+                                    ),
+                                    child: Text(
+                                      category,
+                                      style: const TextStyle(
+                                        fontSize: 23,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'Gabriola',
+                                        color: Color.fromARGB(195, 18, 83, 96),
+                                      ),
+                                    ),
                                   ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                widget.destinationDetails['About']
+                                    .split('\n')
+                                    .take(4)
+                                    .join('\n'),
+                                maxLines: 4,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 25,
+                                  fontFamily: 'Gabriola',
+                                  color: Color.fromARGB(255, 23, 103, 120),
                                 ),
                               ),
                             ],
                           ),
-
-                          const SizedBox(height: 10),
-                          Text(
-                            widget.destinationDetails['About']
-                                .split('\n')
-                                .take(4)
-                                .join('\n'),
-                            maxLines: 4,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 25,
-                              fontFamily: 'Gabriola',
-                              color: Color.fromARGB(255, 23, 103, 120),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            bottom: 30,
+            right: 10,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 20,
+                ),
+                backgroundColor: const Color(0xFF1E889E),
+                textStyle: const TextStyle(
+                  fontSize: 20,
+                  fontFamily: 'Zilla',
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text('About ${widget.destination['name']}',
+                          style: const TextStyle(
+                              fontSize: 18,
+                              color: Color.fromARGB(255, 11, 57, 66))),
+                      content: Scrollbar(
+                        controller: aboutController,
+                        thickness: 5,
+                        trackVisibility: true,
+                        thumbVisibility: true,
+                        child: SizedBox(
+                          width: 800,
+                          child: SingleChildScrollView(
+                            controller: aboutController,
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 10.0),
+                              child: Text(
+                                widget.destinationDetails['About'],
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontFamily: 'Gabriola',
+                                  color: Color.fromARGB(255, 23, 103, 120),
+                                ),
+                              ),
                             ),
                           ),
-                          // Button to show the full text in a dialog.
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 20,
-                                    vertical: 20,
-                                  ),
-                                  backgroundColor: const Color(0xFF1E889E),
-                                  textStyle: const TextStyle(
-                                    fontSize: 20,
-                                    fontFamily: 'Zilla',
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return AlertDialog(
-                                        title: Text('About $destinationName',
-                                            style: const TextStyle(
-                                                fontSize: 18,
-                                                color: Color.fromARGB(
-                                                    255, 11, 57, 66))),
-                                        content: Scrollbar(
-                                          controller: aboutController,
-                                          thickness: 5,
-                                          trackVisibility: true,
-                                          thumbVisibility: true,
-                                          child: SizedBox(
-                                            // height: 350,
-                                            width: 800,
-                                            child: SingleChildScrollView(
-                                              controller: aboutController,
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 10.0),
-                                                child: Text(
-                                                  widget.destinationDetails[
-                                                      'About'],
-                                                  style: const TextStyle(
-                                                    fontSize: 22,
-                                                    fontFamily: 'Gabriola',
-                                                    color: Color.fromARGB(
-                                                        255, 23, 103, 120),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            child: const Text(
-                                              'Close',
-                                              style: TextStyle(
-                                                fontSize: 22.0,
-                                                fontFamily: 'Zilla',
-                                                fontWeight: FontWeight.bold,
-                                                color: Color.fromARGB(
-                                                    255, 200, 50, 27),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                },
-                                child: const Text('Read More'),
-                              ),
-                            ],
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text(
+                            'Close',
+                            style: TextStyle(
+                              fontSize: 22.0,
+                              fontFamily: 'Zilla',
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(255, 200, 50, 27),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 );
               },
+              child: const Text('Read More'),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
