@@ -21,46 +21,50 @@ class _ComplaintsListPageState extends State<ComplaintsListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: widget.complaints.isEmpty ? Colors.white : null,
       body: Padding(
         padding: EdgeInsets.only(top: widget.complaints.isNotEmpty ? 0.0 : 24),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
-            image: widget.complaints.isNotEmpty
-                ? const DecorationImage(
-                    image: AssetImage(
-                        "assets/Images/Profiles/Tourist/homeBackground.jpg"),
-                    fit: BoxFit.cover,
-                  )
-                : const DecorationImage(
-                    image: AssetImage(
-                        "assets/Images/Profiles/Tourist/emptyListBackground.png"),
-                    fit: BoxFit.cover,
-                  ),
-          ),
+              color: Colors.white,
+              image: widget.complaints.isNotEmpty
+                  ? const DecorationImage(
+                      image: AssetImage(
+                          "assets/Images/Profiles/Tourist/homeBackground.jpg"),
+                      fit: BoxFit.fill,
+                    )
+                  : null),
           child: Column(
             children: [
               const SizedBox(height: 20),
               Expanded(
                 child: widget.complaints.isEmpty
                     ? Center(
-                        child: Column(
-                        children: [
-                          const SizedBox(height: 150),
-                          Image.asset(
-                            'assets/Images/Profiles/Tourist/emptyList.gif',
-                            fit: BoxFit.cover,
-                          ),
-                          const Text(
-                            'No complaints found',
-                            style: TextStyle(
-                                fontSize: 40,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Gabriola',
-                                color: Color.fromARGB(255, 23, 99, 114)),
-                          ),
-                        ],
-                      ))
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Positioned(
+                              top: -50,
+                              child: Image.asset(
+                                'assets/Images/Profiles/Tourist/emptyList.gif',
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                            const Positioned(
+                              top: 420,
+                              child: Text(
+                                'No complaints found',
+                                style: TextStyle(
+                                  fontSize: 40,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Gabriola',
+                                  color: Color.fromARGB(255, 23, 99, 114),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
                     : ListView.builder(
                         itemCount: widget.complaints.length,
                         itemBuilder: (context, index) {
@@ -104,7 +108,7 @@ class ComplaintCard extends StatelessWidget {
 
     return Card(
       margin: const EdgeInsets.only(right: 10, left: 10, bottom: 10),
-      color: const Color.fromARGB(68, 30, 137, 158),
+      color: const Color.fromARGB(61, 141, 148, 149),
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
@@ -118,7 +122,7 @@ class ComplaintCard extends StatelessWidget {
               title: Text(
                 complaint['title'],
                 style: const TextStyle(
-                    fontSize: 25,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Times New Roman',
                     color: Color.fromARGB(255, 21, 98, 113)),
@@ -133,9 +137,8 @@ class ComplaintCard extends StatelessWidget {
                   Text(
                     complaint['complaint'],
                     style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w100,
-                        fontFamily: 'Zilla',
+                        fontSize: 18,
+                        fontFamily: 'Time New Roman',
                         color: Color.fromARGB(255, 14, 63, 73)),
                   ),
                 ],
@@ -146,8 +149,8 @@ class ComplaintCard extends StatelessWidget {
             if (complaint['images'] != null &&
                 (complaint['images'] as List).isNotEmpty)
               SizedBox(
-                height: 150,
-                child: (complaint['images'] as List).length >= 4
+                height: 225,
+                child: (complaint['images'] as List).length >= 6
                     ? Scrollbar(
                         trackVisibility: true,
                         thumbVisibility: true,
@@ -167,8 +170,7 @@ class ComplaintCard extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10.0),
                                   border: Border.all(
-                                    color:
-                                        const Color.fromARGB(121, 30, 137, 158),
+                                    color: const Color.fromARGB(60, 0, 0, 0),
                                     width: 3.0,
                                   ),
                                 ),
@@ -176,8 +178,8 @@ class ComplaintCard extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(10.0),
                                   child: Image.network(
                                     (complaint['images'] as List)[imgIndex],
-                                    width: 100,
-                                    height: 100,
+                                    width: 225,
+                                    height: 225,
                                     fit: BoxFit.fill,
                                   ),
                                 ),
@@ -196,8 +198,7 @@ class ComplaintCard extends StatelessWidget {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10.0),
                                 border: Border.all(
-                                  color:
-                                      const Color.fromARGB(121, 30, 137, 158),
+                                  color: const Color.fromARGB(60, 0, 0, 0),
                                   width: 3.0,
                                 ),
                               ),
@@ -205,8 +206,8 @@ class ComplaintCard extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(8.0),
                                 child: Image.network(
                                   complaint['images'][imgIndex] as String,
-                                  width: 100,
-                                  height: 100,
+                                  width: 225,
+                                  height: 225,
                                   fit: BoxFit.fill,
                                 ),
                               ),
@@ -226,17 +227,17 @@ class ComplaintCard extends StatelessWidget {
                     child: Text(
                       complaint['date'],
                       style: const TextStyle(
-                          fontSize: 19.5,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
                           fontFamily: 'Time New Roman',
                           color: Color.fromARGB(255, 14, 63, 73)),
                     ),
                   ),
                   Text(
-                    complaint['seen'].toLowerCase() == "true" ? 'Seen' : 'Unseen',
+                    complaint['seen'].toLowerCase() == "true"
+                        ? 'Seen'
+                        : 'Unseen',
                     style: const TextStyle(
-                        fontSize: 19.5,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
                         fontFamily: 'Time New Roman',
                         color: Color.fromARGB(255, 14, 63, 73)),
                   ),

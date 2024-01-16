@@ -35,35 +35,35 @@ class _AddingReviewPageState extends State<AddingReviewPage> {
     if (selectedStars == 0) {
       // Stars evaluation not selected.
       showCustomSnackBar(context, 'Please select a star rating',
-          bottomMargin: 370);
+          bottomMargin: 0);
       return false;
     }
 
     if (titleController.text.isEmpty) {
       // Review title or content not filled.
       showCustomSnackBar(context, 'Please enter the review title',
-          bottomMargin: 370);
+          bottomMargin: 0);
       return false;
     }
 
     if (contentController.text.isEmpty) {
       // Review title or content not filled.
       showCustomSnackBar(context, 'Please enter the review content',
-          bottomMargin: 370);
+          bottomMargin: 0);
       return false;
     }
 
     if (titleController.text.length < 5) {
       // Review title or content not filled.
       showCustomSnackBar(context, 'Title must have at least 5 characters',
-          bottomMargin: 370);
+          bottomMargin: 0);
       return false;
     }
 
     if (contentController.text.length < 20) {
       // Review title or content not filled.
       showCustomSnackBar(context, 'Content must have at least 20 chars',
-          bottomMargin: 370);
+          bottomMargin: 0);
       return false;
     }
     // Form is valid.
@@ -96,13 +96,13 @@ class _AddingReviewPageState extends State<AddingReviewPage> {
         if (responseData['message'] == "Your review was saved") {
           // ignore: use_build_context_synchronously
           showCustomSnackBar(context, 'Thanks for sharing your review',
-              bottomMargin: 370);
+              bottomMargin: 0);
           // Call the callback to trigger getDestinationDetails.
           widget.onReviewAdded();
         } else {
           // ignore: use_build_context_synchronously
           showCustomSnackBar(context, 'Your review has been updated',
-              bottomMargin: 370);
+              bottomMargin: 0);
           widget.onReviewAdded();
         }
       } else if (response.statusCode == 500) {
@@ -113,12 +113,12 @@ class _AddingReviewPageState extends State<AddingReviewPage> {
         } else {
           // ignore: use_build_context_synchronously
           showCustomSnackBar(context, responseData['message'],
-              bottomMargin: 370);
+              bottomMargin: 0);
         }
       } else {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'Error storing your review',
-            bottomMargin: 370);
+            bottomMargin: 0);
       }
     } catch (error) {
       // Handle network or other errors
@@ -142,77 +142,85 @@ class _AddingReviewPageState extends State<AddingReviewPage> {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
             children: [
-              const SizedBox(height: 2),
-              Center(
-                child: Image.asset(
-                  'assets/Images/Profiles/Tourist/review.gif',
-                  fit: BoxFit.cover,
-                ),
-              ),
-              const SizedBox(height: 11),
-              Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(
-                    5,
-                    (index) => IconButton(
-                      icon: Icon(
-                        index < selectedStars
-                            ? FontAwesomeIcons.solidStar
-                            : FontAwesomeIcons.star,
-                        color: Colors.amber,
+              Expanded(
+                child: Column(
+                  children: [
+                    Center(
+                      child: Image.asset(
+                        'assets/Images/Profiles/Tourist/review.gif',
+                        fit: BoxFit.cover,
                       ),
-                      onPressed: () {
-                        setState(() {
-                          if (index == 0 && selectedStars == 1) {
-                            selectedStars = 0;
-                          } else {
-                            selectedStars = index + 1;
-                          }
-                        });
-                      },
                     ),
-                  ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: titleController,
-                decoration: const InputDecoration(
-                  labelText: 'Review Title',
-                  labelStyle: TextStyle(
-                    fontSize: 25,
-                    color: Color(0xFF1E889E),
-                    fontWeight: FontWeight.bold,
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFF1E889E)),
-                  ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(
+                          5,
+                          (index) => IconButton(
+                            icon: Icon(
+                              index < selectedStars
+                                  ? FontAwesomeIcons.solidStar
+                                  : FontAwesomeIcons.star,
+                              color: Colors.amber,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                if (index == 0 && selectedStars == 1) {
+                                  selectedStars = 0;
+                                } else {
+                                  selectedStars = index + 1;
+                                }
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    TextField(
+                      controller: titleController,
+                      decoration: const InputDecoration(
+                        labelText: 'Review Title',
+                        labelStyle: TextStyle(
+                          fontSize: 20,
+                          color: Color(0xFF1E889E),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Color(0xFF1E889E)),
+                        ),
+                      ),
+                      maxLength: 34,
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: contentController,
+                      decoration: const InputDecoration(
+                        labelText: 'Review Content',
+                        labelStyle: TextStyle(
+                          fontSize: 20,
+                          color: Color(0xFF1E889E),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Color(0xFF1E889E)),
+                        ),
+                      ),
+                      minLines: 1,
+                      maxLines: 7,
+                      maxLength: 1000,
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                  ],
                 ),
-                maxLength: 34,
-                style: const TextStyle(fontSize: 18),
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: contentController,
-                decoration: const InputDecoration(
-                  labelText: 'Review Content',
-                  labelStyle: TextStyle(
-                    fontSize: 25,
-                    color: Color(0xFF1E889E),
-                    fontWeight: FontWeight.bold,
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFF1E889E)),
-                  ),
-                ),
-                minLines: 1,
-                maxLines: 5,
-                maxLength: 1000,
-                style: const TextStyle(fontSize: 18),
               ),
             ],
           ),
@@ -246,12 +254,12 @@ class _AddingReviewPageState extends State<AddingReviewPage> {
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 10,
+                  horizontal: 60,
+                  vertical: 20,
                 ),
                 backgroundColor: const Color(0xFF1E889E),
                 textStyle: const TextStyle(
-                  fontSize: 25,
+                  fontSize: 20,
                   fontFamily: 'Zilla',
                   fontWeight: FontWeight.bold,
                 ),

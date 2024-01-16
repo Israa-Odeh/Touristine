@@ -9,7 +9,7 @@ class UploadedImagesPage extends StatefulWidget {
   final String token;
   final String destinationName;
   List<Map<String, dynamic>> uploadedImages;
-  final int minImagesToShowScrollbar = 3;
+  final int minImagesToShowScrollbar = 6;
 
   UploadedImagesPage(
       {super.key,
@@ -81,39 +81,41 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: widget.uploadedImages.isEmpty ? Colors.white : null,
       body: Padding(
         padding:
             EdgeInsets.only(top: widget.uploadedImages.isNotEmpty ? 0.0 : 24),
         child: Container(
           decoration: BoxDecoration(
-            image: widget.uploadedImages.isNotEmpty
-                ? const DecorationImage(
-                    image: AssetImage(
-                        "assets/Images/Profiles/Tourist/homeBackground.jpg"),
-                    fit: BoxFit.cover,
-                  )
-                : const DecorationImage(
-                    image: AssetImage(
-                        "assets/Images/Profiles/Tourist/emptyListBackground.png"),
-                    fit: BoxFit.cover,
-                  ),
-          ),
+              image: widget.uploadedImages.isNotEmpty
+                  ? const DecorationImage(
+                      image: AssetImage(
+                          "assets/Images/Profiles/Tourist/homeBackground.jpg"),
+                      fit: BoxFit.fill,
+                    )
+                  : null),
           child: widget.uploadedImages.isEmpty
               ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  child: Stack(
+                    alignment: Alignment.center,
                     children: [
-                      Image.asset(
-                        'assets/Images/Profiles/Tourist/emptyList.gif',
-                        fit: BoxFit.cover,
+                      Positioned(
+                        top: -50,
+                        child: Image.asset(
+                          'assets/Images/Profiles/Tourist/emptyList.gif',
+                          fit: BoxFit.fill,
+                        ),
                       ),
-                      const Text(
-                        'No uploads found',
-                        style: TextStyle(
-                          fontSize: 40,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'Gabriola',
-                          color: Color.fromARGB(255, 23, 99, 114),
+                      const Positioned(
+                        top: 420,
+                        child: Text(
+                          'No uploads found',
+                          style: TextStyle(
+                            fontSize: 40,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Gabriola',
+                            color: Color.fromARGB(255, 23, 99, 114),
+                          ),
                         ),
                       ),
                     ],
@@ -143,7 +145,7 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
                           ],
                         ),
                         child: Card(
-                          color: const Color.fromARGB(68, 30, 137, 158),
+                          color: const Color.fromARGB(61, 141, 148, 149),
                           elevation: 0,
                           margin: const EdgeInsets.symmetric(vertical: 10),
                           shape: RoundedRectangleBorder(
@@ -154,55 +156,34 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                if (keywords.length <= 2)
-                                  Row(
-                                    children: [
-                                      const Text(
-                                        'Categories: ',
-                                        style: TextStyle(
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.w100,
-                                            fontFamily: 'Zilla',
-                                            color: Color.fromARGB(
-                                                255, 14, 63, 73)),
-                                      ),
-                                      Text(
-                                        keywords.join(', '),
-                                        style: const TextStyle(
-                                            fontSize: 22,
-                                            fontWeight: FontWeight.w100,
-                                            fontFamily: 'Zilla',
-                                            color: Color.fromARGB(
-                                                255, 14, 63, 73)),
-                                      ),
-                                    ],
-                                  ),
-                                if (keywords.length > 2)
-                                  const Text(
-                                    'Categories: ',
-                                    style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.w100,
-                                        fontFamily: 'Zilla',
-                                        color: Color.fromARGB(255, 14, 63, 73)),
-                                  ),
-                                if (keywords.length > 2)
-                                  const SizedBox(height: 10),
-                                if (keywords.length > 2)
-                                  Text(
-                                    keywords.join(', '),
-                                    style: const TextStyle(
-                                        fontSize: 22,
-                                        fontWeight: FontWeight.w100,
-                                        fontFamily: 'Zilla',
-                                        color: Color.fromARGB(255, 14, 63, 73)),
-                                  ),
+                                Row(
+                                  children: [
+                                    const Text(
+                                      'Categories: ',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w100,
+                                          fontFamily: 'Zilla',
+                                          color:
+                                              Color.fromARGB(255, 14, 63, 73)),
+                                    ),
+                                    Text(
+                                      keywords.join(', '),
+                                      style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w100,
+                                          fontFamily: 'Zilla',
+                                          color:
+                                              Color.fromARGB(255, 14, 63, 73)),
+                                    ),
+                                  ],
+                                ),
                                 const Divider(
                                   color: Color.fromARGB(126, 14, 63, 73),
                                   thickness: 2,
                                 ),
                                 SizedBox(
-                                  height: 200,
+                                  height: 225,
                                   child: imageUrls.length >=
                                           widget.minImagesToShowScrollbar
                                       ? Scrollbar(
@@ -228,8 +209,8 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
                                                           12.0),
                                                   child: Image.network(
                                                     imageUrls[index],
-                                                    width: 160,
-                                                    height: 110,
+                                                    width: 225,
+                                                    height: 225,
                                                     fit: BoxFit.fill,
                                                   ),
                                                 ),
@@ -251,8 +232,8 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
                                                     BorderRadius.circular(12.0),
                                                 child: Image.network(
                                                   imageUrls[index],
-                                                  width: 160,
-                                                  height: 110,
+                                                  width: 225,
+                                                  height: 225,
                                                   fit: BoxFit.fill,
                                                 ),
                                               ),
@@ -271,8 +252,7 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
                                     Text(
                                       uploadingDate,
                                       style: const TextStyle(
-                                          fontSize: 19.5,
-                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16,
                                           fontFamily: 'Time New Roman',
                                           color:
                                               Color.fromARGB(255, 14, 63, 73)),
@@ -280,8 +260,7 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
                                     Text(
                                       imageInfo['status'],
                                       style: const TextStyle(
-                                          fontSize: 19.5,
-                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16,
                                           fontFamily: 'Time New Roman',
                                           color:
                                               Color.fromARGB(255, 14, 63, 73)),

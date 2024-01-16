@@ -19,45 +19,49 @@ class _AllReviewsPageState extends State<AllReviewsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: widget.reviews.isEmpty ? Colors.white : null,
       body: Padding(
         padding: EdgeInsets.only(top: widget.reviews.isNotEmpty ? 0.0 : 24),
         child: Container(
           decoration: BoxDecoration(
-            image: widget.reviews.isNotEmpty
-                ? const DecorationImage(
-                    image: AssetImage(
-                        "assets/Images/Profiles/Tourist/homeBackground.jpg"),
-                    fit: BoxFit.cover,
-                  )
-                : const DecorationImage(
-                    image: AssetImage(
-                        "assets/Images/Profiles/Tourist/emptyListBackground.png"),
-                    fit: BoxFit.cover,
-                  ),
-          ),
+              image: widget.reviews.isNotEmpty
+                  ? const DecorationImage(
+                      image: AssetImage(
+                          "assets/Images/Profiles/Tourist/homeBackground.jpg"),
+                      fit: BoxFit.cover,
+                    )
+                  : null),
           child: Column(
             children: [
               const SizedBox(height: 20),
               Expanded(
                 child: widget.reviews.isEmpty
                     ? Center(
-                        child: Column(
-                        children: [
-                          const SizedBox(height: 150),
-                          Image.asset(
-                            'assets/Images/Profiles/Tourist/emptyList.gif',
-                            fit: BoxFit.cover,
-                          ),
-                          const Text(
-                            'No reviews found',
-                            style: TextStyle(
-                                fontSize: 40,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Gabriola',
-                                color: Color.fromARGB(255, 23, 99, 114)),
-                          ),
-                        ],
-                      ))
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Positioned(
+                              top: -50,
+                              child: Image.asset(
+                                'assets/Images/Profiles/Tourist/emptyList.gif',
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                            const Positioned(
+                              top: 420,
+                              child: Text(
+                                'No reviews found',
+                                style: TextStyle(
+                                  fontSize: 40,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: 'Gabriola',
+                                  color: Color.fromARGB(255, 23, 99, 114),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
                     : ListView.builder(
                         itemCount: widget.reviews.length,
                         itemBuilder: (context, index) {
@@ -91,7 +95,7 @@ class _AllReviewsPageState extends State<AllReviewsPage> {
   Widget _buildReviewCard(Map<String, dynamic> review) {
     return Card(
       margin: const EdgeInsets.only(right: 10, left: 10, bottom: 10),
-      color: const Color.fromARGB(68, 30, 137, 158),
+      color: const Color.fromARGB(61, 141, 148, 149),
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
@@ -109,7 +113,7 @@ class _AllReviewsPageState extends State<AllReviewsPage> {
                 Text(
                   '${review['firstName']} ${review['lastName']}',
                   style: const TextStyle(
-                      fontSize: 35,
+                      fontSize: 28,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Gabriola',
                       color: Color.fromARGB(199, 13, 60, 69)),
@@ -123,7 +127,7 @@ class _AllReviewsPageState extends State<AllReviewsPage> {
                       child: Icon(
                         FontAwesomeIcons.solidStar,
                         color: Color.fromARGB(255, 211, 171, 12),
-                        size: 22,
+                        size: 26,
                       ),
                     ),
                   ),
@@ -140,7 +144,7 @@ class _AllReviewsPageState extends State<AllReviewsPage> {
             Text(
               '${review['commentTitle']}',
               style: const TextStyle(
-                  fontSize: 25,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Times New Roman',
                   color: Color.fromARGB(255, 21, 98, 113)),
@@ -150,9 +154,9 @@ class _AllReviewsPageState extends State<AllReviewsPage> {
             Text(
               '${review['commentContent']}',
               style: const TextStyle(
-                  fontSize: 24,
+                  fontSize: 18,
                   fontWeight: FontWeight.w100,
-                  fontFamily: 'Zilla',
+                  fontFamily: 'Time New Roman',
                   color: Color.fromARGB(255, 14, 63, 73)),
             ),
             const SizedBox(height: 10),
@@ -162,8 +166,7 @@ class _AllReviewsPageState extends State<AllReviewsPage> {
               child: Text(
                 '${review['date']}',
                 style: const TextStyle(
-                    fontSize: 19.5,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
                     fontFamily: 'Time New Roman',
                     color: Color.fromARGB(255, 14, 63, 73)),
               ),

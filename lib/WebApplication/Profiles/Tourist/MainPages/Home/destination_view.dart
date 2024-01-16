@@ -970,367 +970,334 @@ class _DestinationDetailsState extends State<DestinationDetails> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 8),
-          ScrollbarTheme(
-            data: ScrollbarThemeData(
-              thumbColor: MaterialStateProperty.all(
-                  const Color.fromARGB(125, 23, 102, 118)),
-              radius: const Radius.circular(10),
+          Container(
+            height: 295,
+            width: 1280,
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(33, 20, 89, 121),
+              borderRadius: BorderRadius.circular(15.0),
             ),
-            child: Scrollbar(
-              controller: scrollController,
-              trackVisibility: true,
-              thumbVisibility: true,
-              thickness: 10,
-              child: Container(
-                height: 295,
-                width: 1280,
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(33, 20, 89, 121),
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.only(left: 13.0, right: 20, top: 10),
-                  child: ListView(
-                    controller: scrollController,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 13.0, right: 20, top: 20),
+              child: ListView(
+                controller: scrollController,
+                children: [
+                  Row(
                     children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
-                                color: const Color(0xFF1E889E),
-                              ),
-                              width: 370.0,
-                              height: 60.0,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Padding(
-                                    padding: EdgeInsets.only(left: 30.0),
-                                    child: FaIcon(
-                                      FontAwesomeIcons.dollarSign,
-                                      color: Colors.white,
-                                      size: 38,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 30.0),
-                                    child: Text(
-                                      getBudgetLevel(widget
-                                          .destinationDetails['CostLevel']),
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontFamily: 'Time New Roman',
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            color: const Color(0xFF1E889E),
                           ),
-                          const SizedBox(width: 15),
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
-                                color: const Color(0xFF1E889E),
-                              ),
-                              width: 370.0,
-                              height: 60.0,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Padding(
-                                    padding: EdgeInsets.only(left: 30.0),
-                                    child: FaIcon(
-                                      FontAwesomeIcons.rankingStar,
-                                      color: Colors.white,
-                                      size: 38,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 30.0),
-                                    child: Text(
-                                      widget.destinationDetails['Rating'] !=
-                                              null
-                                          ? '${widget.destinationDetails['Rating']}'
-                                          : '0.0',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontFamily: 'Time New Roman',
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10.0),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
-                                color: const Color(0xFF1E889E),
-                              ),
-                              width: 370.0,
-                              height: 60.0,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Padding(
-                                    padding: EdgeInsets.only(left: 30.0),
-                                    child: FaIcon(
-                                      FontAwesomeIcons.cloudSunRain,
-                                      color: Colors.white,
-                                      size: 38,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 30.0),
-                                    child: Text(
-                                      '${widget.destinationDetails['Weather'][0]}°C',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontFamily: 'Time New Roman',
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 15),
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
-                                color: const Color(0xFF1E889E),
-                              ),
-                              width: 370.0,
-                              height: 60.0,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Padding(
-                                    padding: EdgeInsets.only(left: 30.0),
-                                    child: FaIcon(
-                                      FontAwesomeIcons.cloudSun,
-                                      color: Colors.white,
-                                      size: 38,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 30.0),
-                                    child: Text(
-                                      widget.destinationDetails[
-                                          'WeatherDescription'][0],
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontFamily: 'Time New Roman',
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10.0),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
-                                color: const Color(0xFF1E889E),
-                              ),
-                              width: 370.0,
-                              height: 60.0,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Padding(
-                                    padding: EdgeInsets.only(left: 30.0),
-                                    child: FaIcon(
-                                      FontAwesomeIcons.clock,
-                                      color: Colors.white,
-                                      size: 38,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 30.0),
-                                    child: Text(
-                                      '${widget.destinationDetails['OpeningTime']} - ${widget.destinationDetails['ClosingTime']}',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontFamily: 'Time New Roman',
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 15),
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                showWDDialog(context);
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  color: const Color(0xFF1E889E),
-                                ),
-                                width: 370.0,
-                                height: 60.0,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Padding(
-                                      padding: EdgeInsets.only(left: 30.0),
-                                      child: FaIcon(
-                                        FontAwesomeIcons.calendar,
-                                        color: Colors.white,
-                                        size: 38,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(right: 30.0),
-                                      child: Text(
-                                        getFormattedDays(widget
-                                                            .destinationDetails[
-                                                        'WorkingDays'])
-                                                    .length <=
-                                                20
-                                            ? getFormattedDays(
-                                                widget.destinationDetails[
-                                                    'WorkingDays'])
-                                            : "Workings Days",
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: 'Time New Roman',
-                                          fontSize: 25,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                          width: 370.0,
+                          height: 60.0,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.only(left: 30.0),
+                                child: FaIcon(
+                                  FontAwesomeIcons.dollarSign,
+                                  color: Colors.white,
+                                  size: 30,
                                 ),
                               ),
-                            ),
+                              Padding(
+                                padding: const EdgeInsets.only(right: 30.0),
+                                child: Text(
+                                  getBudgetLevel(
+                                      widget.destinationDetails['CostLevel']),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'Time New Roman',
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-                      const SizedBox(height: 10.0),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
-                                color: const Color(0xFF1E889E),
-                              ),
-                              width: 370.0,
-                              height: 60.0,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Padding(
-                                    padding: EdgeInsets.only(left: 30.0),
-                                    child: FaIcon(
-                                      FontAwesomeIcons.personShelter,
-                                      color: Colors.white,
-                                      size: 38,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 30.0),
-                                    child: Text(
-                                      widget.destinationDetails['sheltered']
-                                                  .toLowerCase() ==
-                                              ("true")
-                                          ? 'Sheltered'
-                                          : 'Unsheltered',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontFamily: 'Time New Roman',
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            color: const Color(0xFF1E889E),
                           ),
-                          const SizedBox(width: 15),
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
-                                color: const Color(0xFF1E889E),
+                          width: 370.0,
+                          height: 60.0,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.only(left: 30.0),
+                                child: FaIcon(
+                                  FontAwesomeIcons.rankingStar,
+                                  color: Colors.white,
+                                  size: 30,
+                                ),
                               ),
-                              width: 370.0,
-                              height: 60.0,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Padding(
-                                    padding: EdgeInsets.only(left: 30.0),
-                                    child: FaIcon(
-                                      FontAwesomeIcons.hourglass,
-                                      color: Colors.white,
-                                      size: 38,
-                                    ),
+                              Padding(
+                                padding: const EdgeInsets.only(right: 30.0),
+                                child: Text(
+                                  widget.destinationDetails['Rating'] != null
+                                      ? '${widget.destinationDetails['Rating']}'
+                                      : '0.0',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'Time New Roman',
+                                    fontSize: 20,
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 30.0),
-                                    child: Text(
-                                      '${widget.destinationDetails['EstimatedTime']} ${widget.destinationDetails['EstimatedTime'] == 1 ? 'hour' : 'hours'}',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontFamily: 'Time New Roman',
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ],
                   ),
-                ),
+                  const SizedBox(height: 10.0),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            color: const Color(0xFF1E889E),
+                          ),
+                          width: 370.0,
+                          height: 60.0,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.only(left: 30.0),
+                                child: FaIcon(
+                                  FontAwesomeIcons.cloudSunRain,
+                                  color: Colors.white,
+                                  size: 30,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(right: 30.0),
+                                child: Text(
+                                  '${widget.destinationDetails['Weather'][0]}°C',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'Time New Roman',
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            color: const Color(0xFF1E889E),
+                          ),
+                          width: 370.0,
+                          height: 60.0,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.only(left: 30.0),
+                                child: FaIcon(
+                                  FontAwesomeIcons.cloudSun,
+                                  color: Colors.white,
+                                  size: 30,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(right: 30.0),
+                                child: Text(
+                                  widget.destinationDetails[
+                                      'WeatherDescription'][0],
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'Time New Roman',
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10.0),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            color: const Color(0xFF1E889E),
+                          ),
+                          width: 370.0,
+                          height: 60.0,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.only(left: 30.0),
+                                child: FaIcon(
+                                  FontAwesomeIcons.clock,
+                                  color: Colors.white,
+                                  size: 30,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(right: 30.0),
+                                child: Text(
+                                  '${widget.destinationDetails['OpeningTime']} - ${widget.destinationDetails['ClosingTime']}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'Time New Roman',
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            showWDDialog(context);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0),
+                              color: const Color(0xFF1E889E),
+                            ),
+                            width: 370.0,
+                            height: 60.0,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.only(left: 30.0),
+                                  child: FaIcon(
+                                    FontAwesomeIcons.calendar,
+                                    color: Colors.white,
+                                    size: 30,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 30.0),
+                                  child: Text(
+                                    getFormattedDays(widget
+                                        .destinationDetails['WorkingDays']),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontFamily: 'Time New Roman',
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10.0),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            color: const Color(0xFF1E889E),
+                          ),
+                          width: 370.0,
+                          height: 60.0,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.only(left: 30.0),
+                                child: FaIcon(
+                                  FontAwesomeIcons.personShelter,
+                                  color: Colors.white,
+                                  size: 30,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(right: 30.0),
+                                child: Text(
+                                  widget.destinationDetails['sheltered']
+                                              .toLowerCase() ==
+                                          ("true")
+                                      ? 'Sheltered'
+                                      : 'Unsheltered',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'Time New Roman',
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            color: const Color(0xFF1E889E),
+                          ),
+                          width: 370.0,
+                          height: 60.0,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.only(left: 30.0),
+                                child: FaIcon(
+                                  FontAwesomeIcons.hourglass,
+                                  color: Colors.white,
+                                  size: 30,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(right: 30.0),
+                                child: Text(
+                                  '${widget.destinationDetails['EstimatedTime']} ${widget.destinationDetails['EstimatedTime'] == 1 ? 'hour' : 'hours'}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'Time New Roman',
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),
@@ -1384,86 +1351,94 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                   const Color.fromARGB(125, 23, 102, 118)),
               radius: const Radius.circular(10),
             ),
-            child: Scrollbar(
-              controller: scrollController,
-              trackVisibility: true,
-              thumbVisibility: true,
-              thickness: 10,
-              child: Container(
-                height: 295,
-                width: 400,
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(33, 20, 89, 121),
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 13.0, right: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Vertical scrollable list of services.
-                      SizedBox(
-                        height: 295,
-                        child: ListView.builder(
-                          controller: scrollController,
-                          scrollDirection: Axis.vertical,
-                          itemCount:
-                              widget.destinationDetails['Services'].length,
-                          itemBuilder: (context, index) {
-                            String serviceName = widget
-                                .destinationDetails['Services'][index]['name'];
-                            ServiceDescription serviceDescription =
-                                getServiceDescription(serviceName);
+            child: ScrollConfiguration(
+              behavior:
+                  ScrollConfiguration.of(context).copyWith(scrollbars: false),
+              child: Scrollbar(
+                controller: scrollController,
+                trackVisibility: true,
+                thumbVisibility: true,
+                interactive: true,
+                thickness: 10,
+                child: Container(
+                  height: 295,
+                  width: 1280,
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(33, 20, 89, 121),
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.only(left: 13.0, right: 20, top: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Vertical scrollable list of services.
+                        SizedBox(
+                          height: 275,
+                          child: ListView.builder(
+                            controller: scrollController,
+                            scrollDirection: Axis.vertical,
+                            itemCount:
+                                widget.destinationDetails['Services'].length,
+                            itemBuilder: (context, index) {
+                              String serviceName =
+                                  widget.destinationDetails['Services'][index]
+                                      ['name'];
+                              ServiceDescription serviceDescription =
+                                  getServiceDescription(serviceName);
 
-                            return Container(
-                              margin: (index ==
-                                      widget.destinationDetails['Services']
-                                              .length -
-                                          1)
-                                  ? const EdgeInsets.only(bottom: 20)
-                                  : const EdgeInsets.only(bottom: 10),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
-                                color: const Color.fromARGB(162, 30, 137, 158),
-                              ),
-                              height: 100,
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    // Icon for the service, using the corresponding icon from the list
-                                    Icon(
-                                      serviceDescription.icon,
-                                      color: const Color.fromARGB(
-                                          255, 255, 255, 255),
-                                      size: 35,
-                                    ),
-                                    // Text description for the service
-                                    const SizedBox(
-                                      width: 30,
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        serviceDescription.description,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: 'Times New Roman',
-                                          fontSize: 23,
-                                          fontWeight: FontWeight.w500,
+                              return Container(
+                                margin: (index ==
+                                        widget.destinationDetails['Services']
+                                                .length -
+                                            1)
+                                    ? const EdgeInsets.only(bottom: 20)
+                                    : const EdgeInsets.only(bottom: 10),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  color:
+                                      const Color.fromARGB(162, 30, 137, 158),
+                                ),
+                                height: 100,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      // Icon for the service, using the corresponding icon from the list
+                                      Icon(
+                                        serviceDescription.icon,
+                                        color: const Color.fromARGB(
+                                            255, 255, 255, 255),
+                                        size: 30,
+                                      ),
+                                      // Text description for the service
+                                      const SizedBox(
+                                        width: 30,
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          serviceDescription.description,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontFamily: 'Times New Roman',
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -1705,7 +1680,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
           const SizedBox(height: 8),
           Container(
             height: 295,
-            width: 400,
+            width: 1280,
             decoration: BoxDecoration(
               color: const Color.fromARGB(33, 20, 89, 121),
               borderRadius: BorderRadius.circular(15.0),
@@ -1719,13 +1694,13 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                     const Text(
                       'Share and be the first to write a review about this destination!',
                       style: TextStyle(
-                        fontSize: 35,
+                        fontSize: 28,
                         fontFamily: 'Gabriola',
                         fontWeight: FontWeight.w500,
                         color: Color.fromARGB(255, 23, 103, 120),
                       ),
                     ),
-                  if (reviewsCount == 0) const SizedBox(height: 30),
+                  if (reviewsCount == 0) const SizedBox(height: 100),
                   if (reviewsCount > 0)
                     SizedBox(
                       height: 150,
@@ -1749,7 +1724,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                                           FontAwesomeIcons.solidStar,
                                           color:
                                               Color.fromARGB(255, 211, 171, 12),
-                                          size: 18,
+                                          size: 20,
                                         ),
                                         SizedBox(width: 5),
                                       ],
@@ -1757,26 +1732,30 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                                   ),
                                 ),
                                 // Dynamic filled bars.
-                                Container(
-                                  width: 200,
-                                  height: 20,
-                                  decoration: BoxDecoration(
-                                    color:
-                                        const Color.fromARGB(59, 30, 137, 158),
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                  child: FractionallySizedBox(
-                                    alignment: Alignment.centerLeft,
-                                    widthFactor: count /
-                                        widget.ratings.values.fold<int>(
-                                            0, (sum, value) => sum + value),
-                                    child: Container(
-                                      height: 20,
-                                      decoration: BoxDecoration(
-                                        color: const Color.fromARGB(
-                                            167, 30, 137, 158),
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 5.0),
+                                  child: Container(
+                                    width: 500,
+                                    height: 20,
+                                    decoration: BoxDecoration(
+                                      color: const Color.fromARGB(
+                                          59, 30, 137, 158),
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    child: FractionallySizedBox(
+                                      alignment: Alignment.centerLeft,
+                                      widthFactor: count /
+                                          widget.ratings.values.fold<int>(
+                                              0, (sum, value) => sum + value),
+                                      child: Container(
+                                        height: 20,
+                                        decoration: BoxDecoration(
+                                          color: const Color.fromARGB(
+                                              167, 30, 137, 158),
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -1794,12 +1773,11 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                     style: const TextStyle(
                       color: Color(0xFF1E889E),
                       fontFamily: 'Gabriola',
-                      fontSize: 35,
+                      fontSize: 30,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   // Buttons
-                  // const SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -1818,11 +1796,11 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 50,
-                            vertical: 10,
+                            vertical: 20,
                           ),
                           backgroundColor: const Color(0xFF1E889E),
                           textStyle: const TextStyle(
-                            fontSize: 30,
+                            fontSize: 25,
                             fontFamily: 'Zilla',
                             fontWeight: FontWeight.bold,
                           ),
@@ -1858,17 +1836,13 @@ class _DestinationDetailsState extends State<DestinationDetails> {
             const SizedBox(height: 8),
             LayoutBuilder(
               builder: (context, constraints) {
-                double additionalMargin = 0;
-                if (constraints.maxHeight > 295) {
-                  additionalMargin = 10.0;
-                }
                 return Padding(
-                  padding: EdgeInsets.only(bottom: 5.0 + additionalMargin),
+                  padding: const EdgeInsets.only(bottom: 5.0),
                   child: Container(
                     constraints: const BoxConstraints(
                       minHeight: 295,
                     ),
-                    width: 400,
+                    width: 1280,
                     decoration: BoxDecoration(
                       color: const Color.fromARGB(33, 20, 89, 121),
                       borderRadius: BorderRadius.circular(15.0),
@@ -1882,13 +1856,13 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                           const Text(
                             'Do you have any complaints? Feel free to inform us, and we will follow the necessary procedures.',
                             style: TextStyle(
-                              fontSize: 35,
+                              fontSize: 28,
                               fontFamily: 'Gabriola',
                               fontWeight: FontWeight.w500,
                               color: Color.fromARGB(255, 23, 103, 120),
                             ),
                           ),
-                          const SizedBox(height: 40),
+                          const SizedBox(height: 160),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -1909,11 +1883,11 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                                 style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 50,
-                                    vertical: 10,
+                                    vertical: 20,
                                   ),
                                   backgroundColor: const Color(0xFF1E889E),
                                   textStyle: const TextStyle(
-                                    fontSize: 30,
+                                    fontSize: 25,
                                     fontFamily: 'Zilla',
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -1962,17 +1936,13 @@ class _DestinationDetailsState extends State<DestinationDetails> {
             const SizedBox(height: 8),
             LayoutBuilder(
               builder: (context, constraints) {
-                double additionalMargin = 0;
-                if (constraints.maxHeight > 295) {
-                  additionalMargin = 10.0;
-                }
                 return Padding(
-                  padding: EdgeInsets.only(bottom: 5.0 + additionalMargin),
+                  padding: const EdgeInsets.only(bottom: 5.0),
                   child: Container(
                     constraints: const BoxConstraints(
                       minHeight: 295,
                     ),
-                    width: 400,
+                    width: 1280,
                     decoration: BoxDecoration(
                       color: const Color.fromARGB(33, 20, 89, 121),
                       borderRadius: BorderRadius.circular(15.0),
@@ -1986,13 +1956,13 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                           Text(
                             'Capture the beauty of  ${widget.destination['name']} through your lens and share it with us!',
                             style: const TextStyle(
-                              fontSize: 35,
+                              fontSize: 28,
                               fontFamily: 'Gabriola',
                               fontWeight: FontWeight.w500,
                               color: Color.fromARGB(255, 23, 103, 120),
                             ),
                           ),
-                          const SizedBox(height: 40),
+                          const SizedBox(height: 160),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -2014,11 +1984,11 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                                 style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 30,
-                                    vertical: 10,
+                                    vertical: 20,
                                   ),
                                   backgroundColor: const Color(0xFF1E889E),
                                   textStyle: const TextStyle(
-                                    fontSize: 28,
+                                    fontSize: 25,
                                     fontFamily: 'Zilla',
                                     fontWeight: FontWeight.bold,
                                   ),
