@@ -62,7 +62,7 @@ class _AddingReviewPageState extends State<AddingReviewPage> {
 
     if (contentController.text.length < 20) {
       // Review title or content not filled.
-      showCustomSnackBar(context, 'Content must have at least 20 chars',
+      showCustomSnackBar(context, 'Content must have at least 20 characters',
           bottomMargin: 0);
       return false;
     }
