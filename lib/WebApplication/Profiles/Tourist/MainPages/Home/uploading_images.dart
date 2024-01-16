@@ -207,8 +207,8 @@ class _UploadingImagesPageState extends State<UploadingImagesPage> {
                                       children: [
                                         Image.memory(
                                           selectedImages[index],
-                                          width: 190,
-                                          height: 190,
+                                          width: 195,
+                                          height: 195,
                                           fit: BoxFit.cover,
                                         ),
                                         Positioned(
@@ -256,8 +256,8 @@ class _UploadingImagesPageState extends State<UploadingImagesPage> {
                                     children: [
                                       Image.memory(
                                         selectedImages[index],
-                                        width: 190,
-                                        height: 190,
+                                        width: 195,
+                                        height: 195,
                                         fit: BoxFit.cover,
                                       ),
                                       Positioned(
@@ -297,7 +297,7 @@ class _UploadingImagesPageState extends State<UploadingImagesPage> {
                   const SizedBox(height: 10),
                   Center(
                     child: Padding(
-                      padding: const EdgeInsets.only(right: 20.0),
+                      padding: const EdgeInsets.only(right: 14.0, left: 6),
                       child: ElevatedButton(
                         onPressed: pickImage,
                         style: ElevatedButton.styleFrom(

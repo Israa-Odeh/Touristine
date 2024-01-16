@@ -147,7 +147,7 @@ class _HomePageState extends State<HomePage> {
                     child: Text(
                       title,
                       style: const TextStyle(
-                        fontSize: 25,
+                        fontSize: 22,
                         fontFamily: 'Zilla',
                         color: Color.fromARGB(227, 245, 243, 243),
                         fontWeight: FontWeight.bold,
@@ -219,7 +219,7 @@ class _HomePageState extends State<HomePage> {
                           child: Text(
                             "Other Places",
                             style: TextStyle(
-                              fontSize: 38,
+                              fontSize: 34,
                               fontFamily: 'Gabriola',
                               color: Color(0xFF1E889E),
                               fontWeight: FontWeight.bold,

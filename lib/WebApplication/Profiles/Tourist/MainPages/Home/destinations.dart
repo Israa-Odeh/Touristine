@@ -178,7 +178,7 @@ class _DestinationListState extends State<DestinationList> {
                   child: Text(
                     widget.listTitle,
                     style: const TextStyle(
-                      fontSize: 38,
+                      fontSize: 34,
                       fontFamily: 'Gabriola',
                       color: Color(0xFF1E889E),
                       fontWeight: FontWeight.bold,
@@ -254,7 +254,7 @@ class _DestinationListState extends State<DestinationList> {
                                               ? const Color.fromARGB(
                                                   255, 25, 114, 132)
                                               : const Color(0xFF1E889E),
-                                          fontSize: 25,
+                                          fontSize: 22,
                                           fontWeight: FontWeight.bold,
                                           fontFamily: 'Zilla',
                                         ),

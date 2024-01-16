@@ -697,7 +697,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                     indicatorWeight: 3,
                     labelColor: Color(0xFF1E889E),
                     unselectedLabelColor: Color.fromARGB(182, 30, 137, 158),
-                    labelStyle: TextStyle(fontSize: 25.0, fontFamily: 'Zilla'),
+                    labelStyle: TextStyle(fontSize: 23.0, fontFamily: 'Zilla'),
                     unselectedLabelStyle:
                         TextStyle(fontSize: 20.0, fontFamily: 'Zilla'),
                     tabs: [
