@@ -79,7 +79,7 @@ class _HomePageState extends State<HomePage> {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return CustomBottomSheet(itemsList: statisticsList, height: 300);
+        return CustomBottomSheet(itemsList: statisticsList, height: 270);
       },
     ).then((value) {
       if (value != null) {
@@ -186,7 +186,7 @@ class _HomePageState extends State<HomePage> {
               image: DecorationImage(
                 image: AssetImage(
                     'assets/Images/Profiles/Admin/mainBackground.jpg'),
-                fit: BoxFit.cover,
+                fit: BoxFit.fill,
               ),
             ),
             child: Padding(
