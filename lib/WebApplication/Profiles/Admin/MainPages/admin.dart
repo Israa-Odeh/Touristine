@@ -1,4 +1,8 @@
 import 'package:touristine/WebApplication/Profiles/Admin/MainPages/DestinationUpload/dest_upload_home.dart';
+import 'package:touristine/WebApplication/Profiles/Admin/MainPages/UserInteractions/user_interactions.dart';
+import 'package:touristine/WebApplication/Profiles/Admin/MainPages/UserInteractions/suggested_places.dart';
+import 'package:touristine/WebApplication/Profiles/Admin/MainPages/DestinationUpload/dest_generator.dart';
+import 'package:touristine/WebApplication/Profiles/Admin/MainPages/DestinationUpload/my_dests_list.dart';
 import 'package:touristine/WebApplication/Profiles/Admin/MainPages/UserInteractions/tab_bar_viewer.dart';
 import 'package:touristine/WebApplication/Profiles/Admin/MainPages/Chatting/chatting_list.dart';
 import 'package:touristine/WebApplication/Profiles/Admin/ActiveStatus/active_status.dart';
@@ -143,7 +147,7 @@ class _AdminAppState extends State<AdminProfile> {
               Container(
                   color: const Color(0xFF1E889E),
                   child: Padding(
-                  padding: const EdgeInsets.only(top: 0.0),
+                    padding: const EdgeInsets.only(top: 0.0),
                     child: Row(
                       children: [
                         SizedBox(
@@ -207,7 +211,7 @@ class _AdminAppState extends State<AdminProfile> {
                   future: fetchData,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
-                      return _children[_currentIndex];
+                      return getCurrentTab();
                     } else {
                       return const Center(
                         child: CircularProgressIndicator(
@@ -226,10 +230,139 @@ class _AdminAppState extends State<AdminProfile> {
     );
   }
 
-  void onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
+  String destinationMenuOption = "Add a Place";
+  String userMenuOption = "User Interactions";
+
+  Widget getCurrentTab() {
+    if (_currentIndex == 0) {
+      // Home Page.
+      return _children[0];
+    } else if (_currentIndex == 1) {
+      // Plan Maker Tab.
+      _children[1];
+      // if (destinationMenuOption == "Add a Place") {
+      //   return AddDestTab(token: widget.token);
+      // } else if (destinationMenuOption == "My Places") {
+      //   return AddedDestinationsPage(
+      //     token: widget.token,
+      //     onDestinationEdit: (Map<String, dynamic> destinationInfo) {},
+      //   );
+      // }
+    } else if (_currentIndex == 2) {
+      // Upload Places Tab.
+      _children[2];
+      // if (userMenuOption == "User Interactions") {
+      //   return UserInteractionsPage(token: widget.token);
+      // } else if (userMenuOption == "User Suggestions") {
+      //   return SuggestedPlacesPage(
+      //       token: widget.token, changeTabIndex: (int , Map<String, dynamic> ) {  },);
+      // }
+    } else if (_currentIndex == 3) {
+      // Cracks Tab.
+      return _children[3];
+    } else if (_currentIndex == 4) {
+      _children[3];
+      // Chatting Tab.
+    } else if (_currentIndex == 5) {
+      // Profile Tab.
+      _children[5];
+      // return openProfilePageOption();
+    }
+    // Return a default widget if the index doesn't match any tab.
+    return Container();
+  }
+
+  // void onTabTapped(int index) {
+  //   setState(() {
+  //     _currentIndex = index;
+  //   });
+  // }
+
+  String profileMenuOption = "My Account"; // Will be moved.
+
+  void onTabTapped(int index) async {
+    if (index == 1) {
+      final selectedOption = await showMenu(
+        context: context,
+        position: _currentIndex == 1
+            ? const RelativeRect.fromLTRB(430, 65, 430, 0)
+            : _currentIndex == 0
+                ? const RelativeRect.fromLTRB(460, 65, 460, 0)
+                : const RelativeRect.fromLTRB(400, 65, 400, 0),
+        items: <PopupMenuEntry>[
+          const PopupMenuItem<String>(
+            value: "Add a Place",
+            child: Text("Add a Place"),
+          ),
+          const PopupMenuItem<String>(
+            value: "My Places",
+            child: Text("My Places"),
+          ),
+        ],
+      );
+      if (selectedOption != null) {
+        setState(() {
+          destinationMenuOption = selectedOption;
+          _currentIndex = index;
+        });
+      }
+    } else if (index == 2) {
+      final selectedOption = await showMenu(
+        context: context,
+        position: _currentIndex == 2
+            ? const RelativeRect.fromLTRB(560, 65, 560, 0)
+            : _currentIndex <= 1
+                ? const RelativeRect.fromLTRB(590, 65, 590, 0)
+                : const RelativeRect.fromLTRB(530, 65, 530, 0),
+        items: <PopupMenuEntry>[
+          const PopupMenuItem<String>(
+            value: "User Interactions",
+            child: Text("User Interactions"),
+          ),
+          const PopupMenuItem<String>(
+            value: "User Suggestions",
+            child: Text("User Suggestions"),
+          ),
+        ],
+      );
+      if (selectedOption != null) {
+        setState(() {
+          userMenuOption = selectedOption;
+          _currentIndex = index;
+        });
+      }
+    } else if (index == 5) {
+      final selectedOption = await showMenu(
+        context: context,
+        position: _currentIndex == 5
+            ? const RelativeRect.fromLTRB(920, 65, 920, 0)
+            : const RelativeRect.fromLTRB(960, 65, 960, 0),
+        items: <PopupMenuEntry>[
+          const PopupMenuItem<String>(
+            value: "My Account",
+            child: Text("My Account"),
+          ),
+          const PopupMenuItem<String>(
+            value: "New Admin",
+            child: Text("New Admin"),
+          ),
+          const PopupMenuItem<String>(
+            value: "Log Out",
+            child: Text("Log Out"),
+          ),
+        ],
+      );
+      if (selectedOption != null) {
+        setState(() {
+          profileMenuOption = selectedOption;
+          _currentIndex = index;
+        });
+      }
+    } else {
+      setState(() {
+        _currentIndex = index;
+      });
+    }
   }
 
   BottomNavigationBarItem _buildBottomNavigationBarItem(
