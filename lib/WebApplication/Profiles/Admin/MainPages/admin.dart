@@ -138,61 +138,88 @@ class _AdminAppState extends State<AdminProfile> {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
-          body: FutureBuilder(
-            future: fetchData,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                return _children[_currentIndex];
-              } else {
-                return const Center(
-                  child: CircularProgressIndicator(
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(Color(0xFF1E889E)),
-                  ),
-                );
-              }
-            },
-          ),
-          bottomNavigationBar: BottomNavigationBar(
-            currentIndex: _currentIndex,
-            onTap: onTabTapped,
-            items: [
-              _buildBottomNavigationBarItem(
-                FontAwesomeIcons.house,
-                'Home Page',
-                0,
-              ),
-              _buildBottomNavigationBarItem(
-                FontAwesomeIcons.mapLocationDot,
-                'Upload Places',
-                1,
-              ),
-              _buildBottomNavigationBarItem(
-                FontAwesomeIcons.usersViewfinder,
-                'User Interactions',
-                2,
-              ),
-              _buildBottomNavigationBarItem(
-                "assets/Images/Profiles/Admin/crack.png",
-                'Cracks Analysis',
-                3,
-              ),
-              _buildBottomNavigationBarItem(
-                FontAwesomeIcons.comment,
-                'Chatting',
-                4,
-              ),
-              _buildBottomNavigationBarItem(
-                FontAwesomeIcons.user,
-                'Profile',
-                5,
+          body: Column(
+            children: [
+              Container(
+                  color: const Color(0xFF1E889E),
+                  child: Padding(
+                  padding: const EdgeInsets.only(top: 0.0),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          height: 50,
+                          width: 300,
+                          // child: buildSearchBox(),
+                        ),
+                        SizedBox(
+                          width: 800,
+                          child: BottomNavigationBar(
+                            currentIndex: _currentIndex,
+                            onTap: onTabTapped,
+                            items: [
+                              _buildBottomNavigationBarItem(
+                                FontAwesomeIcons.house,
+                                'Home Page',
+                                0,
+                              ),
+                              _buildBottomNavigationBarItem(
+                                FontAwesomeIcons.mapLocationDot,
+                                'Upload Places',
+                                1,
+                              ),
+                              _buildBottomNavigationBarItem(
+                                FontAwesomeIcons.usersViewfinder,
+                                'User Interactions',
+                                2,
+                              ),
+                              _buildBottomNavigationBarItem(
+                                "assets/Images/Profiles/Admin/crack.png",
+                                'Cracks Analysis',
+                                3,
+                              ),
+                              _buildBottomNavigationBarItem(
+                                FontAwesomeIcons.comment,
+                                'Chatting',
+                                4,
+                              ),
+                              _buildBottomNavigationBarItem(
+                                FontAwesomeIcons.user,
+                                'Profile',
+                                5,
+                              ),
+                            ],
+                            selectedItemColor:
+                                const Color.fromARGB(255, 255, 255, 255),
+                            unselectedItemColor:
+                                const Color.fromARGB(255, 255, 255, 255),
+                            selectedLabelStyle: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                            backgroundColor: Colors.transparent,
+                            elevation: 0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )),
+              Expanded(
+                child: FutureBuilder(
+                  future: fetchData,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return _children[_currentIndex];
+                    } else {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Color(0xFF1E889E)),
+                        ),
+                      );
+                    }
+                  },
+                ),
               ),
             ],
-            selectedItemColor: const Color.fromARGB(255, 255, 255, 255),
-            unselectedItemColor: const Color.fromARGB(255, 255, 255, 255),
-            selectedLabelStyle: const TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
           ),
         ),
       ),
