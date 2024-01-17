@@ -282,15 +282,16 @@ class _ChattingListState extends State<ChattingList> {
           Positioned.fill(
             child: Image.asset(
               'assets/Images/Profiles/Tourist/homeBackground.jpg',
-              fit: BoxFit.cover,
+              fit: BoxFit.fill,
             ),
           ),
           Column(
             children: [
-              if (!isLoading) const SizedBox(height: 40),
+              if (!isLoading) const SizedBox(height: 20),
               if (!isLoading && admins.isNotEmpty)
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  padding:
+                      const EdgeInsets.only(right: 20.0, left: 20, bottom: 20),
                   child: TextField(
                     focusNode: focusNode,
                     onChanged: filterAdmins,
@@ -321,27 +322,30 @@ class _ChattingListState extends State<ChattingList> {
                         ),
                       )
                     : filteredAdmins.isEmpty
-                        ? SingleChildScrollView(
-                            child: Center(
-                              child: Column(
-                                children: [
-                                  const SizedBox(height: 110),
-                                  Image.asset(
-                                    'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
-                                    fit: BoxFit.cover,
-                                  ),
-                                  const Text(
-                                    'No chats found',
-                                    style: TextStyle(
-                                      fontSize: 40,
-                                      fontWeight: FontWeight.w600,
-                                      fontFamily: 'Gabriola',
-                                      color: Color.fromARGB(255, 23, 99, 114),
-                                    ),
-                                  ),
-                                ],
+                        ? Center(
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Positioned(
+                              top: -80,
+                              child: Image.asset(
+                                'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
+                                fit: BoxFit.cover,
                               ),
                             ),
+                            const Positioned(
+                              top: 350,
+                              child: Text(
+                                'No chats found',
+                                style: TextStyle(
+                                  fontSize: 40,
+                                  fontFamily: 'Gabriola',
+                                  color: Color.fromARGB(255, 23, 99, 114),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                           )
                         : ListView.builder(
                             itemCount: filteredAdmins.length,
@@ -349,80 +353,85 @@ class _ChattingListState extends State<ChattingList> {
                               final admin = filteredAdmins[index];
                               final bool isActive =
                                   admin['activeStatus'] ?? false;
-                              return Card(
-                                elevation: 5,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                color: const Color.fromARGB(240, 255, 255, 255),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Stack(
-                                    alignment: Alignment.bottomRight,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          CircleAvatar(
-                                            backgroundColor: Colors.white,
-                                            radius: 50,
-                                            backgroundImage: (admin['image'] !=
-                                                        null &&
-                                                    admin['image'] != "")
-                                                ? NetworkImage(admin['image'])
-                                                : const AssetImage(
-                                                        "assets/Images/Profiles/Tourist/DefaultProfileImage.png")
-                                                    as ImageProvider<Object>?,
-                                          ),
-                                          const SizedBox(width: 16),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                '${admin['firstName']} ${admin['lastName']}',
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 20,
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 15.0),
+                                child: Card(
+                                  elevation: 5,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  color:
+                                      const Color.fromARGB(240, 255, 255, 255),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Stack(
+                                      alignment: Alignment.bottomRight,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            CircleAvatar(
+                                              backgroundColor: Colors.white,
+                                              radius: 50,
+                                              backgroundImage: (admin[
+                                                              'image'] !=
+                                                          null &&
+                                                      admin['image'] != "")
+                                                  ? NetworkImage(admin['image'])
+                                                  : const AssetImage(
+                                                          "assets/Images/Profiles/Tourist/DefaultProfileImage.png")
+                                                      as ImageProvider<Object>?,
+                                            ),
+                                            const SizedBox(width: 16),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  '${admin['firstName']} ${admin['lastName']}',
+                                                  style: const TextStyle(
+                                                    fontSize: 18,
+                                                  ),
                                                 ),
-                                              ),
-                                              const SizedBox(height: 20),
-                                              Text(
-                                                admin['email'],
-                                                style: const TextStyle(
-                                                  color: Colors.grey,
+                                                const SizedBox(height: 20),
+                                                Text(
+                                                  admin['email'],
+                                                  style: const TextStyle(
+                                                    color: Colors.grey,
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                      IconButton(
-                                        icon: const FaIcon(
-                                          FontAwesomeIcons.facebookMessenger,
-                                          color: Color.fromARGB(255, 0, 0, 0),
+                                              ],
+                                            ),
+                                          ],
                                         ),
-                                        onPressed: () {
-                                          openChatWithAdmin(admin);
-                                        },
-                                      ),
-                                      // Display the active status dot.
-                                      Positioned(
-                                        top: 4,
-                                        right: 16,
-                                        child: Container(
-                                          width: 15,
-                                          height: 15,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: isActive
-                                                ? const Color.fromARGB(
-                                                    170, 76, 175, 79)
-                                                : const Color.fromARGB(
-                                                    174, 244, 67, 54),
+                                        IconButton(
+                                          icon: const FaIcon(
+                                            FontAwesomeIcons.facebookMessenger,
+                                            color: Color.fromARGB(255, 0, 0, 0),
+                                          ),
+                                          onPressed: () {
+                                            openChatWithAdmin(admin);
+                                          },
+                                        ),
+                                        // Display the active status dot.
+                                        Positioned(
+                                          top: 4,
+                                          right: 15,
+                                          child: Container(
+                                            width: 15,
+                                            height: 15,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: isActive
+                                                  ? const Color.fromARGB(
+                                                      170, 76, 175, 79)
+                                                  : const Color.fromARGB(
+                                                      174, 244, 67, 54),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               );
