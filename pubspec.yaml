@@ -57,8 +57,8 @@ dependencies:
   path_provider: ^2.0.3
   firebase_storage: ^11.5.6
   firebase_messaging: ^14.7.10
-  image_picker_web: ^3.1.1
-  google_maps_flutter_web: ^0.5.4+3
+  file_picker: ^6.1.1
+  uuid: ^4.2.2
 
 dev_dependencies:
   flutter_test:

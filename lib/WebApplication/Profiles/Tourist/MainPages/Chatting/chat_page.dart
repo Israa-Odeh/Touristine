@@ -2,11 +2,13 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
+import 'dart:typed_data';
 import 'dart:async';
-import 'dart:io';
 
 class ChatPage extends StatefulWidget {
   final String token;
@@ -195,38 +197,32 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  void pickAndUploadImage() async {
-    try {
-      final XFile? pickedFile =
-          await imagePicker.pickImage(source: ImageSource.gallery);
+  Future<void> pickAndUploadImage() async {
+    FilePickerResult? result;
+    result = await FilePicker.platform.pickFiles(type: FileType.image);
 
-      if (pickedFile != null) {
-        File imageFile = File(pickedFile.path);
-        String imageUrl = await uploadImage(imageFile);
-        sendUserMessage(imageUrl);
-      }
-    } catch (e) {
-      print('Error picking or uploading image: $e');
-    }
-  }
+    if (result != null) {
+      Uint8List? uploadFile = result.files.single.bytes;
+      // String imageFileName = result.files.single.name;
 
-  Future<String> uploadImage(File imageFile) async {
-    try {
-      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-      Reference storageReference =
-          storage.ref().child('chat_images/$fileName.jpg');
-      UploadTask uploadTask = storageReference.putFile(imageFile);
+      // Specify the folder path in Firebase Storage.
+      String folderPath = 'chat_images/';
 
-      await uploadTask.whenComplete(() => null);
+      // Generate a unique filename using UUID.
+      String fileName = '${const Uuid().v1()}.jpg';
 
-      String imageUrl = await storageReference.getDownloadURL();
+      // Create a Reference with the specified path
+      Reference reference =
+          FirebaseStorage.instance.ref().child('$folderPath$fileName');
 
-      print('Image uploaded successfully. URL: $imageUrl');
+      final UploadTask uploadTask = reference.putData(uploadFile!);
 
-      return imageUrl;
-    } catch (e) {
-      print('Error uploading image: $e');
-      throw e;
+      uploadTask.whenComplete(() {
+        reference.getDownloadURL().then((url) {
+          print('File uploaded to: $url');
+          sendUserMessage(url);
+        });
+      });
     }
   }
 
@@ -311,8 +307,8 @@ class _ChatPageState extends State<ChatPage> {
     if (chatMessages[index]['imageUrl'] != null) {
       return Padding(
         padding: EdgeInsets.only(
-          right: isTourist ? 12 : 124,
-          left: isTourist ? 124 : 12,
+          right: isTourist ? 12 : 650,
+          left: isTourist ? 650 : 12,
           top: 8.0,
           bottom: 0,
         ),
@@ -325,7 +321,7 @@ class _ChatPageState extends State<ChatPage> {
             showImageDialog(imageUrl, date, time);
           },
           child: SizedBox(
-            height: 200,
+            height: 400,
             width: 500,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15.0),
@@ -340,8 +336,8 @@ class _ChatPageState extends State<ChatPage> {
     } else {
       return Padding(
         padding: EdgeInsets.only(
-          right: isTourist ? 8 : 120,
-          left: isTourist ? 120 : 8,
+          right: isTourist ? 8 : 650,
+          left: isTourist ? 650 : 8,
           top: 8.0,
           bottom: 0,
         ),
@@ -361,7 +357,7 @@ class _ChatPageState extends State<ChatPage> {
                   child: Text(
                     chatMessages[index]['message'],
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 16,
                       color: isTourist ? Colors.white : Colors.black,
                     ),
                   ),
@@ -409,8 +405,8 @@ class _ChatPageState extends State<ChatPage> {
           child: Stack(
             children: [
               SizedBox(
-                width: 500,
-                height: 500,
+                width: 1000,
+                height: 800,
                 child: Image.network(
                   imageUrl,
                   fit: BoxFit.fill,
