@@ -416,7 +416,7 @@ class _ChattingListState extends State<ChattingList> {
                                         // Display the active status dot.
                                         Positioned(
                                           top: 4,
-                                          right: 13.5,
+                                          right: 15,
                                           child: Container(
                                             width: 12,
                                             height: 12,
