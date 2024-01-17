@@ -94,8 +94,9 @@ class _TabBarViewerState extends State<TabBarViewer> {
                     children: [
                       UserInteractionsPage(token: widget.token),
                       SuggestedPlacesPage(
-                          token: widget.token,
-                          changeTabIndex: widget.changeTabIndex),
+                        token: widget.token,
+                        // changeTabIndex: widget.changeTabIndex,
+                      ),
                     ],
                   ),
                 ),

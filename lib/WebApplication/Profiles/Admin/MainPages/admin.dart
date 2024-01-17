@@ -3,11 +3,12 @@ import 'package:touristine/WebApplication/Profiles/Admin/MainPages/UserInteracti
 import 'package:touristine/WebApplication/Profiles/Admin/MainPages/UserInteractions/suggested_places.dart';
 import 'package:touristine/WebApplication/Profiles/Admin/MainPages/DestinationUpload/dest_generator.dart';
 import 'package:touristine/WebApplication/Profiles/Admin/MainPages/DestinationUpload/my_dests_list.dart';
-import 'package:touristine/WebApplication/Profiles/Admin/MainPages/UserInteractions/tab_bar_viewer.dart';
 import 'package:touristine/WebApplication/Profiles/Admin/MainPages/Chatting/chatting_list.dart';
+import 'package:touristine/WebApplication/Profiles/Admin/Profile/Sections/adding_admins.dart';
+import 'package:touristine/WebApplication/LoginAndRegistration/MainPages/landing_page.dart';
+import 'package:touristine/WebApplication/Profiles/Admin/Profile/Sections/my_account.dart';
 import 'package:touristine/WebApplication/Profiles/Admin/ActiveStatus/active_status.dart';
 import 'package:touristine/WebApplication/Profiles/Admin/MainPages/cracks_analysis.dart';
-import 'package:touristine/WebApplication/Profiles/Admin/MainPages/profile_page.dart';
 import 'package:touristine/WebApplication/Profiles/Admin/MainPages/Home/home.dart';
 import 'package:touristine/WebApplication/Notifications/snack_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -110,14 +111,16 @@ class _AdminAppState extends State<AdminProfile> {
         selectedCategory: 'By City',
         selectedStatisticsType: 'Visits Count',
       ),
-      DestsUploadHomePage(token: widget.token),
-      TabBarViewer(token: widget.token, changeTabIndex: changeTabIndex),
+      Container(),
+      Container(),
       CracksAnalysisPage(token: widget.token),
       ChattingList(token: widget.token),
-      ProfilePage(token: widget.token)
+      Container()
     ];
   }
 
+  ///////////////////////////////////// To Be Edited ////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////////
   void changeTabIndex(int newIndex, Map<String, dynamic> destinationInfo) {
     setState(() {
       _currentIndex = newIndex;
@@ -126,11 +129,19 @@ class _AdminAppState extends State<AdminProfile> {
     _children[newIndex] = DestsUploadHomePage(
         token: widget.token, destinationToBeAdded: destinationInfo);
   }
+  ///////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////////
 
-  void moveToStep(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
+  String profileMenuOption = "My Account";
+
+  String getProfileBarTitle() {
+    if (profileMenuOption == 'My Account') {
+      return 'My Account';
+    } else if (profileMenuOption == 'New Admin') {
+      return 'New Admin';
+    } else {
+      return 'Log Out';
+    }
   }
 
   @override
@@ -150,10 +161,9 @@ class _AdminAppState extends State<AdminProfile> {
                     padding: const EdgeInsets.only(top: 0.0),
                     child: Row(
                       children: [
-                        SizedBox(
+                        const SizedBox(
                           height: 50,
-                          width: 300,
-                          // child: buildSearchBox(),
+                          width: 230,
                         ),
                         SizedBox(
                           width: 800,
@@ -168,12 +178,16 @@ class _AdminAppState extends State<AdminProfile> {
                               ),
                               _buildBottomNavigationBarItem(
                                 FontAwesomeIcons.mapLocationDot,
-                                'Upload Places',
+                                destinationMenuOption == "Add a Place"
+                                    ? 'Upload Places'
+                                    : 'My Places',
                                 1,
                               ),
                               _buildBottomNavigationBarItem(
                                 FontAwesomeIcons.usersViewfinder,
-                                'User Interactions',
+                                userMenuOption == "User Interactions"
+                                    ? 'User Interactions'
+                                    : "User Suggestions",
                                 2,
                               ),
                               _buildBottomNavigationBarItem(
@@ -188,7 +202,7 @@ class _AdminAppState extends State<AdminProfile> {
                               ),
                               _buildBottomNavigationBarItem(
                                 FontAwesomeIcons.user,
-                                'Profile',
+                                getProfileBarTitle(),
                                 5,
                               ),
                             ],
@@ -238,57 +252,82 @@ class _AdminAppState extends State<AdminProfile> {
       // Home Page.
       return _children[0];
     } else if (_currentIndex == 1) {
-      // Plan Maker Tab.
-      _children[1];
-      // if (destinationMenuOption == "Add a Place") {
-      //   return AddDestTab(token: widget.token);
-      // } else if (destinationMenuOption == "My Places") {
-      //   return AddedDestinationsPage(
-      //     token: widget.token,
-      //     onDestinationEdit: (Map<String, dynamic> destinationInfo) {},
-      //   );
-      // }
+      // Destinations Tab.
+      if (destinationMenuOption == "Add a Place") {
+        return AddDestTab(token: widget.token);
+      } else if (destinationMenuOption == "My Places") {
+        return AddedDestinationsPage(
+          token: widget.token,
+          //////////////////////////////////////////////////////////////////////////////////////
+          //////////////////////////////////////////////////////////////////////////////////////
+          onDestinationEdit: (Map<String, dynamic> destinationInfo) {},
+          //////////////////////////////////////////////////////////////////////////////////////
+          //////////////////////////////////////////////////////////////////////////////////////
+        );
+      }
     } else if (_currentIndex == 2) {
-      // Upload Places Tab.
-      _children[2];
-      // if (userMenuOption == "User Interactions") {
-      //   return UserInteractionsPage(token: widget.token);
-      // } else if (userMenuOption == "User Suggestions") {
-      //   return SuggestedPlacesPage(
-      //       token: widget.token, changeTabIndex: (int , Map<String, dynamic> ) {  },);
-      // }
+      // User Interactions Tab.
+      if (userMenuOption == "User Interactions") {
+        return UserInteractionsPage(token: widget.token);
+      } else if (userMenuOption == "User Suggestions") {
+        return SuggestedPlacesPage(
+          token: widget.token,
+          //////////////////////////////////////////////////////////////////////////////////////
+          // changeTabIndex: widget.changeTabIndex,
+          //////////////////////////////////////////////////////////////////////////////////////
+        );
+      }
     } else if (_currentIndex == 3) {
       // Cracks Tab.
       return _children[3];
     } else if (_currentIndex == 4) {
-      _children[3];
+      _children[4];
       // Chatting Tab.
     } else if (_currentIndex == 5) {
       // Profile Tab.
-      _children[5];
-      // return openProfilePageOption();
+      return openProfilePageOption();
     }
     // Return a default widget if the index doesn't match any tab.
     return Container();
   }
 
-  // void onTabTapped(int index) {
-  //   setState(() {
-  //     _currentIndex = index;
-  //   });
-  // }
+  Widget openProfilePageOption() {
+    if (profileMenuOption == 'My Account') {
+      return AccountPage(
+        token: widget.token,
+      );
+    } else if (profileMenuOption == 'New Admin') {
+      return AdminAddingPage(
+        token: widget.token,
+      );
+    }
+    // Log Out Option.
+    else {
+      // Extract the admin email from the token.
+      Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
+      String adminEmail = decodedToken['email'];
 
-  String profileMenuOption = "My Account"; // Will be moved.
+      // Set the admin active status to false.
+      setAdminActiveStatus(adminEmail, false).then((_) {
+        Navigator.of(context).popUntil((route) => route.isFirst);
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const LandingPage()));
+      });
+
+      // Return a placeholder widget while the logout operation completes.
+      return Container();
+    }
+  }
 
   void onTabTapped(int index) async {
     if (index == 1) {
       final selectedOption = await showMenu(
         context: context,
         position: _currentIndex == 1
-            ? const RelativeRect.fromLTRB(430, 65, 430, 0)
+            ? const RelativeRect.fromLTRB(360, 65, 360, 0)
             : _currentIndex == 0
-                ? const RelativeRect.fromLTRB(460, 65, 460, 0)
-                : const RelativeRect.fromLTRB(400, 65, 400, 0),
+                ? const RelativeRect.fromLTRB(390, 65, 390, 0)
+                : const RelativeRect.fromLTRB(330, 65, 330, 0),
         items: <PopupMenuEntry>[
           const PopupMenuItem<String>(
             value: "Add a Place",
@@ -310,10 +349,10 @@ class _AdminAppState extends State<AdminProfile> {
       final selectedOption = await showMenu(
         context: context,
         position: _currentIndex == 2
-            ? const RelativeRect.fromLTRB(560, 65, 560, 0)
+            ? const RelativeRect.fromLTRB(490, 65, 490, 0)
             : _currentIndex <= 1
-                ? const RelativeRect.fromLTRB(590, 65, 590, 0)
-                : const RelativeRect.fromLTRB(530, 65, 530, 0),
+                ? const RelativeRect.fromLTRB(520, 65, 520, 0)
+                : const RelativeRect.fromLTRB(460, 65, 460, 0),
         items: <PopupMenuEntry>[
           const PopupMenuItem<String>(
             value: "User Interactions",
@@ -335,8 +374,8 @@ class _AdminAppState extends State<AdminProfile> {
       final selectedOption = await showMenu(
         context: context,
         position: _currentIndex == 5
-            ? const RelativeRect.fromLTRB(920, 65, 920, 0)
-            : const RelativeRect.fromLTRB(960, 65, 960, 0),
+            ? const RelativeRect.fromLTRB(850, 65, 850, 0)
+            : const RelativeRect.fromLTRB(890, 65, 890, 0),
         items: <PopupMenuEntry>[
           const PopupMenuItem<String>(
             value: "My Account",

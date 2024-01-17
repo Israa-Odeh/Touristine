@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-void setAdminActiveStatus(String adminEmail, bool isActive) {
+Future<void> setAdminActiveStatus(String adminEmail, bool isActive) async {
   FirebaseFirestore.instance
       .collection('admins_active_status')
       .doc(adminEmail)

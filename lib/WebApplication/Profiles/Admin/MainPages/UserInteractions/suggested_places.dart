@@ -7,10 +7,13 @@ import 'dart:convert';
 
 class SuggestedPlacesPage extends StatefulWidget {
   final String token;
-  final Function(int, Map<String, dynamic>) changeTabIndex;
+  // final Function(int, Map<String, dynamic>) changeTabIndex;
 
-  const SuggestedPlacesPage(
-      {super.key, required this.token, required this.changeTabIndex});
+  const SuggestedPlacesPage({
+    super.key,
+    required this.token,
+    // required this.changeTabIndex,
+  });
 
   @override
   _SuggestedPlacesPageState createState() => _SuggestedPlacesPageState();
@@ -76,7 +79,7 @@ class _SuggestedPlacesPageState extends State<SuggestedPlacesPage> {
   // If there are any suggestion to be added as a new destination, navigate
   // to the uploads interface and include the destination where needed.
   void changeTabIndex(int newIndex, Map<String, dynamic> destinationInfo) {
-    widget.changeTabIndex(newIndex, destinationInfo);
+    // widget.changeTabIndex(newIndex, destinationInfo);
   }
 
   void approveDestination(Map<String, dynamic> destinationInfo) {
