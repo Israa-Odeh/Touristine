@@ -310,7 +310,7 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
   Widget buildCard(String destinationId, String destinationName,
       String imagePath, String city, String category) {
     return Card(
-      elevation: 5,
+      elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
@@ -385,7 +385,7 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
                         destinationName,
                         style: const TextStyle(
                           fontFamily: 'Andalus',
-                          fontSize: 25,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                         textAlign: TextAlign.left,
@@ -402,16 +402,16 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
                             city,
                             style: const TextStyle(
                               fontFamily: 'Zilla',
-                              fontSize: 18,
-                              fontWeight: FontWeight.w300,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w100,
                             ),
                           ),
                           Text(
                             getPlaceCategory(category),
                             style: const TextStyle(
                               fontFamily: 'Zilla',
-                              fontSize: 18,
-                              fontWeight: FontWeight.w300,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w100,
                             ),
                           ),
                         ],
@@ -463,7 +463,7 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return CustomBottomSheet(itemsList: filteringList, height: 400);
+        return CustomBottomSheet(itemsList: filteringList, height: 300);
       },
     ).then((value) {
       if (value != null) {
@@ -531,7 +531,7 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
         children: [
           Image.asset(
             'assets/Images/Profiles/Admin/mainBackground.jpg',
-            fit: BoxFit.cover,
+            fit: BoxFit.fill,
             width: double.infinity,
             height: double.infinity,
           ),
@@ -561,14 +561,14 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
                               selectedFilter,
                               style: const TextStyle(
                                 color: Color.fromARGB(163, 0, 0, 0),
-                                fontSize: 22,
+                                fontSize: 18,
                               ),
                             ),
                           ),
                           const FaIcon(
                             FontAwesomeIcons.list,
                             color: Color.fromARGB(100, 0, 0, 0),
-                            size: 25,
+                            size: 20,
                           ),
                         ],
                       ),
@@ -585,29 +585,41 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
                       )
                     : destinationsList.isEmpty
                         ? Center(
-                            child: Column(
+                            child: Stack(
+                              alignment: Alignment.center,
                               children: [
-                                const SizedBox(height: 40),
-                                Image.asset(
-                                  'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
-                                  fit: BoxFit.cover,
+                                Positioned(
+                                  top: -70,
+                                  child: Image.asset(
+                                    'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
+                                    fit: BoxFit.fill,
+                                  ),
                                 ),
-                                const Text(
-                                  'No destinations found',
-                                  style: TextStyle(
-                                    fontSize: 40,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: 'Gabriola',
-                                    color: Color.fromARGB(255, 23, 99, 114),
+                                const Positioned(
+                                  top: 350,
+                                  child: Text(
+                                    'No destinations found',
+                                    style: TextStyle(
+                                      fontSize: 40,
+                                      fontFamily: 'Gabriola',
+                                      color: Color.fromARGB(255, 23, 99, 114),
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
                           )
-                        : ListView(
-                            padding: const EdgeInsets.only(
-                                left: 16, right: 16, bottom: 16),
-                            children: destinationsList.map((destinationData) {
+                        : GridView.builder(
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3, //  The # of cards in a row.
+                              crossAxisSpacing: 16.0, // Horizontal.
+                              mainAxisSpacing: 0.0, // Vertical.
+                            ),
+                            padding: const EdgeInsets.only(left: 16, right: 16),
+                            itemCount: destinationsList.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final destinationData = destinationsList[index];
                               final destinationId = destinationData['id'];
                               final destinationName = destinationData['name'];
                               final imagePath = destinationData['image'];
@@ -616,11 +628,10 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
                               return Column(
                                 children: [
                                   buildCard(destinationId, destinationName,
-                                      imagePath, city, category),
-                                  const SizedBox(height: 10),
+                                      imagePath, city, category)
                                 ],
                               );
-                            }).toList(),
+                            },
                           ),
               ),
             ],
