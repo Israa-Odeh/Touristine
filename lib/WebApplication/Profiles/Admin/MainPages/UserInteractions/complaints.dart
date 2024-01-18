@@ -226,10 +226,10 @@ class _ComplaintsListPageState extends State<ComplaintsListPage> {
               style: TextStyle(
                   fontFamily: 'Zilla Slab Light',
                   fontWeight: FontWeight.bold,
-                  fontSize: 25)),
+                  fontSize: 20)),
           content: Text(
             dialogMessage,
-            style: const TextStyle(fontFamily: 'Andalus', fontSize: 25),
+            style: const TextStyle(fontFamily: 'Andalus', fontSize: 18),
           ),
           actions: <Widget>[
             TextButton(
@@ -239,7 +239,7 @@ class _ComplaintsListPageState extends State<ComplaintsListPage> {
               child: const Text(
                 'Cancel',
                 style: TextStyle(
-                  fontSize: 22.0,
+                  fontSize: 16.0,
                   fontFamily: 'Zilla',
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 0, 0, 0),
@@ -253,7 +253,7 @@ class _ComplaintsListPageState extends State<ComplaintsListPage> {
               child: const Text(
                 'Delete',
                 style: TextStyle(
-                  fontSize: 22.0,
+                  fontSize: 16.0,
                   fontFamily: 'Zilla',
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 200, 50, 27),
@@ -276,65 +276,68 @@ class _ComplaintsListPageState extends State<ComplaintsListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.only(top: complaints.isNotEmpty ? 0.0 : 24),
-        child: Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            image: DecorationImage(
-              image:
-                  AssetImage("assets/Images/Profiles/Admin/mainBackground.jpg"),
-              fit: BoxFit.cover,
-            ),
+      backgroundColor: complaints.isEmpty ? Colors.white : null,
+      body: Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          image: DecorationImage(
+            image:
+                AssetImage("assets/Images/Profiles/Admin/mainBackground.jpg"),
+            fit: BoxFit.fill,
           ),
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              Expanded(
-                child: isLoading
-                    ? const Center(
-                        child: CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Color(0xFF1E889E)),
-                        ),
-                      )
-                    : (complaints.isEmpty
-                        ? Center(
-                            child: Column(
-                              children: [
-                                const SizedBox(height: 120),
-                                Image.asset(
-                                  'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
-                                  fit: BoxFit.cover,
+        ),
+        child: Column(
+          children: [
+            const SizedBox(height: 20),
+            Expanded(
+              child: isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(Color(0xFF1E889E)),
+                      ),
+                    )
+                  : (complaints.isEmpty
+                      ? Center(
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Positioned(
+                                top: -40,
+                                child: Image.asset(
+                                  'assets/Images/Profiles/Tourist/emptyList.gif',
+                                  fit: BoxFit.fill,
                                 ),
-                                const Text(
+                              ),
+                              const Positioned(
+                                top: 420,
+                                child: Text(
                                   'No complaints found',
                                   style: TextStyle(
                                     fontSize: 40,
-                                    fontWeight: FontWeight.w600,
                                     fontFamily: 'Gabriola',
                                     color: Color.fromARGB(255, 23, 99, 114),
                                   ),
                                 ),
-                              ],
-                            ),
-                          )
-                        : ListView.builder(
-                            itemCount: complaints.length,
-                            itemBuilder: (context, index) {
-                              return ComplaintCard(
-                                complaint: complaints[index],
-                                onDelete: deleteComplaint,
-                                showConfirmationDialog: showConfirmationDialog,
-                                markAsSeen: markComplaintAsSeen,
-                                updateComplaintLocally:
-                                    updateComplaintStatusLocally,
-                              );
-                            },
-                          )),
-              ),
-            ],
-          ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: complaints.length,
+                          itemBuilder: (context, index) {
+                            return ComplaintCard(
+                              complaint: complaints[index],
+                              onDelete: deleteComplaint,
+                              showConfirmationDialog: showConfirmationDialog,
+                              markAsSeen: markComplaintAsSeen,
+                              updateComplaintLocally:
+                                  updateComplaintStatusLocally,
+                            );
+                          },
+                        )),
+            ),
+          ],
         ),
       ),
       persistentFooterButtons: [
@@ -361,12 +364,12 @@ class _ComplaintsListPageState extends State<ComplaintsListPage> {
                 },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 10,
+                    horizontal: 60,
+                    vertical: 20,
                   ),
                   backgroundColor: const Color(0xFF1E889E),
                   textStyle: const TextStyle(
-                    fontSize: 25,
+                    fontSize: 20,
                     fontFamily: 'Zilla',
                     fontWeight: FontWeight.bold,
                   ),
@@ -450,7 +453,7 @@ class ComplaintCard extends StatelessWidget {
                 child: Text(
                   complaint['title'],
                   style: const TextStyle(
-                    fontSize: 25,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Times New Roman',
                     color: Color.fromARGB(255, 14, 63, 73),
@@ -463,7 +466,7 @@ class ComplaintCard extends StatelessWidget {
                   Text(
                     complaint['complaint'],
                     style: const TextStyle(
-                      fontSize: 24,
+                      fontSize: 18,
                       fontWeight: FontWeight.w100,
                       fontFamily: 'Zilla',
                       color: Color.fromARGB(255, 14, 63, 73),
@@ -476,8 +479,8 @@ class ComplaintCard extends StatelessWidget {
             // Display images if available.
             if (images.isNotEmpty)
               SizedBox(
-                height: 150,
-                child: images.length >= 4
+                height: 225,
+                child: images.length >= 6
                     ? Scrollbar(
                         trackVisibility: true,
                         thumbVisibility: true,
@@ -515,8 +518,8 @@ class ComplaintCard extends StatelessWidget {
                                             BorderRadius.circular(10.0),
                                         child: Image.network(
                                           images[imgIndex],
-                                          width: 100,
-                                          height: 100,
+                                          width: 225,
+                                          height: 225,
                                           fit: BoxFit.fill,
                                         ),
                                       ),
@@ -566,8 +569,8 @@ class ComplaintCard extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(8.0),
                                   child: Image.network(
                                     images[imgIndex],
-                                    width: 100,
-                                    height: 100,
+                                    width: 225,
+                                    height: 225,
                                     fit: BoxFit.fill,
                                   ),
                                 ),
@@ -588,8 +591,7 @@ class ComplaintCard extends StatelessWidget {
                     child: Text(
                       complaint['date'],
                       style: const TextStyle(
-                        fontSize: 19.5,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
                         fontFamily: 'Time New Roman',
                         color: Color.fromARGB(255, 14, 63, 73),
                       ),
@@ -600,8 +602,7 @@ class ComplaintCard extends StatelessWidget {
                         ? 'Seen'
                         : 'Unseen',
                     style: const TextStyle(
-                      fontSize: 19.5,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
                       fontFamily: 'Time New Roman',
                       color: Color.fromARGB(255, 14, 63, 73),
                     ),
