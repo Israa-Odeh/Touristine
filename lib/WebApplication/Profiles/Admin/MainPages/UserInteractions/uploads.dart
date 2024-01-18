@@ -437,7 +437,7 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
                                                           Image.network(
                                                             imageUrls[
                                                                 imageIndex],
-                                                            width: 335,
+                                                            width: 360,
                                                             height: 180,
                                                             fit: BoxFit.cover,
                                                           ),
