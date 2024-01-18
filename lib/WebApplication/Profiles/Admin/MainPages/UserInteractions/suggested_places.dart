@@ -102,85 +102,58 @@ class _SuggestedPlacesPageState extends State<SuggestedPlacesPage> {
       );
     } else if (uploadedDestinations.isEmpty) {
       return Center(
-        child: Column(
+        child: Stack(
+          alignment: Alignment.center,
           children: [
-            const SizedBox(height: 70),
-            Image.asset(
-              'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
-              fit: BoxFit.cover,
+            Positioned(
+              top: -40,
+              child: Image.asset(
+                'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
+                fit: BoxFit.fill,
+              ),
             ),
-            const Text(
-              'No suggestions found',
-              style: TextStyle(
+            const Positioned(
+              top: 420,
+              child: Text(
+                'No suggestions found',
+                style: TextStyle(
                   fontSize: 40,
-                  fontWeight: FontWeight.w600,
                   fontFamily: 'Gabriola',
-                  color: Color.fromARGB(255, 23, 99, 114)),
+                  color: Color.fromARGB(255, 23, 99, 114),
+                ),
+              ),
             ),
           ],
         ),
       );
     } else {
-      ScrollController pageScrollController = ScrollController();
-
-      return uploadedDestinations.length > 1
-          ? ScrollbarTheme(
-              data: ScrollbarThemeData(
-                thumbColor: MaterialStateProperty.all(
-                    const Color.fromARGB(255, 131, 131, 131)),
-                radius: const Radius.circular(0),
-              ),
-              child: Scrollbar(
-                thumbVisibility: true,
-                trackVisibility: true,
-                thickness: 6.0,
-                controller: pageScrollController,
-                child: ListView.builder(
-                  controller: pageScrollController,
-                  itemCount: uploadedDestinations.length,
-                  itemBuilder: (context, index) {
-                    TextEditingController commentController =
-                        TextEditingController();
-                    return DestinationCard(
-                      token: widget.token,
-                      destination: uploadedDestinations[index],
-                      onDelete: () {
-                        setState(() {
-                          uploadedDestinations.removeAt(index);
-                        });
-                      },
-                      commentController: commentController,
-                      onApproveSuggestion: (destinationInfo) {
-                        approveDestination(destinationInfo);
-                      },
-                    );
-                  },
-                ),
-              ),
-            )
-          : Padding(
-              padding: const EdgeInsets.symmetric(vertical: 0.0),
-              child: ListView.builder(
-                itemCount: uploadedDestinations.length,
-                itemBuilder: (context, index) {
-                  TextEditingController commentController =
-                      TextEditingController();
-                  return DestinationCard(
-                    token: widget.token,
-                    destination: uploadedDestinations[index],
-                    onDelete: () {
-                      setState(() {
-                        uploadedDestinations.removeAt(index);
-                      });
-                    },
-                    commentController: commentController,
-                    onApproveSuggestion: (destinationInfo) {
-                      approveDestination(destinationInfo);
-                    },
-                  );
-                },
-              ),
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10),
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4,
+            crossAxisSpacing: 8.0,
+            mainAxisSpacing: 8.0,
+            mainAxisExtent: 516, // Height of each card.
+          ),
+          itemCount: uploadedDestinations.length,
+          itemBuilder: (context, index) {
+            return DestinationCard(
+              token: widget.token,
+              destination: uploadedDestinations[index],
+              onDelete: () {
+                setState(() {
+                  uploadedDestinations.removeAt(index);
+                });
+              },
+              commentController: TextEditingController(),
+              onApproveSuggestion: (destinationInfo) {
+                approveDestination(destinationInfo);
+              },
             );
+          },
+        ),
+      );
     }
   }
 }
@@ -292,7 +265,6 @@ class _DestinationCardState extends State<DestinationCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.all(16.0),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
         side: const BorderSide(
@@ -307,7 +279,7 @@ class _DestinationCardState extends State<DestinationCard> {
           children: [
             // Username and comment buttons row.
             Container(
-              height: 55,
+              height: 45,
               color: const Color.fromARGB(94, 195, 195, 195),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -321,10 +293,10 @@ class _DestinationCardState extends State<DestinationCard> {
                       },
                       icon: const FaIcon(
                         FontAwesomeIcons.circleUser,
-                        size: 30,
+                        size: 25,
                         color: Color.fromARGB(185, 0, 0, 0),
                       ),
-                      iconSize: 30,
+                      iconSize: 25,
                       color: const Color.fromARGB(82, 30, 137, 158),
                     ),
                     Material(
@@ -341,8 +313,8 @@ class _DestinationCardState extends State<DestinationCard> {
                           child: Image.asset(
                               'assets/Images/Profiles/Admin/message.png',
                               color: Colors.black,
-                              width: 35,
-                              height: 35,
+                              width: 30,
+                              height: 30,
                               fit: BoxFit.cover),
                         ),
                       ),
@@ -353,7 +325,7 @@ class _DestinationCardState extends State<DestinationCard> {
             ),
             // Horizontal ListView of images.
             SizedBox(
-              height: 200,
+              height: 140,
               child: Scrollbar(
                 trackVisibility: true,
                 thumbVisibility: true,
@@ -365,12 +337,12 @@ class _DestinationCardState extends State<DestinationCard> {
                   itemCount: widget.destination['imagesURLs'].length,
                   itemBuilder: (context, index) {
                     return SizedBox(
-                      width: 400,
+                      width: 300,
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 10.0),
                         child: Image.network(
                           widget.destination['imagesURLs'][index],
-                          fit: BoxFit.cover,
+                          fit: BoxFit.fill,
                         ),
                       ),
                     );
@@ -395,7 +367,7 @@ class _DestinationCardState extends State<DestinationCard> {
                             color: Color.fromARGB(255, 12, 53, 61),
                             fontFamily: 'Zilla Slab Light',
                             fontWeight: FontWeight.bold,
-                            fontSize: 23,
+                            fontSize: 18,
                           ),
                         ),
                       ),
@@ -421,7 +393,7 @@ class _DestinationCardState extends State<DestinationCard> {
                         color: Color.fromARGB(255, 12, 53, 61),
                         fontFamily: 'Zilla Slab Light',
                         fontWeight: FontWeight.bold,
-                        fontSize: 18),
+                        fontSize: 16),
                   ),
                   Text(
                     widget.destination['city'],
@@ -429,7 +401,7 @@ class _DestinationCardState extends State<DestinationCard> {
                         color: Color.fromARGB(255, 12, 53, 61),
                         fontFamily: 'Zilla Slab Light',
                         fontWeight: FontWeight.bold,
-                        fontSize: 18),
+                        fontSize: 16),
                   ),
                 ],
               ),
@@ -458,7 +430,7 @@ class _DestinationCardState extends State<DestinationCard> {
                       style: const TextStyle(
                         fontFamily: 'Andalus',
                         color: Color(0xFF595959),
-                        fontSize: 25,
+                        fontSize: 18,
                       ),
                     ),
                   ),
@@ -473,20 +445,20 @@ class _DestinationCardState extends State<DestinationCard> {
             // Budget and sheltered status row.
             Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 15, vertical: 8.0),
+                  const EdgeInsets.symmetric(horizontal: 15, vertical: 4.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     widget.destination['budget'] ?? '',
-                    style: const TextStyle(fontFamily: 'Calibri', fontSize: 20),
+                    style: const TextStyle(fontFamily: 'Calibri', fontSize: 17),
                   ),
                   Text(
                       widget.destination['sheltered'] == "true"
                           ? 'Sheltered'
                           : 'Unsheltered',
                       style:
-                          const TextStyle(fontFamily: 'Calibri', fontSize: 20)),
+                          const TextStyle(fontFamily: 'Calibri', fontSize: 17)),
                 ],
               ),
             ),
@@ -498,17 +470,17 @@ class _DestinationCardState extends State<DestinationCard> {
             // Time to spend and date row.
             Padding(
               padding: const EdgeInsets.only(
-                  left: 15.0, right: 15, top: 10, bottom: 20),
+                  left: 15.0, right: 15, top: 5, bottom: 5),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                       '${widget.destination['timeToSpend']} ${widget.destination['timeToSpend'] > 1 ? 'hours' : 'hour'}',
                       style:
-                          const TextStyle(fontFamily: 'Calibri', fontSize: 20)),
+                          const TextStyle(fontFamily: 'Calibri', fontSize: 17)),
                   Text(widget.destination['date'] ?? '',
                       style:
-                          const TextStyle(fontFamily: 'Calibri', fontSize: 20)),
+                          const TextStyle(fontFamily: 'Calibri', fontSize: 17)),
                 ],
               ),
             ),
@@ -516,7 +488,7 @@ class _DestinationCardState extends State<DestinationCard> {
             Container(
               color: const Color.fromARGB(94, 195, 195, 195),
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -536,11 +508,11 @@ class _DestinationCardState extends State<DestinationCard> {
                         },
                         borderRadius: BorderRadius.circular(30.0),
                         child: const Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 20.0, vertical: 10),
+                          padding: EdgeInsets.symmetric(horizontal: 10.0),
                           child: FaIcon(
                             FontAwesomeIcons.solidTrashCan,
                             color: Colors.black,
+                            size: 20,
                           ),
                         ),
                       ),
@@ -566,10 +538,10 @@ class _DestinationCardState extends State<DestinationCard> {
                       },
                       icon: const FaIcon(
                         FontAwesomeIcons.circlePlus,
-                        size: 30,
+                        size: 20,
                         color: Color.fromARGB(185, 0, 0, 0),
                       ),
-                      iconSize: 30,
+                      iconSize: 20,
                       color: const Color.fromARGB(82, 30, 137, 158),
                     )
                   ],
@@ -593,6 +565,7 @@ class _DestinationCardState extends State<DestinationCard> {
           elevation: 0.0,
           backgroundColor: Colors.transparent,
           child: Container(
+            width: 200,
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -604,19 +577,18 @@ class _DestinationCardState extends State<DestinationCard> {
                 const Text(
                   'This place is suggested by',
                   style: TextStyle(
-                    fontSize: 30.0,
+                    fontSize: 22.0,
                     fontFamily: 'Gabriola',
-                    fontWeight: FontWeight.bold,
                     color: Color.fromARGB(255, 18, 84, 97),
                   ),
                 ),
                 const Divider(
-                    thickness: 1, color: Color.fromARGB(255, 16, 73, 85)),
+                    thickness: 0.5, color: Color.fromARGB(255, 16, 73, 85)),
                 const SizedBox(height: 10.0),
                 Text(
                   name,
                   style: const TextStyle(
-                    fontSize: 28.0,
+                    fontSize: 18.0,
                     fontFamily: 'Zilla Slab Light',
                     color: Color.fromARGB(255, 18, 84, 97),
                   ),
@@ -631,7 +603,7 @@ class _DestinationCardState extends State<DestinationCard> {
                     child: const Text(
                       'Close',
                       style: TextStyle(
-                        fontSize: 22.0,
+                        fontSize: 16.0,
                         fontFamily: 'Zilla',
                         fontWeight: FontWeight.bold,
                         color: Color.fromARGB(255, 214, 61, 27),
@@ -658,6 +630,7 @@ class _DestinationCardState extends State<DestinationCard> {
           elevation: 0.0,
           backgroundColor: Colors.transparent,
           child: Container(
+            width: 400,
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -678,12 +651,12 @@ class _DestinationCardState extends State<DestinationCard> {
                       borderSide: BorderSide(color: Color(0xFF1E889E)),
                     ),
                     labelStyle: TextStyle(
-                      fontSize: 25,
+                      fontSize: 18,
                       color: Color.fromARGB(255, 71, 71, 71),
                     ),
                   ),
                   style: const TextStyle(
-                    fontSize: 22.0,
+                    fontSize: 16.0,
                     fontFamily: 'Zilla Slab Light',
                     color: Color.fromARGB(255, 18, 84, 97),
                   ),
@@ -701,7 +674,7 @@ class _DestinationCardState extends State<DestinationCard> {
                         child: const Text(
                           'Close',
                           style: TextStyle(
-                            fontSize: 22.0,
+                            fontSize: 16.0,
                             fontFamily: 'Zilla',
                             fontWeight: FontWeight.bold,
                             color: Color.fromARGB(255, 214, 61, 27),
@@ -734,10 +707,10 @@ class _DestinationCardState extends State<DestinationCard> {
               style: const TextStyle(
                   fontFamily: 'Zilla Slab Light',
                   fontWeight: FontWeight.bold,
-                  fontSize: 25)),
+                  fontSize: 20)),
           content: Text(
             dialogMessage,
-            style: const TextStyle(fontFamily: 'Andalus', fontSize: 25),
+            style: const TextStyle(fontFamily: 'Andalus', fontSize: 18),
           ),
           actions: <Widget>[
             TextButton(
@@ -747,7 +720,7 @@ class _DestinationCardState extends State<DestinationCard> {
               child: const Text(
                 'Cancel',
                 style: TextStyle(
-                  fontSize: 22.0,
+                  fontSize: 16.0,
                   fontFamily: 'Zilla',
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 0, 0, 0),
@@ -761,7 +734,7 @@ class _DestinationCardState extends State<DestinationCard> {
               child: Text(
                 confirmBTN,
                 style: const TextStyle(
-                  fontSize: 22.0,
+                  fontSize: 16.0,
                   fontFamily: 'Zilla',
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 200, 50, 27),
