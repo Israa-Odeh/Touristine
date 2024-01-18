@@ -163,12 +163,12 @@ class _ChatPageState extends State<ChatPage> {
                 const EdgeInsets.only(right: 10.0, left: 10.0, bottom: 30.0),
             child: TextField(
               style: const TextStyle(
-                fontSize: 20,
+                fontSize: 16,
               ),
               controller: messageController,
               decoration: const InputDecoration(
                 hintText: 'Type your message',
-                hintStyle: TextStyle(fontSize: 20),
+                hintStyle: TextStyle(fontSize: 18),
                 border: UnderlineInputBorder(
                   borderSide: BorderSide(color: Colors.transparent),
                 ),
@@ -450,7 +450,6 @@ class _ChatPageState extends State<ChatPage> {
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
