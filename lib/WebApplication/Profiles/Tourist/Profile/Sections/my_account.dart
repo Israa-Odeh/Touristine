@@ -297,7 +297,7 @@ class _AccountPageState extends State<AccountPage> {
                               ),
                               backgroundColor: const Color(0xFF1E889E),
                               textStyle: const TextStyle(
-                                fontSize: 25,
+                                fontSize: 22,
                                 fontFamily: 'Zilla',
                                 fontWeight: FontWeight.w300,
                               ),
