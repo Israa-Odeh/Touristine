@@ -347,7 +347,7 @@ class _AddDestTabState extends State<AddDestTab> {
                                       padding:
                                           EdgeInsets.symmetric(horizontal: 20),
                                       child: Text(
-                                        'More details matter to others!',
+                                        'More Details Matter to Others!',
                                         style: TextStyle(
                                           fontFamily: 'Gabriola',
                                           fontSize: 30,
@@ -691,7 +691,7 @@ class _AddDestTabState extends State<AddDestTab> {
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          'Share your unique experiences',
+                          'Share Your Unique Experiences',
                           style: TextStyle(
                             fontFamily: 'Gabriola',
                             fontSize: 30,
@@ -880,7 +880,7 @@ class _AddDestTabState extends State<AddDestTab> {
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          'Inform others about this place',
+                          'Inform Others About This Place',
                           style: TextStyle(
                             fontFamily: 'Gabriola',
                             fontSize: 30,
@@ -964,7 +964,7 @@ class _AddDestTabState extends State<AddDestTab> {
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          'Enrich the place with Images',
+                          'Enrich the Place With Images',
                           style: TextStyle(
                             fontFamily: 'Gabriola',
                             fontSize: 30,
