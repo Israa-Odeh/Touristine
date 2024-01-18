@@ -256,7 +256,7 @@ class _UserInteractionsPageState extends State<UserInteractionsPage> {
                   destinationName,
                   style: const TextStyle(
                     fontFamily: 'Andalus',
-                    fontSize: 25,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center,
@@ -274,7 +274,7 @@ class _UserInteractionsPageState extends State<UserInteractionsPage> {
                       _buildButton(
                           'Complaints',
                           FontAwesomeIcons.faceAngry,
-                          20,
+                          40,
                           const Color.fromARGB(255, 231, 231, 231),
                           const Color.fromARGB(255, 0, 0, 0), () {
                         Navigator.push(
@@ -288,7 +288,7 @@ class _UserInteractionsPageState extends State<UserInteractionsPage> {
                       _buildButton(
                           'Uploads',
                           FontAwesomeIcons.photoFilm,
-                          40,
+                          60,
                           const Color(0xFF1E889E),
                           const Color.fromARGB(255, 255, 255, 255), () {
                         Navigator.push(
@@ -322,13 +322,12 @@ class _UserInteractionsPageState extends State<UserInteractionsPage> {
       style: ElevatedButton.styleFrom(
         padding: EdgeInsets.symmetric(
           horizontal: horizontalHeight,
-          vertical: 10,
+          vertical: 20,
         ),
         backgroundColor: btnColor,
         textStyle: const TextStyle(
-          fontSize: 22,
+          fontSize: 16,
           fontFamily: 'Zilla',
-          fontWeight: FontWeight.w300,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
@@ -355,7 +354,7 @@ class _UserInteractionsPageState extends State<UserInteractionsPage> {
         children: [
           Image.asset(
             'assets/Images/Profiles/Admin/mainBackground.jpg',
-            fit: BoxFit.cover,
+            fit: BoxFit.fill,
             width: double.infinity,
             height: double.infinity,
           ),
@@ -368,41 +367,54 @@ class _UserInteractionsPageState extends State<UserInteractionsPage> {
                 )
               : destinations.isEmpty
                   ? Center(
-                      child: Column(
+                      child: Stack(
+                        alignment: Alignment.center,
                         children: [
-                          const SizedBox(height: 80),
-                          Image.asset(
-                            'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
-                            fit: BoxFit.cover,
+                          Positioned(
+                            top: -40,
+                            child: Image.asset(
+                              'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
+                              fit: BoxFit.fill,
+                            ),
                           ),
-                          const Text(
-                            'No interactions found',
-                            style: TextStyle(
-                              fontSize: 40,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'Gabriola',
-                              color: Color.fromARGB(255, 23, 99, 114),
+                          const Positioned(
+                            top: 420,
+                            child: Text(
+                              'No interactions found',
+                              style: TextStyle(
+                                fontSize: 40,
+                                fontFamily: 'Gabriola',
+                                color: Color.fromARGB(255, 23, 99, 114),
+                              ),
                             ),
                           ),
                         ],
                       ),
                     )
-                  : ListView(
-                      padding: const EdgeInsets.all(16),
-                      children: destinations.entries.map((entry) {
-                        final destinationName = entry.key;
-                        final imagePath = entry.value;
-                        final currentCardIndex =
-                            destinations.keys.toList().indexOf(destinationName);
-                        return Column(
-                          children: [
-                            _buildCard(
-                                destinationName, imagePath, currentCardIndex),
-                            const SizedBox(height: 10),
-                          ],
-                        );
-                      }).toList(),
-                    ),
+                  : Padding(
+                    padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+                    child: GridView.builder(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3, // Number of cards in a row.
+                          mainAxisSpacing: 16, // Spacing between rows.
+                          crossAxisSpacing: 16, // Spacing between columns.
+                          mainAxisExtent: 296
+                        ),
+                        itemCount: destinations.length,
+                        itemBuilder: (context, index) {
+                          final entry = destinations.entries.elementAt(index);
+                          final destinationName = entry.key;
+                          final imagePath = entry.value;
+                          final currentCardIndex =
+                              destinations.keys.toList().indexOf(destinationName);
+                          return _buildCard(
+                            destinationName,
+                            imagePath,
+                            currentCardIndex,
+                          );
+                        },
+                      ),
+                  ),
         ],
       ),
     );
