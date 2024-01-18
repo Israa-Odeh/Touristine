@@ -281,7 +281,7 @@ class _AdminAppState extends State<AdminProfile> {
       // Cracks Tab.
       return _children[3];
     } else if (_currentIndex == 4) {
-      _children[4];
+      return _children[4];
       // Chatting Tab.
     } else if (_currentIndex == 5) {
       // Profile Tab.
