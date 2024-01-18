@@ -100,69 +100,73 @@ class _AdminAddingPageState extends State<AdminAddingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Positioned(
-          top: -7.5,
-          bottom: -2,
-          right: -130,
-          left: -130,
-          child: Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                    'assets/Images/Profiles/Admin/ProfilePage/AdminAddingBackground.png'),
-                fit: BoxFit.fill,
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                children: [
+                  Image.asset(
+                      'assets/Images/Profiles/Admin/AccountPage/Admin.gif',
+                      fit: BoxFit.cover),
+                ],
               ),
             ),
-          ),
-        ),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          resizeToAvoidBottomInset: true,
-          body: SingleChildScrollView(
-            child: Center(
+            Expanded(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 250),
-                  CustomField(
-                    controller: firstNameController,
-                    hintText: 'First Name',
-                    obscureText: false,
-                    fieldPrefixIcon: const FaIcon(
-                      FontAwesomeIcons.user,
-                      size: 30,
+                  const SizedBox(height: 90),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 70.0),
+                    child: CustomField(
+                      controller: firstNameController,
+                      hintText: 'First Name',
+                      obscureText: false,
+                      fieldPrefixIcon: const FaIcon(
+                        FontAwesomeIcons.user,
+                        size: 30,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 15),
-                  CustomField(
-                    controller: lastNameController,
-                    hintText: 'Last Name',
-                    obscureText: false,
-                    fieldPrefixIcon: const FaIcon(
-                      FontAwesomeIcons.user,
-                      size: 30,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 70.0),
+                    child: CustomField(
+                      controller: lastNameController,
+                      hintText: 'Last Name',
+                      obscureText: false,
+                      fieldPrefixIcon: const FaIcon(
+                        FontAwesomeIcons.user,
+                        size: 30,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 15),
-                  CustomField(
-                    controller: emailController,
-                    hintText: 'Email',
-                    obscureText: false,
-                    fieldPrefixIcon: const FaIcon(
-                      FontAwesomeIcons.envelope,
-                      size: 30,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 70.0),
+                    child: CustomField(
+                      controller: emailController,
+                      hintText: 'Email',
+                      obscureText: false,
+                      fieldPrefixIcon: const FaIcon(
+                        FontAwesomeIcons.envelope,
+                        size: 30,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 15),
-                  CustomField(
-                    controller: passwordController,
-                    hintText: 'Password',
-                    obscureText: true,
-                    fieldPrefixIcon: const FaIcon(
-                      FontAwesomeIcons.lock,
-                      size: 30,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 70.0),
+                    child: CustomField(
+                      controller: passwordController,
+                      hintText: 'Password',
+                      obscureText: true,
+                      fieldPrefixIcon: const FaIcon(
+                        FontAwesomeIcons.lock,
+                        size: 30,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 40),
@@ -172,38 +176,25 @@ class _AdminAddingPageState extends State<AdminAddingPage> {
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 40,
-                        vertical: 13,
+                        horizontal: 50,
+                        vertical: 20,
                       ),
                       backgroundColor: const Color(0xFF1E889E),
                       textStyle: const TextStyle(
-                        fontSize: 30,
+                        fontSize: 22,
                         fontFamily: 'Zilla',
                         fontWeight: FontWeight.w300,
                       ),
                     ),
                     child: const Text('Create Admin'),
                   ),
-                  const SizedBox(height: 100),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 320.0),
-                    child: IconButton(
-                      icon: const FaIcon(
-                        FontAwesomeIcons.arrowLeft,
-                        color: Color(0xFF1E889E),
-                        size: 30,
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ),
+                  const SizedBox(height: 50),
                 ],
               ),
-            ),
-          ),
+            )
+          ],
         ),
-      ],
+      ),
     );
   }
 }
