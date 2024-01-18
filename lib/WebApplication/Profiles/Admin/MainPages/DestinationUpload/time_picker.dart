@@ -1,4 +1,3 @@
-import 'package:wheel_picker/wheel_picker.dart';
 import 'package:flutter/material.dart';
 
 class TimeWheelPicker extends StatefulWidget {
@@ -20,16 +19,6 @@ class _TimeWheelPickerState extends State<TimeWheelPicker> {
   late int selectedHours;
   late int selectedMinutes;
 
-  late final hoursWheel = WheelPickerController(
-    itemCount: 16,
-    initialIndex: widget.initialHours,
-  );
-  late final minutesWheel = WheelPickerController(
-    itemCount: 60,
-    initialIndex: widget.initialMins,
-    mounts: [hoursWheel],
-  );
-
   @override
   void initState() {
     super.initState();
@@ -44,56 +33,46 @@ class _TimeWheelPickerState extends State<TimeWheelPicker> {
       height: 1.5,
       color: Color.fromARGB(170, 0, 0, 0),
     );
-    final wheelStyle = WheelPickerStyle(
-      height: 40,
-      itemExtent: textStyle.fontSize! * textStyle.height!,
-      squeeze: 1.25,
-      diameterRatio: .8,
-      surroundingOpacity: .25,
-      magnification: 1.2,
-    );
-
-    Widget itemBuilder(BuildContext context, int index) {
-      return Text("$index".padLeft(2, '0'), style: textStyle);
-    }
 
     return SizedBox(
       height: 55.0,
       child: Stack(
         fit: StackFit.expand,
         children: [
-          _centerBar(context),
+          centerBar(context),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              WheelPicker(
-                builder: itemBuilder,
-                controller: hoursWheel,
-                looping: false,
-                style: wheelStyle,
-                selectedIndexColor: const Color.fromARGB(255, 0, 0, 0),
-                onIndexChanged: (index) {
+              const SizedBox(width: 30),
+              _buildDigitButton(selectedHours ~/ 10),
+              _buildDigitButton(selectedHours % 10),
+              const Text(" : ", style: textStyle),
+              _buildDigitButton(selectedMinutes ~/ 10),
+              _buildDigitButton(selectedMinutes % 10),
+              const SizedBox(width: 30),
+              ElevatedButton.icon(
+                onPressed: () {
                   setState(() {
-                    selectedHours = index;
+                    // Increment hours count cyclically.
+                    selectedHours = (selectedHours + 1) % 17;
+
                     widget.onTimeChanged(selectedHours, selectedMinutes);
                   });
                 },
+                icon: const Padding(
+                  padding: EdgeInsets.only(left: 5.0),
+                  child: Icon(Icons.add, size: 35),
+                ),
+                label: const Text(''),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF1E889E),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 5.0,
+                    vertical: 10.0,
+                  ),
+                ),
               ),
-              const Text(":", style: textStyle),
-              WheelPicker(
-                builder: itemBuilder,
-                controller: minutesWheel,
-                style: wheelStyle,
-                enableTap: true,
-                selectedIndexColor: const Color.fromARGB(255, 0, 0, 0),
-                onIndexChanged: (index) {
-                  setState(() {
-                    selectedMinutes = index;
-                    widget.onTimeChanged(selectedHours, selectedMinutes);
-                  });
-                },
-              )
             ],
           ),
         ],
@@ -101,18 +80,22 @@ class _TimeWheelPickerState extends State<TimeWheelPicker> {
     );
   }
 
-  @override
-  void dispose() {
-    hoursWheel.dispose();
-    minutesWheel.dispose();
-    super.dispose();
+  Widget _buildDigitButton(int digit) {
+    return Text(
+      "$digit",
+      style: const TextStyle(
+        fontSize: 21.0,
+        height: 1.5,
+        color: Color.fromARGB(170, 0, 0, 0),
+      ),
+    );
   }
 
-  Widget _centerBar(BuildContext context) {
+  Widget centerBar(BuildContext context) {
     return Center(
       child: Container(
-        height: 55.0,
-        width: 150,
+        height: 53.0,
+        width: 200,
         decoration: BoxDecoration(
           color: const Color.fromARGB(255, 13, 47, 48).withAlpha(26),
           borderRadius: BorderRadius.circular(8.0),

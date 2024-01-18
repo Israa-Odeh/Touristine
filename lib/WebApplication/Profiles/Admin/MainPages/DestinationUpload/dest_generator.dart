@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'dart:typed_data';
 import 'dart:convert';
 import 'dart:io';
 
@@ -39,7 +40,7 @@ class _AddDestTabState extends State<AddDestTab> {
   TextEditingController aboutController = TextEditingController();
   TextEditingController geoTagsController = TextEditingController();
 
-  List<File> selectedImages = []; // List to store selected images.
+  List<Uint8List> selectedImages = []; // List to store selected images.
   List<Map<String, String>> addedActivities = [];
   List<String> geoTags = [];
 
@@ -185,8 +186,8 @@ class _AddDestTabState extends State<AddDestTab> {
 
     // Add images to the request.
     for (int i = 0; i < selectedImages.length; i++) {
-      List<int> imageBytes = selectedImages[i].readAsBytesSync();
-      String fileName = selectedImages[i].path.split('/').last;
+      Uint8List imageBytes = selectedImages[i];
+      String fileName = 'image_$i.jpg';
 
       final image = http.MultipartFile.fromBytes(
         'images',
@@ -380,7 +381,7 @@ class _AddDestTabState extends State<AddDestTab> {
     if (!mounted) return;
 
     setState(() {
-      selectedImages = downloadedImages;
+      // selectedImages = downloadedImages; ////////// Commented for error.
     });
     print(selectedImages);
   }
@@ -515,7 +516,7 @@ class _AddDestTabState extends State<AddDestTab> {
   }
 
   void nextPage() {
-    if (currentPage < 11) {
+    if (currentPage < 10) {
       pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
@@ -543,9 +544,7 @@ class _AddDestTabState extends State<AddDestTab> {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return CustomBottomSheet(
-          itemsList: categoriesList,
-        );
+        return CustomBottomSheet(itemsList: categoriesList, height: 260);
       },
     ).then((value) {
       // Handle the selected item from the bottom sheet.
@@ -562,7 +561,7 @@ class _AddDestTabState extends State<AddDestTab> {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return CustomBottomSheet(itemsList: budgetsList, height: 240);
+        return CustomBottomSheet(itemsList: budgetsList, height: 220);
       },
     ).then((value) {
       // Handle the selected item from the bottom sheet.
@@ -579,7 +578,7 @@ class _AddDestTabState extends State<AddDestTab> {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return CustomBottomSheet(itemsList: citiesList, height: 300);
+        return CustomBottomSheet(itemsList: citiesList, height: 260);
       },
     ).then((value) {
       // Handle the selected item from the bottom sheet.
@@ -665,7 +664,7 @@ class _AddDestTabState extends State<AddDestTab> {
       builder: (BuildContext context) {
         return BottomDropList(
           itemsList: visitorTypes,
-          height: 230,
+          height: 210,
           initiallySelectedItems: selectedVisitorTypes,
           onDone: (List<String> selectedItems) {
             setState(() {
@@ -687,7 +686,7 @@ class _AddDestTabState extends State<AddDestTab> {
       builder: (BuildContext context) {
         return BottomDropList(
           itemsList: ageCategories,
-          height: 290,
+          height: 250,
           initiallySelectedItems: selectedAgeCategories,
           onDone: (List<String> selectedItems) {
             setState(() {
@@ -706,8 +705,9 @@ class _AddDestTabState extends State<AddDestTab> {
         await ImagePicker().pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
+      var image = await pickedFile.readAsBytes();
       setState(() {
-        selectedImages.add(File(pickedFile.path));
+        selectedImages.add(image);
       });
     }
   }
@@ -744,13 +744,14 @@ class _AddDestTabState extends State<AddDestTab> {
       return false;
     }
 
-    if (selectedHours == 0 && selectedMinutes < 10) {
-      showCustomSnackBar(context, 'Minimum allowed time is 10 mins',
+    if (selectedHours < 1 && selectedMinutes == 0) {
+      showCustomSnackBar(context, 'The minimum allowed time is an hour',
           bottomMargin: 0);
       return false;
     }
     if (yes == false && no == false) {
-      showCustomSnackBar(context, 'Specify whether the dest. is sheltered',
+      showCustomSnackBar(
+          context, 'Specify whether the destination is sheltered',
           bottomMargin: 0);
       return false;
     }
@@ -837,13 +838,12 @@ class _AddDestTabState extends State<AddDestTab> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              height: 580,
+              height: 450,
               child: PageView(
                 controller: pageController,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
                   buildIntroPage(),
-                  buildDestNameCatPage(),
                   buildDestLatLngPage(),
                   Container(
                     margin: const EdgeInsets.all(10),
@@ -860,82 +860,120 @@ class _AddDestTabState extends State<AddDestTab> {
                         ),
                       ],
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.start,
+                    child: Row(
                       children: [
-                        const Text(
-                          'Set working times and days',
-                          style: TextStyle(
-                            fontFamily: 'Gabriola',
-                            fontSize: 33,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF455a64),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Image.asset(
+                                  'assets/Images/Profiles/Admin/DestUpload/workingDays.gif',
+                                  height: 390,
+                                  fit: BoxFit.cover),
+                            ],
                           ),
-                          textAlign: TextAlign.center,
                         ),
-                        Image.asset(
-                          'assets/Images/Profiles/Admin/DestUpload/workingDays.gif',
-                          height: 245,
-                          width: 245,
-                        ),
-                        SizedBox(
-                            height:
-                                startTimeController.text.isNotEmpty ? 10 : 0),
-                        buildTimeInput(
-                          'Opening Time',
-                          startTimeController,
-                          startTimeBorderIconColor,
-                          FontAwesomeIcons.clock,
-                          () => selectStartTime(context),
-                        ),
-                        SizedBox(
-                            height:
-                                endTimeController.text.isNotEmpty ? 20 : 10),
-                        buildTimeInput(
-                          'Closing Time',
-                          endTimeController,
-                          endTimeBorderIconColor,
-                          FontAwesomeIcons.clock,
-                          () => selectEndTime(context),
-                        ),
-                        SizedBox(
-                            height: startTimeController.text.isNotEmpty &&
-                                    endTimeController.text.isNotEmpty
-                                ? 15
-                                : 10),
-                        ElevatedButton(
-                          onPressed: showWorkingDaysBottomSheet,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                const Color.fromARGB(255, 231, 231, 231),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                          ),
-                          child: SizedBox(
-                            height: 50,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 5.0),
-                                  child: Text(
-                                    selectedWorkingDays.isEmpty
-                                        ? 'Select Working Days'
-                                        : "Working Days",
-                                    style: const TextStyle(
-                                        color: Color.fromARGB(163, 0, 0, 0),
-                                        fontSize: 22),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 50.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: Divider(
+                                        thickness: 1,
+                                        color: Color(0xFF1E889E),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 20),
+                                      child: Text(
+                                        'Set Working Times and Days',
+                                        style: TextStyle(
+                                          fontFamily: 'Gabriola',
+                                          fontSize: 30,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF455a64),
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Divider(
+                                        thickness: 1,
+                                        color: Color(0xFF1E889E),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 40),
+                              buildTimeInput(
+                                'Opening Time',
+                                startTimeController,
+                                startTimeBorderIconColor,
+                                FontAwesomeIcons.clock,
+                                () => selectStartTime(context),
+                              ),
+                              SizedBox(
+                                  height: endTimeController.text.isNotEmpty
+                                      ? 20
+                                      : 10),
+                              buildTimeInput(
+                                'Closing Time',
+                                endTimeController,
+                                endTimeBorderIconColor,
+                                FontAwesomeIcons.clock,
+                                () => selectEndTime(context),
+                              ),
+                              SizedBox(
+                                  height: startTimeController.text.isNotEmpty &&
+                                          endTimeController.text.isNotEmpty
+                                      ? 15
+                                      : 10),
+                              ElevatedButton(
+                                onPressed: showWorkingDaysBottomSheet,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 231, 231, 231),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
                                   ),
                                 ),
-                                const FaIcon(
-                                  FontAwesomeIcons.calendarCheck,
-                                  color: Color.fromARGB(100, 0, 0, 0),
-                                  size: 28,
+                                child: SizedBox(
+                                  height: 50,
+                                  width: 350,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 5.0),
+                                        child: Text(
+                                          selectedWorkingDays.isEmpty
+                                              ? 'Select Working Days'
+                                              : "Working Days",
+                                          style: const TextStyle(
+                                              color:
+                                                  Color.fromARGB(163, 0, 0, 0),
+                                              fontSize: 18),
+                                        ),
+                                      ),
+                                      const FaIcon(
+                                        FontAwesomeIcons.calendarCheck,
+                                        color: Color.fromARGB(100, 0, 0, 0),
+                                        size: 24,
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -956,153 +994,207 @@ class _AddDestTabState extends State<AddDestTab> {
                         ),
                       ],
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.start,
+                    child: Row(
                       children: [
-                        const Text(
-                          'More details matter to others!',
-                          style: TextStyle(
-                            fontFamily: 'Gabriola',
-                            fontSize: 33,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF455a64),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Image.asset(
+                                  'assets/Images/Profiles/Admin/DestUpload/Timer.gif',
+                                  height: 390,
+                                  fit: BoxFit.cover),
+                            ],
                           ),
-                          textAlign: TextAlign.center,
                         ),
-                        Image.asset(
-                            'assets/Images/Profiles/Admin/DestUpload/Timer.gif',
-                            height: 260,
-                            width: 260),
-                        ElevatedButton(
-                          onPressed: showBudgetBottomSheet,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                const Color.fromARGB(255, 231, 231, 231),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                          ),
-                          child: SizedBox(
-                            height: 50,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 5.0),
-                                  child: Text(
-                                    selectedBudget.isEmpty
-                                        ? 'Select Budget'
-                                        : selectedBudget,
-                                    style: const TextStyle(
-                                        color: Color.fromARGB(163, 0, 0, 0),
-                                        fontSize: 22),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 50.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: Divider(
+                                        thickness: 1,
+                                        color: Color(0xFF1E889E),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 20),
+                                      child: Text(
+                                        'More Details Matter to Others!',
+                                        style: TextStyle(
+                                          fontFamily: 'Gabriola',
+                                          fontSize: 30,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF455a64),
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Divider(
+                                        thickness: 1,
+                                        color: Color(0xFF1E889E),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 40),
+                              ElevatedButton(
+                                onPressed: showBudgetBottomSheet,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 231, 231, 231),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
                                   ),
                                 ),
-                                const FaIcon(
-                                  FontAwesomeIcons.dollarSign,
-                                  color: Color.fromARGB(100, 0, 0, 0),
-                                  size: 28,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 15),
-                        Row(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: const Color.fromARGB(146, 0, 0, 0),
-                                  width: 1,
-                                ),
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              child: Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color:
-                                      const Color.fromARGB(255, 231, 231, 231),
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: const Padding(
-                                  padding: EdgeInsets.all(6.0),
+                                child: SizedBox(
+                                  height: 50,
+                                  width: 350,
                                   child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Row(
-                                        children: [
-                                          FaIcon(
-                                            FontAwesomeIcons.clock,
-                                            color: Color.fromARGB(163, 0, 0, 0),
-                                            size: 24,
-                                          ),
-                                          SizedBox(width: 8),
-                                          Text(
-                                            'Time to spend',
-                                            style: TextStyle(
-                                                fontSize: 22,
-                                                color: Color.fromARGB(
-                                                    163, 0, 0, 0),
-                                                fontWeight: FontWeight.bold,
-                                                fontFamily: 'Times New Roman'),
-                                          ),
-                                        ],
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 5.0),
+                                        child: Text(
+                                          selectedBudget.isEmpty
+                                              ? 'Select Budget'
+                                              : selectedBudget,
+                                          style: const TextStyle(
+                                              color:
+                                                  Color.fromARGB(163, 0, 0, 0),
+                                              fontSize: 18),
+                                        ),
+                                      ),
+                                      const FaIcon(
+                                        FontAwesomeIcons.dollarSign,
+                                        color: Color.fromARGB(100, 0, 0, 0),
+                                        size: 24,
                                       ),
                                     ],
                                   ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                                child: TimeWheelPicker(
-                                    initialHours: selectedHours,
-                                    initialMins: selectedMinutes,
-                                    onTimeChanged: handleTimeChanged)),
-                          ],
-                        ),
-                        const SizedBox(height: 15),
-                        Row(
-                          children: [
-                            const SizedBox(width: 10),
-                            const Text(
-                              'Sheltered?',
-                              style: TextStyle(
-                                fontFamily: 'Gabriola',
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF455a64),
+                              const SizedBox(height: 15),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 105.0),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: const Color.fromARGB(
+                                              146, 0, 0, 0),
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                      child: Container(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: const Color.fromARGB(
+                                              255, 231, 231, 231),
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                        ),
+                                        child: const Padding(
+                                          padding: EdgeInsets.all(6.0),
+                                          child: Row(
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  FaIcon(
+                                                    FontAwesomeIcons.clock,
+                                                    color: Color.fromARGB(
+                                                        163, 0, 0, 0),
+                                                    size: 20,
+                                                  ),
+                                                  SizedBox(width: 8),
+                                                  Text(
+                                                    'Time to spend',
+                                                    style: TextStyle(
+                                                        fontSize: 18,
+                                                        color: Color.fromARGB(
+                                                            163, 0, 0, 0),
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontFamily:
+                                                            'Times New Roman'),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                        child: TimeWheelPicker(
+                                            initialHours: selectedHours,
+                                            initialMins: selectedMinutes,
+                                            onTimeChanged: handleTimeChanged)),
+                                  ],
+                                ),
                               ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(width: 30),
-                            Expanded(
-                              child: buildCheckboxListTile(
-                                titleText: 'Yes',
-                                value: yes,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    yes = newValue!;
-                                    no = false;
-                                  });
-                                },
+                              const SizedBox(height: 15),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 105.0),
+                                child: Row(
+                                  children: [
+                                    const SizedBox(width: 10),
+                                    const Text(
+                                      'Sheltered?',
+                                      style: TextStyle(
+                                        fontFamily: 'Gabriola',
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF455a64),
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    const SizedBox(width: 30),
+                                    Expanded(
+                                      child: buildCheckboxListTile(
+                                        titleText: 'Yes',
+                                        value: yes,
+                                        onChanged: (newValue) {
+                                          setState(() {
+                                            yes = newValue!;
+                                            no = false;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(width: 130),
+                                    Expanded(
+                                      child: buildCheckboxListTile(
+                                        titleText: 'No',
+                                        value: no,
+                                        onChanged: (newValue) {
+                                          setState(() {
+                                            no = newValue!;
+                                            yes = false;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 35),
-                            Expanded(
-                              child: buildCheckboxListTile(
-                                titleText: 'No',
-                                value: no,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    no = newValue!;
-                                    yes = false;
-                                  });
-                                },
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -1131,7 +1223,7 @@ class _AddDestTabState extends State<AddDestTab> {
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 20,
-                          vertical: 8,
+                          vertical: 20,
                         ),
                         backgroundColor: const Color(0xFF1E889E),
                         textStyle: const TextStyle(
@@ -1147,10 +1239,10 @@ class _AddDestTabState extends State<AddDestTab> {
                   ),
                   const SizedBox(width: 10),
                   Visibility(
-                    visible: currentPage < 11,
+                    visible: currentPage < 10,
                     child: ElevatedButton(
                       onPressed: () {
-                        if (currentPage == 1) {
+                        if (currentPage == 0) {
                           if (destNameController.text.isEmpty) {
                             showCustomSnackBar(
                                 context, 'Please enter a destination name',
@@ -1175,19 +1267,19 @@ class _AddDestTabState extends State<AddDestTab> {
                           } else {
                             nextPage();
                           }
-                        } else if (currentPage == 2) {
+                        } else if (currentPage == 1) {
                           if (validateLatLng()) {
                             nextPage();
                           }
-                        } else if (currentPage == 3) {
+                        } else if (currentPage == 2) {
                           if (validateTimeAndWD()) {
                             nextPage();
                           }
-                        } else if (currentPage == 4) {
+                        } else if (currentPage == 3) {
                           if (validateForm()) {
                             nextPage();
                           }
-                        } else if (currentPage == 5) {
+                        } else if (currentPage == 4) {
                           if (selectedVisitorTypes.isEmpty) {
                             showCustomSnackBar(
                                 context, 'Please specify the visitor types',
@@ -1199,7 +1291,7 @@ class _AddDestTabState extends State<AddDestTab> {
                           } else {
                             nextPage();
                           }
-                        } else if (currentPage == 6) {
+                        } else if (currentPage == 5) {
                           if (aboutController.text.isEmpty) {
                             showCustomSnackBar(
                                 context, 'Provide information about the place',
@@ -1211,7 +1303,7 @@ class _AddDestTabState extends State<AddDestTab> {
                           } else {
                             nextPage();
                           }
-                        } else if (currentPage == 7) {
+                        } else if (currentPage == 6) {
                           if (selectedServices.isEmpty &&
                               otherServices.isEmpty) {
                             showCustomSnackBar(
@@ -1220,7 +1312,7 @@ class _AddDestTabState extends State<AddDestTab> {
                           } else {
                             nextPage();
                           }
-                        } else if (currentPage == 8) {
+                        } else if (currentPage == 7) {
                           if (addedActivities.isEmpty) {
                             showCustomSnackBar(
                                 context, 'Please enter at least one activity',
@@ -1228,7 +1320,7 @@ class _AddDestTabState extends State<AddDestTab> {
                           } else {
                             nextPage();
                           }
-                        } else if (currentPage == 9) {
+                        } else if (currentPage == 8) {
                           if (geoTags.isEmpty) {
                             showCustomSnackBar(context,
                                 'Please enter at least one search term',
@@ -1236,7 +1328,7 @@ class _AddDestTabState extends State<AddDestTab> {
                           } else {
                             nextPage();
                           }
-                        } else if (currentPage == 10) {
+                        } else if (currentPage == 9) {
                           if (selectedImages.isEmpty) {
                             showCustomSnackBar(
                                 context, 'Destination images are needed',
@@ -1251,7 +1343,7 @@ class _AddDestTabState extends State<AddDestTab> {
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 40,
-                          vertical: 8,
+                          vertical: 20,
                         ),
                         backgroundColor: const Color(0xFF1E889E),
                         textStyle: const TextStyle(
@@ -1296,139 +1388,143 @@ class _AddDestTabState extends State<AddDestTab> {
 
   Widget buildIntroPage() {
     return buildPageContent(
-      Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+      Row(
         children: [
-          const Text(
-            'A Call to Explore Palestine!',
-            style: TextStyle(
-              fontFamily: 'Gabriola',
-              fontSize: 33,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF455a64),
+          Expanded(
+            child: Column(
+              children: [
+                Image.asset(
+                  'assets/Images/Profiles/Admin/DestUpload/horseRiding.gif',
+                  height: 390,
+                  fit: BoxFit.cover,
+                ),
+              ],
             ),
-            textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 10),
-          Image.asset(
-            'assets/Images/Profiles/Admin/DestUpload/horseRiding.gif',
-            fit: BoxFit.cover,
-          ),
-          const SizedBox(height: 22.57),
-          const Text(
-            'Promote Palestinian tourism with enticing destinations',
-            style: TextStyle(
-              fontFamily: 'Gabriola',
-              fontSize: 33,
-              color: Color(0xFF455a64),
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildDestNameCatPage() {
-    return Container(
-      margin: const EdgeInsets.all(10),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          const Text(
-            'Add the destination details',
-            style: TextStyle(
-              fontFamily: 'Gabriola',
-              fontSize: 33,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF455a64),
-            ),
-            textAlign: TextAlign.center,
-          ),
-          Image.asset('assets/Images/Profiles/Admin/DestUpload/guide.gif',
-              fit: BoxFit.cover),
-          buildDestInput(
-            'Destination Name',
-            60,
-            destNameController,
-            destNameBorderIconColor,
-            FontAwesomeIcons.locationDot,
-          ),
-          const SizedBox(height: 15),
-          ElevatedButton(
-            onPressed: showCityBottomSheet,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(255, 231, 231, 231),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-            ),
-            child: SizedBox(
-              height: 50,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 5.0),
-                    child: Text(
-                      selectedCity.isEmpty ? 'Select City' : selectedCity,
-                      style: const TextStyle(
-                          color: Color.fromARGB(163, 0, 0, 0), fontSize: 22),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 50.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          'A Call to Explore Palestine!',
+                          style: TextStyle(
+                            fontFamily: 'Gabriola',
+                            fontSize: 30,
+                            // fontWeight: FontWeight.bold,
+                            color: Color(0xFF455a64),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Promote Palestinian tourism with enticing destinations',
+                  style: TextStyle(
+                    fontFamily: 'Gabriola',
+                    fontSize: 25,
+                    color: Color(0xFF455a64),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 30),
+                buildDestInput(
+                  'Destination Name',
+                  55,
+                  destNameController,
+                  destNameBorderIconColor,
+                  FontAwesomeIcons.locationDot,
+                ),
+                const SizedBox(height: 15),
+                ElevatedButton(
+                  onPressed: showCityBottomSheet,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 231, 231, 231),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
                     ),
                   ),
-                  const FaIcon(
-                    FontAwesomeIcons.city,
-                    color: Color.fromARGB(100, 0, 0, 0),
-                    size: 25,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 15),
-          ElevatedButton(
-            onPressed: showCategorisBottomSheet,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(255, 231, 231, 231),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-            ),
-            child: SizedBox(
-              height: 50,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 5.0),
-                    child: Text(
-                      selectedCategory.isEmpty
-                          ? 'Select Category'
-                          : selectedCategory,
-                      style: const TextStyle(
-                          color: Color.fromARGB(163, 0, 0, 0), fontSize: 22),
+                  child: SizedBox(
+                    height: 50,
+                    width: 350,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 5.0),
+                          child: Text(
+                            selectedCity.isEmpty ? 'Select City' : selectedCity,
+                            style: const TextStyle(
+                                color: Color.fromARGB(163, 0, 0, 0),
+                                fontSize: 18),
+                          ),
+                        ),
+                        const FaIcon(
+                          FontAwesomeIcons.city,
+                          color: Color.fromARGB(100, 0, 0, 0),
+                          size: 24,
+                        ),
+                      ],
                     ),
                   ),
-                  const FaIcon(
-                    FontAwesomeIcons.mountainCity,
-                    color: Color.fromARGB(100, 0, 0, 0),
-                    size: 28,
+                ),
+                const SizedBox(height: 15),
+                ElevatedButton(
+                  onPressed: showCategorisBottomSheet,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 231, 231, 231),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
                   ),
-                ],
-              ),
+                  child: SizedBox(
+                    height: 50,
+                    width: 350,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 5.0),
+                          child: Text(
+                            selectedCategory.isEmpty
+                                ? 'Select Category'
+                                : selectedCategory,
+                            style: const TextStyle(
+                                color: Color.fromARGB(163, 0, 0, 0),
+                                fontSize: 18),
+                          ),
+                        ),
+                        const FaIcon(
+                          FontAwesomeIcons.mountainCity,
+                          color: Color.fromARGB(100, 0, 0, 0),
+                          size: 24,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -1452,39 +1548,74 @@ class _AddDestTabState extends State<AddDestTab> {
           ),
         ],
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+      child: Row(
         children: [
-          const Text(
-            'Specify the destination location',
-            style: TextStyle(
-              fontFamily: 'Gabriola',
-              fontSize: 33,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF455a64),
+          Expanded(
+            child: Column(
+              children: [
+                Image.asset(
+                    'assets/Images/Profiles/Admin/DestUpload/currentLocation.gif',
+                    height: 390,
+                    fit: BoxFit.cover),
+              ],
             ),
-            textAlign: TextAlign.center,
           ),
-          Image.asset(
-              'assets/Images/Profiles/Admin/DestUpload/currentLocation.gif',
-              fit: BoxFit.cover),
-          const SizedBox(height: 20),
-          buildDestInput(
-            'Latitude',
-            55,
-            destLatController,
-            destLatBorderIconColor,
-            FontAwesomeIcons.locationDot,
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 50.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          'Specify the Destination Location',
+                          style: TextStyle(
+                            fontFamily: 'Gabriola',
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF455a64),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 80),
+                buildDestInput(
+                  'Latitude',
+                  55,
+                  destLatController,
+                  destLatBorderIconColor,
+                  FontAwesomeIcons.locationDot,
+                ),
+                SizedBox(height: destLngController.text.isEmpty ? 15 : 20),
+                buildDestInput(
+                  'Longitude',
+                  55,
+                  destLngController,
+                  destLngBorderIconColor,
+                  FontAwesomeIcons.locationDot,
+                ),
+              ],
+            ),
           ),
-          SizedBox(height: destLngController.text.isEmpty ? 15 : 20),
-          buildDestInput(
-            'Longitude',
-            55,
-            destLngController,
-            destLngBorderIconColor,
-            FontAwesomeIcons.locationDot,
-          ),
-          const SizedBox(height: 15),
         ],
       ),
     );
@@ -1498,26 +1629,24 @@ class _AddDestTabState extends State<AddDestTab> {
     Function() onTap,
   ) {
     return SizedBox(
-      height: 60,
+      height: 55,
+      width: 380,
       child: InkWell(
         onTap: onTap,
         child: IgnorePointer(
           child: TextFormField(
             controller: controller,
             style: const TextStyle(
-                fontSize: 22, color: Color.fromARGB(192, 0, 0, 0)),
+                fontSize: 18, color: Color.fromARGB(192, 0, 0, 0)),
             decoration: InputDecoration(
-              labelStyle: const TextStyle(fontSize: 22),
+              labelStyle: const TextStyle(fontSize: 18),
               labelText: labelText,
               floatingLabelStyle: const TextStyle(
-                fontSize: 26,
+                fontSize: 22,
                 fontWeight: FontWeight.w400,
                 color: Color(0xFF1E889E),
               ),
-              suffixIcon: Icon(
-                icon,
-                color: borderIconColor,
-              ),
+              suffixIcon: Icon(icon, color: borderIconColor, size: 24),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
                 borderSide: BorderSide(
@@ -1549,23 +1678,21 @@ class _AddDestTabState extends State<AddDestTab> {
   ) {
     return SizedBox(
       height: height,
+      width: 380,
       child: InkWell(
         child: TextFormField(
           controller: controller,
           style: const TextStyle(
-              fontSize: 22, color: Color.fromARGB(192, 0, 0, 0)),
+              fontSize: 18, color: Color.fromARGB(192, 0, 0, 0)),
           decoration: InputDecoration(
-            labelStyle: const TextStyle(fontSize: 22),
+            labelStyle: const TextStyle(fontSize: 18),
             labelText: labelText,
             floatingLabelStyle: const TextStyle(
-              fontSize: 26,
+              fontSize: 22,
               fontWeight: FontWeight.w400,
               color: Color(0xFF1E889E),
             ),
-            suffixIcon: Icon(
-              icon,
-              color: borderIconColor,
-            ),
+            suffixIcon: Icon(icon, color: borderIconColor, size: 24),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20.0),
               borderSide: BorderSide(
@@ -1589,86 +1716,125 @@ class _AddDestTabState extends State<AddDestTab> {
 
   Widget buildVisitorsAgesPage() {
     return buildPageContent(
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.start,
+      Row(
         children: [
-          const Text(
-            'Define ages and visitor types',
-            style: TextStyle(
-              fontFamily: 'Gabriola',
-              fontSize: 33,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF455a64),
-            ),
-            textAlign: TextAlign.center,
-          ),
-          Image.asset('assets/Images/Profiles/Admin/DestUpload/camel.png',
-              fit: BoxFit.cover),
-          const SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: showVisitorTypesBottomSheet,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(255, 231, 231, 231),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-            ),
-            child: SizedBox(
-              height: 50,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 5.0),
-                    child: Text(
-                      selectedVisitorTypes.isEmpty
-                          ? 'Select Visitor Types'
-                          : "Visitor Types",
-                      style: const TextStyle(
-                          color: Color.fromARGB(163, 0, 0, 0), fontSize: 22),
-                    ),
-                  ),
-                  const FaIcon(
-                    FontAwesomeIcons.listCheck,
-                    color: Color.fromARGB(100, 0, 0, 0),
-                    size: 28,
-                  ),
-                ],
-              ),
+          Expanded(
+            child: Column(
+              children: [
+                Image.asset('assets/Images/Profiles/Admin/DestUpload/camel.png',
+                    height: 390, fit: BoxFit.cover),
+              ],
             ),
           ),
-          const SizedBox(height: 15),
-          ElevatedButton(
-            onPressed: showAgeCategoriesBottomSheet,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(255, 231, 231, 231),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-            ),
-            child: SizedBox(
-              height: 50,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 5.0),
-                    child: Text(
-                      selectedAgeCategories.isEmpty
-                          ? 'Select Age Categories'
-                          : "Age Categories",
-                      style: const TextStyle(
-                          color: Color.fromARGB(163, 0, 0, 0), fontSize: 22),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 50.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          'Define Ages and Visitor Types',
+                          style: TextStyle(
+                            fontFamily: 'Gabriola',
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF455a64),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 80),
+                ElevatedButton(
+                  onPressed: showVisitorTypesBottomSheet,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 231, 231, 231),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
                     ),
                   ),
-                  const FaIcon(
-                    FontAwesomeIcons.userGroup,
-                    color: Color.fromARGB(100, 0, 0, 0),
-                    size: 28,
+                  child: SizedBox(
+                    height: 50,
+                    width: 350,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 5.0),
+                          child: Text(
+                            selectedVisitorTypes.isEmpty
+                                ? 'Select Visitor Types'
+                                : "Visitor Types",
+                            style: const TextStyle(
+                                color: Color.fromARGB(163, 0, 0, 0),
+                                fontSize: 18),
+                          ),
+                        ),
+                        const FaIcon(
+                          FontAwesomeIcons.listCheck,
+                          color: Color.fromARGB(100, 0, 0, 0),
+                          size: 24,
+                        ),
+                      ],
+                    ),
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 15),
+                ElevatedButton(
+                  onPressed: showAgeCategoriesBottomSheet,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 231, 231, 231),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                  ),
+                  child: SizedBox(
+                    height: 50,
+                    width: 350,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 5.0),
+                          child: Text(
+                            selectedAgeCategories.isEmpty
+                                ? 'Select Age Categories'
+                                : "Age Categories",
+                            style: const TextStyle(
+                                color: Color.fromARGB(163, 0, 0, 0),
+                                fontSize: 18),
+                          ),
+                        ),
+                        const FaIcon(
+                          FontAwesomeIcons.userGroup,
+                          color: Color.fromARGB(100, 0, 0, 0),
+                          size: 24,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -1677,53 +1843,78 @@ class _AddDestTabState extends State<AddDestTab> {
   }
 
   Widget buildAboutPage() {
-    double imageDimensions = 360;
-    setState(() {
-      imageDimensions = aboutController.text.isEmpty ? 360 : 280;
-    });
     return buildPageContent(
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.start,
+      Row(
         children: [
-          const Text(
-            'Inform others about this place',
-            style: TextStyle(
-              fontFamily: 'Gabriola',
-              fontSize: 33,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF455a64),
+          Expanded(
+            child: Column(
+              children: [
+                Image.asset('assets/Images/Profiles/Admin/DestUpload/Notes.gif',
+                    height: 390, fit: BoxFit.cover),
+              ],
             ),
-            textAlign: TextAlign.center,
           ),
-          Image.asset('assets/Images/Profiles/Admin/DestUpload/Notes.gif',
-              height: imageDimensions, width: imageDimensions),
-          TextFormField(
-            controller: aboutController,
-            onChanged: (text) {
-              setState(() {
-                if (text.isEmpty) {
-                  imageDimensions = 360;
-                } else {
-                  imageDimensions = 280;
-                }
-              });
-            },
-            decoration: const InputDecoration(
-              labelText: 'About Destination',
-              labelStyle: TextStyle(
-                fontSize: 22,
-                color: Color(0xFF1E889E),
-                fontWeight: FontWeight.bold,
-              ),
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF1E889E)),
-              ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 50.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          'Inform Others About This Place',
+                          style: TextStyle(
+                            fontFamily: 'Gabriola',
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF455a64),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 80.0),
+                  child: TextFormField(
+                    controller: aboutController,
+                    decoration: const InputDecoration(
+                      labelText: 'About Destination',
+                      labelStyle: TextStyle(
+                        fontSize: 18,
+                        color: Color(0xFF1E889E),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFF1E889E)),
+                      ),
+                    ),
+                    minLines: 1,
+                    maxLines: 12,
+                    maxLength: 1000,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ),
+              ],
             ),
-            minLines: 1,
-            maxLines: 5,
-            maxLength: 1000,
-            style: const TextStyle(fontSize: 20),
           ),
         ],
       ),
@@ -1734,223 +1925,233 @@ class _AddDestTabState extends State<AddDestTab> {
     ScrollController servicesSccrollController = ScrollController();
 
     return buildPageContent(
-      CustomScrollView(
-        controller: servicesSccrollController,
-        slivers: [
-          SliverToBoxAdapter(
+      Row(
+        children: [
+          Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                const Text(
-                  'Share the destination Services!',
-                  style: TextStyle(
-                    fontFamily: 'Gabriola',
-                    fontSize: 33,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF455a64),
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                Visibility(
-                  visible: otherServices.isNotEmpty,
-                  child: const SizedBox(height: 10),
-                ),
-                Visibility(
-                  visible: otherServices.isEmpty,
-                  child: Image.asset(
-                      'assets/Images/Profiles/Admin/DestUpload/Questions.gif',
-                      height: 210,
-                      width: 210,
-                      fit: BoxFit.cover),
-                ),
-                ElevatedButton(
-                  onPressed: showServicesBottomSheet,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 231, 231, 231),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                  ),
-                  child: SizedBox(
-                    height: 50,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 5.0),
-                          child: Text(
-                            selectedServices.isEmpty
-                                ? 'Select Services'
-                                : "Services",
-                            style: const TextStyle(
-                                color: Color.fromARGB(163, 0, 0, 0),
-                                fontSize: 22),
-                          ),
-                        ),
-                        const FaIcon(
-                          FontAwesomeIcons.listCheck,
-                          color: Color.fromARGB(100, 0, 0, 0),
-                          size: 28,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                TextFormField(
-                  controller: otherServicesController,
-                  decoration: const InputDecoration(
-                    labelText: 'Other Services',
-                    labelStyle: TextStyle(
-                      fontSize: 22,
-                      color: Color(0xFF1E889E),
-                      fontWeight: FontWeight.bold,
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFF1E889E)),
-                    ),
-                  ),
-                  minLines: 1,
-                  maxLines: 2,
-                  maxLength: 43,
-                  style: const TextStyle(fontSize: 20),
-                ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Visibility(
-                    visible: otherServices.isEmpty,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 25.0),
-                      child: ElevatedButton(
-                        onPressed: addOtherItem,
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 10,
-                          ),
-                          backgroundColor:
-                              const Color.fromARGB(255, 216, 215, 215),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                        ),
-                        child: const Text(
-                          'Add Service',
-                          style: TextStyle(
-                            color: Color.fromARGB(163, 0, 0, 0),
-                            fontSize: 22,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
+                Image.asset(
+                    'assets/Images/Profiles/Admin/DestUpload/Questions.gif',
+                    height: 390,
+                    fit: BoxFit.cover),
               ],
             ),
           ),
-          SliverToBoxAdapter(
-            child: otherServices.length > 2
-                ? SizedBox(
-                    height: 190,
-                    child: Scrollbar(
-                      controller: servicesSccrollController,
-                      trackVisibility: true,
-                      thumbVisibility: true,
-                      child: SingleChildScrollView(
-                        child: Column(
+          Expanded(
+            child: CustomScrollView(
+              controller: servicesSccrollController,
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 50.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Divider(
+                                thickness: 1,
+                                color: Color(0xFF1E889E),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              child: Text(
+                                'Share the Destination Services',
+                                style: TextStyle(
+                                  fontFamily: 'Gabriola',
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF455a64),
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Expanded(
+                              child: Divider(
+                                thickness: 1,
+                                color: Color(0xFF1E889E),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      ElevatedButton(
+                        onPressed: showServicesBottomSheet,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              const Color.fromARGB(255, 231, 231, 231),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                        ),
+                        child: SizedBox(
+                          height: 50,
+                          width: 350,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(left: 5.0),
+                                child: Text(
+                                  selectedServices.isEmpty
+                                      ? 'Select Services'
+                                      : "Services",
+                                  style: const TextStyle(
+                                      color: Color.fromARGB(163, 0, 0, 0),
+                                      fontSize: 18),
+                                ),
+                              ),
+                              const FaIcon(
+                                FontAwesomeIcons.listCheck,
+                                color: Color.fromARGB(100, 0, 0, 0),
+                                size: 24,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 110.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 5.0),
+                                child: TextFormField(
+                                  controller: otherServicesController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Other Services',
+                                    labelStyle: TextStyle(
+                                      fontSize: 18,
+                                      color: Color(0xFF1E889E),
+                                    ),
+                                    focusedBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Color(0xFF1E889E)),
+                                    ),
+                                  ),
+                                  minLines: 1,
+                                  maxLines: 2,
+                                  maxLength: 43,
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 20.0),
+                              child: ElevatedButton(
+                                onPressed: addOtherItem,
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 20,
+                                  ),
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 216, 215, 215),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                ),
+                                child: const FaIcon(
+                                  FontAwesomeIcons.plus,
+                                  color: Color.fromARGB(163, 0, 0, 0),
+                                  size: 18,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: otherServices.length > 2
+                      ? SizedBox(
+                          height: 150,
+                          child: Scrollbar(
+                            controller: servicesSccrollController,
+                            trackVisibility: true,
+                            thumbVisibility: true,
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children:
+                                    otherServices.asMap().entries.map((entry) {
+                                  final int index = entry.key;
+                                  final String item = entry.value;
+
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 100.0),
+                                    child: Card(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        side: const BorderSide(
+                                          color: Color.fromARGB(50, 0, 0, 0),
+                                          width: 1.0,
+                                        ),
+                                      ),
+                                      elevation: 3,
+                                      margin: const EdgeInsets.all(8),
+                                      child: ListTile(
+                                        title: Text(item,
+                                            style: const TextStyle(
+                                                fontSize: 18,
+                                                fontFamily: 'Andalus')),
+                                        trailing: InkWell(
+                                          onTap: () => removeItem(index),
+                                          child: const FaIcon(
+                                              FontAwesomeIcons.circleXmark),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                        )
+                      : Column(
                           children: otherServices.asMap().entries.map((entry) {
                             final int index = entry.key;
                             final String item = entry.value;
 
-                            return Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                                side: const BorderSide(
-                                  color: Color.fromARGB(50, 0, 0, 0),
-                                  width: 1.0,
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 100.0),
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  side: const BorderSide(
+                                    color: Color.fromARGB(50, 0, 0, 0),
+                                    width: 1.0,
+                                  ),
                                 ),
-                              ),
-                              elevation: 3,
-                              margin: const EdgeInsets.all(8),
-                              child: ListTile(
-                                title: Text(item,
-                                    style: const TextStyle(
-                                        fontSize: 22, fontFamily: 'Andalus')),
-                                trailing: InkWell(
-                                  onTap: () => removeItem(index),
-                                  child: const FaIcon(
-                                      FontAwesomeIcons.circleXmark),
+                                elevation: 3,
+                                margin: const EdgeInsets.all(8),
+                                child: ListTile(
+                                  title: Text(item,
+                                      style: const TextStyle(
+                                          fontSize: 18, fontFamily: 'Andalus')),
+                                  trailing: InkWell(
+                                    onTap: () => removeItem(index),
+                                    child: const FaIcon(
+                                        FontAwesomeIcons.circleXmark),
+                                  ),
                                 ),
                               ),
                             );
                           }).toList(),
                         ),
-                      ),
-                    ),
-                  )
-                : Column(
-                    children: otherServices.asMap().entries.map((entry) {
-                      final int index = entry.key;
-                      final String item = entry.value;
-
-                      return Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          side: const BorderSide(
-                            color: Color.fromARGB(50, 0, 0, 0),
-                            width: 1.0,
-                          ),
-                        ),
-                        elevation: 3,
-                        margin: const EdgeInsets.all(8),
-                        child: ListTile(
-                          title: Text(item,
-                              style: const TextStyle(
-                                  fontSize: 22, fontFamily: 'Andalus')),
-                          trailing: InkWell(
-                            onTap: () => removeItem(index),
-                            child: const FaIcon(FontAwesomeIcons.circleXmark),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-          ),
-          SliverToBoxAdapter(
-            child: Visibility(
-              visible: otherServices.isNotEmpty,
-              child: Align(
-                alignment: Alignment.bottomRight,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: ElevatedButton(
-                    onPressed: addOtherItem,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 10,
-                      ),
-                      backgroundColor: const Color.fromARGB(255, 216, 215, 215),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    child: const Text(
-                      'Add Service',
-                      style: TextStyle(
-                        color: Color.fromARGB(163, 0, 0, 0),
-                        fontSize: 22,
-                      ),
-                    ),
-                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ],
@@ -1963,7 +2164,8 @@ class _AddDestTabState extends State<AddDestTab> {
       showCustomSnackBar(context, 'Please enter the service you want!',
           bottomMargin: 0);
     } else if (otherServicesController.text.length < 4) {
-      showCustomSnackBar(context, 'A service can\'t be shorter than 4 chars!',
+      showCustomSnackBar(
+          context, 'A service can\'t be shorter than 4 characters!',
           bottomMargin: 0);
     } else if (otherServicesController.text.length > 43) {
       showCustomSnackBar(
@@ -1984,156 +2186,177 @@ class _AddDestTabState extends State<AddDestTab> {
   }
 
   Widget buildActivitiesPage() {
-    double imageDimensions = 220;
-    setState(() {
-      imageDimensions = activityTitleController.text.isEmpty &&
-              activityContentController.text.isEmpty
-          ? 220
-          : activityContentController.text.isNotEmpty
-              ? activityContentController.text.length <= 60
-                  ? 170
-                  : 150
-              : 220;
-    });
     return buildPageContent(
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.start,
+      Row(
         children: [
-          const Text(
-            'Highlight potential activities',
-            style: TextStyle(
-              fontFamily: 'Gabriola',
-              fontSize: 33,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF455a64),
+          Expanded(
+            child: Column(
+              children: [
+                Image.asset(
+                    'assets/Images/Profiles/Admin/DestUpload/activity.gif',
+                    height: 390,
+                    fit: BoxFit.cover),
+              ],
             ),
-            textAlign: TextAlign.center,
           ),
-          Image.asset('assets/Images/Profiles/Admin/DestUpload/activity.gif',
-              height: imageDimensions, width: imageDimensions),
-          TextField(
-            controller: activityTitleController,
-            decoration: const InputDecoration(
-              labelText: 'Activity Title',
-              labelStyle: TextStyle(
-                fontSize: 22,
-                color: Color(0xFF1E889E),
-                fontWeight: FontWeight.bold,
-              ),
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF1E889E)),
-              ),
-            ),
-            maxLength: 25,
-            style: const TextStyle(fontSize: 18),
-          ),
-          TextFormField(
-            controller: activityContentController,
-            onChanged: (text) {
-              setState(() {
-                if (text.isEmpty) {
-                  imageDimensions = 220;
-                } else if (text.length <= 60) {
-                  imageDimensions = 170;
-                } else {
-                  imageDimensions = 150;
-                }
-              });
-            },
-            decoration: const InputDecoration(
-              labelText: 'About Activity',
-              labelStyle: TextStyle(
-                fontSize: 22,
-                color: Color(0xFF1E889E),
-                fontWeight: FontWeight.bold,
-              ),
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF1E889E)),
-              ),
-            ),
-            minLines: 1,
-            maxLines: 4,
-            maxLength: 500,
-            style: const TextStyle(fontSize: 20),
-          ),
-          const SizedBox(height: 15),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Visibility(
-                visible: addedActivities.isNotEmpty,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Open a new page to view added activities.
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ActivityListPage(
-                                addedActivities: addedActivities,
-                              )),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 10,
-                    ),
-                    backgroundColor: const Color(0xFFe0e0e0),
-                    textStyle: const TextStyle(
-                      fontSize: 27,
-                      fontFamily: 'Zilla',
-                      fontWeight: FontWeight.w300,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                  ),
-                  child: const Text(
-                    'View All',
-                    style: TextStyle(
-                        fontFamily: 'Zilla', color: Color(0xFF455a64)),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 50.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          'Highlight Potential Activities',
+                          style: TextStyle(
+                            fontFamily: 'Gabriola',
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF455a64),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              const SizedBox(width: 16),
-              ElevatedButton(
-                onPressed: () {
-                  if (validateActivities()) {
-                    setState(() {
-                      addedActivities.add({
-                        'title': activityTitleController.text,
-                        'description': activityContentController.text,
-                      });
-                      activityTitleController.clear();
-                      activityContentController.clear();
-                      imageDimensions = 220;
-                    });
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 10,
-                  ),
-                  backgroundColor: const Color(0xFFe0e0e0),
-                  textStyle: const TextStyle(
-                    fontSize: 27,
-                    fontFamily: 'Zilla',
-                    fontWeight: FontWeight.w300,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),
+                const SizedBox(height: 40),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 80.0),
+                  child: TextField(
+                    controller: activityTitleController,
+                    decoration: const InputDecoration(
+                      labelText: 'Activity Title',
+                      labelStyle: TextStyle(
+                        fontSize: 18,
+                        color: Color(0xFF1E889E),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFF1E889E)),
+                      ),
+                    ),
+                    maxLength: 25,
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ),
-                child: const FaIcon(
-                  FontAwesomeIcons.plus,
-                  size: 27,
-                  color: Color(0xFF455a64),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 80.0),
+                  child: TextFormField(
+                    controller: activityContentController,
+                    decoration: const InputDecoration(
+                      labelText: 'About Activity',
+                      labelStyle: TextStyle(
+                        fontSize: 18,
+                        color: Color(0xFF1E889E),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFF1E889E)),
+                      ),
+                    ),
+                    minLines: 1,
+                    maxLines: 4,
+                    maxLength: 500,
+                    style: const TextStyle(fontSize: 16),
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 80.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Visibility(
+                        visible: addedActivities.isNotEmpty,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ActivityListPage(
+                                        addedActivities: addedActivities,
+                                      )),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 20,
+                            ),
+                            backgroundColor: const Color(0xFFe0e0e0),
+                            textStyle: const TextStyle(
+                              fontSize: 18,
+                              fontFamily: 'Zilla',
+                              fontWeight: FontWeight.w300,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                          ),
+                          child: const Text(
+                            'View All',
+                            style: TextStyle(
+                                fontFamily: 'Zilla', color: Color(0xFF455a64)),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      ElevatedButton(
+                        onPressed: () {
+                          if (validateActivities()) {
+                            setState(() {
+                              addedActivities.add({
+                                'title': activityTitleController.text,
+                                'description': activityContentController.text,
+                              });
+                              activityTitleController.clear();
+                              activityContentController.clear();
+                            });
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 20,
+                          ),
+                          backgroundColor: const Color(0xFFe0e0e0),
+                          textStyle: const TextStyle(
+                            fontSize: 18,
+                            fontFamily: 'Zilla',
+                            fontWeight: FontWeight.w300,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                        ),
+                        child: const FaIcon(
+                          FontAwesomeIcons.plus,
+                          size: 20,
+                          color: Color(0xFF455a64),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -2144,188 +2367,197 @@ class _AddDestTabState extends State<AddDestTab> {
     ScrollController geoTagsSccrollController = ScrollController();
 
     return buildPageContent(
-      CustomScrollView(
-        controller: geoTagsSccrollController,
-        slivers: [
-          SliverToBoxAdapter(
+      Row(
+        children: [
+          Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                const Text(
-                  'Identify search keywords!',
-                  style: TextStyle(
-                    fontFamily: 'Gabriola',
-                    fontSize: 33,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF455a64),
-                  ),
-                  textAlign: TextAlign.center,
-                ),
                 Image.asset(
                     'assets/Images/Profiles/Admin/DestUpload/Search.gif',
-                    height: geoTags.isEmpty
-                        ? 300
-                        : geoTags.length > 1
-                            ? 0
-                            : 180,
-                    width: geoTags.isEmpty
-                        ? 300
-                        : geoTags.length > 1
-                            ? 0
-                            : 180,
+                    height: 390,
                     fit: BoxFit.cover),
-                TextFormField(
-                  controller: geoTagsController,
-                  decoration: const InputDecoration(
-                    labelText: 'Search Term',
-                    labelStyle: TextStyle(
-                      fontSize: 22,
-                      color: Color(0xFF1E889E),
-                      fontWeight: FontWeight.bold,
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFF1E889E)),
-                    ),
-                  ),
-                  minLines: 1,
-                  maxLines: 2,
-                  maxLength: 30,
-                  style: const TextStyle(fontSize: 20),
-                ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Visibility(
-                    visible: geoTags.isEmpty,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 20.0),
-                      child: ElevatedButton(
-                        onPressed: addGeoTag,
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 10,
-                          ),
-                          backgroundColor:
-                              const Color.fromARGB(255, 216, 215, 215),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                        ),
-                        child: const Text(
-                          'Add Term',
-                          style: TextStyle(
-                            color: Color.fromARGB(163, 0, 0, 0),
-                            fontSize: 22,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
               ],
             ),
           ),
-          SliverToBoxAdapter(
-            child: geoTags.length > 3
-                ? SizedBox(
-                    height: 270,
-                    child: Scrollbar(
-                      controller: geoTagsSccrollController,
-                      trackVisibility: true,
-                      thumbVisibility: true,
-                      child: SingleChildScrollView(
-                        child: Column(
+          Expanded(
+            child: CustomScrollView(
+              controller: geoTagsSccrollController,
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 50.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Divider(
+                                thickness: 1,
+                                color: Color(0xFF1E889E),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              child: Text(
+                                'Identify Search Keywords',
+                                style: TextStyle(
+                                  fontFamily: 'Gabriola',
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF455a64),
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Expanded(
+                              child: Divider(
+                                thickness: 1,
+                                color: Color(0xFF1E889E),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 100.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 5.0),
+                                child: TextFormField(
+                                  controller: geoTagsController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Search Term',
+                                    labelStyle: TextStyle(
+                                      fontSize: 18,
+                                      color: Color(0xFF1E889E),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    focusedBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Color(0xFF1E889E)),
+                                    ),
+                                  ),
+                                  minLines: 1,
+                                  maxLines: 2,
+                                  maxLength: 30,
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 20.0),
+                              child: ElevatedButton(
+                                onPressed: addGeoTag,
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 20,
+                                  ),
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 216, 215, 215),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                ),
+                                child: const FaIcon(
+                                  FontAwesomeIcons.plus,
+                                  color: Color.fromARGB(163, 0, 0, 0),
+                                  size: 18,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: geoTags.length > 3
+                      ? SizedBox(
+                          height: 200,
+                          child: Scrollbar(
+                            controller: geoTagsSccrollController,
+                            trackVisibility: true,
+                            thumbVisibility: true,
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children: geoTags.asMap().entries.map((entry) {
+                                  final int index = entry.key;
+                                  final String item = entry.value;
+
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 90.0),
+                                    child: Card(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        side: const BorderSide(
+                                          color: Color.fromARGB(50, 0, 0, 0),
+                                          width: 1.0,
+                                        ),
+                                      ),
+                                      elevation: 3,
+                                      margin: const EdgeInsets.all(8),
+                                      child: ListTile(
+                                        title: Text(item,
+                                            style: const TextStyle(
+                                                fontSize: 18,
+                                                fontFamily: 'Andalus')),
+                                        trailing: InkWell(
+                                          onTap: () => removeGeoTag(index),
+                                          child: const FaIcon(
+                                              FontAwesomeIcons.circleXmark),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                        )
+                      : Column(
                           children: geoTags.asMap().entries.map((entry) {
                             final int index = entry.key;
                             final String item = entry.value;
 
-                            return Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                                side: const BorderSide(
-                                  color: Color.fromARGB(50, 0, 0, 0),
-                                  width: 1.0,
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 90.0),
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  side: const BorderSide(
+                                    color: Color.fromARGB(50, 0, 0, 0),
+                                    width: 1.0,
+                                  ),
                                 ),
-                              ),
-                              elevation: 3,
-                              margin: const EdgeInsets.all(8),
-                              child: ListTile(
-                                title: Text(item,
-                                    style: const TextStyle(
-                                        fontSize: 22, fontFamily: 'Andalus')),
-                                trailing: InkWell(
-                                  onTap: () => removeGeoTag(index),
-                                  child: const FaIcon(
-                                      FontAwesomeIcons.circleXmark),
+                                elevation: 3,
+                                margin: const EdgeInsets.all(8),
+                                child: ListTile(
+                                  title: Text(item,
+                                      style: const TextStyle(
+                                          fontSize: 18, fontFamily: 'Andalus')),
+                                  trailing: InkWell(
+                                    onTap: () => removeGeoTag(index),
+                                    child: const FaIcon(
+                                        FontAwesomeIcons.circleXmark),
+                                  ),
                                 ),
                               ),
                             );
                           }).toList(),
                         ),
-                      ),
-                    ),
-                  )
-                : Column(
-                    children: geoTags.asMap().entries.map((entry) {
-                      final int index = entry.key;
-                      final String item = entry.value;
-
-                      return Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          side: const BorderSide(
-                            color: Color.fromARGB(50, 0, 0, 0),
-                            width: 1.0,
-                          ),
-                        ),
-                        elevation: 3,
-                        margin: const EdgeInsets.all(8),
-                        child: ListTile(
-                          title: Text(item,
-                              style: const TextStyle(
-                                  fontSize: 22, fontFamily: 'Andalus')),
-                          trailing: InkWell(
-                            onTap: () => removeGeoTag(index),
-                            child: const FaIcon(FontAwesomeIcons.circleXmark),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-          ),
-          SliverToBoxAdapter(
-            child: Visibility(
-              visible: geoTags.isNotEmpty,
-              child: Align(
-                alignment: Alignment.bottomRight,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: ElevatedButton(
-                    onPressed: addGeoTag,
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 10,
-                      ),
-                      backgroundColor: const Color.fromARGB(255, 216, 215, 215),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    child: const Text(
-                      'Add Term',
-                      style: TextStyle(
-                        color: Color.fromARGB(163, 0, 0, 0),
-                        fontSize: 22,
-                      ),
-                    ),
-                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ],
@@ -2338,7 +2570,7 @@ class _AddDestTabState extends State<AddDestTab> {
       showCustomSnackBar(context, 'Please enter the term you want!',
           bottomMargin: 0);
     } else if (geoTagsController.text.length < 3) {
-      showCustomSnackBar(context, 'A term can\'t be shorter than 3 chars!',
+      showCustomSnackBar(context, 'A term can\'t be shorter than 3 characters!',
           bottomMargin: 0);
     } else {
       setState(() {
@@ -2358,166 +2590,201 @@ class _AddDestTabState extends State<AddDestTab> {
     final ScrollController scrollController = ScrollController();
 
     return buildPageContent(
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.start,
+      Row(
         children: [
-          Text(
-            selectedImages.isEmpty
-                ? 'Make the destination more appealing by adding images'
-                : 'Enrich the place with Images',
-            style: const TextStyle(
-              fontFamily: 'Gabriola',
-              fontSize: 33,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF455a64),
+          Expanded(
+            child: Column(
+              children: [
+                Image.asset(
+                    'assets/Images/Profiles/Admin/DestUpload/destImages.gif',
+                    height: 390,
+                    fit: BoxFit.cover),
+              ],
             ),
-            textAlign: TextAlign.center,
           ),
-          Visibility(
-              visible: selectedImages.isEmpty,
-              child: const SizedBox(height: 20)),
-          Image.asset('assets/Images/Profiles/Admin/DestUpload/destImages.gif',
-              height: selectedImages.isEmpty ? 300 : 190,
-              width: selectedImages.isEmpty ? 300 : 190,
-              fit: BoxFit.fill),
-          Visibility(
-              visible: selectedImages.isNotEmpty,
-              child: const SizedBox(height: 10)),
-          if (selectedImages.isNotEmpty)
-            SizedBox(
-              height: 200,
-              child: selectedImages.length >= 3
-                  ? Scrollbar(
-                      trackVisibility: true,
-                      thumbVisibility: true,
-                      thickness: 5,
-                      controller: scrollController,
-                      child: ListView.builder(
-                        controller: scrollController,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: selectedImages.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Stack(
-                              children: [
-                                Image.file(
-                                  selectedImages[index],
-                                  width: 145,
-                                  height: 180,
-                                  fit: BoxFit.fill,
-                                ),
-                                Positioned(
-                                  top: -5,
-                                  right: -5,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: const Color.fromARGB(
-                                                  255, 20, 94, 108)
-                                              .withOpacity(1),
-                                          blurRadius: 1,
-                                          spreadRadius: -10,
-                                          offset: const Offset(0, 0),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 50.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          'Enrich the Place With Images',
+                          style: TextStyle(
+                            fontFamily: 'Gabriola',
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF455a64),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (selectedImages.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 60),
+                    child: SizedBox(
+                      height: 250,
+                      child: selectedImages.length >= 3
+                          ? Scrollbar(
+                              trackVisibility: true,
+                              thumbVisibility: true,
+                              thickness: 5,
+                              controller: scrollController,
+                              child: ListView.builder(
+                                controller: scrollController,
+                                scrollDirection: Axis.horizontal,
+                                itemCount: selectedImages.length,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Stack(
+                                      children: [
+                                        Image.memory(
+                                          selectedImages[index],
+                                          width: 220,
+                                          height: 250,
+                                          fit: BoxFit.fill,
                                         ),
+                                        Positioned(
+                                          top: -5,
+                                          right: -5,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: const Color.fromARGB(
+                                                          255, 20, 94, 108)
+                                                      .withOpacity(1),
+                                                  blurRadius: 1,
+                                                  spreadRadius: -10,
+                                                  offset: const Offset(0, 0),
+                                                ),
+                                              ],
+                                            ),
+                                            child: IconButton(
+                                              icon: const FaIcon(
+                                                FontAwesomeIcons.xmark,
+                                                color: Color.fromARGB(
+                                                    255, 255, 255, 255),
+                                                size: 20.0,
+                                              ),
+                                              onPressed: () =>
+                                                  deleteImage(index),
+                                            ),
+                                          ),
+                                        )
                                       ],
                                     ),
-                                    child: IconButton(
-                                      icon: const FaIcon(
-                                        FontAwesomeIcons.xmark,
-                                        color:
-                                            Color.fromARGB(255, 255, 255, 255),
-                                        size: 20.0,
-                                      ),
-                                      onPressed: () => deleteImage(index),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    )
-                  : ListView.builder(
-                      controller: scrollController,
-                      scrollDirection: Axis.horizontal,
-                      itemCount: selectedImages.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Stack(
-                            children: [
-                              Image.file(
-                                selectedImages[index],
-                                width: 145,
-                                height: 180,
-                                fit: BoxFit.fill,
+                                  );
+                                },
                               ),
-                              Positioned(
-                                top: -5,
-                                right: -5,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: const Color.fromARGB(
-                                                255, 20, 94, 108)
-                                            .withOpacity(1),
-                                        blurRadius: 1,
-                                        spreadRadius: -10,
-                                        offset: const Offset(0, 0),
+                            )
+                          : ListView.builder(
+                              controller: scrollController,
+                              scrollDirection: Axis.horizontal,
+                              itemCount: selectedImages.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Stack(
+                                    children: [
+                                      Image.memory(
+                                        selectedImages[index],
+                                        width: 220,
+                                        height: 250,
+                                        fit: BoxFit.fill,
                                       ),
+                                      Positioned(
+                                        top: -5,
+                                        right: -5,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: const Color.fromARGB(
+                                                        255, 20, 94, 108)
+                                                    .withOpacity(1),
+                                                blurRadius: 1,
+                                                spreadRadius: -10,
+                                                offset: const Offset(0, 0),
+                                              ),
+                                            ],
+                                          ),
+                                          child: IconButton(
+                                            icon: const FaIcon(
+                                              FontAwesomeIcons.xmark,
+                                              color: Color.fromARGB(
+                                                  255, 255, 255, 255),
+                                              size: 20.0,
+                                            ),
+                                            onPressed: () => deleteImage(index),
+                                          ),
+                                        ),
+                                      )
                                     ],
                                   ),
-                                  child: IconButton(
-                                    icon: const FaIcon(
-                                      FontAwesomeIcons.xmark,
-                                      color: Color.fromARGB(255, 255, 255, 255),
-                                      size: 20.0,
-                                    ),
-                                    onPressed: () => deleteImage(index),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        );
-                      },
+                                );
+                              },
+                            ),
                     ),
-            ),
-          SizedBox(height: selectedImages.isEmpty ? 30 : 7.5),
-          ElevatedButton(
-            onPressed: pickImage,
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 10,
-              ),
-              backgroundColor: const Color(0xFF1E889E),
-              textStyle: const TextStyle(
-                fontSize: 27,
-                fontFamily: 'Zilla',
-                fontWeight: FontWeight.w300,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-            ),
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FaIcon(
-                  FontAwesomeIcons.photoFilm,
-                  size: 27,
-                  color: Colors.white,
+                  ),
+                SizedBox(height: selectedImages.isEmpty ? 100 : 7.5),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 60),
+                  child: ElevatedButton(
+                    onPressed: pickImage,
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 20,
+                      ),
+                      backgroundColor: const Color(0xFF1E889E),
+                      textStyle: const TextStyle(
+                        fontSize: 25,
+                        fontFamily: 'Zilla',
+                        fontWeight: FontWeight.w300,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        FaIcon(
+                          FontAwesomeIcons.photoFilm,
+                          size: 25,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 10),
+                        Text('Add Image'),
+                      ],
+                    ),
+                  ),
                 ),
-                SizedBox(width: 10),
-                Text('Add Image'),
               ],
             ),
           ),
@@ -2528,55 +2795,102 @@ class _AddDestTabState extends State<AddDestTab> {
 
   Widget buildSummaryPage() {
     return buildPageContent(
-      Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+      Row(
         children: [
-          const Text(
-            'Submit the destination and encourage others to explore!',
-            style: TextStyle(
-              fontFamily: 'Gabriola',
-              fontSize: 33,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF455a64),
+          Expanded(
+            child: Column(
+              children: [
+                Image.asset(
+                    'assets/Images/Profiles/Admin/DestUpload/Confirmed.gif',
+                    height: 390,
+                    fit: BoxFit.cover),
+              ],
             ),
-            textAlign: TextAlign.center,
           ),
-          Image.asset('assets/Images/Profiles/Admin/DestUpload/Confirmed.gif',
-              fit: BoxFit.cover),
-          const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 60.0),
-            child: ElevatedButton(
-              onPressed: () async {
-                await addDestination();
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 13,
-                ),
-                backgroundColor: const Color(0xFF1E889E),
-                textStyle: const TextStyle(
-                  fontSize: 27,
-                  fontFamily: 'Zilla',
-                  fontWeight: FontWeight.w300,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  FaIcon(
-                    FontAwesomeIcons.circleCheck,
-                    size: 27,
-                    color: Colors.white,
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 50.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          'Encourage Adventure',
+                          style: TextStyle(
+                            fontFamily: 'Gabriola',
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF455a64),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(width: 10),
-                  Text('Submit'),
-                ],
-              ),
+                ),
+                const SizedBox(height: 40),
+                const Text(
+                  'Submit the destination and encourage\n others to explore!',
+                  style: TextStyle(
+                    fontFamily: 'Gabriola',
+                    fontSize: 28,
+                    color: Color(0xFF455a64),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 60),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 160.0),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      await addDestination();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 20,
+                      ),
+                      backgroundColor: const Color(0xFF1E889E),
+                      textStyle: const TextStyle(
+                        fontSize: 25,
+                        fontFamily: 'Zilla',
+                        fontWeight: FontWeight.w300,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        FaIcon(
+                          FontAwesomeIcons.circleCheck,
+                          size: 22,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 10),
+                        Text('Submit'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -2601,7 +2915,7 @@ class _AddDestTabState extends State<AddDestTab> {
               child: Text(
                 titleText,
                 style: const TextStyle(
-                  fontSize: 30,
+                  fontSize: 24,
                   fontFamily: 'Gabriola',
                   color: Color.fromARGB(255, 0, 0, 0),
                 ),

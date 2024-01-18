@@ -52,12 +52,13 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
               decoration: InputDecoration(
                 hintText: 'Search',
                 hintStyle: const TextStyle(
-                  fontSize: 22,
+                  fontSize: 18,
                 ),
                 prefixIcon: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: FaIcon(
                     FontAwesomeIcons.magnifyingGlass,
+                    size: 20,
                     color: focusNode.hasFocus
                         ? const Color(0xFF1E889E)
                         : Colors.black,
@@ -66,7 +67,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                 focusedBorder: const UnderlineInputBorder(
                   borderSide: BorderSide(
                     color: Color(0xFF1E889E),
-                    width: 2.0,
+                    width: 1.0,
                   ),
                 ),
               ),
@@ -80,7 +81,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
                   title: Text(
                     filteredItems[index],
                     style: const TextStyle(
-                      fontSize: 19.5,
+                      fontSize: 17,
                     ),
                   ),
                   onTap: () {

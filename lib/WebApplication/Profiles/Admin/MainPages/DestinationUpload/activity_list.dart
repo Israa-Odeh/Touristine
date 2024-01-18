@@ -14,67 +14,54 @@ class _ActivityListPageState extends State<ActivityListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding:
-            EdgeInsets.only(top: widget.addedActivities.isNotEmpty ? 0.0 : 24),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            image: widget.addedActivities.isNotEmpty
-                ? const DecorationImage(
-                    image: AssetImage(
-                        "assets/Images/Profiles/Admin/mainBackground.jpg"),
-                    fit: BoxFit.cover,
+      backgroundColor: widget.addedActivities.isEmpty ? Colors.white : null,
+      body: Column(
+        children: [
+          const SizedBox(height: 20),
+          Expanded(
+            child: widget.addedActivities.isEmpty
+                ? Center(
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Positioned(
+                          top: -20,
+                          child: Image.asset(
+                            'assets/Images/Profiles/Tourist/emptyList.gif',
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                        const Positioned(
+                          top: 420,
+                          child: Text(
+                            'No activities found',
+                            style: TextStyle(
+                              fontSize: 40,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Gabriola',
+                              color: Color.fromARGB(255, 23, 99, 114),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   )
-                : const DecorationImage(
-                    image: AssetImage(
-                        "assets/Images/Profiles/Tourist/emptyListBackground.png"),
-                    fit: BoxFit.cover,
+                : ListView.builder(
+                    itemCount: widget.addedActivities.length,
+                    itemBuilder: (context, index) {
+                      return buildSingleActivity(
+                        widget.addedActivities[index]['title'] ?? '',
+                        widget.addedActivities[index]['description'] ?? '',
+                        () {
+                          setState(() {
+                            widget.addedActivities.removeAt(index);
+                          });
+                        },
+                      );
+                    },
                   ),
           ),
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              Expanded(
-                child: widget.addedActivities.isEmpty
-                    ? Center(
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 150),
-                            Image.asset(
-                              'assets/Images/Profiles/Tourist/emptyList.gif',
-                              fit: BoxFit.cover,
-                            ),
-                            const Text(
-                              'No activities found',
-                              style: TextStyle(
-                                fontSize: 40,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Gabriola',
-                                color: Color.fromARGB(255, 23, 99, 114),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : ListView.builder(
-                        itemCount: widget.addedActivities.length,
-                        itemBuilder: (context, index) {
-                          return buildSingleActivity(
-                            widget.addedActivities[index]['title'] ?? '',
-                            widget.addedActivities[index]['description'] ?? '',
-                            () {
-                              setState(() {
-                                widget.addedActivities.removeAt(index);
-                              });
-                            },
-                          );
-                        },
-                      ),
-              ),
-            ],
-          ),
-        ),
+        ],
       ),
       floatingActionButton: Padding(
         padding: EdgeInsets.only(
@@ -100,11 +87,9 @@ class _ActivityListPageState extends State<ActivityListPage> {
     String content,
     VoidCallback onDelete,
   ) {
-    int? maxLines = title.length > 25 ? 5 : 2;
-
     return Card(
       margin: const EdgeInsets.only(right: 10, left: 10, bottom: 10),
-      color: const Color.fromARGB(68, 30, 137, 158),
+      color: const Color.fromARGB(61, 141, 148, 149),
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
@@ -122,12 +107,11 @@ class _ActivityListPageState extends State<ActivityListPage> {
                   child: Text(
                     title,
                     style: const TextStyle(
-                      fontSize: 25,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Times New Roman',
                       color: Color.fromARGB(255, 21, 98, 113),
                     ),
-                    maxLines: maxLines,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
@@ -135,7 +119,7 @@ class _ActivityListPageState extends State<ActivityListPage> {
                   icon: const FaIcon(
                     FontAwesomeIcons.trash,
                     color: Color(0xFF1E889E),
-                    size: 26,
+                    size: 22,
                   ),
                   onPressed: onDelete,
                 ),
@@ -148,7 +132,7 @@ class _ActivityListPageState extends State<ActivityListPage> {
             Text(
               content,
               style: const TextStyle(
-                fontSize: 25,
+                fontSize: 18,
                 fontWeight: FontWeight.w100,
                 fontFamily: 'Andalus',
                 color: Color.fromARGB(255, 14, 63, 73),

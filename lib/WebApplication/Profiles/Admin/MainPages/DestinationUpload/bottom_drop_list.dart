@@ -57,7 +57,7 @@ class _CustomBottomSheetState extends State<BottomDropList> {
                       widget.title,
                       style: const TextStyle(
                         fontFamily: 'Andalus',
-                        fontSize: 25,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Color.fromARGB(255, 18, 83, 96),
                       ),
@@ -68,11 +68,11 @@ class _CustomBottomSheetState extends State<BottomDropList> {
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 10,
-                        vertical: 8,
+                        vertical: 20,
                       ),
                       backgroundColor: const Color(0xFF1E889E),
                       textStyle: const TextStyle(
-                        fontSize: 22,
+                        fontSize: 18,
                         fontFamily: 'Zilla',
                       ),
                       shape: RoundedRectangleBorder(
@@ -106,7 +106,7 @@ class _CustomBottomSheetState extends State<BottomDropList> {
                   title: Text(
                     widget.itemsList[index],
                     style: const TextStyle(
-                      fontSize: 19.5,
+                      fontSize: 17,
                     ),
                   ),
                   value: selectedItems[index],
