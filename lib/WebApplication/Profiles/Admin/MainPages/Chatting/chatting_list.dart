@@ -281,7 +281,7 @@ class _ChattingListState extends State<ChattingList> {
           Positioned.fill(
             child: Image.asset(
               'assets/Images/Profiles/Admin/mainBackground.jpg',
-              fit: BoxFit.cover,
+              fit: BoxFit.fill,
             ),
           ),
           Column(
@@ -289,7 +289,8 @@ class _ChattingListState extends State<ChattingList> {
               if (!isLoading) const SizedBox(height: 40),
               if (!isLoading && tourists.isNotEmpty)
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  padding:
+                      const EdgeInsets.only(right: 20.0, left: 20, bottom: 20),
                   child: TextField(
                     focusNode: focusNode,
                     onChanged: filterTourists,
@@ -320,26 +321,29 @@ class _ChattingListState extends State<ChattingList> {
                         ),
                       )
                     : filteredTourists.isEmpty
-                        ? SingleChildScrollView(
-                            child: Center(
-                              child: Column(
-                                children: [
-                                  const SizedBox(height: 110),
-                                  Image.asset(
+                        ? Center(
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Positioned(
+                                  top: -80,
+                                  child: Image.asset(
                                     'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
                                     fit: BoxFit.cover,
                                   ),
-                                  const Text(
+                                ),
+                                const Positioned(
+                                  top: 350,
+                                  child: Text(
                                     'No chats found',
                                     style: TextStyle(
                                       fontSize: 40,
-                                      fontWeight: FontWeight.w600,
                                       fontFamily: 'Gabriola',
                                       color: Color.fromARGB(255, 23, 99, 114),
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           )
                         : ListView.builder(
@@ -348,81 +352,87 @@ class _ChattingListState extends State<ChattingList> {
                               final tourist = filteredTourists[index];
                               final bool isActive =
                                   tourist['activeStatus'] ?? false;
-                              return Card(
-                                elevation: 5,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                color: const Color.fromARGB(240, 255, 255, 255),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Stack(
-                                    alignment: Alignment.bottomRight,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          CircleAvatar(
-                                            backgroundColor: Colors.white,
-                                            radius: 50,
-                                            backgroundImage: (tourist[
-                                                            'image'] !=
-                                                        null &&
-                                                    tourist['image'] != "")
-                                                ? NetworkImage(tourist['image'])
-                                                : const AssetImage(
-                                                        "assets/Images/Profiles/Tourist/DefaultProfileImage.png")
-                                                    as ImageProvider<Object>?,
-                                          ),
-                                          const SizedBox(width: 16),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                '${tourist['firstName']} ${tourist['lastName']}',
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 20,
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 15.0),
+                                child: Card(
+                                  elevation: 5,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  color:
+                                      const Color.fromARGB(240, 255, 255, 255),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Stack(
+                                      alignment: Alignment.bottomRight,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            CircleAvatar(
+                                              backgroundColor: Colors.white,
+                                              radius: 50,
+                                              backgroundImage: (tourist[
+                                                              'image'] !=
+                                                          null &&
+                                                      tourist['image'] != "")
+                                                  ? NetworkImage(
+                                                      tourist['image'])
+                                                  : const AssetImage(
+                                                          "assets/Images/Profiles/Tourist/DefaultProfileImage.png")
+                                                      as ImageProvider<Object>?,
+                                            ),
+                                            const SizedBox(width: 16),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  '${tourist['firstName']} ${tourist['lastName']}',
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 18,
+                                                  ),
                                                 ),
-                                              ),
-                                              const SizedBox(height: 20),
-                                              Text(
-                                                tourist['email'],
-                                                style: const TextStyle(
-                                                  color: Colors.grey,
+                                                const SizedBox(height: 20),
+                                                Text(
+                                                  tourist['email'],
+                                                  style: const TextStyle(
+                                                    color: Colors.grey,
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                      IconButton(
-                                        icon: const FaIcon(
-                                          FontAwesomeIcons.facebookMessenger,
-                                          color: Color.fromARGB(255, 0, 0, 0),
+                                              ],
+                                            ),
+                                          ],
                                         ),
-                                        onPressed: () {
-                                          openChatWithTourist(tourist);
-                                        },
-                                      ),
-                                      // Display the active status dot.
-                                      Positioned(
-                                        top: 4,
-                                        right: 16,
-                                        child: Container(
-                                          width: 15,
-                                          height: 15,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: isActive
-                                                ? const Color.fromARGB(
-                                                    170, 76, 175, 79)
-                                                : const Color.fromARGB(
-                                                    174, 244, 67, 54),
+                                        IconButton(
+                                          icon: const FaIcon(
+                                            FontAwesomeIcons.facebookMessenger,
+                                            color: Color.fromARGB(255, 0, 0, 0),
+                                          ),
+                                          onPressed: () {
+                                            openChatWithTourist(tourist);
+                                          },
+                                        ),
+                                        // Display the active status dot.
+                                        Positioned(
+                                          top: 4,
+                                          right: 15,
+                                          child: Container(
+                                            width: 12,
+                                            height: 12,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: isActive
+                                                  ? const Color.fromARGB(
+                                                      170, 76, 175, 79)
+                                                  : const Color.fromARGB(
+                                                      174, 244, 67, 54),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               );
