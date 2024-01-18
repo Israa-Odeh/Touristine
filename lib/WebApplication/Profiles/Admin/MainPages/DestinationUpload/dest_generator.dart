@@ -1423,7 +1423,7 @@ class _AddDestTabState extends State<AddDestTab> {
                           style: TextStyle(
                             fontFamily: 'Gabriola',
                             fontSize: 30,
-                            // fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.bold,
                             color: Color(0xFF455a64),
                           ),
                           textAlign: TextAlign.center,
