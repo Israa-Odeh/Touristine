@@ -305,7 +305,7 @@ class _ComplaintsListPageState extends State<ComplaintsListPage> {
                               Positioned(
                                 top: -40,
                                 child: Image.asset(
-                                  'assets/Images/Profiles/Tourist/emptyList.gif',
+                                  'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
                                   fit: BoxFit.fill,
                                 ),
                               ),
@@ -425,18 +425,18 @@ class ComplaintCard extends StatelessWidget {
                   Text(
                     complaint['firstName'],
                     style: const TextStyle(
-                      fontSize: 25,
+                      fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'Times New Roman',
+                      fontFamily: 'Gabriola',
                       color: Color.fromARGB(255, 21, 98, 113),
                     ),
                   ),
                   Text(
                     " ${complaint['lastName']}",
                     style: const TextStyle(
-                      fontSize: 25,
+                      fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'Times New Roman',
+                      fontFamily: 'Gabriola',
                       color: Color.fromARGB(255, 21, 98, 113),
                     ),
                   ),
@@ -625,7 +625,7 @@ class ComplaintCard extends StatelessWidget {
                   icon: const Icon(
                     FontAwesomeIcons.trash,
                     color: Color(0xFF1E889E),
-                    size: 30,
+                    size: 25,
                   ),
                   onPressed: () async {
                     onDelete(complaint['id']);
@@ -638,7 +638,7 @@ class ComplaintCard extends StatelessWidget {
                     icon: const Icon(
                       FontAwesomeIcons.solidCircleCheck,
                       color: Color(0xFF1E889E),
-                      size: 30,
+                      size: 25,
                     ),
                     onPressed: () async {
                       await markAsSeen(complaint['id']);
@@ -690,13 +690,12 @@ void showImageDialog(BuildContext context, String imagePath) {
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 20,
-                          vertical: 10,
+                          vertical: 20,
                         ),
                         backgroundColor: const Color(0xFF1E889E),
                         textStyle: const TextStyle(
-                          fontSize: 22.0,
+                          fontSize: 20.0,
                           fontFamily: 'Zilla',
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       child: const Text('Close'),
