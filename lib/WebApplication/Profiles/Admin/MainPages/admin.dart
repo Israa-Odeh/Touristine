@@ -268,9 +268,7 @@ class _AdminAppState extends State<AdminProfile> {
       } else if (userMenuOption == "User Suggestions") {
         return SuggestedPlacesPage(
           token: widget.token,
-          //////////////////////////////////////////////////////////////////////////////////////
-          // changeTabIndex: widget.changeTabIndex,
-          //////////////////////////////////////////////////////////////////////////////////////
+          changeTabIndex: changeTabIndex,
         );
       }
     } else if (_currentIndex == 3) {

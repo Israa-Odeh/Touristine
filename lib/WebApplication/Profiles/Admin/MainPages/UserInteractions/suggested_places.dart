@@ -7,12 +7,12 @@ import 'dart:convert';
 
 class SuggestedPlacesPage extends StatefulWidget {
   final String token;
-  // final Function(int, Map<String, dynamic>) changeTabIndex;
+  final Function(int, Map<String, dynamic>) changeTabIndex;
 
   const SuggestedPlacesPage({
     super.key,
     required this.token,
-    // required this.changeTabIndex,
+    required this.changeTabIndex,
   });
 
   @override
@@ -79,7 +79,7 @@ class _SuggestedPlacesPageState extends State<SuggestedPlacesPage> {
   // If there are any suggestion to be added as a new destination, navigate
   // to the uploads interface and include the destination where needed.
   void changeTabIndex(int newIndex, Map<String, dynamic> destinationInfo) {
-    // widget.changeTabIndex(newIndex, destinationInfo);
+    widget.changeTabIndex(newIndex, destinationInfo);
   }
 
   void approveDestination(Map<String, dynamic> destinationInfo) {
@@ -488,7 +488,8 @@ class _DestinationCardState extends State<DestinationCard> {
             Container(
               color: const Color.fromARGB(94, 195, 195, 195),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
