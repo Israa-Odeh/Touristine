@@ -8,7 +8,8 @@ import 'dart:convert';
 
 class AddedDestinationsPage extends StatefulWidget {
   final String token;
-  final Function(Map<String, dynamic> destinationInfo) onDestinationEdit;
+  final Function(int newIndex, Map<String, dynamic> destinationInfo)
+      onDestinationEdit;
 
   const AddedDestinationsPage(
       {super.key, required this.token, required this.onDestinationEdit});
@@ -146,7 +147,7 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
         print(destinationInfo);
 
         // Send the destination info to the callback.
-        widget.onDestinationEdit(destinationInfo);
+        widget.onDestinationEdit(1, destinationInfo);
 
         // Handle all these stuff in the dest generator *O*.
       } else if (response.statusCode == 500) {

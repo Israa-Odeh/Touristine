@@ -1,4 +1,3 @@
-import 'package:touristine/WebApplication/Profiles/Admin/MainPages/DestinationUpload/dest_upload_home.dart';
 import 'package:touristine/WebApplication/Profiles/Admin/MainPages/UserInteractions/user_interactions.dart';
 import 'package:touristine/WebApplication/Profiles/Admin/MainPages/UserInteractions/suggested_places.dart';
 import 'package:touristine/WebApplication/Profiles/Admin/MainPages/DestinationUpload/dest_generator.dart';
@@ -119,18 +118,14 @@ class _AdminAppState extends State<AdminProfile> {
     ];
   }
 
-  ///////////////////////////////////// To Be Edited ////////////////////////////////////////
-  ///////////////////////////////////////////////////////////////////////////////////////////
+  Map<String, dynamic> selectedDestinationInfo = {};
   void changeTabIndex(int newIndex, Map<String, dynamic> destinationInfo) {
     setState(() {
       _currentIndex = newIndex;
+      destinationMenuOption = "Add a Place";
+      selectedDestinationInfo = destinationInfo;
     });
-    // Pass destinationToBeAdded to DestsUploadHomePage.
-    _children[newIndex] = DestsUploadHomePage(
-        token: widget.token, destinationToBeAdded: destinationInfo);
   }
-  ///////////////////////////////////////////////////////////////////////////////////////////
-  ///////////////////////////////////////////////////////////////////////////////////////////
 
   String profileMenuOption = "My Account";
 
@@ -254,15 +249,16 @@ class _AdminAppState extends State<AdminProfile> {
     } else if (_currentIndex == 1) {
       // Destinations Tab.
       if (destinationMenuOption == "Add a Place") {
-        return AddDestTab(token: widget.token);
+        var addDestTab = AddDestTab(
+          token: widget.token,
+          destinationToBeAdded: selectedDestinationInfo,
+        );
+        selectedDestinationInfo = {};
+        return addDestTab;
       } else if (destinationMenuOption == "My Places") {
         return AddedDestinationsPage(
           token: widget.token,
-          //////////////////////////////////////////////////////////////////////////////////////
-          //////////////////////////////////////////////////////////////////////////////////////
-          onDestinationEdit: (Map<String, dynamic> destinationInfo) {},
-          //////////////////////////////////////////////////////////////////////////////////////
-          //////////////////////////////////////////////////////////////////////////////////////
+          onDestinationEdit: changeTabIndex,
         );
       }
     } else if (_currentIndex == 2) {
