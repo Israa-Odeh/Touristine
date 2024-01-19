@@ -4,14 +4,13 @@ import 'package:touristine/WebApplication/Profiles/Admin/MainPages/DestinationUp
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/planMaker/custom_bottom_sheet.dart';
 import 'package:touristine/WebApplication/Notifications/snack_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:dio/dio.dart';
 import 'dart:typed_data';
 import 'dart:convert';
-import 'dart:io';
 
 // ignore: must_be_immutable
 class AddDestTab extends StatefulWidget {
@@ -367,23 +366,26 @@ class _AddDestTabState extends State<AddDestTab> {
   }
 
   Future<void> downloadImages() async {
-    List<File> downloadedImages = [];
-    if (!mounted) return;
+    final dio = Dio();
+
     for (String imageUrl in destinationInfo['imagesURLs']) {
-      final response = await http.get(Uri.parse(imageUrl));
-      final documentDirectory = await getApplicationDocumentsDirectory();
-      final file = File(
-          '${documentDirectory.path}/${DateTime.now().millisecondsSinceEpoch}.png');
+      try {
+        // Make a network request to download the image using Dio
+        Response<List<int>> response = await dio.get<List<int>>(
+          imageUrl,
+          options: Options(responseType: ResponseType.bytes),
+        );
 
-      await file.writeAsBytes(response.bodyBytes);
-      downloadedImages.add(file);
+        // Convert the response body into Uint8List
+        Uint8List imageBytes = Uint8List.fromList(response.data!);
+
+        // Add the Uint8List to the selectedImages list
+        selectedImages.add(imageBytes);
+      } catch (e) {
+        // Handle error if the request was not successful
+        print('Failed to fetch image. Error: $e');
+      }
     }
-    if (!mounted) return;
-
-    setState(() {
-      // selectedImages = downloadedImages; ////////// Commented for error.
-    });
-    print(selectedImages);
   }
 
   void setupOtherFieldsToEdit() {

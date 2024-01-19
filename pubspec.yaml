@@ -59,6 +59,8 @@ dependencies:
   firebase_messaging: ^14.7.10
   file_picker: ^6.1.1
   uuid: ^4.2.2
+  image_downloader: ^0.31.0
+  dio: ^5.4.0
 
 dev_dependencies:
   flutter_test:
