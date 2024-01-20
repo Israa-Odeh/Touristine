@@ -640,7 +640,7 @@ class _LoginPageState extends State<LoginPage>
                       onPressed: signUserIn,
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 155,
+                          horizontal: 160,
                           vertical: 20,
                         ),
                         backgroundColor: const Color(0xFF1E889E),
