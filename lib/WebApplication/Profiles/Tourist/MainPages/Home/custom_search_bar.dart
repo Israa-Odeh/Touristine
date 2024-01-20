@@ -315,14 +315,14 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                             controller: searchController,
                             decoration: InputDecoration(
                               hintText: 'Search',
-                              hintStyle: const TextStyle(fontSize: 22),
+                              hintStyle: const TextStyle(fontSize: 18),
                               border: InputBorder.none,
                               icon: FaIcon(
                                 FontAwesomeIcons.magnifyingGlass,
                                 color: iconColor,
                               ),
                             ),
-                            style: const TextStyle(fontSize: 22),
+                            style: const TextStyle(fontSize: 18),
                             onChanged: (value) {
                               updateSuggestions(value);
                             },
@@ -397,7 +397,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                 return ListTile(
                   title: Text(suggestion,
                       style:
-                          const TextStyle(fontSize: 24, fontFamily: 'Andalus')),
+                          const TextStyle(fontSize: 18, fontFamily: 'Andalus')),
                   onTap: () {
                     searchController.text = suggestion;
                     updateSuggestions(searchController.text);

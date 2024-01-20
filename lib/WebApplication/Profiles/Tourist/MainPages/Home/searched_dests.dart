@@ -282,7 +282,7 @@ Widget buildPlaceTile(
                       child: Text(
                         title,
                         style: const TextStyle(
-                          fontSize: 22,
+                          fontSize: 20,
                           fontFamily: 'Zilla',
                           color: Color.fromARGB(159, 0, 0, 0),
                           fontWeight: FontWeight.bold,
