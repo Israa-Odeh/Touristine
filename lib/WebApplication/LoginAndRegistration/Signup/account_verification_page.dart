@@ -208,7 +208,7 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
                                   'Begin your adventure!',
                                   style: TextStyle(
                                     color: Color(0xFF455a64),
-                                    fontSize: 45,
+                                    fontSize: 30,
                                     fontFamily: 'Gabriola',
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -232,9 +232,8 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
                             ? 'Congratulations! You have been \n         successfully verified'
                             : 'Please check your email to verify your account',
                         style: const TextStyle(
-                          fontSize: 30,
+                          fontSize: 28,
                           fontFamily: 'Gabriola',
-                          fontWeight: FontWeight.bold,
                           color: Color(0xFF455a64),
                         ),
                       ),
@@ -262,7 +261,7 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
                           ),
                           backgroundColor: const Color(0xFF1E889E),
                           textStyle: const TextStyle(
-                            fontSize: 25,
+                            fontSize: 22,
                             fontFamily: 'Zilla',
                             fontWeight: FontWeight.w300,
                           ),
@@ -285,7 +284,7 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
                             backgroundColor: const Color(0xFFe6e6e6),
                             textStyle: const TextStyle(
                               color: Color(0xFF455a64),
-                              fontSize: 25,
+                              fontSize: 22,
                               fontFamily: 'Zilla',
                               fontWeight: FontWeight.w300,
                             ),

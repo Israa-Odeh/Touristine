@@ -111,7 +111,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                             'Password Reset',
                             style: TextStyle(
                               color: Color(0xFF455a64),
-                              fontSize: 40,
+                              fontSize: 30,
                               fontFamily: 'Gabriola',
                               fontWeight: FontWeight.bold,
                             ),
@@ -128,22 +128,14 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                   ),
                   const SizedBox(height: 50),
                   const Text(
-                    'Please check your email for the newly',
+                    'Please check your email for the newly\ngenerated password',
                     style: TextStyle(
                       color: Color(0xFF455a64),
-                      fontSize: 35,
+                      fontSize: 28,
                       fontFamily: 'Gabriola',
                       fontWeight: FontWeight.w500,
                     ),
-                  ),
-                  const Text(
-                    'generated password',
-                    style: TextStyle(
-                      color: Color(0xFF455a64),
-                      fontSize: 35,
-                      fontFamily: 'Gabriola',
-                      fontWeight: FontWeight.w500,
-                    ),
+                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 30),
                   ElevatedButton(
@@ -155,7 +147,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                       ),
                       backgroundColor: const Color(0xFF1E889E),
                       textStyle: const TextStyle(
-                        fontSize: 28,
+                        fontSize: 22,
                         fontFamily: 'Zilla',
                         fontWeight: FontWeight.w300,
                       ),
@@ -174,13 +166,13 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 200,
+                        horizontal: 188,
                         vertical: 20,
                       ),
                       backgroundColor: const Color(0xFFe6e6e6),
                       textStyle: const TextStyle(
                         color: Color(0xFF455a64),
-                        fontSize: 28,
+                        fontSize: 22,
                         fontFamily: 'Zilla',
                         fontWeight: FontWeight.w300,
                       ),

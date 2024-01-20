@@ -661,7 +661,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 7,
+      length: 6,
       child: Scaffold(
         body: Stack(
           children: [
@@ -704,7 +704,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                       Tab(text: 'About'),
                       Tab(text: 'Description'),
                       Tab(text: 'Services'),
-                      Tab(text: 'Location'),
+                      // Tab(text: 'Location'),
                       Tab(text: 'Reviews'),
                       Tab(text: 'Complaints'),
                       Tab(text: 'Images'),
@@ -717,7 +717,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                         _buildAboutTab(),
                         _buildDescriptionTab(),
                         _buildServicesTab(),
-                        _buildLocationsTab(),
+                        // _buildLocationsTab(),
                         _buildReviewsTab(),
                         _buildComplaintsTab(),
                         _buildImagesUplaodTab(),

@@ -85,7 +85,7 @@ class OnboardingScreen extends StatelessWidget {
                           firstText,
                           style: const TextStyle(
                             fontFamily: 'Gabriola',
-                            fontSize: 37,
+                            fontSize: 28,
                             color: Color(0xFF455a64),
                           ),
                           textAlign: TextAlign.center,
@@ -96,7 +96,7 @@ class OnboardingScreen extends StatelessWidget {
                           secondText,
                           style: const TextStyle(
                             fontFamily: 'Gabriola',
-                            fontSize: 37,
+                            fontSize: 28,
                             color: Color(0xFF455a64),
                           ),
                           textAlign: TextAlign.center,

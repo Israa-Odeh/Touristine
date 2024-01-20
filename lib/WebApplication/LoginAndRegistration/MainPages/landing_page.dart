@@ -102,9 +102,8 @@ class LandingPage extends StatelessWidget {
                 child: Text(
                   "Experience every moment of Palestine like it's your first!",
                   style: TextStyle(
-                    fontSize: 35,
+                    fontSize: 30,
                     fontFamily: 'Gabriola',
-                    fontWeight: FontWeight.bold,
                     color: Color(0xFF455a64),
                   ),
                 ),

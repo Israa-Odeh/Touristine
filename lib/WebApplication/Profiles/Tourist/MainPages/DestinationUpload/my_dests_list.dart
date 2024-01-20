@@ -519,6 +519,7 @@ class _DestinationCardState extends State<DestinationCard> {
           elevation: 0.0,
           backgroundColor: Colors.transparent,
           child: Container(
+            width: 400,
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -530,7 +531,7 @@ class _DestinationCardState extends State<DestinationCard> {
                 const Text(
                   'Admin Comment',
                   style: TextStyle(
-                    fontSize: 30.0,
+                    fontSize: 20.0,
                     fontFamily: 'Gabriola',
                     fontWeight: FontWeight.bold,
                     color: Color.fromARGB(255, 18, 84, 97),
@@ -542,7 +543,7 @@ class _DestinationCardState extends State<DestinationCard> {
                 Text(
                   comment,
                   style: const TextStyle(
-                    fontSize: 22.0,
+                    fontSize: 18.0,
                     fontFamily: 'Zilla Slab Light',
                     color: Color.fromARGB(255, 18, 84, 97),
                   ),
@@ -557,7 +558,7 @@ class _DestinationCardState extends State<DestinationCard> {
                     child: const Text(
                       'Close',
                       style: TextStyle(
-                        fontSize: 22.0,
+                        fontSize: 16.0,
                         fontFamily: 'Zilla',
                         fontWeight: FontWeight.bold,
                         color: Color.fromARGB(255, 214, 61, 27),

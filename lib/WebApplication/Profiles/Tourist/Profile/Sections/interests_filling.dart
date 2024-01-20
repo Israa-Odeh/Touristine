@@ -381,7 +381,7 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
                           backgroundColor: const Color(0xFFe6e6e6),
                           textStyle: const TextStyle(
                             color: Color(0xFF455a64),
-                            fontSize: 25,
+                            fontSize: 22,
                             fontFamily: 'Zilla',
                             fontWeight: FontWeight.w300,
                           ),
@@ -407,7 +407,7 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
                         ),
                         backgroundColor: const Color(0xFF1E889E),
                         textStyle: const TextStyle(
-                          fontSize: 25,
+                          fontSize: 22,
                           fontFamily: 'Zilla',
                           fontWeight: FontWeight.w300,
                         ),

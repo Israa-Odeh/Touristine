@@ -114,7 +114,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                       ),
                       child: const FaIcon(
                         FontAwesomeIcons.arrowLeft,
-                        size: 30,
+                        size: 25,
                       ),
                     ),
                   ),
@@ -163,7 +163,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                                 style: TextStyle(
                                   fontFamily: 'Zilla',
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 30,
+                                  fontSize: 22,
                                 ),
                               ),
                             )
@@ -182,7 +182,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                               ),
                               child: const FaIcon(
                                 FontAwesomeIcons.arrowRight,
-                                size: 30,
+                                size: 25,
                               ),
                             ),
                       const SizedBox(width: 20),
@@ -203,7 +203,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                             style: TextStyle(
                               fontFamily: 'Zilla',
                               fontWeight: FontWeight.bold,
-                              fontSize: 30,
+                              fontSize: 22,
                             ),
                           ),
                         ),

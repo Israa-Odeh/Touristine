@@ -164,12 +164,12 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                           color: Color.fromARGB(255, 12, 53, 61),
                           fontFamily: 'Zilla Slab Light',
                           fontWeight: FontWeight.bold,
-                          fontSize: 23,
+                          fontSize: 20,
                         ),
                       ),
                     ),
                     CheckboxListTile(
-                      title: const Text('Budget-friendly'),
+                      title: const Text('Budget-friendly', style: TextStyle(fontSize: 18)),
                       value: isBudgetFriendly,
                       activeColor: const Color(0xFF1E889E),
                       onChanged: (bool? value) {
@@ -179,7 +179,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                       },
                     ),
                     CheckboxListTile(
-                      title: const Text('Mid-range'),
+                      title: const Text('Mid-range', style: TextStyle(fontSize: 18)),
                       value: isMidRange,
                       activeColor: const Color(0xFF1E889E),
                       onChanged: (bool? value) {
@@ -189,7 +189,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                       },
                     ),
                     CheckboxListTile(
-                      title: const Text('Luxurious'),
+                      title: const Text('Luxurious', style: TextStyle(fontSize: 18)),
                       value: isLuxurious,
                       activeColor: const Color(0xFF1E889E),
                       onChanged: (bool? value) {
@@ -209,7 +209,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                           color: Color.fromARGB(255, 12, 53, 61),
                           fontFamily: 'Zilla Slab Light',
                           fontWeight: FontWeight.bold,
-                          fontSize: 23,
+                          fontSize: 20,
                         ),
                       ),
                     ),
@@ -257,7 +257,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                       child: const Text(
                         'Close',
                         style: TextStyle(
-                          fontSize: 22.0,
+                          fontSize: 16.0,
                           fontFamily: 'Zilla',
                           fontWeight: FontWeight.bold,
                           color: Color.fromARGB(255, 200, 50, 27),
@@ -397,7 +397,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                 return ListTile(
                   title: Text(suggestion,
                       style:
-                          const TextStyle(fontSize: 18, fontFamily: 'Andalus')),
+                          const TextStyle(fontSize: 19, fontFamily: 'Andalus')),
                   onTap: () {
                     searchController.text = suggestion;
                     updateSuggestions(searchController.text);

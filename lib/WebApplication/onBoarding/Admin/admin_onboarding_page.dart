@@ -43,7 +43,7 @@ class _AdminOnBoardingPageState extends State<AdminOnBoardingPage> {
         'levels based on crack analysis',
         'feedback, and crack analysis',
       ],
-      titleSize: 50, // Set the desired title size to be 50.
+      titleSize: 30, // Set the desired title size to be 50.
       numOfPages: 5, // The number of pages in the onboarding Page.
       profileType: 200, // 200 is for the admin profile.
     );

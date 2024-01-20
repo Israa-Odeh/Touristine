@@ -233,7 +233,7 @@ class _SignupPageState extends State<SignupPage> {
                               'Register now and live the experience',
                               style: TextStyle(
                                 color: Color(0xFF455a64),
-                                fontSize: 31,
+                                fontSize: 30,
                                 fontFamily: 'Gabriola',
                                 fontWeight: FontWeight.bold,
                               ),
@@ -323,7 +323,7 @@ class _SignupPageState extends State<SignupPage> {
                         ),
                         backgroundColor: const Color(0xFF1E889E),
                         textStyle: const TextStyle(
-                          fontSize: 25,
+                          fontSize: 22,
                           fontFamily: 'Zilla',
                           fontWeight: FontWeight.w300,
                         ),

@@ -379,7 +379,7 @@ class _PlaceCardState extends State<PlaceCard> {
                     widget.details['placeName'],
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 20.0,
+                      fontSize: 18.0,
                       color: Colors.white,
                     ),
                   ),
@@ -387,7 +387,7 @@ class _PlaceCardState extends State<PlaceCard> {
                     '${widget.details['startTime']} - ${widget.details['endTime']}',
                     style: const TextStyle(
                       color: Color.fromARGB(255, 255, 255, 255),
-                      fontSize: 19,
+                      fontSize: 16,
                     ),
                   ),
                 ],
@@ -459,7 +459,7 @@ class _PlaceCardState extends State<PlaceCard> {
                                       Text(
                                         data['title']!,
                                         style: const TextStyle(
-                                          fontSize: 18.0,
+                                          fontSize: 16.0,
                                           fontWeight: FontWeight.bold,
                                           fontFamily: 'Times New Roman',
                                         ),
@@ -472,7 +472,7 @@ class _PlaceCardState extends State<PlaceCard> {
                                           child: Text(
                                             data['description']!,
                                             style: const TextStyle(
-                                              fontSize: 16,
+                                              fontSize: 15,
                                               fontFamily: 'Time New Roman',
                                               color: Color.fromARGB(
                                                   255, 91, 91, 91),
@@ -549,7 +549,7 @@ class _PlaceCardState extends State<PlaceCard> {
                         ),
                         backgroundColor: const Color(0xFF1E889E),
                         textStyle: const TextStyle(
-                          fontSize: 22,
+                          fontSize: 20,
                           fontFamily: 'Zilla',
                           fontWeight: FontWeight.w300,
                         ),
