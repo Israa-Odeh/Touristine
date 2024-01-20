@@ -239,8 +239,8 @@ class _TouristAppState extends State<TouristProfile> {
     moveToStep(widget.stepNum);
   }
 
-  String planMenuOption = "Make a Plan";
-  String destinationMenuOption = "Add a Place";
+  String planMenuOption = "Make Plan";
+  String destinationMenuOption = "Suggest Place";
 
   Widget getCurrentTab() {
     if (_currentIndex == 0) {
@@ -248,16 +248,16 @@ class _TouristAppState extends State<TouristProfile> {
       return _children[0];
     } else if (_currentIndex == 1) {
       // Plan Maker Tab.
-      if (planMenuOption == "Make a Plan") {
+      if (planMenuOption == "Make Plan") {
         return MakePlanTab(token: widget.token);
       } else if (planMenuOption == "My Plans") {
         return MyPlansTab(token: widget.token);
       }
     } else if (_currentIndex == 2) {
       // Upload Places Tab.
-      if (destinationMenuOption == "Add a Place") {
+      if (destinationMenuOption == "Suggest Place") {
         return AddDestTab(token: widget.token);
-      } else if (destinationMenuOption == "My Places") {
+      } else if (destinationMenuOption == "My Suggestions") {
         return DestinationCardGenerator(token: widget.token);
       }
     } else if (_currentIndex == 3) {
@@ -411,16 +411,16 @@ class _TouristAppState extends State<TouristProfile> {
                             ),
                             _buildBottomNavigationBarItem(
                               FontAwesomeIcons.clock,
-                              planMenuOption == "Make a Plan"
-                                  ? 'Plan Maker'
+                              planMenuOption == "Make Plan"
+                                  ? 'Make Plan'
                                   : 'My Plans',
                               1,
                             ),
                             _buildBottomNavigationBarItem(
                               FontAwesomeIcons.mapLocationDot,
-                              destinationMenuOption == "Add a Place"
-                                  ? 'Upload Places'
-                                  : 'My Places',
+                              destinationMenuOption == "Suggest Place"
+                                  ? 'Suggest Place'
+                                  : 'My Suggestions',
                               2,
                             ),
                             _buildBottomNavigationBarItem(
@@ -495,14 +495,14 @@ class _TouristAppState extends State<TouristProfile> {
       final selectedOption = await showMenu(
         context: context,
         position: _currentIndex == 1
-            ? const RelativeRect.fromLTRB(470, 65, 470, 0)
+            ? const RelativeRect.fromLTRB(495, 65, 495, 0)
             : _currentIndex == 0
-                ? const RelativeRect.fromLTRB(510, 65, 510, 0)
-                : const RelativeRect.fromLTRB(440, 65, 440, 0),
+                ? const RelativeRect.fromLTRB(535, 65, 535, 0)
+                : const RelativeRect.fromLTRB(465, 65, 465, 0),
         items: <PopupMenuEntry>[
           const PopupMenuItem<String>(
-            value: "Make a Plan",
-            child: Text("Make a Plan"),
+            value: "Make Plan",
+            child: Text("Make Plan"),
           ),
           const PopupMenuItem<String>(
             value: "My Plans",
@@ -526,12 +526,12 @@ class _TouristAppState extends State<TouristProfile> {
                 : const RelativeRect.fromLTRB(580, 65, 580, 0),
         items: <PopupMenuEntry>[
           const PopupMenuItem<String>(
-            value: "Add a Place",
-            child: Text("Add a Place"),
+            value: "Suggest Place",
+            child: Text("Suggest Place"),
           ),
           const PopupMenuItem<String>(
-            value: "My Places",
-            child: Text("My Places"),
+            value: "My Suggestions",
+            child: Text("My Suggestions"),
           ),
         ],
       );

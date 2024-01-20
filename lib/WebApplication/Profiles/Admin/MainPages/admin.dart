@@ -122,7 +122,7 @@ class _AdminAppState extends State<AdminProfile> {
   void changeTabIndex(int newIndex, Map<String, dynamic> destinationInfo) {
     setState(() {
       _currentIndex = newIndex;
-      destinationMenuOption = "Add a Place";
+      destinationMenuOption = "Add Place";
       selectedDestinationInfo = destinationInfo;
     });
   }
@@ -173,8 +173,8 @@ class _AdminAppState extends State<AdminProfile> {
                               ),
                               _buildBottomNavigationBarItem(
                                 FontAwesomeIcons.mapLocationDot,
-                                destinationMenuOption == "Add a Place"
-                                    ? 'Upload Places'
+                                destinationMenuOption == "Add Place"
+                                    ? 'Add Place'
                                     : 'My Places',
                                 1,
                               ),
@@ -239,7 +239,7 @@ class _AdminAppState extends State<AdminProfile> {
     );
   }
 
-  String destinationMenuOption = "Add a Place";
+  String destinationMenuOption = "Add Place";
   String userMenuOption = "User Interactions";
 
   Widget getCurrentTab() {
@@ -248,7 +248,7 @@ class _AdminAppState extends State<AdminProfile> {
       return _children[0];
     } else if (_currentIndex == 1) {
       // Destinations Tab.
-      if (destinationMenuOption == "Add a Place") {
+      if (destinationMenuOption == "Add Place") {
         var addDestTab = AddDestTab(
           token: widget.token,
           destinationToBeAdded: selectedDestinationInfo,
@@ -318,14 +318,14 @@ class _AdminAppState extends State<AdminProfile> {
       final selectedOption = await showMenu(
         context: context,
         position: _currentIndex == 1
-            ? const RelativeRect.fromLTRB(360, 65, 360, 0)
+            ? const RelativeRect.fromLTRB(390, 65, 390, 0)
             : _currentIndex == 0
-                ? const RelativeRect.fromLTRB(390, 65, 390, 0)
-                : const RelativeRect.fromLTRB(330, 65, 330, 0),
+                ? const RelativeRect.fromLTRB(420, 65, 420, 0)
+                : const RelativeRect.fromLTRB(360, 65, 360, 0),
         items: <PopupMenuEntry>[
           const PopupMenuItem<String>(
-            value: "Add a Place",
-            child: Text("Add a Place"),
+            value: "Add Place",
+            child: Text("Add Place"),
           ),
           const PopupMenuItem<String>(
             value: "My Places",

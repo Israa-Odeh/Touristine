@@ -252,6 +252,10 @@ class _DestinationCardState extends State<DestinationCard> {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'Your comment has been added',
             bottomMargin: 0);
+        Timer(const Duration(seconds: 3), () {
+          // Call the callback function when a comment is added.
+          widget.onApproveSuggestion(widget.destination);
+        });
       } else {
         final Map<String, dynamic> responseData = json.decode(response.body);
         // ignore: use_build_context_synchronously
@@ -530,10 +534,6 @@ class _DestinationCardState extends State<DestinationCard> {
                           if (confirmAddition == true) {
                             await addAdminComment(widget.destination['destID'],
                                 widget.commentController.text);
-                            Timer(const Duration(seconds: 3), () {
-                              // Call the callback function when add comment button is pressed.
-                              widget.onApproveSuggestion(widget.destination);
-                            });
                           }
                         }
                       },

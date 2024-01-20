@@ -57,9 +57,9 @@ class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(FontAwesomeIcons.plus),
-                            SizedBox(width: 15),
+                            SizedBox(width: 10),
                             Text(
-                              'Add Place',
+                              'Suggest Place',
                             ),
                           ],
                         ),
@@ -72,7 +72,7 @@ class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
                             Icon(
                               FontAwesomeIcons.list,
                             ),
-                            SizedBox(width: 15),
+                            SizedBox(width: 10),
                             Text(
                               'My Places',
                             ),
@@ -84,7 +84,7 @@ class _DestsUploadHomePageState extends State<DestsUploadHomePage> {
                       color: Color(0xFF1E889E),
                     ),
                     labelStyle: TextStyle(
-                      fontSize: 25,
+                      fontSize: 24,
                       fontWeight: FontWeight.w500,
                       fontFamily: 'Times New Roman',
                     ),
