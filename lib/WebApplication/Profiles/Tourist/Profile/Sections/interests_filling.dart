@@ -6,8 +6,10 @@ import 'dart:convert';
 
 class InterestsFillingPage extends StatefulWidget {
   final String token;
+  final bool allowPoping;
 
-  const InterestsFillingPage({super.key, required this.token});
+  const InterestsFillingPage(
+      {super.key, required this.token, this.allowPoping = false});
 
   @override
   _InterestsFillingPageState createState() => _InterestsFillingPageState();
@@ -191,6 +193,10 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
           // ignore: use_build_context_synchronously
           showCustomSnackBar(context, "Your interests have been updated",
               bottomMargin: 0);
+          if (widget.allowPoping) {
+            // ignore: use_build_context_synchronously
+            Navigator.of(context).pop();
+          }
         }
       } else {
         // ignore: use_build_context_synchronously
@@ -235,6 +241,11 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
       default:
         return true; // Return true for steps not requiring validation.
     }
+  }
+
+  void cancelChanges() {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    Navigator.of(context).pop();
   }
 
   // Function to create a CheckboxListTile
@@ -370,7 +381,7 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(width: !isLastStep ? 540 : 610),
-                    if (currentStep != 0)
+                    if (!widget.allowPoping && currentStep != 0)
                       ElevatedButton(
                         onPressed: controlsDetails.onStepCancel,
                         style: ElevatedButton.styleFrom(
@@ -393,12 +404,37 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
                           ),
                         ),
                       ),
+                    if (widget.allowPoping)
+                      ElevatedButton(
+                        onPressed: currentStep != 0
+                            ? controlsDetails.onStepCancel
+                            : cancelChanges,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 100,
+                            vertical: 20,
+                          ),
+                          backgroundColor: const Color(0xFFe6e6e6),
+                          textStyle: const TextStyle(
+                            color: Color(0xFF455a64),
+                            fontSize: 22,
+                            fontFamily: 'Zilla',
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
+                        child: Text(
+                          currentStep != 0 ? 'Back' : 'Cancel',
+                          style: const TextStyle(
+                            color: Color(0xFF1e889e),
+                          ),
+                        ),
+                      ),
                     const SizedBox(width: 20),
                     ElevatedButton(
                       onPressed: controlsDetails.onStepContinue,
                       style: ElevatedButton.styleFrom(
                         padding: EdgeInsets.symmetric(
-                          horizontal: currentStep == 0
+                          horizontal: currentStep == 0 && !widget.allowPoping
                               ? 250
                               : !isLastStep
                                   ? 100

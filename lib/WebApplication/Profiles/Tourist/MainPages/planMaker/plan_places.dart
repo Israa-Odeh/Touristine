@@ -36,7 +36,7 @@ class _PlanPlacesPageState extends State<PlanPlacesPage> {
     if (!serviceEnabled) {
       // ignore: use_build_context_synchronously
       showCustomSnackBar(context, "Location services are disabled",
-          bottomMargin: 310);
+          bottomMargin: 0);
       return false;
     }
     permission = await Geolocator.checkPermission();
@@ -45,7 +45,7 @@ class _PlanPlacesPageState extends State<PlanPlacesPage> {
       if (permission == LocationPermission.denied) {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, "Location permissions are denied",
-            bottomMargin: 310);
+            bottomMargin: 0);
         return false;
       }
     }
@@ -53,14 +53,13 @@ class _PlanPlacesPageState extends State<PlanPlacesPage> {
       // Location permissions are permanently denied, we cannot request permissions,
       // ignore: use_build_context_synchronously
       showCustomSnackBar(context, "Location permissions permanently denied",
-          bottomMargin: 310);
+          bottomMargin: 0);
 
       return false;
     }
     // ignore: use_build_context_synchronously
-    // ignore: use_build_context_synchronously
     // showCustomSnackBar(context, "Please wait for a moment",
-    //     bottomMargin: 310);
+    //     bottomMargin: 0);
     return true;
   }
 

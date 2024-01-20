@@ -45,19 +45,19 @@ class _AdminAddingPageState extends State<AdminAddingPage> {
   Future<void> validateForm() async {
     if (isInputEmpty()) {
       showCustomSnackBar(context, 'Please fill in all the fields',
-          bottomMargin: 620.0);
+          bottomMargin: 0);
     } else if (!isNameValid(firstNameController.text)) {
       showCustomSnackBar(context, 'Invalid first name: 2-20 characters only',
-          bottomMargin: 620.0);
+          bottomMargin: 0);
     } else if (!isNameValid(lastNameController.text)) {
       showCustomSnackBar(context, 'Invalid last name: 2-20 characters only',
-          bottomMargin: 620.0);
+          bottomMargin: 0);
     } else if (!isEmailValid(emailController.text)) {
       showCustomSnackBar(context, 'Please enter a valid email address',
-          bottomMargin: 620.0);
+          bottomMargin: 0);
     } else if (!isPasswordValid(passwordController.text)) {
       showCustomSnackBar(context, 'Password must contain 8-30 chars',
-          bottomMargin: 620.0);
+          bottomMargin: 0);
     } else {
       await addNewAdmin();
     }
@@ -87,11 +87,11 @@ class _AdminAddingPageState extends State<AdminAddingPage> {
 
       if (response.statusCode == 200) {
         showCustomSnackBar(context, 'The new admin has been added',
-            bottomMargin: 620.0);
+            bottomMargin: 0);
       } else {
         final Map<String, dynamic> responseData = json.decode(response.body);
         // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, responseData['error'], bottomMargin: 620.0);
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
       }
     } catch (error) {
       print('Error adding a new admin: $error');

@@ -107,7 +107,7 @@ class _AccountPageState extends State<AccountPage> {
           }
           // ignore: use_build_context_synchronously
           showCustomSnackBar(context, "Your information has been edited",
-              bottomMargin: 457);
+              bottomMargin: 0);
           // ignore: use_build_context_synchronously
           context.read<UserProvider>().updateData(
                 newFirstName: firstNameController.text,
@@ -122,16 +122,16 @@ class _AccountPageState extends State<AccountPage> {
             parsedResponse['message'] == 'Unable to upload') {
           // ignore: use_build_context_synchronously
           showCustomSnackBar(context, "Unable to upload the image",
-              bottomMargin: 457);
+              bottomMargin: 0);
         } else {
           // ignore: use_build_context_synchronously
           showCustomSnackBar(context, "An error has occurred",
-              bottomMargin: 457);
+              bottomMargin: 0);
         }
       } else {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'Failed to update, please try again',
-            bottomMargin: 457);
+            bottomMargin: 0);
       }
     } catch (e) {
       print('Error: $e');
@@ -149,22 +149,22 @@ class _AccountPageState extends State<AccountPage> {
     if (isDataChanged) {
       if (isInputEmpty()) {
         showCustomSnackBar(context, 'Please fill in all the fields',
-            bottomMargin: 457);
+            bottomMargin: 0);
       } else if (!isNameValid(firstNameController.text)) {
         showCustomSnackBar(context, 'Invalid first name: 2-20 characters only',
-            bottomMargin: 457);
+            bottomMargin: 0);
       } else if (!isNameValid(lastNameController.text)) {
         showCustomSnackBar(context, 'Invalid last name: 2-20 characters only',
-            bottomMargin: 457);
+            bottomMargin: 0);
       } else if (!isPasswordValid(passwordController.text)) {
         showCustomSnackBar(context, 'Password must contain 8-30 chars',
-            bottomMargin: 457);
+            bottomMargin: 0);
       } else {
         sendAndSaveData();
       }
     } else {
       showCustomSnackBar(context, 'No modifications detected',
-          bottomMargin: 457);
+          bottomMargin: 0);
     }
   }
 

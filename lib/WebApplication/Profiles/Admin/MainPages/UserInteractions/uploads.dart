@@ -610,7 +610,7 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
                 icon: const FaIcon(
                   FontAwesomeIcons.arrowLeft,
                   color: Color(0xFF1E889E),
-                  size: 30,
+                  size: 20,
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();

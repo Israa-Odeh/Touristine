@@ -98,18 +98,18 @@ class _LocationPageState extends State<LocationPage> {
             responseData['message'] == 'updated') {
           // ignore: use_build_context_synchronously
           showCustomSnackBar(context, "Your location has been updated",
-              bottomMargin: 310);
+              bottomMargin: 0);
         }
       } else if (response.statusCode == 500) {
         final Map<String, dynamic> responseData = json.decode(response.body);
         if (responseData.containsKey('error')) {
           // ignore: use_build_context_synchronously
           showCustomSnackBar(context, "An error has occured",
-              bottomMargin: 310);
+              bottomMargin: 0);
         }
       } else {
         // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, "An error has occurred", bottomMargin: 310);
+        showCustomSnackBar(context, "An error has occurred", bottomMargin: 0);
       }
     } catch (error) {
       // Catch block to handle any errors during the request.
@@ -125,7 +125,7 @@ class _LocationPageState extends State<LocationPage> {
     if (!serviceEnabled) {
       // ignore: use_build_context_synchronously
       showCustomSnackBar(context, "Location services are disabled",
-          bottomMargin: 310);
+          bottomMargin: 0);
       return false;
     }
     permission = await Geolocator.checkPermission();
@@ -134,7 +134,7 @@ class _LocationPageState extends State<LocationPage> {
       if (permission == LocationPermission.denied) {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, "Location permissions are denied",
-            bottomMargin: 310);
+            bottomMargin: 0);
         return false;
       }
     }
@@ -142,12 +142,12 @@ class _LocationPageState extends State<LocationPage> {
       // Location permissions are permanently denied, we cannot request permissions,
       // ignore: use_build_context_synchronously
       showCustomSnackBar(context, "Location permissions permanently denied",
-          bottomMargin: 310);
+          bottomMargin: 0);
 
       return false;
     }
     // ignore: use_build_context_synchronously
-    showCustomSnackBar(context, "Please wait for a moment", bottomMargin: 310);
+    showCustomSnackBar(context, "Please wait for a moment", bottomMargin: 0);
     return true;
   }
 

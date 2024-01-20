@@ -143,7 +143,7 @@ class _UserInteractionsPageState extends State<UserInteractionsPage> {
           showCustomSnackBar(context, 'Reviews are not available',
               bottomMargin: 0);
         } else {
-          showCustomSnackBar(context, responseData['error'], bottomMargin: 310);
+          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
         }
       } else {
         showCustomSnackBar(context, 'Error retrieving destination reviews',

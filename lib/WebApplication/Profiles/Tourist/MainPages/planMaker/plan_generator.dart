@@ -138,7 +138,7 @@ class _MakePlanTabState extends State<MakePlanTab> {
       } else {
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, 'Error storing the plan contents',
-            bottomMargin: 370);
+            bottomMargin: 0);
       }
     } catch (error) {
       print('Error storing the plan: $error');
@@ -781,7 +781,7 @@ class _MakePlanTabState extends State<MakePlanTab> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) =>
-                              InterestsFillingPage(token: widget.token),
+                              InterestsFillingPage(token: widget.token, allowPoping: true),
                         ),
                       );
                     },
