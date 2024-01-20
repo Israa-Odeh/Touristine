@@ -28,7 +28,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  double reservedSizeForBottomTitles = 30;
+  double reservedSizeForBottomTitles = 35;
   int maxNumberOfWords = 0;
 
   final List<Color> barColors = [
@@ -79,7 +79,7 @@ class _HomePageState extends State<HomePage> {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return CustomBottomSheet(itemsList: statisticsList, height: 270);
+        return CustomBottomSheet(itemsList: statisticsList, height: 260);
       },
     ).then((value) {
       if (value != null) {
@@ -127,7 +127,7 @@ class _HomePageState extends State<HomePage> {
     return maxNumberOfWords == 1
         ? 15
         : maxNumberOfWords == 2
-            ? 30
+            ? 35
             : maxNumberOfWords == 3
                 ? 48
                 : maxNumberOfWords == 4
@@ -169,9 +169,12 @@ class _HomePageState extends State<HomePage> {
       padding = maxVisits > 0 ? min(maxVisits * 0.1, maxPaddingThreshold) : 1.0;
     }
 
+    ScrollController barChartScroller = ScrollController();
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        backgroundColor: Colors.white,
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(0.0),
           child: AppBar(
@@ -179,287 +182,318 @@ class _HomePageState extends State<HomePage> {
             elevation: 0,
           ),
         ),
-        body: SingleChildScrollView(
-          child: Container(
-            height: 755,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                    'assets/Images/Profiles/Admin/mainBackground.jpg'),
-                fit: BoxFit.fill,
-              ),
+        body: Container(
+          height: 550,
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image:
+                  AssetImage('assets/Images/Profiles/Admin/mainBackground.jpg'),
+              fit: BoxFit.fill,
             ),
-            child: Padding(
-              padding: const EdgeInsets.only(left: 10.0, right: 10, top: 30),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                    child: ElevatedButton(
-                      onPressed: showChoicesBottomSheet,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            const Color.fromARGB(255, 231, 231, 231),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                      ),
-                      child: SizedBox(
-                        height: 50,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 5.0),
-                              child: Text(
-                                widget.selectedStatisticsType.isEmpty
-                                    ? 'Select Statistic Type'
-                                    : widget.selectedStatisticsType,
-                                style: const TextStyle(
-                                    color: Color.fromARGB(163, 0, 0, 0),
-                                    fontSize: 22),
-                              ),
-                            ),
-                            const FaIcon(
-                              FontAwesomeIcons.chartSimple,
-                              color: Color.fromARGB(100, 0, 0, 0),
-                              size: 25,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: selectedChartType == ChartType.bar &&
-                            widget.statisticsResult.isNotEmpty
-                        ? MainAxisAlignment.end
-                        : selectedChartType == ChartType.pie &&
-                                widget.statisticsResult.isNotEmpty
-                            ? MainAxisAlignment.spaceAround
-                            : MainAxisAlignment.center,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 10.0, right: 10, top: 30),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(right: 35.0),
-                        child: DropdownButton<String>(
-                          value: widget.selectedCity,
-                          icon: const Icon(
-                            FontAwesomeIcons.caretDown,
-                            color: Color.fromARGB(104, 0, 0, 0),
+                        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                        child: ElevatedButton(
+                          onPressed: showChoicesBottomSheet,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromARGB(255, 231, 231, 231),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
                           ),
-                          items: [
-                            'All Cities',
-                            'Nablus',
-                            'Ramallah',
-                            'Jerusalem',
-                            'Bethlehem'
-                          ].map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          onChanged: (String? value) {
-                            setState(() {
-                              widget.selectedCity = value ?? 'All Cities';
-                            });
-                          },
+                          child: SizedBox(
+                            height: 50,
+                            width: 400,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 5.0),
+                                  child: Text(
+                                    widget.selectedStatisticsType.isEmpty
+                                        ? 'Select Statistic Type'
+                                        : widget.selectedStatisticsType,
+                                    style: const TextStyle(
+                                        color: Color.fromARGB(163, 0, 0, 0),
+                                        fontSize: 18),
+                                  ),
+                                ),
+                                const FaIcon(
+                                  FontAwesomeIcons.chartSimple,
+                                  color: Color.fromARGB(100, 0, 0, 0),
+                                  size: 20,
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                      if (widget.selectedCity == "All Cities")
-                        DropdownButton<String>(
-                          value: widget.selectedCategory,
-                          icon: const Icon(
-                            FontAwesomeIcons.caretDown,
-                            color: Color.fromRGBO(0, 0, 0, 0.5),
-                          ),
-                          items: (getCategoriesListForAllChoice())
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          onChanged: (String? value) {
-                            if (value != null) {
-                              setState(() {
-                                widget.selectedCategory = value;
-                              });
-                            }
-                          },
-                        ),
-                      if (widget.selectedCity != "All Cities")
-                        DropdownButton<String>(
-                          value: widget.selectedCategory == "By City"
-                              ? "By Category"
-                              : widget.selectedCategory,
-                          icon: const Icon(
-                            FontAwesomeIcons.caretDown,
-                            color: Color.fromRGBO(0, 0, 0, 0.5),
-                          ),
-                          items: (getCategoriesListForNonAll())
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          onChanged: (String? value) {
-                            if (value != null) {
-                              setState(() {
-                                widget.selectedCategory = value;
-                              });
-                            }
-                          },
-                        )
-                    ],
-                  ),
-                  if (widget.statisticsResult.isNotEmpty)
-                    SizedBox(
-                      height: selectedChartType == ChartType.bar ? 450 : 490,
-                      child: (widget.statisticsResult.length > 4 &&
-                              selectedChartType == ChartType.bar)
-                          ? Scrollbar(
-                              trackVisibility: true,
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: buildBarChart(),
-                              ),
-                            )
-                          : selectedChartType == ChartType.bar
-                              ? buildBarChart()
-                              : buildPieChart(),
-                    )
-                  else
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                            'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
-                            fit: BoxFit.fill),
-                        const Text(
-                          'No results found',
-                          style: TextStyle(
-                              fontSize: 40,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'Gabriola',
-                              color: Color.fromARGB(255, 23, 99, 114)),
-                        ),
-                        if (selectedChartType == ChartType.bar)
-                          const SizedBox(height: 36.5),
-                        if (selectedChartType == ChartType.pie)
-                          const SizedBox(height: 30.5)
-                      ],
-                    ),
-                  if (selectedChartType == ChartType.bar &&
-                      widget.statisticsResult.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20, left: 70),
-                      child: Text(
-                        widget.selectedCategory,
-                        style: const TextStyle(
-                          color: Color.fromARGB(163, 0, 0, 0),
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Zilla Slab Light',
-                        ),
-                      ),
-                    ),
-                  SizedBox(
-                      height: selectedChartType == ChartType.bar ? 30 : 36),
-                  if (widget.statisticsResult.length <= 10)
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: Row(
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          _buildCircularIconButton(
-                            icon: FontAwesomeIcons.chartColumn,
-                            onPressed: () {
-                              setState(() {
-                                selectedChartType = ChartType.bar;
-                              });
-                              if (widget.selectedStatisticsType.isNotEmpty &&
-                                  widget.selectedCity.isNotEmpty &&
-                                  widget.selectedCategory.isNotEmpty) {
-                                updateChart();
-                              } else {
-                                showCustomSnackBar(context,
-                                    'Please select the relevant options',
-                                    bottomMargin: 0);
-                              }
-                            },
+                          Padding(
+                            padding: const EdgeInsets.only(right: 35.0),
+                            child: DropdownButton<String>(
+                              value: widget.selectedCity,
+                              icon: const Icon(
+                                FontAwesomeIcons.caretDown,
+                                color: Color.fromARGB(104, 0, 0, 0),
+                              ),
+                              items: [
+                                'All Cities',
+                                'Nablus',
+                                'Ramallah',
+                                'Jerusalem',
+                                'Bethlehem'
+                              ].map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              onChanged: (String? value) {
+                                setState(() {
+                                  widget.selectedCity = value ?? 'All Cities';
+                                });
+                              },
+                            ),
                           ),
-                          _buildCircularIconButton(
-                            icon: FontAwesomeIcons.chartPie,
-                            onPressed: () {
-                              setState(() {
-                                selectedChartType = ChartType.pie;
-                              });
-                              if (widget.selectedStatisticsType.isNotEmpty &&
-                                  widget.selectedCity.isNotEmpty &&
-                                  widget.selectedCategory.isNotEmpty) {
-                                updateChart();
-                              } else {
-                                showCustomSnackBar(context,
-                                    'Please select the relevant options',
-                                    bottomMargin: 0);
-                              }
-                            },
-                          ),
+                          if (widget.selectedCity == "All Cities")
+                            DropdownButton<String>(
+                              value: widget.selectedCategory,
+                              icon: const Icon(
+                                FontAwesomeIcons.caretDown,
+                                color: Color.fromRGBO(0, 0, 0, 0.5),
+                              ),
+                              items: (getCategoriesListForAllChoice())
+                                  .map<DropdownMenuItem<String>>(
+                                      (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              onChanged: (String? value) {
+                                if (value != null) {
+                                  setState(() {
+                                    widget.selectedCategory = value;
+                                  });
+                                }
+                              },
+                            ),
+                          if (widget.selectedCity != "All Cities")
+                            DropdownButton<String>(
+                              value: widget.selectedCategory == "By City"
+                                  ? "By Category"
+                                  : widget.selectedCategory,
+                              icon: const Icon(
+                                FontAwesomeIcons.caretDown,
+                                color: Color.fromRGBO(0, 0, 0, 0.5),
+                              ),
+                              items: (getCategoriesListForNonAll())
+                                  .map<DropdownMenuItem<String>>(
+                                      (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              onChanged: (String? value) {
+                                if (value != null) {
+                                  setState(() {
+                                    widget.selectedCategory = value;
+                                  });
+                                }
+                              },
+                            )
                         ],
                       ),
-                    ),
-                  if (widget.statisticsResult.length > 10)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 70.0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (widget.selectedStatisticsType.isNotEmpty &&
-                              widget.selectedCity.isNotEmpty &&
-                              widget.selectedCategory.isNotEmpty) {
-                            updateChart();
-                          } else {
-                            showCustomSnackBar(
-                                context, 'Please select the relevant options',
-                                bottomMargin: 0);
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 10,
-                          ),
-                          backgroundColor: const Color(0xFF1E889E),
-                          textStyle: const TextStyle(
-                            fontSize: 27,
-                            fontFamily: 'Zilla',
-                            fontWeight: FontWeight.w300,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15.0),
+                      Image.asset('assets/Images/Profiles/Admin/Statistics.gif',
+                          height: 300, fit: BoxFit.cover),
+                      if (widget.statisticsResult.length <= 10)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              _buildCircularIconButton(
+                                icon: FontAwesomeIcons.chartColumn,
+                                onPressed: () {
+                                  setState(() {
+                                    selectedChartType = ChartType.bar;
+                                  });
+                                  if (widget
+                                          .selectedStatisticsType.isNotEmpty &&
+                                      widget.selectedCity.isNotEmpty &&
+                                      widget.selectedCategory.isNotEmpty) {
+                                    updateChart();
+                                  } else {
+                                    showCustomSnackBar(context,
+                                        'Please select the relevant options',
+                                        bottomMargin: 0);
+                                  }
+                                },
+                              ),
+                              _buildCircularIconButton(
+                                icon: FontAwesomeIcons.chartPie,
+                                onPressed: () {
+                                  setState(() {
+                                    selectedChartType = ChartType.pie;
+                                  });
+                                  if (widget
+                                          .selectedStatisticsType.isNotEmpty &&
+                                      widget.selectedCity.isNotEmpty &&
+                                      widget.selectedCategory.isNotEmpty) {
+                                    updateChart();
+                                  } else {
+                                    showCustomSnackBar(context,
+                                        'Please select the relevant options',
+                                        bottomMargin: 0);
+                                  }
+                                },
+                              ),
+                            ],
                           ),
                         ),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            FaIcon(
-                              FontAwesomeIcons.arrowsRotate,
-                              size: 27,
-                              color: Colors.white,
+                      if (widget.statisticsResult.length > 10)
+                        Padding(
+                          padding:
+                              const EdgeInsets.symmetric(horizontal: 110.0),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (widget.selectedStatisticsType.isNotEmpty &&
+                                  widget.selectedCity.isNotEmpty &&
+                                  widget.selectedCategory.isNotEmpty) {
+                                updateChart();
+                              } else {
+                                showCustomSnackBar(context,
+                                    'Please select the relevant options',
+                                    bottomMargin: 0);
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 20,
+                              ),
+                              backgroundColor: const Color(0xFF1E889E),
+                              textStyle: const TextStyle(
+                                fontSize: 20,
+                                fontFamily: 'Zilla',
+                                fontWeight: FontWeight.w300,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
                             ),
-                            SizedBox(width: 10),
-                            Text('Update Chart'),
-                          ],
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                FaIcon(
+                                  FontAwesomeIcons.arrowsRotate,
+                                  size: 25,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(width: 10),
+                                Text('Update Chart'),
+                              ],
+                            ),
+                          ),
                         ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    children: [
+                      Column(
+                        children: [
+                          if (widget.statisticsResult.isNotEmpty)
+                            SizedBox(
+                              width: 600,
+                              height: selectedChartType == ChartType.bar
+                                  ? 420
+                                  : 490,
+                              child: (widget.statisticsResult.length > 7 &&
+                                      selectedChartType == ChartType.bar)
+                                  ? Scrollbar(
+                                      controller: barChartScroller,
+                                      trackVisibility: true,
+                                      child: SingleChildScrollView(
+                                        controller: barChartScroller,
+                                        scrollDirection: Axis.horizontal,
+                                        child: buildBarChart(),
+                                      ),
+                                    )
+                                  : selectedChartType == ChartType.bar
+                                      ? buildBarChart()
+                                      : buildPieChart(),
+                            )
+                          else
+                            SizedBox(
+                              height: 500,
+                              child: Center(
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    Positioned(
+                                      top: -50,
+                                      child: Image.asset(
+                                        'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
+                                    const Positioned(
+                                      top: 370,
+                                      child: Text(
+                                        'No destinations found',
+                                        style: TextStyle(
+                                          fontSize: 40,
+                                          fontFamily: 'Gabriola',
+                                          color:
+                                              Color.fromARGB(255, 23, 99, 114),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          if (selectedChartType == ChartType.bar &&
+                              widget.statisticsResult.isNotEmpty)
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  top: 20,
+                                  right: widget.statisticsResult.length <= 5
+                                      ? 100
+                                      : 0),
+                              child: Text(
+                                widget.selectedCategory,
+                                style: const TextStyle(
+                                  color: Color.fromARGB(163, 0, 0, 0),
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Zilla Slab Light',
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
-                    ),
-                ],
-              ),
+                    ],
+                  ),
+                )
+              ],
             ),
           ),
         ),
@@ -481,7 +515,7 @@ class _HomePageState extends State<HomePage> {
                   : widget.selectedStatisticsType,
               style: const TextStyle(
                   color: Color.fromARGB(163, 0, 0, 0),
-                  fontSize: 22,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Zilla Slab Light'),
             ),
@@ -489,7 +523,7 @@ class _HomePageState extends State<HomePage> {
         ),
         SizedBox(
           width: widget.statisticsResult.length <= 4
-              ? 360
+              ? 400
               : (80 * widget.statisticsResult.length).toDouble(),
           child: Padding(
             padding: const EdgeInsets.only(top: 10.0),
@@ -569,7 +603,7 @@ class _HomePageState extends State<HomePage> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 100.0),
+          padding: const EdgeInsets.only(top: 80.0),
           child: SizedBox(
             width: 150,
             height: 150,
@@ -589,63 +623,39 @@ class _HomePageState extends State<HomePage> {
         ),
         Padding(
           padding: const EdgeInsets.only(top: 100.0),
-          child: widget.statisticsResult.keys.length <= 3
-              ? SizedBox(
-                  height: 100,
-                  child: Wrap(
-                    spacing: 8.0,
-                    runSpacing: 8.0,
-                    children: widget.statisticsResult.keys.map((city) {
-                      return Container(
-                        width: 300,
-                        height: 40,
-                        color: barColors[widget.statisticsResult.keys
-                            .toList()
-                            .indexOf(city)],
-                        child: Center(
-                          child: Text(
-                            city,
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 20),
+          child: SizedBox(
+            height: 140,
+            child: Scrollbar(
+              controller: scrollController,
+              trackVisibility: true,
+              thumbVisibility: true,
+              child: SingleChildScrollView(
+                controller: scrollController,
+                scrollDirection: Axis.vertical,
+                child: Wrap(
+                  spacing: 8.0,
+                  runSpacing: 10.0,
+                  children: widget.statisticsResult.keys.map((city) {
+                    return Container(
+                      width: 300,
+                      height: 40,
+                      color: barColors[
+                          widget.statisticsResult.keys.toList().indexOf(city)],
+                      child: Center(
+                        child: Text(
+                          city,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
                           ),
                         ),
-                      );
-                    }).toList(),
-                  ))
-              : SizedBox(
-                  height: 140,
-                  child: Scrollbar(
-                    controller: scrollController,
-                    trackVisibility: true,
-                    thumbVisibility: true,
-                    child: SingleChildScrollView(
-                      controller: scrollController,
-                      scrollDirection: Axis.vertical,
-                      child: Wrap(
-                        spacing: 8.0,
-                        runSpacing: 10.0,
-                        children: widget.statisticsResult.keys.map((city) {
-                          return Container(
-                            width: 300,
-                            height: 40,
-                            color: barColors[widget.statisticsResult.keys
-                                .toList()
-                                .indexOf(city)],
-                            child: Center(
-                              child: Text(
-                                city,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ),
-                          );
-                        }).toList(),
                       ),
-                    ),
-                  ),
+                    );
+                  }).toList(),
                 ),
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -766,7 +776,6 @@ class _HomePageState extends State<HomePage> {
           widget.statisticsResult =
               Map.fromEntries(newStatisticsResult.entries);
         });
-
         print(widget.statisticsResult);
       } else if (response.statusCode == 500) {
         final Map<String, dynamic> responseData = json.decode(response.body);
