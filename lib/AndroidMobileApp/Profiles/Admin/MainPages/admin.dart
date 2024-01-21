@@ -2,7 +2,7 @@ import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/Destination
 import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/UserInteractions/tab_bar_viewer.dart';
 import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/Chatting/chatting_list.dart';
 import 'package:touristine/AndroidMobileApp/Profiles/Admin/ActiveStatus/active_status.dart';
-import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/cracks_analysis.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/Cracks/cracks_page.dart';
 import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/profile_page.dart';
 import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/Home/home.dart';
 import 'package:touristine/AndroidMobileApp/Notifications/snack_bar.dart';
