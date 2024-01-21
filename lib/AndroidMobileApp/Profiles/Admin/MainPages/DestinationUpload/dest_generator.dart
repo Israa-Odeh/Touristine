@@ -38,6 +38,7 @@ class _AddDestTabState extends State<AddDestTab> {
   TextEditingController activityContentController = TextEditingController();
   TextEditingController aboutController = TextEditingController();
   TextEditingController geoTagsController = TextEditingController();
+  TextEditingController virtualTourController = TextEditingController();
 
   List<File> selectedImages = []; // List to store selected images.
   List<Map<String, String>> addedActivities = [];
@@ -157,6 +158,7 @@ class _AddDestTabState extends State<AddDestTab> {
     request.fields['ageCategories'] = selectedAgeCategoriesJson;
     String geoTagsJson = jsonEncode(geoTags);
     request.fields['geoTags'] = geoTagsJson;
+    request.fields['virtualTourLink'] = virtualTourController.text;
     request.fields['edited'] =
         destinationInfo.isNotEmpty && destinationInfo.containsKey('latitude')
             ? "true"
@@ -390,6 +392,7 @@ class _AddDestTabState extends State<AddDestTab> {
     destLngController.text = destinationInfo['longitude'];
     startTimeController.text = destinationInfo['openingTime'];
     endTimeController.text = destinationInfo['closingTime'];
+    virtualTourController.text = destinationInfo['virtualTourLink'];
 
     selectedWorkingDays =
         List<String>.from(destinationInfo['selectedWorkingDays']);
@@ -515,7 +518,7 @@ class _AddDestTabState extends State<AddDestTab> {
   }
 
   void nextPage() {
-    if (currentPage < 11) {
+    if (currentPage < 12) {
       pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
@@ -1112,6 +1115,7 @@ class _AddDestTabState extends State<AddDestTab> {
                   buildServicesPage(),
                   buildActivitiesPage(),
                   buildGeoTagsPage(),
+                  buildVirtualTourPage(),
                   buildImagesPage(),
                   buildSummaryPage(),
                 ],
@@ -1147,7 +1151,7 @@ class _AddDestTabState extends State<AddDestTab> {
                   ),
                   const SizedBox(width: 10),
                   Visibility(
-                    visible: currentPage < 11,
+                    visible: currentPage < 12,
                     child: ElevatedButton(
                       onPressed: () {
                         if (currentPage == 1) {
@@ -1236,7 +1240,7 @@ class _AddDestTabState extends State<AddDestTab> {
                           } else {
                             nextPage();
                           }
-                        } else if (currentPage == 10) {
+                        } else if (currentPage == 11) {
                           if (selectedImages.isEmpty) {
                             showCustomSnackBar(
                                 context, 'Destination images are needed',
@@ -2352,6 +2356,51 @@ class _AddDestTabState extends State<AddDestTab> {
     setState(() {
       geoTags.removeAt(index);
     });
+  }
+
+  Widget buildVirtualTourPage() {
+    return buildPageContent(
+      Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          const Text(
+            'Incorporate a virtual tour',
+            style: TextStyle(
+              fontFamily: 'Gabriola',
+              fontSize: 33,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF455a64),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 10),
+          Image.asset(
+            'assets/Images/Profiles/Admin/DestUpload/VirtualTour.gif',
+            height: 300,
+            fit: BoxFit.cover,
+          ),
+          const SizedBox(height: 22.57),
+          TextField(
+            controller: activityTitleController,
+            decoration: const InputDecoration(
+              labelText: 'Virtual Tour Link',
+              labelStyle: TextStyle(
+                fontSize: 22,
+                color: Color(0xFF1E889E),
+                fontWeight: FontWeight.bold,
+              ),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Color(0xFF1E889E)),
+              ),
+            ),
+            maxLength: 200,
+            minLines: 1,
+            maxLines: 3,
+            style: const TextStyle(fontSize: 18),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget buildImagesPage() {
