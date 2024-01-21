@@ -175,7 +175,7 @@ class _CracksAnalysisPageState extends State<CracksAnalysisPage> {
       if (!mounted) return;
       try {
         final url = Uri.parse(
-            'https://touristine.onrender.com/delete-destination-with-cracks');
+            'https://touristine.onrender.com/delete-destinations-with-cracks');
 
         final response = await http.post(
           url,

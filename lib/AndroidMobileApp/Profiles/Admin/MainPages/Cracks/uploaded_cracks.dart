@@ -157,7 +157,7 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
       if (!mounted) return;
       try {
         final url =
-            Uri.parse('https://touristine.onrender.com/reject-an-upload');
+            Uri.parse('https://touristine.onrender.com/reject-uploaded-crack');
 
         final response = await http.post(
           url,
