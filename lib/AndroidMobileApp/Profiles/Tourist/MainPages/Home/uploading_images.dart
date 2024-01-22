@@ -34,6 +34,12 @@ class _UploadingImagesPageState extends State<UploadingImagesPage> {
           bottomMargin: 400);
       return false;
     }
+    if (selectedKeywords.contains('Cracks') && selectedKeywords.length > 1) {
+      showCustomSnackBar(context,
+          'Select only the cracks category for analysis purposes, without adding others',
+          bottomMargin: 0);
+      return false;
+    }
     return true;
   }
 
