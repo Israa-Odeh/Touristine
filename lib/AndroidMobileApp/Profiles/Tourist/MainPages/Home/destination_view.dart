@@ -58,8 +58,6 @@ class _DestinationDetailsState extends State<DestinationDetails> {
     selectedImage =
         widget.destination['image'] ?? widget.destination['imagePath'];
     getDestinationLatLng();
-    if (widget.destinationDetails['virtualTourLink'] == null)
-      print("It is null");
   }
 
   @override
@@ -665,7 +663,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
   @override
   Widget build(BuildContext context) {
     int tabLength =
-        widget.destinationDetails['virtualTourLink'] == null ? 7 : 8;
+        widget.destinationDetails['virtualTourLink'].toString().isEmpty ? 7 : 8;
     return DefaultTabController(
       length: tabLength,
       child: Scaffold(
@@ -715,12 +713,14 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                       const Tab(text: 'Description'),
                       const Tab(text: 'Services'),
                       const Tab(text: 'Location'),
+                      // Add Virtual Tour Tab if there is a virtual tour link.
+                      if (widget.destinationDetails['virtualTourLink']
+                          .toString()
+                          .isNotEmpty)
+                        const Tab(text: 'Virtual Tour'),
                       const Tab(text: 'Reviews'),
                       const Tab(text: 'Complaints'),
                       const Tab(text: 'Images'),
-                      // Add Virtual Tour Tab if there is a virtual tour link.
-                      if (widget.destinationDetails['virtualTourLink'] != null)
-                        const Tab(text: 'Virtual Tour'),
                     ],
                   ),
                   SizedBox(
@@ -731,12 +731,13 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                         _buildDescriptionTab(),
                         _buildServicesTab(),
                         _buildLocationsTab(),
+                        if (widget.destinationDetails['virtualTourLink']
+                            .toString()
+                            .isNotEmpty)
+                          _buildVirtualTourTab(),
                         _buildReviewsTab(),
                         _buildComplaintsTab(),
                         _buildImagesUplaodTab(),
-                        if (widget.destinationDetails['virtualTourLink'] !=
-                            null)
-                          _buildVirtualTourTab(),
                       ],
                     ),
                   ),
@@ -2077,30 +2078,32 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                       color: const Color.fromARGB(33, 20, 89, 121),
                       borderRadius: BorderRadius.circular(15.0),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 13.0, vertical: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Discover ${widget.destination['name']} with a virtual tour for a real experience!',
-                            style: const TextStyle(
-                              fontSize: 35,
-                              fontFamily: 'Gabriola',
-                              fontWeight: FontWeight.w500,
-                              color: Color.fromARGB(255, 23, 103, 120),
+                    child: SizedBox(
+                      height: 295,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 13.0, vertical: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Discover ${widget.destination['name']} with a virtual tour for a real experience!',
+                              style: const TextStyle(
+                                fontSize: 35,
+                                fontFamily: 'Gabriola',
+                                fontWeight: FontWeight.w500,
+                                color: Color.fromARGB(255, 23, 103, 120),
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 40),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              ElevatedButton(
+                            const Spacer(),
+                            Align(
+                              alignment: Alignment.bottomCenter,
+                              child: ElevatedButton(
                                 onPressed: () {
-                                  // final websiteURI = Uri.parse(widget
-                                  //     .destinationDetails['virtualTourLink']);
-                                  // launchTourURL(websiteURI);
+                                  final websiteURI = Uri.parse(widget
+                                      .destinationDetails['virtualTourLink']);
+                                  launchTourURL(websiteURI);
                                 },
                                 style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(
@@ -2128,16 +2131,9 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                                   ],
                                 ),
                               ),
-                              // FloatingActionButton(
-                              //   heroTag: 'Start Tour',
-                              //   backgroundColor: const Color(0xFF1E889E),
-                              //   onPressed: () {},
-                              //   child:
-                              //       const FaIcon(FontAwesomeIcons.vrCardboard),
-                              // ),
-                            ],
-                          ),
-                        ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

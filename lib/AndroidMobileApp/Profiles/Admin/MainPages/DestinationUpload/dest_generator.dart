@@ -158,7 +158,8 @@ class _AddDestTabState extends State<AddDestTab> {
     request.fields['ageCategories'] = selectedAgeCategoriesJson;
     String geoTagsJson = jsonEncode(geoTags);
     request.fields['geoTags'] = geoTagsJson;
-    request.fields['virtualTourLink'] = virtualTourController.text;
+    request.fields['virtualTourLink'] =
+        virtualTourController.text.isEmpty ? "" : virtualTourController.text;
     request.fields['edited'] =
         destinationInfo.isNotEmpty && destinationInfo.containsKey('latitude')
             ? "true"
