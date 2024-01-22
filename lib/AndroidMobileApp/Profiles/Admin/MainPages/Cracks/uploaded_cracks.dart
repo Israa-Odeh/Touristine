@@ -7,9 +7,13 @@ import 'dart:convert';
 class UploadedCracksPage extends StatefulWidget {
   final String token;
   final String destinationId;
+  final String destinationName;
 
   const UploadedCracksPage(
-      {super.key, required this.token, required this.destinationId});
+      {super.key,
+      required this.token,
+      required this.destinationId,
+      required this.destinationName});
 
   @override
   _UploadedCracksPageState createState() => _UploadedCracksPageState();
@@ -48,8 +52,8 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
       if (!mounted) return;
 
       if (response.statusCode == 200) {
-        // Jenan, I need to retrieve a List<Map> of the uploaded 
-        // cracks for the give destination id, the format will
+        // Jenan, I need to retrieve a List<Map> of the uploaded
+        // cracks for the given destination id, the format will
         // be as the one at line 247.
         final Map<String, dynamic> responseBody = json.decode(response.body);
         final List<Map<String, dynamic>> fetchedUploads =
@@ -64,14 +68,12 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
         showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
       } else {
         // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, 'Error retrieving destination uploads',
+        showCustomSnackBar(
+            context, 'Error retrieving destination uploaded cracks',
             bottomMargin: 0);
       }
     } catch (error) {
       if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
         print('Error fetching uploads: $error');
       }
     } finally {
@@ -167,7 +169,7 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
           },
           body: {
             'uploadId': uploadId,
-            'destinationName': widget.destinationId,
+            'destinationName': widget.destinationName,
           },
         );
 
@@ -245,30 +247,6 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
   void initState() {
     super.initState();
     getDestinationUploads();
-    uploadedImages = [
-      {
-        'id': '1',
-        'keywords': ['Cracks'],
-        'date': '07/10/2023',
-        'images': [
-          'https://milpitasbeat.com/wp-content/uploads/2021/05/Untitled-design-11-2.png',
-          'https://upload.wikimedia.org/wikipedia/commons/9/9c/SurBaherDec102022_05.jpg',
-        ],
-        'status': 'Pending',
-      },
-      {
-        'id': '2',
-        'keywords': ['Cracks'],
-        'date': '20/01/2024',
-        'images': [
-          'https://upload.wikimedia.org/wikipedia/commons/6/61/SurBaherFeb162022_04.jpg',
-          'https://upload.wikimedia.org/wikipedia/commons/6/61/SurBaherFeb162022_04.jpg',
-        ],
-        'status': 'Pending',
-      },
-      // Add more sample data as needed
-    ];
-    initializeScrollers();
   }
 
   @override

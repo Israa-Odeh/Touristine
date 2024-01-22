@@ -352,7 +352,8 @@ class _CracksAnalysisPageState extends State<CracksAnalysisPage> {
                           MaterialPageRoute(
                             builder: (context) => UploadedCracksPage(
                                 token: widget.token,
-                                destinationId: currentCardIndex),
+                                destinationId: currentCardIndex,
+                                destinationName: destinationName),
                           ),
                         );
                       }),
