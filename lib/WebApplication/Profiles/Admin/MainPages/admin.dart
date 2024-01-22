@@ -5,9 +5,9 @@ import 'package:touristine/WebApplication/Profiles/Admin/MainPages/DestinationUp
 import 'package:touristine/WebApplication/Profiles/Admin/MainPages/Chatting/chatting_list.dart';
 import 'package:touristine/WebApplication/Profiles/Admin/Profile/Sections/adding_admins.dart';
 import 'package:touristine/WebApplication/LoginAndRegistration/MainPages/landing_page.dart';
+import 'package:touristine/WebApplication/Profiles/Admin/MainPages/Cracks/cracks_page.dart';
 import 'package:touristine/WebApplication/Profiles/Admin/Profile/Sections/my_account.dart';
 import 'package:touristine/WebApplication/Profiles/Admin/ActiveStatus/active_status.dart';
-import 'package:touristine/WebApplication/Profiles/Admin/MainPages/cracks_analysis.dart';
 import 'package:touristine/WebApplication/Profiles/Admin/MainPages/Home/home.dart';
 import 'package:touristine/WebApplication/Notifications/snack_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
