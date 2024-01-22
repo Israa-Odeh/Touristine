@@ -391,7 +391,7 @@ class _CracksAnalysisPageState extends State<CracksAnalysisPage> {
                   fontWeight: FontWeight.bold,
                   fontSize: 22)),
           content: Text(
-            '$destinationName has $numberOfUploads uploads, each containing cracks.',
+            '$destinationName has $numberOfUploads ${(numberOfUploads > 1) ? "uploads, each containing cracks." : "upload containing cracks."}',
             style: const TextStyle(fontFamily: 'Andalus', fontSize: 24),
           ),
           actions: [
