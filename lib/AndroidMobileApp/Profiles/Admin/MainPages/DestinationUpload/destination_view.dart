@@ -1,6 +1,7 @@
 import 'package:touristine/AndroidMobileApp/Profiles/Tourist/MainPages/Home/images_list.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // ignore: must_be_immutable
 class DestinationDetails extends StatefulWidget {
@@ -146,8 +147,10 @@ class _DestinationDetailsState extends State<DestinationDetails> {
 
   @override
   Widget build(BuildContext context) {
+    int tabLength =
+        widget.destinationDetails['virtualTourLink'].toString().isEmpty ? 3 : 4;
     return DefaultTabController(
-      length: 3,
+      length: tabLength,
       child: Scaffold(
         body: Stack(
           children: [
@@ -177,20 +180,28 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                   if (widget.destinationImages.isEmpty)
                     const SizedBox(height: 130),
                   const SizedBox(height: 8),
-                  const TabBar(
+                  TabBar(
                     isScrollable: true,
-                    indicatorColor: Color(0xFF1E889E),
-                    indicatorPadding: EdgeInsets.symmetric(horizontal: 15),
+                    indicatorColor: const Color(0xFF1E889E),
+                    indicatorPadding:
+                        const EdgeInsets.symmetric(horizontal: 15),
                     indicatorWeight: 3,
-                    labelColor: Color(0xFF1E889E),
-                    unselectedLabelColor: Color.fromARGB(182, 30, 137, 158),
-                    labelStyle: TextStyle(fontSize: 30.0, fontFamily: 'Zilla'),
+                    labelColor: const Color(0xFF1E889E),
+                    unselectedLabelColor:
+                        const Color.fromARGB(182, 30, 137, 158),
+                    labelStyle:
+                        const TextStyle(fontSize: 30.0, fontFamily: 'Zilla'),
                     unselectedLabelStyle:
-                        TextStyle(fontSize: 25.0, fontFamily: 'Zilla'),
+                        const TextStyle(fontSize: 25.0, fontFamily: 'Zilla'),
                     tabs: [
-                      Tab(text: 'About'),
-                      Tab(text: 'Description'),
-                      Tab(text: 'Services'),
+                      const Tab(text: 'About'),
+                      const Tab(text: 'Description'),
+                      const Tab(text: 'Services'),
+                      // Add Virtual Tour Tab if there is a virtual tour link.
+                      if (widget.destinationDetails['virtualTourLink']
+                          .toString()
+                          .isNotEmpty)
+                        const Tab(text: 'Virtual Tour'),
                     ],
                   ),
                   SizedBox(
@@ -200,6 +211,10 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                         _buildAboutTab(),
                         _buildDescriptionTab(),
                         _buildServicesTab(),
+                        if (widget.destinationDetails['virtualTourLink']
+                            .toString()
+                            .isNotEmpty)
+                          _buildVirtualTourTab(),
                       ],
                     ),
                   ),
@@ -929,6 +944,107 @@ class _DestinationDetailsState extends State<DestinationDetails> {
         ],
       ),
     );
+  }
+
+  Widget _buildVirtualTourTab() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 8),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                double additionalMargin = 0;
+                if (constraints.maxHeight > 295) {
+                  additionalMargin = 10.0;
+                }
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 5.0 + additionalMargin),
+                  child: Container(
+                    constraints: const BoxConstraints(
+                      minHeight: 295,
+                    ),
+                    width: 400,
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(33, 20, 89, 121),
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    child: SizedBox(
+                      height: 295,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 13.0, vertical: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '${widget.destination['name']} virtual tour experience!',
+                              style: const TextStyle(
+                                fontSize: 35,
+                                fontFamily: 'Gabriola',
+                                fontWeight: FontWeight.w500,
+                                color: Color.fromARGB(255, 23, 103, 120),
+                              ),
+                            ),
+                            const Spacer(),
+                            Align(
+                              alignment: Alignment.bottomCenter,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  final websiteURI = Uri.parse(widget
+                                      .destinationDetails['virtualTourLink']);
+                                  launchTourURL(websiteURI);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 90,
+                                    vertical: 10,
+                                  ),
+                                  backgroundColor: const Color(0xFF1E889E),
+                                  textStyle: const TextStyle(
+                                    fontSize: 28,
+                                    fontFamily: 'Zilla',
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                child: const Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('Start Tour'),
+                                    SizedBox(width: 20),
+                                    FaIcon(
+                                      FontAwesomeIcons.vrCardboard,
+                                      size: 28,
+                                      color: Colors.white,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void launchTourURL(Uri url) async {
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.inAppWebView);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }
 
