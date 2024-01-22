@@ -167,7 +167,7 @@ class _CracksAnalysisPageState extends State<CracksAnalysisPage> {
         if (response.statusCode == 200) {
           // Jenan, delete all the uploaded cracks for the passed destination (entirely).
           // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, 'The uploaded cracks have been rejected',
+          showCustomSnackBar(context, 'The cracks have been rejected',
               bottomMargin: 0);
           removeDestination(destinationId);
         } else {
