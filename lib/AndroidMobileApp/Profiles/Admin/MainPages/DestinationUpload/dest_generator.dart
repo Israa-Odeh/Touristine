@@ -393,7 +393,6 @@ class _AddDestTabState extends State<AddDestTab> {
     startTimeController.text = destinationInfo['openingTime'];
     endTimeController.text = destinationInfo['closingTime'];
     virtualTourController.text = destinationInfo['virtualTourLink'];
-
     selectedWorkingDays =
         List<String>.from(destinationInfo['selectedWorkingDays']);
 
@@ -2381,7 +2380,7 @@ class _AddDestTabState extends State<AddDestTab> {
           ),
           const SizedBox(height: 22.57),
           TextField(
-            controller: activityTitleController,
+            controller: virtualTourController,
             decoration: const InputDecoration(
               labelText: 'Virtual Tour Link',
               labelStyle: TextStyle(
