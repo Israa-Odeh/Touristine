@@ -353,30 +353,6 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
                                           ),
                                         ],
                                       ),
-                                    if (keywords.length > 2)
-                                      const Text(
-                                        'Categories: ',
-                                        style: TextStyle(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.w100,
-                                          fontFamily: 'Zilla',
-                                          color:
-                                              Color.fromARGB(255, 14, 63, 73),
-                                        ),
-                                      ),
-                                    if (keywords.length > 2)
-                                      const SizedBox(height: 10),
-                                    if (keywords.length > 2)
-                                      Text(
-                                        keywords.join(', '),
-                                        style: const TextStyle(
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.w100,
-                                          fontFamily: 'Zilla',
-                                          color:
-                                              Color.fromARGB(255, 14, 63, 73),
-                                        ),
-                                      ),
                                     const Divider(
                                       color: Color.fromARGB(126, 14, 63, 73),
                                       thickness: 2,
