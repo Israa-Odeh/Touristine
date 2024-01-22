@@ -24,33 +24,6 @@ class _CracksAnalysisPageState extends State<CracksAnalysisPage> {
     super.initState();
     isLoading = true;
     fetchDestinations();
-    //////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////
-    destinations = [
-      {
-        'id': '1234',
-        'name': 'Destination1',
-        'mainImage':
-            'https://milpitasbeat.com/wp-content/uploads/2021/05/Untitled-design-11-2.png',
-        'numberOfUploads': 5,
-      },
-      {
-        'id': '1235',
-        'name': 'Destination2',
-        'mainImage':
-            'https://upload.wikimedia.org/wikipedia/commons/9/9c/SurBaherDec102022_05.jpg',
-        'numberOfUploads': 8,
-      },
-      {
-        'id': '1236',
-        'name': 'Destination3',
-        'mainImage':
-            'https://upload.wikimedia.org/wikipedia/commons/6/61/SurBaherFeb162022_04.jpg',
-        'numberOfUploads': 3,
-      },
-    ];
-    //////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////
   }
 
   // Retrieve destinations that have cracks.
@@ -71,8 +44,14 @@ class _CracksAnalysisPageState extends State<CracksAnalysisPage> {
       if (!mounted) return;
 
       if (response.statusCode == 200) {
-        // Jenan the format of the data is given at line 29.
-        // Retrieve the data....
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        // Extract the 'destinations' data.
+        List<Map<String, dynamic>> destinationsData =
+            List<Map<String, dynamic>>.from(responseData['destinations']);
+        setState(() {
+          destinations = destinationsData;
+        });
+        print(destinations);
       } else if (response.statusCode == 500) {
         final Map<String, dynamic> responseData = json.decode(response.body);
         // ignore: use_build_context_synchronously
@@ -147,7 +126,7 @@ class _CracksAnalysisPageState extends State<CracksAnalysisPage> {
                       children: destinations.map((destination) {
                         final id = destination['id'];
                         final destinationName = destination['name'];
-                        final imagePath = destination['mainImage'];
+                        final imagePath = destination['image'];
                         final numberOfUploads = destination['numberOfUploads'];
 
                         return Column(
@@ -188,7 +167,7 @@ class _CracksAnalysisPageState extends State<CracksAnalysisPage> {
         if (response.statusCode == 200) {
           // Jenan, delete all the uploaded cracks for the passed destination (entirely).
           // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, 'Destination deleted successfully',
+          showCustomSnackBar(context, 'The uploaded cracks have been rejected',
               bottomMargin: 0);
           removeDestination(destinationId);
         } else {
@@ -197,7 +176,7 @@ class _CracksAnalysisPageState extends State<CracksAnalysisPage> {
           showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
         }
       } catch (error) {
-        print('Error deleting destination: $error');
+        print('Error rejecting the uploaded cracks: $error');
       }
     }
   }
