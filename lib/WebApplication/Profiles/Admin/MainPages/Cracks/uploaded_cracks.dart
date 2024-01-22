@@ -292,8 +292,14 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
                     )
                   : Padding(
                       padding:
-                          const EdgeInsets.only(top: 20, right: 16, left: 16),
-                      child: ListView.builder(
+                          const EdgeInsets.only(top: 10, right: 16, left: 16),
+                      child: GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          crossAxisSpacing: 16.0,
+                          mainAxisSpacing: 16.0,
+                        ),
                         itemCount: uploadedImages.length,
                         itemBuilder: (context, index) {
                           final imageInfo = uploadedImages[index];
@@ -334,7 +340,7 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
                                           const Text(
                                             'Category: ',
                                             style: TextStyle(
-                                              fontSize: 24,
+                                              fontSize: 20,
                                               fontWeight: FontWeight.w100,
                                               fontFamily: 'Zilla',
                                               color: Color.fromARGB(
@@ -344,7 +350,7 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
                                           Text(
                                             keywords.join(', '),
                                             style: const TextStyle(
-                                              fontSize: 22,
+                                              fontSize: 16,
                                               fontWeight: FontWeight.w100,
                                               fontFamily: 'Zilla',
                                               color: Color.fromARGB(
@@ -353,33 +359,9 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
                                           ),
                                         ],
                                       ),
-                                    if (keywords.length > 2)
-                                      const Text(
-                                        'Categories: ',
-                                        style: TextStyle(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.w100,
-                                          fontFamily: 'Zilla',
-                                          color:
-                                              Color.fromARGB(255, 14, 63, 73),
-                                        ),
-                                      ),
-                                    if (keywords.length > 2)
-                                      const SizedBox(height: 10),
-                                    if (keywords.length > 2)
-                                      Text(
-                                        keywords.join(', '),
-                                        style: const TextStyle(
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.w100,
-                                          fontFamily: 'Zilla',
-                                          color:
-                                              Color.fromARGB(255, 14, 63, 73),
-                                        ),
-                                      ),
                                     const Divider(
                                       color: Color.fromARGB(126, 14, 63, 73),
-                                      thickness: 2,
+                                      thickness: 1,
                                     ),
                                     SizedBox(
                                         height: 200,
@@ -420,9 +402,9 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
                                                             Image.network(
                                                               imageUrls[
                                                                   imageIndex],
-                                                              width: 335,
+                                                              width: 360,
                                                               height: 180,
-                                                              fit: BoxFit.cover,
+                                                              fit: BoxFit.fill,
                                                             ),
                                                             Positioned(
                                                               top: 0,
@@ -457,7 +439,7 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
                                         )),
                                     const Divider(
                                       color: Color.fromARGB(126, 14, 63, 73),
-                                      thickness: 2,
+                                      thickness: 1,
                                     ),
                                     Row(
                                       mainAxisAlignment:
@@ -466,8 +448,7 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
                                         Text(
                                           uploadingDate,
                                           style: const TextStyle(
-                                            fontSize: 19.5,
-                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16,
                                             fontFamily: 'Time New Roman',
                                             color:
                                                 Color.fromARGB(255, 14, 63, 73),
@@ -476,8 +457,7 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
                                         Text(
                                           status,
                                           style: const TextStyle(
-                                            fontSize: 19.5,
-                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16,
                                             fontFamily: 'Time New Roman',
                                             color:
                                                 Color.fromARGB(255, 14, 63, 73),
@@ -505,14 +485,14 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
                                               style: ElevatedButton.styleFrom(
                                                 padding:
                                                     const EdgeInsets.symmetric(
-                                                  horizontal: 10,
-                                                  vertical: 10,
+                                                  horizontal: 20,
+                                                  vertical: 20,
                                                 ),
                                                 backgroundColor:
                                                     const Color.fromARGB(
                                                         255, 231, 231, 231),
                                                 textStyle: const TextStyle(
-                                                  fontSize: 20,
+                                                  fontSize: 16,
                                                   fontFamily: 'Zilla',
                                                   fontWeight: FontWeight.bold,
                                                 ),
@@ -535,13 +515,13 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
                                               style: ElevatedButton.styleFrom(
                                                 padding:
                                                     const EdgeInsets.symmetric(
-                                                  horizontal: 10,
-                                                  vertical: 10,
+                                                  horizontal: 20,
+                                                  vertical: 20,
                                                 ),
                                                 backgroundColor:
                                                     const Color(0xFF1E889E),
                                                 textStyle: const TextStyle(
-                                                  fontSize: 20,
+                                                  fontSize: 16,
                                                   fontFamily: 'Zilla',
                                                   fontWeight: FontWeight.bold,
                                                 ),
@@ -597,32 +577,13 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
                 icon: const FaIcon(
                   FontAwesomeIcons.arrowLeft,
                   color: Color(0xFF1E889E),
-                  size: 30,
+                  size: 20,
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
             ),
-            // if (uploadedImages.isNotEmpty && !isLoading)
-            //   ElevatedButton(
-            //     onPressed: () async {
-            //       await rejectAllUploads();
-            //     },
-            //     style: ElevatedButton.styleFrom(
-            //       padding: const EdgeInsets.symmetric(
-            //         horizontal: 20,
-            //         vertical: 10,
-            //       ),
-            //       backgroundColor: const Color(0xFF1E889E),
-            //       textStyle: const TextStyle(
-            //         fontSize: 25,
-            //         fontFamily: 'Zilla',
-            //         fontWeight: FontWeight.bold,
-            //       ),
-            //     ),
-            //     child: const Text('Reject All'),
-            //   ),
           ],
         ),
       ],

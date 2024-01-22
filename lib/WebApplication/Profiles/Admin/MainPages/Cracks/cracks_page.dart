@@ -88,7 +88,7 @@ class _CracksAnalysisPageState extends State<CracksAnalysisPage> {
         children: [
           Image.asset(
             'assets/Images/Profiles/Admin/mainBackground.jpg',
-            fit: BoxFit.cover,
+            fit: BoxFit.fill,
             width: double.infinity,
             height: double.infinity,
           ),
@@ -101,42 +101,56 @@ class _CracksAnalysisPageState extends State<CracksAnalysisPage> {
                 )
               : destinations.isEmpty
                   ? Center(
-                      child: Column(
+                      child: Stack(
+                        alignment: Alignment.center,
                         children: [
-                          const SizedBox(height: 98),
-                          Image.asset(
-                            'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
-                            fit: BoxFit.cover,
-                          ),
-                          const Text(
-                            'No cracks found',
-                            style: TextStyle(
-                              fontSize: 40,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'Gabriola',
-                              color: Color.fromARGB(255, 23, 99, 114),
+                          Positioned(
+                            top: -40,
+                            child: Image.asset(
+                              'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
+                              fit: BoxFit.fill,
                             ),
-                            textAlign: TextAlign.center,
+                          ),
+                          const Positioned(
+                            top: 420,
+                            child: Text(
+                              'No cracks found',
+                              style: TextStyle(
+                                fontSize: 40,
+                                fontFamily: 'Gabriola',
+                                color: Color.fromARGB(255, 23, 99, 114),
+                              ),
+                            ),
                           ),
                         ],
                       ),
                     )
-                  : ListView(
-                      padding: const EdgeInsets.all(16),
-                      children: destinations.map((destination) {
-                        final id = destination['id'];
-                        final destinationName = destination['name'];
-                        final imagePath = destination['image'];
-                        final numberOfUploads = destination['numberOfUploads'];
+                  : Padding(
+                      padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+                      child: GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3, // Number of cards in a row.
+                                mainAxisSpacing: 16, // Spacing between rows.
+                                crossAxisSpacing: 16, // Spacing between cols.
+                                mainAxisExtent: 298),
+                        itemCount: destinations.length,
+                        itemBuilder: (context, index) {
+                          final destination = destinations[index];
+                          final id = destination['id'];
+                          final destinationName = destination['name'];
+                          final imagePath = destination['image'];
+                          final numberOfUploads =
+                              destination['numberOfUploads'];
 
-                        return Column(
-                          children: [
-                            _buildCard(destinationName, imagePath, id,
-                                numberOfUploads),
-                            const SizedBox(height: 10),
-                          ],
-                        );
-                      }).toList(),
+                          return _buildCard(
+                            destinationName,
+                            imagePath,
+                            id,
+                            numberOfUploads,
+                          );
+                        },
+                      ),
                     ),
         ],
       ),
@@ -193,10 +207,10 @@ class _CracksAnalysisPageState extends State<CracksAnalysisPage> {
               style: TextStyle(
                   fontFamily: 'Zilla Slab Light',
                   fontWeight: FontWeight.bold,
-                  fontSize: 25)),
+                  fontSize: 20)),
           content: Text(
             dialogMessage,
-            style: const TextStyle(fontFamily: 'Andalus', fontSize: 25),
+            style: const TextStyle(fontFamily: 'Andalus', fontSize: 18),
           ),
           actions: <Widget>[
             TextButton(
@@ -206,7 +220,7 @@ class _CracksAnalysisPageState extends State<CracksAnalysisPage> {
               child: const Text(
                 'Cancel',
                 style: TextStyle(
-                  fontSize: 22.0,
+                  fontSize: 16.0,
                   fontFamily: 'Zilla',
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 0, 0, 0),
@@ -220,7 +234,7 @@ class _CracksAnalysisPageState extends State<CracksAnalysisPage> {
               child: const Text(
                 'Reject',
                 style: TextStyle(
-                  fontSize: 22.0,
+                  fontSize: 16.0,
                   fontFamily: 'Zilla',
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 200, 50, 27),
@@ -325,13 +339,13 @@ class _CracksAnalysisPageState extends State<CracksAnalysisPage> {
                   destinationName,
                   style: const TextStyle(
                     fontFamily: 'Andalus',
-                    fontSize: 25,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center,
                 ),
                 const Divider(
-                  thickness: 3,
+                  thickness: 2,
                   color: Color.fromARGB(80, 19, 83, 96),
                 ),
                 const SizedBox(height: 8),
@@ -343,7 +357,7 @@ class _CracksAnalysisPageState extends State<CracksAnalysisPage> {
                       _buildButton(
                           'View Cracks',
                           FontAwesomeIcons.faceAngry,
-                          80,
+                          115,
                           const Color.fromARGB(255, 231, 231, 231),
                           const Color.fromARGB(255, 0, 0, 0), () {
                         // Handle the function here.....
@@ -363,7 +377,6 @@ class _CracksAnalysisPageState extends State<CracksAnalysisPage> {
                           icon: const FaIcon(
                             FontAwesomeIcons.trash,
                             color: Color.fromARGB(210, 32, 32, 32),
-                            size: 28,
                           ),
                           onPressed: () {
                             deleteDestination(currentCardIndex);
@@ -428,11 +441,11 @@ class _CracksAnalysisPageState extends State<CracksAnalysisPage> {
       style: ElevatedButton.styleFrom(
         padding: EdgeInsets.symmetric(
           horizontal: horizontalHeight,
-          vertical: 10,
+          vertical: 20,
         ),
         backgroundColor: btnColor,
         textStyle: const TextStyle(
-          fontSize: 22,
+          fontSize: 16,
           fontFamily: 'Zilla',
           fontWeight: FontWeight.w300,
         ),
