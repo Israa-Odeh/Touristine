@@ -12,6 +12,8 @@ import 'package:dio/dio.dart';
 import 'dart:typed_data';
 import 'dart:convert';
 
+import 'package:uuid/uuid.dart';
+
 // ignore: must_be_immutable
 class AddDestTab extends StatefulWidget {
   final String token;
@@ -186,10 +188,11 @@ class _AddDestTabState extends State<AddDestTab> {
     print('geoTags: ${request.fields['geoTags']}');
     print(selectedImages);
 
+    const uuid = Uuid();
     // Add images to the request.
     for (int i = 0; i < selectedImages.length; i++) {
       Uint8List imageBytes = selectedImages[i];
-      String fileName = 'image_$i.jpg';
+      String fileName = 'image_${uuid.v4()}.jpg';
 
       final image = http.MultipartFile.fromBytes(
         'images',

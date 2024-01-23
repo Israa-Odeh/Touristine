@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 import 'dart:typed_data';
 import 'dart:convert';
 
+import 'package:uuid/uuid.dart';
+
 class AddingComplaintsPage extends StatefulWidget {
   final String token;
   final String destinationName;
@@ -72,13 +74,13 @@ class _AddingComplaintsPageState extends State<AddingComplaintsPage> {
     request.fields['date'] = currentDate;
     request.fields['destinationName'] = widget.destinationName;
 
+    const uuid = Uuid();
     // Add images to the request.
     if (selectedImages.isNotEmpty) {
       // Add images to the request.
       for (int i = 0; i < selectedImages.length; i++) {
         Uint8List imageBytes = selectedImages[i];
-        String fileName = 'image_$i.jpg';
-
+        String fileName = 'ComplaintImage_${uuid.v4()}.jpg';
         final image = http.MultipartFile.fromBytes(
           'images',
           imageBytes,

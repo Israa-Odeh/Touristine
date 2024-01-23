@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 import 'dart:typed_data';
 import 'dart:convert';
 
+import 'package:uuid/uuid.dart';
+
 class UploadingImagesPage extends StatefulWidget {
   final String token;
   final String destinationName;
@@ -62,10 +64,11 @@ class _UploadingImagesPageState extends State<UploadingImagesPage> {
     // Add keywords to the request.
     request.fields['keywords'] = selectedKeywords.join(', ');
 
+    const uuid = Uuid();
     // Add images to the request.
     for (int i = 0; i < selectedImages.length; i++) {
       Uint8List imageBytes = selectedImages[i];
-      String fileName = 'image_$i.jpg';
+      String fileName = 'UploadedImage_${uuid.v4()}.jpg';
 
       final image = http.MultipartFile.fromBytes(
         'images',

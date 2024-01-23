@@ -9,6 +9,8 @@ import 'package:intl/intl.dart';
 import 'dart:typed_data';
 import 'dart:convert';
 
+import 'package:uuid/uuid.dart';
+
 class AddDestTab extends StatefulWidget {
   final String token;
 
@@ -93,10 +95,11 @@ class _AddDestTabState extends State<AddDestTab> {
     print(aboutController.text);
     // print(selectedImages);
 
+    const uuid = Uuid();
     // Add images to the request.
     for (int i = 0; i < selectedImages.length; i++) {
       Uint8List imageBytes = selectedImages[i];
-      String fileName = 'image_$i.jpg';
+      String fileName = 'SuggestionImage_${uuid.v4()}.jpg';
 
       final image = http.MultipartFile.fromBytes(
         'images',
