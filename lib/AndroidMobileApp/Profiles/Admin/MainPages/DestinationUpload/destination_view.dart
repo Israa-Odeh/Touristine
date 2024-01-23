@@ -981,7 +981,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              '${widget.destination['name']} virtual tour experience!',
+                              'Discover ${widget.destination['name']} with a virtual tour for a real experience!',
                               style: const TextStyle(
                                 fontSize: 35,
                                 fontFamily: 'Gabriola',
