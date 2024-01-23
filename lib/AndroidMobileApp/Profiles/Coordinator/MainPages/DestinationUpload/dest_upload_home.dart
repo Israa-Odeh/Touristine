@@ -1,26 +1,45 @@
-import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/UserInteractions/suggested_places.dart';
-import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/UserInteractions/user_interactions.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/DestinationUpload/dest_generator.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/DestinationUpload/my_dests_list.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
+import 'dart:async';
 
-class TabBarViewer extends StatefulWidget {
+// ignore: must_be_immutable
+class DestsUploadHomePage extends StatefulWidget {
   final String token;
-  final Function(int, Map<String, dynamic>) changeTabIndex;
-
-  const TabBarViewer({
-    super.key,
-    required this.token,
-    required this.changeTabIndex,
-  });
+  Map<String, dynamic> destinationToBeAdded;
+  DestsUploadHomePage(
+      {super.key, required this.token, this.destinationToBeAdded = const {}});
 
   @override
-  _TabBarViewerState createState() => _TabBarViewerState();
+  _DestsUploadHomePageState createState() => _DestsUploadHomePageState();
 }
 
-class _TabBarViewerState extends State<TabBarViewer> {
+class _DestsUploadHomePageState extends State<DestsUploadHomePage>
+    with SingleTickerProviderStateMixin {
+  late TabController tabController;
+
+  Map<String, dynamic> destinationToBeAddedInfo = {};
+
+  // Callback function to be passed to AddedDestinationsPage.
+  void updateDestinationInfo(Map<String, dynamic> destinationInfo) {
+    setState(() {
+      destinationToBeAddedInfo = destinationInfo;
+      // print(destinationToBeAddedInfo);
+    });
+    // Using a Timer to delay the tab switching.
+    Timer(const Duration(milliseconds: 100), () {
+      tabController.animateTo(0); // 0 is the index of the AddDestTab.
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    tabController = TabController(length: 2, vsync: this);
+    tabController.index = 0; // Set the initial tab index to 0 (AddDestTab).
+    destinationToBeAddedInfo = widget.destinationToBeAdded;
+    widget.destinationToBeAdded = {};
   }
 
   @override
@@ -51,17 +70,20 @@ class _TabBarViewerState extends State<TabBarViewer> {
               children: [
                 Container(
                   color: const Color.fromARGB(31, 30, 137, 158),
-                  child: const TabBar(
-                    unselectedLabelColor: Color(0xFF1E889E),
-                    tabs: [
+                  child: TabBar(
+                    controller: tabController,
+                    unselectedLabelColor: const Color(0xFF1E889E),
+                    tabs: const [
                       Tab(
                         height: 60,
                         icon: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(FontAwesomeIcons.star),
+                            Icon(FontAwesomeIcons.plus),
                             SizedBox(width: 15),
-                            Text('Interactions'),
+                            Text(
+                              'Add Place',
+                            ),
                           ],
                         ),
                       ),
@@ -74,15 +96,17 @@ class _TabBarViewerState extends State<TabBarViewer> {
                               FontAwesomeIcons.list,
                             ),
                             SizedBox(width: 15),
-                            Text('Suggestions'),
+                            Text(
+                              'My Places',
+                            ),
                           ],
                         ),
                       ),
                     ],
-                    indicator: BoxDecoration(
+                    indicator: const BoxDecoration(
                       color: Color(0xFF1E889E),
                     ),
-                    labelStyle: TextStyle(
+                    labelStyle: const TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.w500,
                       fontFamily: 'Times New Roman',
@@ -91,11 +115,14 @@ class _TabBarViewerState extends State<TabBarViewer> {
                 ),
                 Expanded(
                   child: TabBarView(
+                    controller: tabController,
                     children: [
-                      UserInteractionsPage(token: widget.token),
-                      SuggestedPlacesPage(
+                      AddDestTab(
                           token: widget.token,
-                          changeTabIndex: widget.changeTabIndex),
+                          destinationToBeAdded: destinationToBeAddedInfo),
+                      AddedDestinationsPage(
+                          token: widget.token,
+                          onDestinationEdit: updateDestinationInfo),
                     ],
                   ),
                 ),

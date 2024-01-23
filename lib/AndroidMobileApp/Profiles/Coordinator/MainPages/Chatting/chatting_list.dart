@@ -1,6 +1,6 @@
 import 'package:touristine/AndroidMobileApp/Profiles/Tourist/MainPages/Chatting/chat_message.dart';
-import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/Chatting/chat_page.dart';
-import 'package:touristine/AndroidMobileApp/Profiles/Admin/ActiveStatus/active_status.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/Chatting/chat_page.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/ActiveStatus/active_status.dart';
 import 'package:touristine/AndroidMobileApp/Notifications/snack_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

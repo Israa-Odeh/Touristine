@@ -1,6 +1,6 @@
-import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/UserInteractions/complaints.dart';
-import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/UserInteractions/reviews.dart';
-import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/UserInteractions/uploads.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/UserInteractions/complaints.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/UserInteractions/reviews.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/UserInteractions/uploads.dart';
 import 'package:touristine/AndroidMobileApp/Notifications/snack_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;

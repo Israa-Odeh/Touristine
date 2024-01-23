@@ -1,6 +1,6 @@
-import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/DestinationUpload/bottom_drop_list.dart';
-import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/DestinationUpload/activity_list.dart';
-import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/DestinationUpload/time_picker.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/DestinationUpload/bottom_drop_list.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/DestinationUpload/activity_list.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/DestinationUpload/time_picker.dart';
 import 'package:touristine/AndroidMobileApp/Profiles/Tourist/MainPages/planMaker/custom_bottom_sheet.dart';
 import 'package:touristine/AndroidMobileApp/Notifications/snack_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

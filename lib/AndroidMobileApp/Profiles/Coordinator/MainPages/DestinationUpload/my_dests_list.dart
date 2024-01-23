@@ -1,4 +1,4 @@
-import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/DestinationUpload/destination_view.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/DestinationUpload/destination_view.dart';
 import 'package:touristine/AndroidMobileApp/Profiles/Tourist/MainPages/planMaker/custom_bottom_sheet.dart';
 import 'package:touristine/AndroidMobileApp/Notifications/snack_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

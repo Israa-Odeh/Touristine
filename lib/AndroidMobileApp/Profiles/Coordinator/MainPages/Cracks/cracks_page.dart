@@ -1,4 +1,4 @@
-import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/Cracks/uploaded_cracks.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/Cracks/uploaded_cracks.dart';
 import 'package:touristine/AndroidMobileApp/Notifications/snack_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';

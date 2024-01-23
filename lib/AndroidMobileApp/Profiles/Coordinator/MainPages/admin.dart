@@ -1,10 +1,10 @@
-import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/DestinationUpload/dest_upload_home.dart';
-import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/UserInteractions/tab_bar_viewer.dart';
-import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/Chatting/chatting_list.dart';
-import 'package:touristine/AndroidMobileApp/Profiles/Admin/ActiveStatus/active_status.dart';
-import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/Cracks/cracks_page.dart';
-import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/profile_page.dart';
-import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/Home/home.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/DestinationUpload/dest_upload_home.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/UserInteractions/tab_bar_viewer.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/Chatting/chatting_list.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/ActiveStatus/active_status.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/Cracks/cracks_page.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/profile_page.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/Home/home.dart';
 import 'package:touristine/AndroidMobileApp/Notifications/snack_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jwt_decode/jwt_decode.dart';

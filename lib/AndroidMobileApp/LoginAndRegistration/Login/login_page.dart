@@ -1,11 +1,11 @@
 import 'package:touristine/AndroidMobileApp/LoginAndRegistration/Login/forgot_password.dart';
 import 'package:touristine/AndroidMobileApp/LoginAndRegistration/MainPages/splash_screen.dart';
 import 'package:touristine/AndroidMobileApp/Notifications/snack_bar.dart';
-import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/admin.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/admin.dart';
 import 'package:touristine/AndroidMobileApp/Profiles/Tourist/MainPages/tourist.dart';
 import 'package:touristine/AndroidMobileApp/UserData/user_provider.dart';
 import 'package:touristine/AndroidMobileApp/components/text_field.dart';
-import 'package:touristine/AndroidMobileApp/onBoarding/Admin/admin_onboarding_page.dart';
+import 'package:touristine/AndroidMobileApp/onBoarding/Coordinator/coordinator_onboarding_page.dart';
 import 'package:touristine/AndroidMobileApp/onBoarding/Tourist/tourist_onboarding_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
