@@ -1,3 +1,4 @@
+import 'package:touristine/AndroidMobileApp/Profiles/Tourist/MainPages/planMaker/custom_bottom_sheet.dart';
 import 'package:touristine/AndroidMobileApp/Notifications/snack_bar.dart';
 import 'package:touristine/AndroidMobileApp/components/custom_field.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -25,7 +26,8 @@ class _AdminAddingPageState extends State<AdminAddingPage> {
     return emailController.text.isEmpty ||
         firstNameController.text.isEmpty ||
         lastNameController.text.isEmpty ||
-        passwordController.text.isEmpty;
+        passwordController.text.isEmpty ||
+        selectedCity.isEmpty;
   }
 
   bool isPasswordValid(String password) {
@@ -45,22 +47,40 @@ class _AdminAddingPageState extends State<AdminAddingPage> {
   Future<void> validateForm() async {
     if (isInputEmpty()) {
       showCustomSnackBar(context, 'Please fill in all the fields',
-          bottomMargin: 620.0);
+          bottomMargin: 655.0);
     } else if (!isNameValid(firstNameController.text)) {
       showCustomSnackBar(context, 'Invalid first name: 2-20 characters only',
-          bottomMargin: 620.0);
+          bottomMargin: 655.0);
     } else if (!isNameValid(lastNameController.text)) {
       showCustomSnackBar(context, 'Invalid last name: 2-20 characters only',
-          bottomMargin: 620.0);
+          bottomMargin: 655.0);
     } else if (!isEmailValid(emailController.text)) {
       showCustomSnackBar(context, 'Please enter a valid email address',
-          bottomMargin: 620.0);
+          bottomMargin: 655.0);
     } else if (!isPasswordValid(passwordController.text)) {
       showCustomSnackBar(context, 'Password must contain 8-30 chars',
-          bottomMargin: 620.0);
+          bottomMargin: 655.0);
     } else {
       await addNewAdmin();
     }
+  }
+
+  List<String> citiesList = ['Jerusalem', 'Nablus', 'Ramallah', 'Bethlehem'];
+  String selectedCity = '';
+  void showCityBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomBottomSheet(itemsList: citiesList, height: 300);
+      },
+    ).then((value) {
+      // Handle the selected item from the bottom sheet.
+      if (value != null) {
+        setState(() {
+          selectedCity = value;
+        });
+      }
+    });
   }
 
   Future<void> addNewAdmin() async {
@@ -80,6 +100,7 @@ class _AdminAddingPageState extends State<AdminAddingPage> {
           'lastName': lastNameController.text,
           'email': emailController.text,
           'password': passwordController.text,
+          'city': selectedCity,
         },
       );
 
@@ -87,11 +108,11 @@ class _AdminAddingPageState extends State<AdminAddingPage> {
 
       if (response.statusCode == 200) {
         showCustomSnackBar(context, 'The new admin has been added',
-            bottomMargin: 620.0);
+            bottomMargin: 655.0);
       } else {
         final Map<String, dynamic> responseData = json.decode(response.body);
         // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, responseData['error'], bottomMargin: 620.0);
+        showCustomSnackBar(context, responseData['error'], bottomMargin: 655.0);
       }
     } catch (error) {
       print('Error adding a new admin: $error');
@@ -125,7 +146,45 @@ class _AdminAddingPageState extends State<AdminAddingPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 250),
+                  const SizedBox(height: 200),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                    child: ElevatedButton(
+                      onPressed: showCityBottomSheet,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            const Color.fromARGB(255, 231, 231, 231),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                      ),
+                      child: SizedBox(
+                        height: 60,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 5.0),
+                              child: Text(
+                                selectedCity.isEmpty
+                                    ? 'Select City'
+                                    : selectedCity,
+                                style: const TextStyle(
+                                    color: Color.fromARGB(163, 0, 0, 0),
+                                    fontSize: 22),
+                              ),
+                            ),
+                            const FaIcon(
+                              FontAwesomeIcons.city,
+                              color: Color.fromARGB(100, 0, 0, 0),
+                              size: 25,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
                   CustomField(
                     controller: firstNameController,
                     hintText: 'First Name',
@@ -184,9 +243,9 @@ class _AdminAddingPageState extends State<AdminAddingPage> {
                     ),
                     child: const Text('Create Admin'),
                   ),
-                  const SizedBox(height: 100),
+                  const SizedBox(height: 70),
                   Padding(
-                    padding: const EdgeInsets.only(right: 320.0),
+                    padding: const EdgeInsets.only(right: 325.0),
                     child: IconButton(
                       icon: const FaIcon(
                         FontAwesomeIcons.arrowLeft,
