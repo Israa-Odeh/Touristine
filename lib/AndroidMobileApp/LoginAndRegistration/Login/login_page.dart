@@ -1,7 +1,7 @@
 import 'package:touristine/AndroidMobileApp/LoginAndRegistration/Login/forgot_password.dart';
 import 'package:touristine/AndroidMobileApp/LoginAndRegistration/MainPages/splash_screen.dart';
 import 'package:touristine/AndroidMobileApp/Notifications/snack_bar.dart';
-import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/admin.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/coordinator.dart';
 import 'package:touristine/AndroidMobileApp/Profiles/Tourist/MainPages/tourist.dart';
 import 'package:touristine/AndroidMobileApp/UserData/user_provider.dart';
 import 'package:touristine/AndroidMobileApp/components/text_field.dart';

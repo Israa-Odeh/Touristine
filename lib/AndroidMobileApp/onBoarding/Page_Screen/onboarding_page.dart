@@ -1,7 +1,7 @@
 import 'package:touristine/AndroidMobileApp/LoginAndRegistration/MainPages/splash_screen.dart';
 import 'package:touristine/AndroidMobileApp/onBoarding/Page_Screen/onboarding_screen.dart';
 import 'package:touristine/AndroidMobileApp/Profiles/Tourist/MainPages/tourist.dart';
-import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/admin.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/coordinator.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
