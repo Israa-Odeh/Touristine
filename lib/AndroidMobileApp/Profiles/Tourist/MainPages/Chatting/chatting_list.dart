@@ -387,9 +387,10 @@ class _ChattingListState extends State<ChattingList> {
                                               ),
                                               const SizedBox(height: 20),
                                               Text(
-                                                admin['email'],
+                                                admin['city'],
                                                 style: const TextStyle(
-                                                  color: Colors.grey,
+                                                  color: Color.fromARGB(255, 141, 141, 141),
+                                                  fontSize: 18,
                                                 ),
                                               ),
                                             ],
