@@ -197,8 +197,9 @@ class _LoginPageState extends State<LoginPage>
               ),
             );
           }
-          // It is an Admin user type in this case.
-          else {
+          // It is a coordinator user type in this case.
+          else if (responseData['status'] == true &&
+              responseData['type'] == 200) {
             String token = responseData['token'];
             String firstName = responseData['firstName'];
             String lastName = responseData['lastName'];
@@ -252,6 +253,10 @@ class _LoginPageState extends State<LoginPage>
                 ),
               );
             }
+          }
+          // It is an admin user type in this case.
+          else {
+            // Write the code related to the admin profile....
           }
         }
 
