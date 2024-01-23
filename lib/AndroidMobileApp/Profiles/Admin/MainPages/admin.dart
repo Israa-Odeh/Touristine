@@ -1,10 +1,9 @@
-import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/DestinationUpload/dest_upload_home.dart';
-import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/UserInteractions/tab_bar_viewer.dart';
-import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/Chatting/chatting_list.dart';
-import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/ActiveStatus/active_status.dart';
-import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/Cracks/cracks_page.dart';
-import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/profile_page.dart';
-import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/Home/home.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/Chatting/chatting_list.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Admin/ActiveStatus/active_status.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/Cracks/mapView.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/Destinations/touristine_destinations.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/Home/home.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/profile_page.dart';
 import 'package:touristine/AndroidMobileApp/Notifications/snack_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jwt_decode/jwt_decode.dart';
@@ -99,34 +98,18 @@ class _AdminAppState extends State<AdminProfile> {
 
   void initializeChildren() {
     _children = [
-      // HomePage(
-      //   token: widget.token,
-      //   statisticsResult: mainStatistics,
-      //   selectedCity: 'All Cities',
-      //   selectedCategory: 'By City',
-      //   selectedStatisticsType: 'Visits Count',
-      // ),
-      DestsUploadHomePage(token: widget.token),
-      TabBarViewer(token: widget.token, changeTabIndex: changeTabIndex),
-      CracksAnalysisPage(token: widget.token),
+      HomePage(
+        token: widget.token,
+        statisticsResult: mainStatistics,
+        selectedCity: 'All Cities',
+        selectedCategory: 'By City',
+        selectedStatisticsType: 'Visits Count',
+      ),
+      TouristineDestinations(token: widget.token),
+      CracksMapViewer(token: widget.token),
       ChattingList(token: widget.token),
       ProfilePage(token: widget.token)
     ];
-  }
-
-  void changeTabIndex(int newIndex, Map<String, dynamic> destinationInfo) {
-    setState(() {
-      _currentIndex = newIndex;
-    });
-    // Pass destinationToBeAdded to DestsUploadHomePage.
-    _children[newIndex] = DestsUploadHomePage(
-        token: widget.token, destinationToBeAdded: destinationInfo);
-  }
-
-  void moveToStep(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
   }
 
   @override
@@ -163,29 +146,24 @@ class _AdminAppState extends State<AdminProfile> {
                 0,
               ),
               _buildBottomNavigationBarItem(
-                FontAwesomeIcons.mapLocationDot,
-                'Upload Places',
-                1,
-              ),
-              _buildBottomNavigationBarItem(
                 FontAwesomeIcons.usersViewfinder,
-                'User Interactions',
-                2,
+                'Destinations',
+                1,
               ),
               _buildBottomNavigationBarItem(
                 "assets/Images/Profiles/Admin/crack.png",
                 'Cracks Analysis',
-                3,
+                2,
               ),
               _buildBottomNavigationBarItem(
                 FontAwesomeIcons.comment,
                 'Chatting',
-                4,
+                3,
               ),
               _buildBottomNavigationBarItem(
                 FontAwesomeIcons.user,
                 'Profile',
-                5,
+                4,
               ),
             ],
             selectedItemColor: const Color.fromARGB(255, 255, 255, 255),
