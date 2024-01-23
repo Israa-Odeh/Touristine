@@ -148,7 +148,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                                           googleAccount: widget.googleAccount,
                                         ))
                                       : SplashScreen(
-                                          profileType: AdminProfile(
+                                          profileType: CoordinatorProfile(
                                             token: widget.token,
                                           ),
                                         );

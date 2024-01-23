@@ -241,7 +241,7 @@ class _LoginPageState extends State<LoginPage>
                 context,
                 MaterialPageRoute(
                   builder: (context) => SplashScreen(
-                    profileType: AdminProfile(
+                    profileType: CoordinatorProfile(
                       token: token,
                     ),
                   ),

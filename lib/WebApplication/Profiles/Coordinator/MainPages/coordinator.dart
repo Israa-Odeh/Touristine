@@ -16,19 +16,19 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
-class AdminProfile extends StatefulWidget {
+class CoordinatorProfile extends StatefulWidget {
   final String token;
 
-  const AdminProfile({
+  const CoordinatorProfile({
     super.key,
     required this.token,
   });
 
   @override
-  _AdminAppState createState() => _AdminAppState();
+  _CoordinatorAppState createState() => _CoordinatorAppState();
 }
 
-class _AdminAppState extends State<AdminProfile> {
+class _CoordinatorAppState extends State<CoordinatorProfile> {
   int _currentIndex = 0;
   late List<Widget> _children = [];
   late Future<void> fetchData;
