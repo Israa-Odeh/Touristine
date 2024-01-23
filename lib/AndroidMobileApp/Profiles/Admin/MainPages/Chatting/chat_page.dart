@@ -10,16 +10,16 @@ import 'dart:io';
 
 class ChatPage extends StatefulWidget {
   final String token;
-  final String touristName;
-  final String touristEmail;
-  final String? touristImage;
+  final String coordinatorName;
+  final String coordinatorEmail;
+  final String? coordinatorImage;
 
   const ChatPage(
       {super.key,
       required this.token,
-      required this.touristName,
-      required this.touristEmail,
-      this.touristImage});
+      required this.coordinatorName,
+      required this.coordinatorEmail,
+      this.coordinatorImage});
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -45,7 +45,7 @@ class _ChatPageState extends State<ChatPage> {
 
   Future<void> fetchMessages() async {
     String chatId =
-        getChatId(widget.touristEmail, Jwt.parseJwt(widget.token)['email']);
+        getChatId(widget.coordinatorEmail, Jwt.parseJwt(widget.token)['email']);
     DocumentReference chatRef = firestore.collection('chats').doc(chatId);
 
     chatSubscription = chatRef.snapshots().listen((chatSnapshot) {
@@ -101,15 +101,15 @@ class _ChatPageState extends State<ChatPage> {
               children: [
                 CircleAvatar(
                   backgroundColor: Colors.white,
-                  backgroundImage: (widget.touristImage != null &&
-                          widget.touristImage != "")
-                      ? NetworkImage(widget.touristImage!)
+                  backgroundImage: (widget.coordinatorImage != null &&
+                          widget.coordinatorImage != "")
+                      ? NetworkImage(widget.coordinatorImage!)
                       : const AssetImage(
                               "assets/Images/Profiles/Tourist/DefaultProfileImage.png")
                           as ImageProvider<Object>?,
                 ),
                 const SizedBox(width: 10),
-                Text(widget.touristName),
+                Text(widget.coordinatorName),
               ],
             ),
           ),
@@ -260,7 +260,7 @@ class _ChatPageState extends State<ChatPage> {
   Future<void> storeMessageInFirebase(String message, String? imageUrl) async {
     Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
     String adminEmail = decodedToken['email'];
-    String chatId = getChatId(widget.touristEmail, adminEmail);
+    String chatId = getChatId(widget.coordinatorEmail, adminEmail);
 
     try {
       DocumentReference chatRef = firestore.collection('chats').doc(chatId);
@@ -289,7 +289,7 @@ class _ChatPageState extends State<ChatPage> {
 
   Widget buildMessageItem(int index) {
     String sender = chatMessages[index]['sender'];
-    bool isTourist = sender == Jwt.parseJwt(widget.token)['email'];
+    bool isAdmin = sender == Jwt.parseJwt(widget.token)['email'];
 
     DateTime messageDate =
         DateFormat('dd/MM/yyyy').parse(chatMessages[index]['date']);
@@ -311,8 +311,8 @@ class _ChatPageState extends State<ChatPage> {
     if (chatMessages[index]['imageUrl'] != null) {
       return Padding(
         padding: EdgeInsets.only(
-          right: isTourist ? 12 : 124,
-          left: isTourist ? 124 : 12,
+          right: isAdmin ? 12 : 124,
+          left: isAdmin ? 124 : 12,
           top: 8.0,
           bottom: 0,
         ),
@@ -340,13 +340,13 @@ class _ChatPageState extends State<ChatPage> {
     } else {
       return Padding(
         padding: EdgeInsets.only(
-          right: isTourist ? 8 : 120,
-          left: isTourist ? 120 : 8,
+          right: isAdmin ? 8 : 120,
+          left: isAdmin ? 120 : 8,
           top: 8.0,
           bottom: 0,
         ),
         child: Card(
-          color: isTourist
+          color: isAdmin
               ? const Color.fromARGB(255, 106, 159, 170)
               : const Color.fromARGB(255, 169, 216, 225),
           shape: RoundedRectangleBorder(
@@ -362,7 +362,7 @@ class _ChatPageState extends State<ChatPage> {
                     chatMessages[index]['message'],
                     style: TextStyle(
                       fontSize: 20,
-                      color: isTourist ? Colors.white : Colors.black,
+                      color: isAdmin ? Colors.white : Colors.black,
                     ),
                   ),
                 ),
@@ -370,7 +370,7 @@ class _ChatPageState extends State<ChatPage> {
                   formattedDateTime,
                   style: TextStyle(
                     fontSize: 14,
-                    color: isTourist ? Colors.white70 : Colors.black54,
+                    color: isAdmin ? Colors.white70 : Colors.black54,
                   ),
                 ),
               ],

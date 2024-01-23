@@ -20,8 +20,8 @@ class ChattingList extends StatefulWidget {
 }
 
 class _ChattingListState extends State<ChattingList> {
-  List<Map<String, dynamic>> filteredTourists = [];
-  List<Map<String, dynamic>> tourists = [];
+  List<Map<String, dynamic>> filteredCoordinators = [];
+  List<Map<String, dynamic>> coordinators = [];
   Color iconColor = Colors.grey;
   late Timer statusUpdateTimer;
   late FocusNode focusNode;
@@ -40,16 +40,16 @@ class _ChattingListState extends State<ChattingList> {
 
     Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
     String adminEmail = decodedToken['email'];
-    getTouristsEmails(adminEmail);
+    getCoordinatorsEmails(adminEmail);
 
     // Start a timer to periodically update active status.
     statusUpdateTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      // Update active status for all tourists.
-      if (mounted) updateTouristsActiveStatus();
+      // Update active status for all coordinators.
+      if (mounted) updateCoordinatorsActiveStatus();
     });
   }
 
-  Future<void> getTouristsEmails(String adminEmail) async {
+  Future<void> getCoordinatorsEmails(String adminEmail) async {
     try {
       if (!mounted) return;
 
@@ -66,18 +66,18 @@ class _ChattingListState extends State<ChattingList> {
       if (querySnapshot.docs.isEmpty) {
         print('No messages with the specified admin ($adminEmail) exist.');
       } else {
-        List<String> touristEmails = [];
+        List<String> coordinatorsEmails = [];
         for (QueryDocumentSnapshot<Map<String, dynamic>> document
             in querySnapshot.docs) {
-          Map<String, dynamic> touristData = document['tourist'];
-          String touristEmail = touristData['email'];
-          touristEmails.add(touristEmail);
+          Map<String, dynamic> coordinatorData = document['tourist'];
+          String coordinatorEmail = coordinatorData['email'];
+          coordinatorsEmails.add(coordinatorEmail);
         }
-        print(touristEmails);
-        await getTouristsInfo(touristEmails);
+        print(coordinatorsEmails);
+        await getCoordinatorsInfo(coordinatorsEmails);
       }
     } catch (e) {
-      print('Error getting tourists with emails: $e');
+      print('Error getting coordinators with emails: $e');
     } finally {
       if (mounted) {
         setState(() {
@@ -87,7 +87,7 @@ class _ChattingListState extends State<ChattingList> {
     }
   }
 
-  Future<void> getTouristsInfo(List<String> touristEmails) async {
+  Future<void> getCoordinatorsInfo(List<String> coordinatorsEmails) async {
     if (!mounted) return;
 
     setState(() {
@@ -95,7 +95,7 @@ class _ChattingListState extends State<ChattingList> {
     });
 
     final url =
-        Uri.parse('https://touristineapp.onrender.com/get-tourists-info');
+        Uri.parse('https://touristineapp.onrender.com/get-coordinators-info');
 
     try {
       final response = await http.post(
@@ -105,39 +105,39 @@ class _ChattingListState extends State<ChattingList> {
           'Authorization': 'Bearer ${widget.token}',
         },
         body: {
-          'touristsEmails': jsonEncode(touristEmails),
+          'tcoordinatorsEmails': jsonEncode(coordinatorsEmails),
         },
       );
 
       if (response.statusCode == 200) {
-        List<Map<String, dynamic>> fetchedTourists =
+        List<Map<String, dynamic>> fetchedCoordinators =
             List<Map<String, dynamic>>.from(
-          jsonDecode(response.body)['tourists'],
+          jsonDecode(response.body)['coordinators'],
         );
 
-        // Fetch the active status for each tourist.
-        List<bool> touristsActiveStatus =
-            await getTouristsActiveStatusList(touristEmails);
+        // Fetch the active status for each coordinator.
+        List<bool> coordinatorsActiveStatus =
+            await getCoordinatorsActiveStatusList(coordinatorsEmails);
 
-        // Update the tourists map with active status.
-        for (int i = 0; i < fetchedTourists.length; i++) {
-          fetchedTourists[i]['activeStatus'] =
-              touristsActiveStatus.isNotEmpty && touristsActiveStatus.length > i
-                  ? touristsActiveStatus[i]
+        // Update the coordinators map with active status.
+        for (int i = 0; i < fetchedCoordinators.length; i++) {
+          fetchedCoordinators[i]['activeStatus'] =
+              coordinatorsActiveStatus.isNotEmpty && coordinatorsActiveStatus.length > i
+                  ? coordinatorsActiveStatus[i]
                   : false;
         }
         setState(() {
-          tourists = fetchedTourists;
-          filteredTourists = List.from(tourists);
+          coordinators = fetchedCoordinators;
+          filteredCoordinators = List.from(coordinators);
         });
-        print(tourists);
+        print(coordinators);
       } else {
         final Map<String, dynamic> responseData = json.decode(response.body);
         // ignore: use_build_context_synchronously
         showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
       }
     } catch (e) {
-      print('Error fetching tourist list: $e');
+      print('Error fetching coordinators list: $e');
     } finally {
       if (mounted) {
         setState(() {
@@ -147,50 +147,53 @@ class _ChattingListState extends State<ChattingList> {
     }
   }
 
-  Future<List<bool>> getTouristsActiveStatusList(
-      List<String> touristsEmails) async {
+  Future<List<bool>> getCoordinatorsActiveStatusList(
+      List<String> coordinatorsEmails) async {
     List<bool> statusList = [];
 
-    for (String email in touristsEmails) {
-      bool? status = await getTouristActiveStatus(email);
+    for (String email in coordinatorsEmails) {
+      bool? status = await getCoordinatorActiveStatus(email);
       statusList.add(status ?? false);
     }
     return statusList;
   }
 
-  void updateTouristsActiveStatus() async {
+  void updateCoordinatorsActiveStatus() async {
     try {
-      List<bool> touristsActiveStatus = await getTouristsActiveStatusList(
-          tourists.map((tourist) => tourist['email'] as String).toList());
+      List<bool> coordinatorsActiveStatus =
+          await getCoordinatorsActiveStatusList(coordinators
+              .map((coordinator) => coordinator['email'] as String)
+              .toList());
 
-      for (int i = 0; i < tourists.length; i++) {
-        tourists[i]['activeStatus'] =
-            touristsActiveStatus.isNotEmpty && touristsActiveStatus.length > i
-                ? touristsActiveStatus[i]
-                : false;
+      for (int i = 0; i < coordinators.length; i++) {
+        coordinators[i]['activeStatus'] = coordinatorsActiveStatus.isNotEmpty &&
+                coordinatorsActiveStatus.length > i
+            ? coordinatorsActiveStatus[i]
+            : false;
         // Print the new active status.
         print(
-            'Tourist ${tourists[i]['firstName']} ${tourists[i]['lastName']} - Active Status: ${tourists[i]['activeStatus']}');
+            'Coordinator ${coordinators[i]['firstName']} ${coordinators[i]['lastName']} - Active Status: ${coordinators[i]['activeStatus']}');
       }
 
       // Trigger a UI update.
       if (mounted) setState(() {});
     } catch (e) {
-      print('Error updating tourists active status: $e');
+      print('Error updating coordinators active status: $e');
     }
   }
 
-  void filterTourists(String query) {
+  void filterCoordinators(String query) {
     setState(() {
       if (query.isEmpty) {
-        filteredTourists = List.from(tourists);
+        filteredCoordinators = List.from(coordinators);
       } else {
-        filteredTourists = tourists.where((tourist) {
-          final fullName = '${tourist['firstName']} ${tourist['lastName']}';
+        filteredCoordinators = coordinators.where((coordinator) {
+          final fullName =
+              '${coordinator['firstName']} ${coordinator['lastName']}';
           final queryLowerCase = query.toLowerCase();
           return fullName.toLowerCase().contains(queryLowerCase) ||
-              tourist['firstName'].toLowerCase().contains(queryLowerCase) ||
-              tourist['lastName'].toLowerCase().contains(queryLowerCase) ||
+              coordinator['firstName'].toLowerCase().contains(queryLowerCase) ||
+              coordinator['lastName'].toLowerCase().contains(queryLowerCase) ||
               fullName.split(' ').every((namePart) =>
                   namePart.toLowerCase().startsWith(queryLowerCase));
         }).toList();
@@ -198,14 +201,14 @@ class _ChattingListState extends State<ChattingList> {
     });
   }
 
-  void openChatWithTourist(Map<String, dynamic> tourist) async {
+  void openChatWithCoordinator(Map<String, dynamic> coordinator) async {
     // Extract the admin email from the token.
     Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
     String adminEmail = decodedToken['email'];
-    String touristEmail = tourist['email'];
+    String coordinatorEmail = coordinator['email'];
 
     DocumentSnapshot<Map<String, dynamic>> chatDoc =
-        await getChat(adminEmail, touristEmail);
+        await getChat(adminEmail, coordinatorEmail);
 
     if (chatDoc.exists) {
       // Chat exists, retrieve and print messages.
@@ -239,9 +242,10 @@ class _ChattingListState extends State<ChattingList> {
         context,
         MaterialPageRoute(
           builder: (context) => ChatPage(
-            touristName: '${tourist['firstName']} ${tourist['lastName']}',
-            touristEmail: tourist['email'],
-            touristImage: tourist['image'],
+            coordinatorName:
+                '${coordinator['firstName']} ${coordinator['lastName']}',
+            coordinatorEmail: coordinator['email'],
+            coordinatorImage: coordinator['image'],
             token: widget.token,
           ),
         ),
@@ -253,8 +257,8 @@ class _ChattingListState extends State<ChattingList> {
   }
 
   Future<DocumentSnapshot<Map<String, dynamic>>> getChat(
-      String adminEmail, String touristEmail) async {
-    String chatId = getChatId(adminEmail, touristEmail);
+      String adminEmail, String coordinatorEmail) async {
+    String chatId = getChatId(adminEmail, coordinatorEmail);
     DocumentSnapshot<Map<String, dynamic>> chatDoc =
         await FirebaseFirestore.instance.collection('chats').doc(chatId).get();
 
@@ -288,12 +292,12 @@ class _ChattingListState extends State<ChattingList> {
           Column(
             children: [
               if (!isLoading) const SizedBox(height: 40),
-              if (!isLoading && tourists.isNotEmpty)
+              if (!isLoading && coordinators.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: TextField(
                     focusNode: focusNode,
-                    onChanged: filterTourists,
+                    onChanged: filterCoordinators,
                     decoration: InputDecoration(
                       hintText: 'Search',
                       prefixIcon: Icon(
@@ -320,7 +324,7 @@ class _ChattingListState extends State<ChattingList> {
                               AlwaysStoppedAnimation<Color>(Color(0xFF1E889E)),
                         ),
                       )
-                    : filteredTourists.isEmpty
+                    : filteredCoordinators.isEmpty
                         ? SingleChildScrollView(
                             child: Center(
                               child: Column(
@@ -344,11 +348,11 @@ class _ChattingListState extends State<ChattingList> {
                             ),
                           )
                         : ListView.builder(
-                            itemCount: filteredTourists.length,
+                            itemCount: filteredCoordinators.length,
                             itemBuilder: (context, index) {
-                              final tourist = filteredTourists[index];
+                              final coordinator = filteredCoordinators[index];
                               final bool isActive =
-                                  tourist['activeStatus'] ?? false;
+                                  coordinator['activeStatus'] ?? false;
                               return Card(
                                 elevation: 5,
                                 shape: RoundedRectangleBorder(
@@ -365,11 +369,12 @@ class _ChattingListState extends State<ChattingList> {
                                           CircleAvatar(
                                             backgroundColor: Colors.white,
                                             radius: 50,
-                                            backgroundImage: (tourist[
+                                            backgroundImage: (coordinator[
                                                             'image'] !=
                                                         null &&
-                                                    tourist['image'] != "")
-                                                ? NetworkImage(tourist['image'])
+                                                    coordinator['image'] != "")
+                                                ? NetworkImage(
+                                                    coordinator['image'])
                                                 : const AssetImage(
                                                         "assets/Images/Profiles/Tourist/DefaultProfileImage.png")
                                                     as ImageProvider<Object>?,
@@ -380,7 +385,7 @@ class _ChattingListState extends State<ChattingList> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                '${tourist['firstName']} ${tourist['lastName']}',
+                                                '${coordinator['firstName']} ${coordinator['lastName']}',
                                                 style: const TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 20,
@@ -388,7 +393,7 @@ class _ChattingListState extends State<ChattingList> {
                                               ),
                                               const SizedBox(height: 20),
                                               Text(
-                                                tourist['email'],
+                                                coordinator['email'],
                                                 style: const TextStyle(
                                                   color: Colors.grey,
                                                 ),
@@ -403,7 +408,7 @@ class _ChattingListState extends State<ChattingList> {
                                           color: Color.fromARGB(255, 0, 0, 0),
                                         ),
                                         onPressed: () {
-                                          openChatWithTourist(tourist);
+                                          openChatWithCoordinator(coordinator);
                                         },
                                       ),
                                       // Display the active status dot.
