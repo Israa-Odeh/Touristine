@@ -44,8 +44,8 @@ class _CoordinatorAppState extends State<CoordinatorProfile> {
         },
         body: {
           'StatisticType': "Visits Count",
-          'city': "allcities",
-          'category': "bycity"
+          'city': widget.city,
+          'category': "bycategory"
         },
       );
 
@@ -62,7 +62,8 @@ class _CoordinatorAppState extends State<CoordinatorProfile> {
           if (item is Map<String, dynamic> && item.length == 1) {
             final String key = item.keys.first;
             final double value = item.values.first.toDouble();
-            newStatisticsResult[key] = value.toInt();
+            final String category = getPlaceCategory(key);
+            newStatisticsResult[category] = value.toInt();
           }
         }
         setState(() {
@@ -79,6 +80,32 @@ class _CoordinatorAppState extends State<CoordinatorProfile> {
       }
     } catch (error) {
       print('Error during finding a result: $error');
+    }
+  }
+
+  String getPlaceCategory(String placeCategory) {
+    if (placeCategory.toLowerCase() == "coastalareas") {
+      return "Coastal Areas";
+    } else if (placeCategory.toLowerCase() == "mountains") {
+      return "Mountains";
+    } else if (placeCategory.toLowerCase() == "nationalparks") {
+      return "National Parks";
+    } else if (placeCategory.toLowerCase() == "majorcities") {
+      return "Major Cities";
+    } else if (placeCategory.toLowerCase() == "countryside") {
+      return "Countryside";
+    } else if (placeCategory.toLowerCase() == "historicalsites") {
+      return "Historical Sites";
+    } else if (placeCategory.toLowerCase() == "religiouslandmarks") {
+      return "Religious Landmarks";
+    } else if (placeCategory.toLowerCase() == "aquariums") {
+      return "Aquariums";
+    } else if (placeCategory.toLowerCase() == "zoos") {
+      return "Zoos";
+    } else if (placeCategory.toLowerCase() == "others") {
+      return "Others";
+    } else {
+      return placeCategory;
     }
   }
 
@@ -104,9 +131,10 @@ class _CoordinatorAppState extends State<CoordinatorProfile> {
       HomePage(
         token: widget.token,
         statisticsResult: mainStatistics,
-        selectedCity: 'All Cities',
-        selectedCategory: 'By City',
+        selectedCity: widget.city,
+        selectedCategory: 'By Category',
         selectedStatisticsType: 'Visits Count',
+        coordinatorCity: widget.city,
       ),
       DestsUploadHomePage(token: widget.token),
       TabBarViewer(token: widget.token, changeTabIndex: changeTabIndex),

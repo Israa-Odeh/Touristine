@@ -14,6 +14,7 @@ class HomePage extends StatefulWidget {
   String selectedCity;
   String selectedCategory;
   String selectedStatisticsType;
+  final String coordinatorCity;
 
   HomePage(
       {super.key,
@@ -21,7 +22,8 @@ class HomePage extends StatefulWidget {
       required this.statisticsResult,
       required this.selectedCity,
       required this.selectedCategory,
-      required this.selectedStatisticsType});
+      required this.selectedStatisticsType,
+      required this.coordinatorCity});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -90,24 +92,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  List<String> getCategoriesListForAllChoice() {
-    return [
-      'By City',
-      'By Category',
-      'Coastal Areas',
-      'Mountains',
-      'National Parks',
-      'Major Cities',
-      'Countryside',
-      'Historical Sites',
-      'Religious Landmarks',
-      'Aquariums',
-      'Zoos',
-      'Others',
-    ];
-  }
-
-  List<String> getCategoriesListForNonAll() {
+  List<String> getCategoriesList() {
     return [
       'By Category',
       'Coastal Areas',
@@ -251,11 +236,7 @@ class _HomePageState extends State<HomePage> {
                             color: Color.fromARGB(104, 0, 0, 0),
                           ),
                           items: [
-                            'All Cities',
-                            'Nablus',
-                            'Ramallah',
-                            'Jerusalem',
-                            'Bethlehem'
+                            widget.coordinatorCity,
                           ].map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
@@ -264,57 +245,33 @@ class _HomePageState extends State<HomePage> {
                           }).toList(),
                           onChanged: (String? value) {
                             setState(() {
-                              widget.selectedCity = value ?? 'All Cities';
+                              widget.selectedCity =
+                                  value ?? widget.coordinatorCity;
                             });
                           },
                         ),
                       ),
-                      if (widget.selectedCity == "All Cities")
-                        DropdownButton<String>(
-                          value: widget.selectedCategory,
-                          icon: const Icon(
-                            FontAwesomeIcons.caretDown,
-                            color: Color.fromRGBO(0, 0, 0, 0.5),
-                          ),
-                          items: (getCategoriesListForAllChoice())
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          onChanged: (String? value) {
-                            if (value != null) {
-                              setState(() {
-                                widget.selectedCategory = value;
-                              });
-                            }
-                          },
+                      DropdownButton<String>(
+                        value: widget.selectedCategory,
+                        icon: const Icon(
+                          FontAwesomeIcons.caretDown,
+                          color: Color.fromRGBO(0, 0, 0, 0.5),
                         ),
-                      if (widget.selectedCity != "All Cities")
-                        DropdownButton<String>(
-                          value: widget.selectedCategory == "By City"
-                              ? "By Category"
-                              : widget.selectedCategory,
-                          icon: const Icon(
-                            FontAwesomeIcons.caretDown,
-                            color: Color.fromRGBO(0, 0, 0, 0.5),
-                          ),
-                          items: (getCategoriesListForNonAll())
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          onChanged: (String? value) {
-                            if (value != null) {
-                              setState(() {
-                                widget.selectedCategory = value;
-                              });
-                            }
-                          },
-                        )
+                        items: (getCategoriesList())
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (String? value) {
+                          if (value != null) {
+                            setState(() {
+                              widget.selectedCategory = value;
+                            });
+                          }
+                        },
+                      )
                     ],
                   ),
                   if (widget.statisticsResult.isNotEmpty)

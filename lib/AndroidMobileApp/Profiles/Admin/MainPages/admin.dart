@@ -99,13 +99,13 @@ class _AdminAppState extends State<AdminProfile> {
 
   void initializeChildren() {
     _children = [
-      HomePage(
-        token: widget.token,
-        statisticsResult: mainStatistics,
-        selectedCity: 'All Cities',
-        selectedCategory: 'By City',
-        selectedStatisticsType: 'Visits Count',
-      ),
+      // HomePage(
+      //   token: widget.token,
+      //   statisticsResult: mainStatistics,
+      //   selectedCity: 'All Cities',
+      //   selectedCategory: 'By City',
+      //   selectedStatisticsType: 'Visits Count',
+      // ),
       DestsUploadHomePage(token: widget.token),
       TabBarViewer(token: widget.token, changeTabIndex: changeTabIndex),
       CracksAnalysisPage(token: widget.token),
