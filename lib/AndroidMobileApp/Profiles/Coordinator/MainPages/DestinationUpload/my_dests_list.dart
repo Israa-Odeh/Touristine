@@ -441,10 +441,6 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
 
   List<String> filteringList = [
     'All',
-    'Jerusalem',
-    'Nablus',
-    'Ramallah',
-    'Bethlehem',
     'Coastal Areas',
     'Mountains',
     'National Parks',
