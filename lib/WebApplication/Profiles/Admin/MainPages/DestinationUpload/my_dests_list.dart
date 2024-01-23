@@ -35,7 +35,7 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
     });
 
     final url =
-        Uri.parse('https://touristine.onrender.com/get-added-destinations');
+        Uri.parse('https://touristineapp.onrender.com/get-added-destinations');
 
     try {
       final response = await http.post(
@@ -87,7 +87,7 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
     if (confirmDeletion == true) {
       if (!mounted) return;
       final url = Uri.parse(
-          'https://touristine.onrender.com/delete-added-destination/$destinationId');
+          'https://touristineapp.onrender.com/delete-added-destination/$destinationId');
 
       try {
         final response = await http.post(
@@ -126,7 +126,7 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
   Future<void> getDestinationInfo(String destinationId) async {
     if (!mounted) return;
     final url =
-        Uri.parse('https://touristine.onrender.com/get-destination-info');
+        Uri.parse('https://touristineapp.onrender.com/get-destination-info');
     try {
       final response = await http.post(
         url,
@@ -169,7 +169,7 @@ class _AddedDestinationsPageState extends State<AddedDestinationsPage> {
   // A function to retrieve all of the destination details.
   Future<void> getDestinationDetails(Map<String, dynamic> destination) async {
     final url =
-        Uri.parse('https://touristine.onrender.com/get-destination-details');
+        Uri.parse('https://touristineapp.onrender.com/get-destination-details');
 
     try {
       final response = await http.post(

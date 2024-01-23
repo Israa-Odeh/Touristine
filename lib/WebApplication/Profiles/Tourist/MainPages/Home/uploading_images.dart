@@ -48,7 +48,7 @@ class _UploadingImagesPageState extends State<UploadingImagesPage> {
   // A function to send uploaded images data to the backend.
   Future<void> uploadImages() async {
     String currentDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
-    final url = Uri.parse('https://touristine.onrender.com/upload-images');
+    final url = Uri.parse('https://touristineapp.onrender.com/upload-images');
 
     // Create a multi-part request.
     final request = http.MultipartRequest('POST', url);

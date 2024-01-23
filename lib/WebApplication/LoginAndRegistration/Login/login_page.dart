@@ -115,7 +115,7 @@ class _LoginPageState extends State<LoginPage>
   }
 
   Future<void> sendData() async {
-    final url = Uri.parse('https://touristine.onrender.com/login');
+    final url = Uri.parse('https://touristineapp.onrender.com/login');
     try {
       final response = await http.post(
         url,
@@ -379,7 +379,7 @@ class _LoginPageState extends State<LoginPage>
           // easily retrive the image from the URL.
         };
 
-        var url = 'https://touristine.onrender.com/signInWithGoogle';
+        var url = 'https://touristineapp.onrender.com/signInWithGoogle';
 
         try {
           var response = await http.post(

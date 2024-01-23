@@ -58,7 +58,8 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
         isSearching = true;
       });
     }
-    final url = Uri.parse('https://touristine.onrender.com/search-destination');
+    final url =
+        Uri.parse('https://touristineapp.onrender.com/search-destination');
 
     try {
       final response = await http.post(
@@ -169,7 +170,8 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                       ),
                     ),
                     CheckboxListTile(
-                      title: const Text('Budget-friendly', style: TextStyle(fontSize: 18)),
+                      title: const Text('Budget-friendly',
+                          style: TextStyle(fontSize: 18)),
                       value: isBudgetFriendly,
                       activeColor: const Color(0xFF1E889E),
                       onChanged: (bool? value) {
@@ -179,7 +181,8 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                       },
                     ),
                     CheckboxListTile(
-                      title: const Text('Mid-range', style: TextStyle(fontSize: 18)),
+                      title: const Text('Mid-range',
+                          style: TextStyle(fontSize: 18)),
                       value: isMidRange,
                       activeColor: const Color(0xFF1E889E),
                       onChanged: (bool? value) {
@@ -189,7 +192,8 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                       },
                     ),
                     CheckboxListTile(
-                      title: const Text('Luxurious', style: TextStyle(fontSize: 18)),
+                      title: const Text('Luxurious',
+                          style: TextStyle(fontSize: 18)),
                       value: isLuxurious,
                       activeColor: const Color(0xFF1E889E),
                       onChanged: (bool? value) {

@@ -732,7 +732,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> updateChart() async {
     print("I have changed a selection!");
-    final url = Uri.parse('https://touristine.onrender.com/get-statistics');
+    final url = Uri.parse('https://touristineapp.onrender.com/get-statistics');
 
     try {
       final response = await http.post(

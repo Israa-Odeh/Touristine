@@ -22,7 +22,7 @@ class _MyPlansTabState extends State<MyPlansTab> {
   // A function to delete a specific plan.
   Future<void> deletePlan(String planId, int index) async {
     final url =
-        Uri.parse('https://touristine.onrender.com/delete-plan/$planId');
+        Uri.parse('https://touristineapp.onrender.com/delete-plan/$planId');
 
     try {
       final response = await http.post(
@@ -68,7 +68,7 @@ class _MyPlansTabState extends State<MyPlansTab> {
   // A function to fetch a specific plan.
   Future<void> fetchPlanContents(String planID) async {
     final url =
-        Uri.parse('https://touristine.onrender.com/fetch-plan-contents');
+        Uri.parse('https://touristineapp.onrender.com/fetch-plan-contents');
 
     try {
       final response = await http.post(
@@ -111,7 +111,7 @@ class _MyPlansTabState extends State<MyPlansTab> {
       isLoading = true;
     });
 
-    final url = Uri.parse('https://touristine.onrender.com/get-plans');
+    final url = Uri.parse('https://touristineapp.onrender.com/get-plans');
 
     try {
       final response = await http.post(

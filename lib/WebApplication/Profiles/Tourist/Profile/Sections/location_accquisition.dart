@@ -22,7 +22,7 @@ class _LocationPageState extends State<LocationPage> {
   // A function that sends a request to the server to retrieve the saved location.
   Future<void> fetchSavedLocation() async {
     final url = Uri.parse(
-        'https://touristine.onrender.com/get-location'); // Replace with your API endpoint
+        'https://touristineapp.onrender.com/get-location'); // Replace with your API endpoint
 
     try {
       final response = await http.post(
@@ -77,7 +77,7 @@ class _LocationPageState extends State<LocationPage> {
 
   Future<void> sendAndSaveLocation() async {
     final url = Uri.parse(
-        'https://touristine.onrender.com/location-accquistion'); // Replace this with your Node.js server URL.
+        'https://touristineapp.onrender.com/location-accquistion'); // Replace this with your Node.js server URL.
 
     try {
       final response = await http.post(

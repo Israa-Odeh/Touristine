@@ -64,7 +64,7 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   Future<void> sendAndSaveData() async {
-    final url = Uri.parse('https://touristine.onrender.com/edit-account');
+    final url = Uri.parse('https://touristineapp.onrender.com/edit-account');
     final request = http.MultipartRequest('POST', url);
 
     // Add headers to the request.
@@ -125,8 +125,7 @@ class _AccountPageState extends State<AccountPage> {
               bottomMargin: 0);
         } else {
           // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, "An error has occurred",
-              bottomMargin: 0);
+          showCustomSnackBar(context, "An error has occurred", bottomMargin: 0);
         }
       } else {
         // ignore: use_build_context_synchronously
@@ -163,8 +162,7 @@ class _AccountPageState extends State<AccountPage> {
         sendAndSaveData();
       }
     } else {
-      showCustomSnackBar(context, 'No modifications detected',
-          bottomMargin: 0);
+      showCustomSnackBar(context, 'No modifications detected', bottomMargin: 0);
     }
   }
 

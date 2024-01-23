@@ -33,7 +33,7 @@ class _UserInteractionsPageState extends State<UserInteractionsPage> {
   // Retrieve destinations that have uploads, reviews, or images.
   void fetchDestinations() async {
     if (!mounted) return;
-    final url = Uri.parse('https://touristine.onrender.com/get-destinations');
+    final url = Uri.parse('https://touristineapp.onrender.com/get-destinations');
 
     try {
       final response = await http.post(
@@ -91,7 +91,7 @@ class _UserInteractionsPageState extends State<UserInteractionsPage> {
     });
 
     final url =
-        Uri.parse('https://touristine.onrender.com/get-destination-reviews');
+        Uri.parse('https://touristineapp.onrender.com/get-destination-reviews');
 
     try {
       final response = await http.post(

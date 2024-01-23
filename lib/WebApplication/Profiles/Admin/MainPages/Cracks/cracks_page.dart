@@ -30,7 +30,7 @@ class _CracksAnalysisPageState extends State<CracksAnalysisPage> {
   void fetchDestinations() async {
     if (!mounted) return;
     final url = Uri.parse(
-        'https://touristine.onrender.com/get-destinations-with-cracks');
+        'https://touristineapp.onrender.com/get-destinations-with-cracks');
 
     try {
       final response = await http.post(
@@ -168,7 +168,7 @@ class _CracksAnalysisPageState extends State<CracksAnalysisPage> {
       if (!mounted) return;
       try {
         final url = Uri.parse(
-            'https://touristine.onrender.com/delete-destinations-with-cracks');
+            'https://touristineapp.onrender.com/delete-destinations-with-cracks');
 
         final response = await http.post(
           url,

@@ -94,7 +94,7 @@ class _ChattingListState extends State<ChattingList> {
       isLoading = true;
     });
 
-    final url = Uri.parse('https://touristine.onrender.com/get-tourists-info');
+    final url = Uri.parse('https://touristineapp.onrender.com/get-tourists-info');
 
     try {
       final response = await http.post(

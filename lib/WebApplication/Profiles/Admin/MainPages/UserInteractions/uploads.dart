@@ -31,7 +31,7 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
     });
 
     final url =
-        Uri.parse('https://touristine.onrender.com/get-destination-uploads');
+        Uri.parse('https://touristineapp.onrender.com/get-destination-uploads');
 
     try {
       final response = await http.post(
@@ -111,7 +111,7 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
     if (!mounted) return;
     try {
       final url =
-          Uri.parse('https://touristine.onrender.com/approve-an-upload');
+          Uri.parse('https://touristineapp.onrender.com/approve-an-upload');
 
       final response = await http.post(
         url,
@@ -158,7 +158,7 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
       if (!mounted) return;
       try {
         final url =
-            Uri.parse('https://touristine.onrender.com/reject-all-uplaods');
+            Uri.parse('https://touristineapp.onrender.com/reject-all-uplaods');
 
         final response = await http.post(
           url,
@@ -196,7 +196,7 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
       if (!mounted) return;
       try {
         final url =
-            Uri.parse('https://touristine.onrender.com/reject-an-upload');
+            Uri.parse('https://touristineapp.onrender.com/reject-an-upload');
 
         final response = await http.post(
           url,

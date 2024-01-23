@@ -62,7 +62,7 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   Future<void> sendAndSaveData() async {
-    final url = Uri.parse('https://touristine.onrender.com/signup');
+    final url = Uri.parse('https://touristineapp.onrender.com/signup');
     try {
       final response = await http.post(
         url,

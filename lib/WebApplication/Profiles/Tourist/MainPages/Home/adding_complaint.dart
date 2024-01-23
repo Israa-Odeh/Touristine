@@ -60,7 +60,7 @@ class _AddingComplaintsPageState extends State<AddingComplaintsPage> {
   // A function to send complaint data to the backend.
   Future<void> sendComplaint() async {
     String currentDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
-    final url = Uri.parse('https://touristine.onrender.com/send-complaint');
+    final url = Uri.parse('https://touristineapp.onrender.com/send-complaint');
 
     // Create a multi-part request.
     final request = http.MultipartRequest('POST', url);

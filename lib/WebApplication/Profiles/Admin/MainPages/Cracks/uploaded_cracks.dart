@@ -35,7 +35,7 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
     });
 
     final url =
-        Uri.parse('https://touristine.onrender.com/get-destination-cracks');
+        Uri.parse('https://touristineapp.onrender.com/get-destination-cracks');
 
     try {
       final response = await http.post(
@@ -114,8 +114,8 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
 
     if (!mounted) return;
     try {
-      final url =
-          Uri.parse('https://touristine.onrender.com/approve-uploaded-crack');
+      final url = Uri.parse(
+          'https://touristineapp.onrender.com/approve-uploaded-crack');
 
       final response = await http.post(
         url,
@@ -158,8 +158,8 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
       print(uploadId);
       if (!mounted) return;
       try {
-        final url =
-            Uri.parse('https://touristine.onrender.com/reject-uploaded-crack');
+        final url = Uri.parse(
+            'https://touristineapp.onrender.com/reject-uploaded-crack');
 
         final response = await http.post(
           url,

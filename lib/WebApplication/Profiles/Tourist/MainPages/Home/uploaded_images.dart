@@ -27,7 +27,7 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
   // A function to delete a specific upload.
   Future<void> deleteUploadedImages(String uploadId, int index) async {
     final url =
-        Uri.parse('https://touristine.onrender.com/delete-uploads/$uploadId');
+        Uri.parse('https://touristineapp.onrender.com/delete-uploads/$uploadId');
 
     try {
       final response = await http.post(
