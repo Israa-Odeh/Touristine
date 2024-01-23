@@ -1,4 +1,4 @@
-import 'package:touristine/WebApplication/Profiles/Admin/MainPages/DestinationUpload/destination_view.dart';
+import 'package:touristine/WebApplication/Profiles/Coordinator/MainPages/DestinationUpload/destination_view.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/planMaker/custom_bottom_sheet.dart';
 import 'package:touristine/WebApplication/Notifications/snack_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

@@ -1,7 +1,7 @@
 import 'package:touristine/WebApplication/LoginAndRegistration/MainPages/splash_screen.dart';
 import 'package:touristine/WebApplication/onBoarding/Page_Screen/onboarding_screen.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/tourist.dart';
-import 'package:touristine/WebApplication/Profiles/Admin/MainPages/admin.dart';
+import 'package:touristine/WebApplication/Profiles/Coordinator/MainPages/coordinator.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
