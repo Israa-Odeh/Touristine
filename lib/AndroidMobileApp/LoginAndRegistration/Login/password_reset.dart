@@ -20,7 +20,7 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
   _PasswordResetPageState({required this.email});
 
   Future<void> resendPassword() async {
-    final url = Uri.parse('https://touristine.onrender.com/send-reset-email');
+    final url = Uri.parse('https://touristineapp.onrender.com/send-reset-email');
 
     try {
       final response = await http.post(

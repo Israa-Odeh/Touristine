@@ -44,7 +44,7 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
 
   Future<void> checkVerificationStatus() async {
     final url = Uri.parse(
-        'https://touristine.onrender.com/check-verification-status'); // Replace this with your Node.js server URL.
+        'https://touristineapp.onrender.com/check-verification-status'); // Replace this with your Node.js server URL.
     try {
       final response = await http.post(
         url,
@@ -98,7 +98,7 @@ class _AccountVerificationPageState extends State<AccountVerificationPage> {
   Future<void> resendEmail() async {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
     String? deviceToken = await messaging.getToken();
-    final url = Uri.parse('https://touristine.onrender.com/signup');
+    final url = Uri.parse('https://touristineapp.onrender.com/signup');
     try {
       final response = await http.post(
         url,

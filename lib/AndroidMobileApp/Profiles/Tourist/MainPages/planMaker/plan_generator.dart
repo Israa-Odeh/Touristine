@@ -93,7 +93,7 @@ class _MakePlanTabState extends State<MakePlanTab> {
     print(groupCount.toString());
     print(selectedAgeCats.join(', '));
 
-    final url = Uri.parse('https://touristine.onrender.com/store-plan');
+    final url = Uri.parse('https://touristineapp.onrender.com/store-plan');
 
     try {
       final response = await http.post(
@@ -148,7 +148,7 @@ class _MakePlanTabState extends State<MakePlanTab> {
   // A function to get the available destinations in the app.
   Future<void> getDestinationsList() async {
     final url =
-        Uri.parse('https://touristine.onrender.com/get-destinations-list');
+        Uri.parse('https://touristineapp.onrender.com/get-destinations-list');
 
     try {
       final response = await http.post(

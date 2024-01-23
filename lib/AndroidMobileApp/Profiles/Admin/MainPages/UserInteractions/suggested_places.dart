@@ -28,7 +28,7 @@ class _SuggestedPlacesPageState extends State<SuggestedPlacesPage> {
       isLoading = true;
     });
 
-    final url = Uri.parse('https://touristine.onrender.com/get-suggestions');
+    final url = Uri.parse('https://touristineapp.onrender.com/get-suggestions');
 
     try {
       final response = await http.post(
@@ -217,7 +217,7 @@ class _DestinationCardState extends State<DestinationCard> {
       if (!mounted) return;
       await addAdminComment(suggestionId, comment);
       final url = Uri.parse(
-          'https://touristine.onrender.com/delete-suggestion/$suggestionId');
+          'https://touristineapp.onrender.com/delete-suggestion/$suggestionId');
 
       try {
         final response = await http.post(
@@ -261,7 +261,7 @@ class _DestinationCardState extends State<DestinationCard> {
     print(suggestionId);
     print(comment);
     try {
-      final url = Uri.parse('https://touristine.onrender.com/add-comment');
+      final url = Uri.parse('https://touristineapp.onrender.com/add-comment');
 
       final response = await http.post(
         url,

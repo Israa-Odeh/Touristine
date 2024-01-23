@@ -67,7 +67,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
 
   // A function to retrieve the users review data.
   Future<void> getAllReviews() async {
-    final url = Uri.parse('https://touristine.onrender.com/get-all-reviews');
+    final url = Uri.parse('https://touristineapp.onrender.com/get-all-reviews');
 
     try {
       final response = await http.post(
@@ -127,7 +127,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
 
   // A function to retrieve the user's review data.
   Future<void> getReviewData() async {
-    final url = Uri.parse('https://touristine.onrender.com/get-review-data');
+    final url = Uri.parse('https://touristineapp.onrender.com/get-review-data');
 
     try {
       final response = await http.post(
@@ -194,7 +194,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
   // A function to retrieve all of the destination details.
   Future<void> getDestinationDetails(String destName) async {
     final url =
-        Uri.parse('https://touristine.onrender.com/get-destination-details');
+        Uri.parse('https://touristineapp.onrender.com/get-destination-details');
 
     try {
       final response = await http.post(
@@ -251,7 +251,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
   // A function to retrieve the destination latitude and longitude.
   Future<void> getDestinationLatLng() async {
     final url =
-        Uri.parse('https://touristine.onrender.com/get-destination-lat-lng');
+        Uri.parse('https://touristineapp.onrender.com/get-destination-lat-lng');
 
     try {
       final response = await http.post(
@@ -291,7 +291,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
 
   // A Function to fetch user complaints from the backend.
   Future<void> fetchUserComplaints() async {
-    final url = Uri.parse('https://touristine.onrender.com/get-complaints');
+    final url = Uri.parse('https://touristineapp.onrender.com/get-complaints');
 
     try {
       final response = await http.post(
@@ -336,7 +336,7 @@ class _DestinationDetailsState extends State<DestinationDetails> {
   // A Function to fetch user images-uploads from the backend.
   Future<void> fetchUploadedImages() async {
     final url =
-        Uri.parse('https://touristine.onrender.com/get-uploaded-images');
+        Uri.parse('https://touristineapp.onrender.com/get-uploaded-images');
 
     try {
       final response = await http.post(

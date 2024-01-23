@@ -66,7 +66,7 @@ class _AdminAddingPageState extends State<AdminAddingPage> {
   Future<void> addNewAdmin() async {
     if (!mounted) return;
 
-    final url = Uri.parse('https://touristine.onrender.com/add-new-admin');
+    final url = Uri.parse('https://touristineapp.onrender.com/add-new-admin');
 
     try {
       final response = await http.post(

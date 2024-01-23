@@ -28,7 +28,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   }
 
   Future<void> sendResetEmail() async {
-    final url = Uri.parse('https://touristine.onrender.com/send-reset-email');
+    final url = Uri.parse('https://touristineapp.onrender.com/send-reset-email');
 
     try {
       final response = await http.post(

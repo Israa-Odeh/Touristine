@@ -120,7 +120,7 @@ class _AddDestTabState extends State<AddDestTab> {
     String formattedMinutes = selectedMinutes.toString().padLeft(2, '0');
 
     final url =
-        Uri.parse('https://touristine.onrender.com/add-new-destination');
+        Uri.parse('https://touristineapp.onrender.com/add-new-destination');
 
     // Create a multi-part request.
     final request = http.MultipartRequest('POST', url);

@@ -58,7 +58,7 @@ class _TouristAppState extends State<TouristProfile> {
   // A function to retrieve a list of recommended destinations.
   Future<void> getRecommendedDestinations() async {
     final url = Uri.parse(
-        'https://touristine.onrender.com/get-recommended-destinations');
+        'https://touristineapp.onrender.com/get-recommended-destinations');
 
     try {
       final response = await http.post(
@@ -110,7 +110,7 @@ class _TouristAppState extends State<TouristProfile> {
   // A function to fetch popular destinations from the database.
   Future<void> getPopularDestinations() async {
     final url =
-        Uri.parse('https://touristine.onrender.com/get-popular-destinations');
+        Uri.parse('https://touristineapp.onrender.com/get-popular-destinations');
 
     try {
       final response = await http.post(
@@ -164,7 +164,7 @@ class _TouristAppState extends State<TouristProfile> {
   // A function to fetch other destinations from the database.
   Future<void> getOtherDestinations() async {
     final url =
-        Uri.parse('https://touristine.onrender.com/get-other-destinations');
+        Uri.parse('https://touristineapp.onrender.com/get-other-destinations');
 
     try {
       final response = await http.post(

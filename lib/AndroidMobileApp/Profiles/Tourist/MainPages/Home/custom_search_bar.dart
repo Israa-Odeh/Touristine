@@ -58,7 +58,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
         isSearching = true;
       });
     }
-    final url = Uri.parse('https://touristine.onrender.com/search-destination');
+    final url = Uri.parse('https://touristineapp.onrender.com/search-destination');
 
     try {
       final response = await http.post(

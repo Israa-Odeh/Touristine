@@ -25,7 +25,7 @@ class _DestinationCardGeneratorState extends State<DestinationCardGenerator> {
       isLoading = true;
     });
 
-    final url = Uri.parse('https://touristine.onrender.com/get-uploaded-dests');
+    final url = Uri.parse('https://touristineapp.onrender.com/get-uploaded-dests');
 
     try {
       final response = await http.post(
@@ -195,7 +195,7 @@ class _DestinationCardState extends State<DestinationCard> {
   // A function to delete a specific destination.
   Future<void> deleteDestination(String destId) async {
     final url =
-        Uri.parse('https://touristine.onrender.com/delete-destination/$destId');
+        Uri.parse('https://touristineapp.onrender.com/delete-destination/$destId');
 
     try {
       final response = await http.post(

@@ -36,7 +36,7 @@ class _DestinationListState extends State<DestinationList> {
   // A function to retrieve all of the destination details.
   Future<void> getDestinationDetails(String destName) async {
     final url =
-        Uri.parse('https://touristine.onrender.com/get-destination-details');
+        Uri.parse('https://touristineapp.onrender.com/get-destination-details');
 
     try {
       setState(() {

@@ -73,7 +73,7 @@ class _AddingReviewPageState extends State<AddingReviewPage> {
   // Function to send the review data to the backend.
   Future<void> sendReviewData() async {
     String currentDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
-    final url = Uri.parse('https://touristine.onrender.com/send-review-data');
+    final url = Uri.parse('https://touristineapp.onrender.com/send-review-data');
 
     try {
       final response = await http.post(

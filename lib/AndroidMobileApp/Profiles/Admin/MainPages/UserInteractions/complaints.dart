@@ -29,7 +29,7 @@ class _ComplaintsListPageState extends State<ComplaintsListPage> {
     });
 
     final url =
-        Uri.parse('https://touristine.onrender.com/get-destination-complaints');
+        Uri.parse('https://touristineapp.onrender.com/get-destination-complaints');
 
     try {
       final response = await http.post(
@@ -98,7 +98,7 @@ class _ComplaintsListPageState extends State<ComplaintsListPage> {
       if (!mounted) return;
       try {
         final url =
-            Uri.parse('https://touristine.onrender.com/delete-all-complaints');
+            Uri.parse('https://touristineapp.onrender.com/delete-all-complaints');
 
         final response = await http.post(
           url,
@@ -136,7 +136,7 @@ class _ComplaintsListPageState extends State<ComplaintsListPage> {
       if (!mounted) return;
       try {
         final url =
-            Uri.parse('https://touristine.onrender.com/delete-complaint');
+            Uri.parse('https://touristineapp.onrender.com/delete-complaint');
 
         final response = await http.post(
           url,
@@ -175,7 +175,7 @@ class _ComplaintsListPageState extends State<ComplaintsListPage> {
 
     try {
       final url =
-          Uri.parse('https://touristine.onrender.com/mark-complaint-as-seen');
+          Uri.parse('https://touristineapp.onrender.com/mark-complaint-as-seen');
 
       final response = await http.post(
         url,

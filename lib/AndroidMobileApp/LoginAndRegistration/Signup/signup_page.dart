@@ -66,7 +66,7 @@ class _SignupPageState extends State<SignupPage> {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
     String? deviceToken = await messaging.getToken();
     final url = Uri.parse(
-        'https://touristine.onrender.com/signup');
+        'https://touristineapp.onrender.com/signup');
     try {
       final response = await http.post(
         url,

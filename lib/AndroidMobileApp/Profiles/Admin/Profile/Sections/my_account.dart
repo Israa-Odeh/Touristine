@@ -64,7 +64,7 @@ class _AccountPageState extends State<AccountPage> {
   }
 
   Future<void> sendAndSaveData() async {
-    final url = Uri.parse('https://touristine.onrender.com/edit-account');
+    final url = Uri.parse('https://touristineapp.onrender.com/edit-account');
     final request = http.MultipartRequest('POST', url);
 
     // Add headers to the request.

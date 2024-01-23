@@ -68,7 +68,7 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
 
   // A function that sends a request to the server to retrieve the saved interests.
   Future<void> fetchSavedInterests() async {
-    final url = Uri.parse('https://touristine.onrender.com/get-interests');
+    final url = Uri.parse('https://touristineapp.onrender.com/get-interests');
 
     try {
       final response = await http.post(
@@ -130,7 +130,7 @@ class _InterestsFillingPageState extends State<InterestsFillingPage> {
   }
 
   Future<void> sendAndSaveData() async {
-    final url = Uri.parse('https://touristine.onrender.com/interests-filling');
+    final url = Uri.parse('https://touristineapp.onrender.com/interests-filling');
 
     try {
       final Map<String, String> postBody = {
