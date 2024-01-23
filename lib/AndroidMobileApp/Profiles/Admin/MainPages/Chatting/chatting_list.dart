@@ -1,11 +1,13 @@
 import 'package:touristine/AndroidMobileApp/Profiles/Tourist/MainPages/Chatting/chat_message.dart';
-import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/Chatting/chat_page.dart';
 import 'package:touristine/AndroidMobileApp/Profiles/Admin/ActiveStatus/active_status.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/Chatting/chat_page.dart';
 import 'package:touristine/AndroidMobileApp/Notifications/snack_bar.dart';
+import 'package:touristine/AndroidMobileApp/UserData/user_provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:async';
@@ -20,12 +22,12 @@ class ChattingList extends StatefulWidget {
 }
 
 class _ChattingListState extends State<ChattingList> {
-  List<Map<String, dynamic>> filteredCoordinators = [];
-  List<Map<String, dynamic>> coordinators = [];
-  Color iconColor = Colors.grey;
-  late Timer statusUpdateTimer;
-  late FocusNode focusNode;
   bool isLoading = true;
+  late FocusNode focusNode;
+  Color iconColor = Colors.grey;
+  List<Map<String, dynamic>> filteredAdmins = [];
+  List<Map<String, dynamic>> admins = [];
+  late Timer statusUpdateTimer;
 
   @override
   void initState() {
@@ -38,64 +40,46 @@ class _ChattingListState extends State<ChattingList> {
       });
     });
 
-    Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
-    String adminEmail = decodedToken['email'];
-    getCoordinatorsEmails(adminEmail);
+    // Retrieve available admins for chatting.
+    getAdminsData();
 
     // Start a timer to periodically update active status.
     statusUpdateTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      // Update active status for all coordinators.
-      if (mounted) updateCoordinatorsActiveStatus();
+      // Update active status for all admins.
+      if (mounted) updateAdminsActiveStatus();
     });
   }
 
-  Future<void> getCoordinatorsEmails(String adminEmail) async {
+  void updateAdminsActiveStatus() async {
     try {
-      if (!mounted) return;
+      List<bool> adminsActiveStatus = await getAdminsActiveStatusList(
+          admins.map((admin) => admin['email'] as String).toList());
 
-      setState(() {
-        isLoading = true;
-      });
-
-      QuerySnapshot<Map<String, dynamic>> querySnapshot =
-          await FirebaseFirestore.instance
-              .collection('chats')
-              .where('admin.email', isEqualTo: adminEmail)
-              .where('messages', isGreaterThan: []).get();
-
-      if (querySnapshot.docs.isEmpty) {
-        print('No messages with the specified admin ($adminEmail) exist.');
-      } else {
-        List<String> coordinatorsEmails = [];
-        for (QueryDocumentSnapshot<Map<String, dynamic>> document
-            in querySnapshot.docs) {
-          Map<String, dynamic> coordinatorData = document['tourist'];
-          String coordinatorEmail = coordinatorData['email'];
-          coordinatorsEmails.add(coordinatorEmail);
-        }
-        print(coordinatorsEmails);
-        await getCoordinatorsInfo(coordinatorsEmails);
+      for (int i = 0; i < admins.length; i++) {
+        admins[i]['activeStatus'] =
+            adminsActiveStatus.isNotEmpty && adminsActiveStatus.length > i
+                ? adminsActiveStatus[i]
+                : false;
+        // Print the new active status.
+        print(
+            'Admin ${admins[i]['firstName']} ${admins[i]['lastName']} - Active Status: ${admins[i]['activeStatus']}');
       }
+
+      // Trigger a UI update.
+      if (mounted) setState(() {});
     } catch (e) {
-      print('Error getting coordinators with emails: $e');
-    } finally {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
+      print('Error updating admins active status: $e');
     }
   }
 
-  Future<void> getCoordinatorsInfo(List<String> coordinatorsEmails) async {
+  Future<void> getAdminsData() async {
     if (!mounted) return;
 
     setState(() {
       isLoading = true;
     });
 
-    final url =
-        Uri.parse('https://touristineapp.onrender.com/get-coordinators-info');
+    final url = Uri.parse('https://touristineapp.onrender.com/get-admins-Data');
 
     try {
       final response = await http.post(
@@ -104,40 +88,47 @@ class _ChattingListState extends State<ChattingList> {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Authorization': 'Bearer ${widget.token}',
         },
-        body: {
-          'tcoordinatorsEmails': jsonEncode(coordinatorsEmails),
-        },
       );
+      if (mounted) {
+        if (response.statusCode == 200) {
+          final Map<String, dynamic> responseData = json.decode(response.body);
+          List<Map<String, dynamic>> fetchedAdmins =
+              List<Map<String, dynamic>>.from(responseData['admins']);
 
-      if (response.statusCode == 200) {
-        List<Map<String, dynamic>> fetchedCoordinators =
-            List<Map<String, dynamic>>.from(
-          jsonDecode(response.body)['coordinators'],
-        );
+          // Extract emails from fetchedAdmins.
+          List<String> adminsEmails =
+              fetchedAdmins.map((admin) => admin['email'] as String).toList();
 
-        // Fetch the active status for each coordinator.
-        List<bool> coordinatorsActiveStatus =
-            await getCoordinatorsActiveStatusList(coordinatorsEmails);
+          // Fetch the active status for each admin by passing the list of emails.
+          List<bool> adminsActiveStatus =
+              await getAdminsActiveStatusList(adminsEmails);
 
-        // Update the coordinators map with active status.
-        for (int i = 0; i < fetchedCoordinators.length; i++) {
-          fetchedCoordinators[i]['activeStatus'] =
-              coordinatorsActiveStatus.isNotEmpty && coordinatorsActiveStatus.length > i
-                  ? coordinatorsActiveStatus[i]
-                  : false;
+          // Update the admins map with active status.
+          for (int i = 0; i < fetchedAdmins.length; i++) {
+            fetchedAdmins[i]['activeStatus'] =
+                adminsActiveStatus.isNotEmpty && adminsActiveStatus.length > i
+                    ? adminsActiveStatus[i]
+                    : false;
+          }
+          setState(() {
+            admins = fetchedAdmins;
+            filteredAdmins = List.from(admins);
+          });
+          print(admins);
+        } else if (response.statusCode == 500) {
+          final Map<String, dynamic> responseData = json.decode(response.body);
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
+        } else {
+          // ignore: use_build_context_synchronously
+          showCustomSnackBar(context, 'Error fetching available admins',
+              bottomMargin: 0);
         }
-        setState(() {
-          coordinators = fetchedCoordinators;
-          filteredCoordinators = List.from(coordinators);
-        });
-        print(coordinators);
-      } else {
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
       }
-    } catch (e) {
-      print('Error fetching coordinators list: $e');
+    } catch (error) {
+      if (mounted) {
+        print('Error fetching admins: $error');
+      }
     } finally {
       if (mounted) {
         setState(() {
@@ -147,53 +138,28 @@ class _ChattingListState extends State<ChattingList> {
     }
   }
 
-  Future<List<bool>> getCoordinatorsActiveStatusList(
-      List<String> coordinatorsEmails) async {
+  Future<List<bool>> getAdminsActiveStatusList(
+      List<String> adminsEmails) async {
     List<bool> statusList = [];
 
-    for (String email in coordinatorsEmails) {
+    for (String email in adminsEmails) {
       bool? status = await getCoordinatorActiveStatus(email);
       statusList.add(status ?? false);
     }
     return statusList;
   }
 
-  void updateCoordinatorsActiveStatus() async {
-    try {
-      List<bool> coordinatorsActiveStatus =
-          await getCoordinatorsActiveStatusList(coordinators
-              .map((coordinator) => coordinator['email'] as String)
-              .toList());
-
-      for (int i = 0; i < coordinators.length; i++) {
-        coordinators[i]['activeStatus'] = coordinatorsActiveStatus.isNotEmpty &&
-                coordinatorsActiveStatus.length > i
-            ? coordinatorsActiveStatus[i]
-            : false;
-        // Print the new active status.
-        print(
-            'Coordinator ${coordinators[i]['firstName']} ${coordinators[i]['lastName']} - Active Status: ${coordinators[i]['activeStatus']}');
-      }
-
-      // Trigger a UI update.
-      if (mounted) setState(() {});
-    } catch (e) {
-      print('Error updating coordinators active status: $e');
-    }
-  }
-
-  void filterCoordinators(String query) {
+  void filterAdmins(String query) {
     setState(() {
       if (query.isEmpty) {
-        filteredCoordinators = List.from(coordinators);
+        filteredAdmins = List.from(admins);
       } else {
-        filteredCoordinators = coordinators.where((coordinator) {
-          final fullName =
-              '${coordinator['firstName']} ${coordinator['lastName']}';
+        filteredAdmins = admins.where((admin) {
+          final fullName = '${admin['firstName']} ${admin['lastName']}';
           final queryLowerCase = query.toLowerCase();
           return fullName.toLowerCase().contains(queryLowerCase) ||
-              coordinator['firstName'].toLowerCase().contains(queryLowerCase) ||
-              coordinator['lastName'].toLowerCase().contains(queryLowerCase) ||
+              admin['firstName'].toLowerCase().contains(queryLowerCase) ||
+              admin['lastName'].toLowerCase().contains(queryLowerCase) ||
               fullName.split(' ').every((namePart) =>
                   namePart.toLowerCase().startsWith(queryLowerCase));
         }).toList();
@@ -201,14 +167,14 @@ class _ChattingListState extends State<ChattingList> {
     });
   }
 
-  void openChatWithCoordinator(Map<String, dynamic> coordinator) async {
-    // Extract the admin email from the token.
+  void openChatWithAdmin(Map<String, dynamic> admin) async {
+    // Extract the tourist email from the token.
     Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
-    String adminEmail = decodedToken['email'];
-    String coordinatorEmail = coordinator['email'];
+    String touristineEmail = decodedToken['email'];
+    String adminEmail = admin['email'];
 
     DocumentSnapshot<Map<String, dynamic>> chatDoc =
-        await getChat(adminEmail, coordinatorEmail);
+        await getChat(touristineEmail, adminEmail);
 
     if (chatDoc.exists) {
       // Chat exists, retrieve and print messages.
@@ -236,33 +202,65 @@ class _ChattingListState extends State<ChattingList> {
         print(
             '${chatMessage.sender}: ${chatMessage.message} - Date: ${chatMessage.date}, Time: ${chatMessage.time}');
       }
-      // Navigate to the ChatPage.
-      // ignore: use_build_context_synchronously
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ChatPage(
-            coordinatorName:
-                '${coordinator['firstName']} ${coordinator['lastName']}',
-            coordinatorEmail: coordinator['email'],
-            coordinatorImage: coordinator['image'],
-            token: widget.token,
-          ),
-        ),
-      );
     } else {
-      // Chat doesn't exist.
-      print('Chat does not exist.');
+      // Chat doesn't exist, initiate a new chat.
+      await createChatDocument(touristineEmail, admin); //
+      print('New chat created.');
     }
+
+    // Navigate to the ChatPage.
+    // ignore: use_build_context_synchronously
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChatPage(
+          coordinatorName: '${admin['firstName']} ${admin['lastName']}',
+          coordinatorEmail: admin['email'],
+          coordinatorImage: admin['image'],
+          token: widget.token,
+        ),
+      ),
+    );
   }
 
   Future<DocumentSnapshot<Map<String, dynamic>>> getChat(
-      String adminEmail, String coordinatorEmail) async {
-    String chatId = getChatId(adminEmail, coordinatorEmail);
+      String touristine, String admin) async {
+    String chatId = getChatId(touristine, admin);
     DocumentSnapshot<Map<String, dynamic>> chatDoc =
         await FirebaseFirestore.instance.collection('chats').doc(chatId).get();
 
     return chatDoc;
+  }
+
+  Future<void> createChatDocument(
+      String touristineEmail, Map<String, dynamic> admin) async {
+    String touristineFirstName = context.read<UserProvider>().firstName;
+    String touristineLastName = context.read<UserProvider>().lastName;
+
+    String adminFirstName = admin['firstName'];
+    String adminLastName = admin['lastName'];
+    String adminEmail = admin['email'];
+
+    String chatId = getChatId(touristineEmail, adminEmail);
+    try {
+      await FirebaseFirestore.instance.collection('chats').doc(chatId).set({
+        'touristine': {
+          'email': touristineEmail,
+          'firstName': touristineFirstName,
+          'lastName': touristineLastName,
+        },
+        'admin': {
+          'email': adminEmail,
+          'firstName': adminFirstName,
+          'lastName': adminLastName,
+        },
+        'messages': [], // Initialize with an empty list of messages.
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+      print('Chat document created successfully.');
+    } catch (e) {
+      print('Error creating chat document: $e');
+    }
   }
 
   String getChatId(String user1, String user2) {
@@ -272,8 +270,6 @@ class _ChattingListState extends State<ChattingList> {
 
   @override
   void dispose() {
-    // Cancel the timer when the widget is disposed.
-    statusUpdateTimer.cancel();
     focusNode.dispose();
     super.dispose();
   }
@@ -285,19 +281,19 @@ class _ChattingListState extends State<ChattingList> {
         children: [
           Positioned.fill(
             child: Image.asset(
-              'assets/Images/Profiles/Admin/mainBackground.jpg',
+              'assets/Images/Profiles/Tourist/homeBackground.jpg',
               fit: BoxFit.cover,
             ),
           ),
           Column(
             children: [
               if (!isLoading) const SizedBox(height: 40),
-              if (!isLoading && coordinators.isNotEmpty)
+              if (!isLoading && admins.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: TextField(
                     focusNode: focusNode,
-                    onChanged: filterCoordinators,
+                    onChanged: filterAdmins,
                     decoration: InputDecoration(
                       hintText: 'Search',
                       prefixIcon: Icon(
@@ -324,7 +320,7 @@ class _ChattingListState extends State<ChattingList> {
                               AlwaysStoppedAnimation<Color>(Color(0xFF1E889E)),
                         ),
                       )
-                    : filteredCoordinators.isEmpty
+                    : filteredAdmins.isEmpty
                         ? SingleChildScrollView(
                             child: Center(
                               child: Column(
@@ -348,11 +344,11 @@ class _ChattingListState extends State<ChattingList> {
                             ),
                           )
                         : ListView.builder(
-                            itemCount: filteredCoordinators.length,
+                            itemCount: filteredAdmins.length,
                             itemBuilder: (context, index) {
-                              final coordinator = filteredCoordinators[index];
+                              final admin = filteredAdmins[index];
                               final bool isActive =
-                                  coordinator['activeStatus'] ?? false;
+                                  admin['activeStatus'] ?? false;
                               return Card(
                                 elevation: 5,
                                 shape: RoundedRectangleBorder(
@@ -369,12 +365,10 @@ class _ChattingListState extends State<ChattingList> {
                                           CircleAvatar(
                                             backgroundColor: Colors.white,
                                             radius: 50,
-                                            backgroundImage: (coordinator[
-                                                            'image'] !=
+                                            backgroundImage: (admin['image'] !=
                                                         null &&
-                                                    coordinator['image'] != "")
-                                                ? NetworkImage(
-                                                    coordinator['image'])
+                                                    admin['image'] != "")
+                                                ? NetworkImage(admin['image'])
                                                 : const AssetImage(
                                                         "assets/Images/Profiles/Tourist/DefaultProfileImage.png")
                                                     as ImageProvider<Object>?,
@@ -385,7 +379,7 @@ class _ChattingListState extends State<ChattingList> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                '${coordinator['firstName']} ${coordinator['lastName']}',
+                                                '${admin['firstName']} ${admin['lastName']}',
                                                 style: const TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 20,
@@ -393,7 +387,7 @@ class _ChattingListState extends State<ChattingList> {
                                               ),
                                               const SizedBox(height: 20),
                                               Text(
-                                                coordinator['email'],
+                                                admin['email'],
                                                 style: const TextStyle(
                                                   color: Colors.grey,
                                                 ),
@@ -408,7 +402,7 @@ class _ChattingListState extends State<ChattingList> {
                                           color: Color.fromARGB(255, 0, 0, 0),
                                         ),
                                         onPressed: () {
-                                          openChatWithCoordinator(coordinator);
+                                          openChatWithAdmin(admin);
                                         },
                                       ),
                                       // Display the active status dot.
