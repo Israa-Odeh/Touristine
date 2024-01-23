@@ -14,10 +14,12 @@ import 'dart:convert';
 
 class CoordinatorProfile extends StatefulWidget {
   final String token;
+  final String city;
 
   const CoordinatorProfile({
     super.key,
     required this.token,
+    required this.city,
   });
 
   @override

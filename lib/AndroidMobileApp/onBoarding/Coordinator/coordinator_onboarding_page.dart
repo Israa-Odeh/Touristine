@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 
 class AdminOnBoardingPage extends StatefulWidget {
   final String token;
+  final String city;
 
-  const AdminOnBoardingPage({super.key, required this.token});
+  const AdminOnBoardingPage(
+      {super.key, required this.token, required this.city});
 
   @override
   _AdminOnBoardingPageState createState() => _AdminOnBoardingPageState();
@@ -46,6 +48,7 @@ class _AdminOnBoardingPageState extends State<AdminOnBoardingPage> {
       titleSize: 50, // Set your desired title size to be 50.
       numOfPages: 5, // The number of pages in the onboarding Page.
       profileType: 200, // 200 for admin profile.
+      city: widget.city,
     );
   }
 }

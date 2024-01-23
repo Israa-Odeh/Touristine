@@ -16,18 +16,21 @@ class OnBoardingPage extends StatefulWidget {
   final double titleSize;
   final int numOfPages;
   final int profileType;
+  final String city;
 
-  const OnBoardingPage(
-      {super.key,
-      required this.token,
-      this.googleAccount = false, // Set default value to false
-      required this.title,
-      required this.imageAsset,
-      required this.firstText,
-      required this.secondText,
-      required this.titleSize,
-      required this.numOfPages,
-      required this.profileType}); // 100: Indicates tourist Profile, 200: Indicates admin profile.
+  const OnBoardingPage({
+    super.key,
+    required this.token,
+    this.googleAccount = false, // Set default value to false
+    required this.title,
+    required this.imageAsset,
+    required this.firstText,
+    required this.secondText,
+    required this.titleSize,
+    required this.numOfPages,
+    required this.profileType, // 100: Indicates tourist Profile, 200: Indicates admin profile.
+    this.city = "",
+  });
 
   @override
   _OnBoardingPageState createState() => _OnBoardingPageState();
@@ -35,7 +38,7 @@ class OnBoardingPage extends StatefulWidget {
 
 class _OnBoardingPageState extends State<OnBoardingPage> {
   // This controller keeps track of what page we are on.
-  PageController _controller = PageController();
+  final PageController _controller = PageController();
 
   // Keeps track if we are on the last page or not.
   bool onLastPage = false;
@@ -137,6 +140,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                                 : SplashScreen(
                                     profileType: CoordinatorProfile(
                                       token: widget.token,
+                                      city: widget.city
                                     ),
                                   );
                           }));
