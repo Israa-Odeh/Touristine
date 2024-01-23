@@ -333,7 +333,8 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
                     padding:
                         const EdgeInsets.only(top: 10, right: 16, left: 16),
                     child: GridView.builder(
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 3,
                         crossAxisSpacing: 16.0,
                         mainAxisSpacing: 16.0,
@@ -649,13 +650,13 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
         return Dialog(
           backgroundColor: Colors.transparent,
           child: SizedBox(
-            width: 500,
-            height: 324,
+            width: 800,
+            height: 500,
             child: Column(
               children: [
                 SizedBox(
-                  width: 500,
-                  height: 260,
+                  width: 800,
+                  height: 436,
                   child: Image.network(
                     imagePath,
                     fit: BoxFit.fill,
@@ -674,11 +675,11 @@ class _UploadedImagesPageState extends State<UploadedImagesPage> {
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 20,
-                            vertical: 10,
+                            vertical: 20,
                           ),
                           backgroundColor: const Color(0xFF1E889E),
                           textStyle: const TextStyle(
-                            fontSize: 22.0,
+                            fontSize: 16.0,
                             fontFamily: 'Zilla',
                             fontWeight: FontWeight.bold,
                           ),

@@ -1,4 +1,4 @@
-import 'package:touristine/AndroidMobileApp/Notifications/snack_bar.dart';
+import 'package:touristine/WebApplication/Notifications/snack_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -203,10 +203,10 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
               style: TextStyle(
                   fontFamily: 'Zilla Slab Light',
                   fontWeight: FontWeight.bold,
-                  fontSize: 25)),
+                  fontSize: 20)),
           content: Text(
             dialogMessage,
-            style: const TextStyle(fontFamily: 'Andalus', fontSize: 25),
+            style: const TextStyle(fontFamily: 'Andalus', fontSize: 18),
           ),
           actions: <Widget>[
             TextButton(
@@ -216,7 +216,7 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
               child: const Text(
                 'Cancel',
                 style: TextStyle(
-                  fontSize: 22.0,
+                  fontSize: 16.0,
                   fontFamily: 'Zilla',
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 0, 0, 0),
@@ -230,7 +230,7 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
               child: const Text(
                 'Reject',
                 style: TextStyle(
-                  fontSize: 22.0,
+                  fontSize: 16.0,
                   fontFamily: 'Zilla',
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 200, 50, 27),
@@ -252,319 +252,317 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.only(top: uploadedImages.isNotEmpty ? 0.0 : 24),
-        child: Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image:
-                  AssetImage("assets/Images/Profiles/Admin/mainBackground.jpg"),
-              fit: BoxFit.cover,
-            ),
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image:
+                AssetImage("assets/Images/Profiles/Admin/mainBackground.jpg"),
+            fit: BoxFit.fill,
           ),
-          child: isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(Color(0xFF1E889E)),
-                  ),
-                )
-              : uploadedImages.isEmpty
-                  ? Center(
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 140),
-                          Image.asset(
+        ),
+        child: isLoading
+            ? const Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1E889E)),
+                ),
+              )
+            : uploadedImages.isEmpty
+                ? Center(
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Positioned(
+                          top: -40,
+                          child: Image.asset(
                             'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
-                            fit: BoxFit.cover,
+                            fit: BoxFit.fill,
                           ),
-                          const Text(
+                        ),
+                        const Positioned(
+                          top: 420,
+                          child: Text(
                             'No uploads found',
                             style: TextStyle(
                               fontSize: 40,
-                              fontWeight: FontWeight.w600,
                               fontFamily: 'Gabriola',
                               color: Color.fromARGB(255, 23, 99, 114),
                             ),
                           ),
-                        ],
-                      ),
-                    )
-                  : Padding(
-                      padding:
-                          const EdgeInsets.only(top: 10, right: 16, left: 16),
-                      child: GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          crossAxisSpacing: 16.0,
-                          mainAxisSpacing: 16.0,
                         ),
-                        itemCount: uploadedImages.length,
-                        itemBuilder: (context, index) {
-                          final imageInfo = uploadedImages[index];
-                          final List<String> keywords =
-                              List<String>.from(imageInfo['keywords']);
-                          final String uploadingDate = imageInfo['date'];
-                          final List<String> imageUrls =
-                              List<String>.from(imageInfo['images']);
-                          final String status = imageInfo['status'];
+                      ],
+                    ),
+                  )
+                : Padding(
+                    padding:
+                        const EdgeInsets.only(top: 10, right: 16, left: 16),
+                    child: GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 16.0,
+                        mainAxisSpacing: 16.0,
+                      ),
+                      itemCount: uploadedImages.length,
+                      itemBuilder: (context, index) {
+                        final imageInfo = uploadedImages[index];
+                        final List<String> keywords =
+                            List<String>.from(imageInfo['keywords']);
+                        final String uploadingDate = imageInfo['date'];
+                        final List<String> imageUrls =
+                            List<String>.from(imageInfo['images']);
+                        final String status = imageInfo['status'];
 
-                          return Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12.0),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.2),
-                                  spreadRadius: 0,
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 0),
-                                ),
-                              ],
-                            ),
-                            child: Card(
-                              color: Colors.white,
-                              elevation: 5,
-                              margin: const EdgeInsets.symmetric(vertical: 10),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.0),
+                        return Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                spreadRadius: 0,
+                                blurRadius: 10,
+                                offset: const Offset(0, 0),
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    if (keywords.length <= 2)
-                                      Row(
-                                        children: [
-                                          const Text(
-                                            'Category: ',
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w100,
-                                              fontFamily: 'Zilla',
-                                              color: Color.fromARGB(
-                                                  255, 14, 63, 73),
-                                            ),
+                            ],
+                          ),
+                          child: Card(
+                            color: Colors.white,
+                            elevation: 5,
+                            margin: const EdgeInsets.symmetric(vertical: 10),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  if (keywords.length <= 2)
+                                    Row(
+                                      children: [
+                                        const Text(
+                                          'Category: ',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w100,
+                                            fontFamily: 'Zilla',
+                                            color:
+                                                Color.fromARGB(255, 14, 63, 73),
                                           ),
-                                          Text(
-                                            keywords.join(', '),
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w100,
-                                              fontFamily: 'Zilla',
-                                              color: Color.fromARGB(
-                                                  255, 14, 63, 73),
-                                            ),
+                                        ),
+                                        Text(
+                                          keywords.join(', '),
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w100,
+                                            fontFamily: 'Zilla',
+                                            color:
+                                                Color.fromARGB(255, 14, 63, 73),
                                           ),
-                                        ],
-                                      ),
-                                    const Divider(
-                                      color: Color.fromARGB(126, 14, 63, 73),
-                                      thickness: 1,
+                                        ),
+                                      ],
                                     ),
-                                    SizedBox(
-                                        height: 200,
-                                        child: Scrollbar(
-                                          trackVisibility: imageUrls.length != 1
-                                              ? true
-                                              : false,
-                                          thumbVisibility: imageUrls.length != 1
-                                              ? true
-                                              : false,
+                                  const Divider(
+                                    color: Color.fromARGB(126, 14, 63, 73),
+                                    thickness: 1,
+                                  ),
+                                  SizedBox(
+                                      height: 200,
+                                      child: Scrollbar(
+                                        trackVisibility: imageUrls.length != 1
+                                            ? true
+                                            : false,
+                                        thumbVisibility: imageUrls.length != 1
+                                            ? true
+                                            : false,
+                                        controller:
+                                            imageScrollControllers[index],
+                                        child: ListView.builder(
                                           controller:
                                               imageScrollControllers[index],
-                                          child: ListView.builder(
-                                            controller:
-                                                imageScrollControllers[index],
-                                            scrollDirection: Axis.horizontal,
-                                            itemCount: imageUrls.length,
-                                            itemBuilder: (context, imageIndex) {
-                                              return Column(
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      showImageDialog(
-                                                          context,
-                                                          imageUrls[
-                                                              imageIndex]);
-                                                    },
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                      child: ClipRRect(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12.0),
-                                                        child: Stack(
-                                                          children: [
-                                                            Image.network(
-                                                              imageUrls[
-                                                                  imageIndex],
-                                                              width: 360,
-                                                              height: 180,
-                                                              fit: BoxFit.fill,
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: imageUrls.length,
+                                          itemBuilder: (context, imageIndex) {
+                                            return Column(
+                                              children: [
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    showImageDialog(context,
+                                                        imageUrls[imageIndex]);
+                                                  },
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              12.0),
+                                                      child: Stack(
+                                                        children: [
+                                                          Image.network(
+                                                            imageUrls[
+                                                                imageIndex],
+                                                            width: 360,
+                                                            height: 180,
+                                                            fit: BoxFit.fill,
+                                                          ),
+                                                          Positioned(
+                                                            top: 0,
+                                                            right: 0,
+                                                            child: Checkbox(
+                                                              value:
+                                                                  selectedImages[
+                                                                          index]
+                                                                      [
+                                                                      imageIndex],
+                                                              onChanged:
+                                                                  (value) {
+                                                                setState(() {
+                                                                  selectedImages[
+                                                                          index]
+                                                                      [
+                                                                      imageIndex] = value!;
+                                                                });
+                                                              },
+                                                              activeColor:
+                                                                  const Color(
+                                                                      0xFF1E889E),
                                                             ),
-                                                            Positioned(
-                                                              top: 0,
-                                                              right: 0,
-                                                              child: Checkbox(
-                                                                value: selectedImages[
-                                                                        index][
-                                                                    imageIndex],
-                                                                onChanged:
-                                                                    (value) {
-                                                                  setState(() {
-                                                                    selectedImages[index]
-                                                                            [
-                                                                            imageIndex] =
-                                                                        value!;
-                                                                  });
-                                                                },
-                                                                activeColor:
-                                                                    const Color(
-                                                                        0xFF1E889E),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
+                                                          ),
+                                                        ],
                                                       ),
                                                     ),
                                                   ),
-                                                ],
-                                              );
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        ),
+                                      )),
+                                  const Divider(
+                                    color: Color.fromARGB(126, 14, 63, 73),
+                                    thickness: 1,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        uploadingDate,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontFamily: 'Time New Roman',
+                                          color:
+                                              Color.fromARGB(255, 14, 63, 73),
+                                        ),
+                                      ),
+                                      Text(
+                                        status,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontFamily: 'Time New Roman',
+                                          color:
+                                              Color.fromARGB(255, 14, 63, 73),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const Divider(
+                                    color: Color.fromARGB(126, 14, 63, 73),
+                                    thickness: 1,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          // Reject Button.
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              rejectAnUpload(
+                                                  uploadedImages[index]['id']);
                                             },
-                                          ),
-                                        )),
-                                    const Divider(
-                                      color: Color.fromARGB(126, 14, 63, 73),
-                                      thickness: 1,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          uploadingDate,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontFamily: 'Time New Roman',
-                                            color:
-                                                Color.fromARGB(255, 14, 63, 73),
-                                          ),
-                                        ),
-                                        Text(
-                                          status,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontFamily: 'Time New Roman',
-                                            color:
-                                                Color.fromARGB(255, 14, 63, 73),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const Divider(
-                                      color: Color.fromARGB(126, 14, 63, 73),
-                                      thickness: 2,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            // Reject Button.
-                                            ElevatedButton(
-                                              onPressed: () {
-                                                rejectAnUpload(
-                                                    uploadedImages[index]
-                                                        ['id']);
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                  horizontal: 20,
-                                                  vertical: 20,
-                                                ),
-                                                backgroundColor:
-                                                    const Color.fromARGB(
-                                                        255, 231, 231, 231),
-                                                textStyle: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontFamily: 'Zilla',
-                                                  fontWeight: FontWeight.bold,
-                                                ),
+                                            style: ElevatedButton.styleFrom(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: 20,
+                                                vertical: 20,
                                               ),
-                                              child: const Text(
-                                                'Reject Upload',
-                                                style: TextStyle(
-                                                    color: Color.fromARGB(
-                                                        255, 0, 0, 0)),
+                                              backgroundColor:
+                                                  const Color.fromARGB(
+                                                      255, 231, 231, 231),
+                                              textStyle: const TextStyle(
+                                                fontSize: 16,
+                                                fontFamily: 'Zilla',
+                                                fontWeight: FontWeight.bold,
                                               ),
                                             ),
-                                            const SizedBox(
-                                              width: 10,
+                                            child: const Text(
+                                              'Reject Upload',
+                                              style: TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 0, 0, 0)),
                                             ),
-                                            // Approve Button.
-                                            ElevatedButton(
-                                              onPressed: () {
-                                                approveAnUpload(index);
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                  horizontal: 20,
-                                                  vertical: 20,
-                                                ),
-                                                backgroundColor:
-                                                    const Color(0xFF1E889E),
-                                                textStyle: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontFamily: 'Zilla',
-                                                  fontWeight: FontWeight.bold,
-                                                ),
+                                          ),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          // Approve Button.
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              approveAnUpload(index);
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: 20,
+                                                vertical: 20,
                                               ),
-                                              child: const Text('Approve'),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            Checkbox(
-                                              value: selectedImages[index]
-                                                  .every(
-                                                      (selected) => selected),
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  selectedImages[index]
-                                                      .fillRange(
-                                                          0,
-                                                          selectedImages[index]
-                                                              .length,
-                                                          value ?? false);
-                                                });
-                                              },
-                                              activeColor:
+                                              backgroundColor:
                                                   const Color(0xFF1E889E),
+                                              textStyle: const TextStyle(
+                                                fontSize: 16,
+                                                fontFamily: 'Zilla',
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
-                                            const Text(''),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                            child: const Text('Approve'),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Checkbox(
+                                            value: selectedImages[index]
+                                                .every((selected) => selected),
+                                            onChanged: (value) {
+                                              setState(() {
+                                                selectedImages[index].fillRange(
+                                                    0,
+                                                    selectedImages[index]
+                                                        .length,
+                                                    value ?? false);
+                                              });
+                                            },
+                                            activeColor:
+                                                const Color(0xFF1E889E),
+                                          ),
+                                          const Text(''),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                        );
+                      },
                     ),
-        ),
+                  ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       persistentFooterButtons: [
@@ -597,13 +595,13 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
         return Dialog(
           backgroundColor: Colors.transparent,
           child: SizedBox(
-            width: 500,
-            height: 324,
+            width: 800,
+            height: 500,
             child: Column(
               children: [
                 SizedBox(
-                  width: 500,
-                  height: 260,
+                  width: 800,
+                  height: 436,
                   child: Image.network(
                     imagePath,
                     fit: BoxFit.fill,
@@ -622,11 +620,11 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 20,
-                            vertical: 10,
+                            vertical: 20,
                           ),
                           backgroundColor: const Color(0xFF1E889E),
                           textStyle: const TextStyle(
-                            fontSize: 22.0,
+                            fontSize: 16.0,
                             fontFamily: 'Zilla',
                             fontWeight: FontWeight.bold,
                           ),

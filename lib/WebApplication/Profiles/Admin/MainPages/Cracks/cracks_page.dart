@@ -1,5 +1,5 @@
-import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/Cracks/uploaded_cracks.dart';
-import 'package:touristine/AndroidMobileApp/Notifications/snack_bar.dart';
+import 'package:touristine/WebApplication/Profiles/Admin/MainPages/Cracks/uploaded_cracks.dart';
+import 'package:touristine/WebApplication/Notifications/snack_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -133,7 +133,7 @@ class _CracksAnalysisPageState extends State<CracksAnalysisPage> {
                                 crossAxisCount: 3, // Number of cards in a row.
                                 mainAxisSpacing: 16, // Spacing between rows.
                                 crossAxisSpacing: 16, // Spacing between cols.
-                                mainAxisExtent: 298),
+                                mainAxisExtent: 297),
                         itemCount: destinations.length,
                         itemBuilder: (context, index) {
                           final destination = destinations[index];
