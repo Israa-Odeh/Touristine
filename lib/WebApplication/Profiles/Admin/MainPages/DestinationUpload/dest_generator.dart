@@ -38,6 +38,7 @@ class _AddDestTabState extends State<AddDestTab> {
   TextEditingController activityContentController = TextEditingController();
   TextEditingController aboutController = TextEditingController();
   TextEditingController geoTagsController = TextEditingController();
+  TextEditingController virtualTourController = TextEditingController();
 
   List<Uint8List> selectedImages = []; // List to store selected images.
   List<Map<String, String>> addedActivities = [];
@@ -157,6 +158,8 @@ class _AddDestTabState extends State<AddDestTab> {
     request.fields['ageCategories'] = selectedAgeCategoriesJson;
     String geoTagsJson = jsonEncode(geoTags);
     request.fields['geoTags'] = geoTagsJson;
+    request.fields['virtualTourLink'] =
+        virtualTourController.text.isEmpty ? "" : virtualTourController.text;
     request.fields['edited'] =
         destinationInfo.isNotEmpty && destinationInfo.containsKey('latitude')
             ? "true"
@@ -393,6 +396,7 @@ class _AddDestTabState extends State<AddDestTab> {
     destLngController.text = destinationInfo['longitude'];
     startTimeController.text = destinationInfo['openingTime'];
     endTimeController.text = destinationInfo['closingTime'];
+    virtualTourController.text = destinationInfo['virtualTourLink'];
 
     selectedWorkingDays =
         List<String>.from(destinationInfo['selectedWorkingDays']);
@@ -518,7 +522,7 @@ class _AddDestTabState extends State<AddDestTab> {
   }
 
   void nextPage() {
-    if (currentPage < 10) {
+    if (currentPage < 11) {
       pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
@@ -1206,6 +1210,7 @@ class _AddDestTabState extends State<AddDestTab> {
                   buildServicesPage(),
                   buildActivitiesPage(),
                   buildGeoTagsPage(),
+                  buildVirtualTourPage(),
                   buildImagesPage(),
                   buildSummaryPage(),
                 ],
@@ -1241,7 +1246,7 @@ class _AddDestTabState extends State<AddDestTab> {
                   ),
                   const SizedBox(width: 10),
                   Visibility(
-                    visible: currentPage < 10,
+                    visible: currentPage < 11,
                     child: ElevatedButton(
                       onPressed: () {
                         if (currentPage == 0) {
@@ -1330,7 +1335,7 @@ class _AddDestTabState extends State<AddDestTab> {
                           } else {
                             nextPage();
                           }
-                        } else if (currentPage == 9) {
+                        } else if (currentPage == 10) {
                           if (selectedImages.isEmpty) {
                             showCustomSnackBar(
                                 context, 'Destination images are needed',
@@ -2586,6 +2591,97 @@ class _AddDestTabState extends State<AddDestTab> {
     setState(() {
       geoTags.removeAt(index);
     });
+  }
+
+  Widget buildVirtualTourPage() {
+    return buildPageContent(
+      Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              children: [
+                Image.asset(
+                    'assets/Images/Profiles/Admin/DestUpload/VirtualTour.gif',
+                    height: 390,
+                    fit: BoxFit.cover),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 50.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          'Incorporate a Virtual Tour',
+                          style: TextStyle(
+                            fontFamily: 'Gabriola',
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF455a64),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Color(0xFF1E889E),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Enhance user experience in Tourstine by integrating\n a virtual tour for destination exploration',
+                  style: TextStyle(
+                    fontFamily: 'Gabriola',
+                    fontSize: 25,
+                    color: Color(0xFF455a64),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 40.0),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 80.0),
+                  child: TextField(
+                    controller: virtualTourController,
+                    decoration: const InputDecoration(
+                      labelText: 'Virtual Tour Link',
+                      labelStyle: TextStyle(
+                        fontSize: 18,
+                        color: Color(0xFF1E889E),
+                        fontWeight: FontWeight.bold,
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFF1E889E)),
+                      ),
+                    ),
+                    maxLength: 200,
+                    minLines: 1,
+                    maxLines: 4,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   Widget buildImagesPage() {
