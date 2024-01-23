@@ -12,11 +12,8 @@ class CracksMapViewer extends StatefulWidget {
 class _CracksMapViewerState extends State<CracksMapViewer> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Cracks Map Viewer'),
-      ),
-      body: const Center(
+    return const Scaffold(
+      body: Center(
         child: Text(
           'This is the Cracks Map Viewer page!',
           style: TextStyle(fontSize: 20),

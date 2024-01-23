@@ -2,8 +2,8 @@ import 'package:touristine/AndroidMobileApp/Profiles/Tourist/MainPages/planMaker
 import 'package:touristine/AndroidMobileApp/Notifications/snack_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:math';
 

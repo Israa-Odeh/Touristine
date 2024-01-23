@@ -1,7 +1,7 @@
+import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/Destinations/touristine_destinations.dart';
 import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/Chatting/chatting_list.dart';
 import 'package:touristine/AndroidMobileApp/Profiles/Admin/ActiveStatus/active_status.dart';
 import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/Cracks/mapView.dart';
-import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/Destinations/touristine_destinations.dart';
 import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/Home/home.dart';
 import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/profile_page.dart';
 import 'package:touristine/AndroidMobileApp/Notifications/snack_bar.dart';
