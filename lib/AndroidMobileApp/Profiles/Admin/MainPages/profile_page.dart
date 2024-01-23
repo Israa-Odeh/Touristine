@@ -1,4 +1,4 @@
-import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/Profile/Sections/adding_admins.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Admin/Profile/Sections/adding_admins.dart';
 import 'package:touristine/AndroidMobileApp/LoginAndRegistration/MainPages/landing_page.dart';
 import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/Profile/Sections/my_account.dart';
 import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/ActiveStatus/active_status.dart';

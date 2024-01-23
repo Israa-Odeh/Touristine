@@ -1,7 +1,6 @@
-import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/Profile/Sections/adding_admins.dart';
-import 'package:touristine/AndroidMobileApp/LoginAndRegistration/MainPages/landing_page.dart';
 import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/Profile/Sections/my_account.dart';
 import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/ActiveStatus/active_status.dart';
+import 'package:touristine/AndroidMobileApp/LoginAndRegistration/MainPages/landing_page.dart';
 import 'package:touristine/AndroidMobileApp/components/profile_picture.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:flutter/material.dart';
@@ -100,17 +99,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => AccountPage(
-                          token: widget.token,
-                        ),
-                      ),
-                    );
-                  }),
-                  const SizedBox(height: 15),
-                  buildProfileTile("New Admin",
-                      "assets/Images/Profiles/Admin/ProfilePage/add.png", () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => AdminAddingPage(
                           token: widget.token,
                         ),
                       ),
