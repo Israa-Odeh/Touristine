@@ -403,10 +403,10 @@ class _CracksAnalysisPageState extends State<CracksAnalysisPage> {
               style: TextStyle(
                   fontFamily: 'Zilla Slab Light',
                   fontWeight: FontWeight.bold,
-                  fontSize: 22)),
+                  fontSize: 20)),
           content: Text(
             '$destinationName has $numberOfUploads ${(numberOfUploads > 1) ? "uploads, each containing cracks." : "upload containing cracks."}',
-            style: const TextStyle(fontFamily: 'Andalus', fontSize: 24),
+            style: const TextStyle(fontFamily: 'Andalus', fontSize: 18),
           ),
           actions: [
             TextButton(
@@ -416,7 +416,7 @@ class _CracksAnalysisPageState extends State<CracksAnalysisPage> {
               child: const Text(
                 'OK',
                 style: TextStyle(
-                  fontSize: 22.0,
+                  fontSize: 16.0,
                   fontFamily: 'Zilla',
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 0, 0, 0),
