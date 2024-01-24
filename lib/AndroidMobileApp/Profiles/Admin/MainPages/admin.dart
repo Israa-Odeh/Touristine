@@ -146,7 +146,7 @@ class _AdminAppState extends State<AdminProfile> {
                 0,
               ),
               _buildBottomNavigationBarItem(
-                FontAwesomeIcons.usersViewfinder,
+                FontAwesomeIcons.mapLocationDot,
                 'Destinations',
                 1,
               ),

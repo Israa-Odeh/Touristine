@@ -1,6 +1,7 @@
 import 'package:touristine/WebApplication/LoginAndRegistration/Login/forgot_password.dart';
 import 'package:touristine/WebApplication/LoginAndRegistration/MainPages/splash_screen.dart';
 import 'package:touristine/WebApplication/Notifications/snack_bar.dart';
+import 'package:touristine/WebApplication/Profiles/Admin/MainPages/admin.dart';
 import 'package:touristine/WebApplication/Profiles/Coordinator/MainPages/coordinator.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/tourist.dart';
 import 'package:touristine/WebApplication/UserData/user_provider.dart';

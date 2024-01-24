@@ -19,12 +19,12 @@ Future<void> setAdminActiveStatus(String adminEmail, bool isActive) async {
   });
 }
 
-Future<bool?> getTouristActiveStatus(String touristEmail) async {
+Future<bool?> getCoordinatorActiveStatus(String coordinatorEmail) async {
   try {
     DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
         .instance
-        .collection('tourists_active_status')
-        .doc(touristEmail)
+        .collection('admins_active_status')
+        .doc(coordinatorEmail)
         .get();
 
     if (snapshot.exists) {
@@ -33,7 +33,7 @@ Future<bool?> getTouristActiveStatus(String touristEmail) async {
       return null;
     }
   } catch (e) {
-    print('Error fetching tourist status: $e');
+    print('Error fetching coordinator status: $e');
     return null;
   }
 }

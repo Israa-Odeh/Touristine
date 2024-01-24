@@ -2,26 +2,24 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:uuid/uuid.dart';
-import 'dart:typed_data';
 import 'dart:async';
+import 'dart:io';
 
 class ChatPage extends StatefulWidget {
   final String token;
-  final String touristName;
-  final String touristEmail;
-  final String? touristImage;
+  final String coordinatorName;
+  final String coordinatorEmail;
+  final String? coordinatorImage;
 
   const ChatPage(
       {super.key,
       required this.token,
-      required this.touristName,
-      required this.touristEmail,
-      this.touristImage});
+      required this.coordinatorName,
+      required this.coordinatorEmail,
+      this.coordinatorImage});
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -47,7 +45,7 @@ class _ChatPageState extends State<ChatPage> {
 
   Future<void> fetchMessages() async {
     String chatId =
-        getChatId(widget.touristEmail, Jwt.parseJwt(widget.token)['email']);
+        getChatId(widget.coordinatorEmail, Jwt.parseJwt(widget.token)['email']);
     DocumentReference chatRef = firestore.collection('chats').doc(chatId);
 
     chatSubscription = chatRef.snapshots().listen((chatSnapshot) {
@@ -103,15 +101,15 @@ class _ChatPageState extends State<ChatPage> {
               children: [
                 CircleAvatar(
                   backgroundColor: Colors.white,
-                  backgroundImage: (widget.touristImage != null &&
-                          widget.touristImage != "")
-                      ? NetworkImage(widget.touristImage!)
+                  backgroundImage: (widget.coordinatorImage != null &&
+                          widget.coordinatorImage != "")
+                      ? NetworkImage(widget.coordinatorImage!)
                       : const AssetImage(
                               "assets/Images/Profiles/Tourist/DefaultProfileImage.png")
                           as ImageProvider<Object>?,
                 ),
                 const SizedBox(width: 10),
-                Text(widget.touristName),
+                Text(widget.coordinatorName),
               ],
             ),
           ),
@@ -163,12 +161,12 @@ class _ChatPageState extends State<ChatPage> {
                 const EdgeInsets.only(right: 10.0, left: 10.0, bottom: 30.0),
             child: TextField(
               style: const TextStyle(
-                fontSize: 16,
+                fontSize: 20,
               ),
               controller: messageController,
               decoration: const InputDecoration(
                 hintText: 'Type your message',
-                hintStyle: TextStyle(fontSize: 18),
+                hintStyle: TextStyle(fontSize: 20),
                 border: UnderlineInputBorder(
                   borderSide: BorderSide(color: Colors.transparent),
                 ),
@@ -197,32 +195,38 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  Future<void> pickAndUploadImage() async {
-    FilePickerResult? result;
-    result = await FilePicker.platform.pickFiles(type: FileType.image);
+  void pickAndUploadImage() async {
+    try {
+      final XFile? pickedFile =
+          await imagePicker.pickImage(source: ImageSource.gallery);
 
-    if (result != null) {
-      Uint8List? uploadFile = result.files.single.bytes;
-      // String imageFileName = result.files.single.name;
+      if (pickedFile != null) {
+        File imageFile = File(pickedFile.path);
+        String imageUrl = await uploadImage(imageFile);
+        sendUserMessage(imageUrl);
+      }
+    } catch (e) {
+      print('Error picking or uploading image: $e');
+    }
+  }
 
-      // Specify the folder path in Firebase Storage.
-      String folderPath = 'chat_images/';
+  Future<String> uploadImage(File imageFile) async {
+    try {
+      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      Reference storageReference =
+          storage.ref().child('chat_images/$fileName.jpg');
+      UploadTask uploadTask = storageReference.putFile(imageFile);
 
-      // Generate a unique filename using UUID.
-      String fileName = '${const Uuid().v1()}.jpg';
+      await uploadTask.whenComplete(() => null);
 
-      // Create a Reference with the specified path
-      Reference reference =
-          FirebaseStorage.instance.ref().child('$folderPath$fileName');
+      String imageUrl = await storageReference.getDownloadURL();
 
-      final UploadTask uploadTask = reference.putData(uploadFile!);
+      print('Image uploaded successfully. URL: $imageUrl');
 
-      uploadTask.whenComplete(() {
-        reference.getDownloadURL().then((url) {
-          print('File uploaded to: $url');
-          sendUserMessage(url);
-        });
-      });
+      return imageUrl;
+    } catch (e) {
+      print('Error uploading image: $e');
+      throw e;
     }
   }
 
@@ -256,7 +260,7 @@ class _ChatPageState extends State<ChatPage> {
   Future<void> storeMessageInFirebase(String message, String? imageUrl) async {
     Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
     String adminEmail = decodedToken['email'];
-    String chatId = getChatId(widget.touristEmail, adminEmail);
+    String chatId = getChatId(widget.coordinatorEmail, adminEmail);
 
     try {
       DocumentReference chatRef = firestore.collection('chats').doc(chatId);
@@ -285,7 +289,7 @@ class _ChatPageState extends State<ChatPage> {
 
   Widget buildMessageItem(int index) {
     String sender = chatMessages[index]['sender'];
-    bool isTourist = sender == Jwt.parseJwt(widget.token)['email'];
+    bool isAdmin = sender == Jwt.parseJwt(widget.token)['email'];
 
     DateTime messageDate =
         DateFormat('dd/MM/yyyy').parse(chatMessages[index]['date']);
@@ -307,8 +311,8 @@ class _ChatPageState extends State<ChatPage> {
     if (chatMessages[index]['imageUrl'] != null) {
       return Padding(
         padding: EdgeInsets.only(
-          right: isTourist ? 12 : 650,
-          left: isTourist ? 650 : 12,
+          right: isAdmin ? 12 : 124,
+          left: isAdmin ? 124 : 12,
           top: 8.0,
           bottom: 0,
         ),
@@ -321,7 +325,7 @@ class _ChatPageState extends State<ChatPage> {
             showImageDialog(imageUrl, date, time);
           },
           child: SizedBox(
-            height: 400,
+            height: 200,
             width: 500,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15.0),
@@ -336,13 +340,13 @@ class _ChatPageState extends State<ChatPage> {
     } else {
       return Padding(
         padding: EdgeInsets.only(
-          right: isTourist ? 8 : 650,
-          left: isTourist ? 650 : 8,
+          right: isAdmin ? 8 : 120,
+          left: isAdmin ? 120 : 8,
           top: 8.0,
           bottom: 0,
         ),
         child: Card(
-          color: isTourist
+          color: isAdmin
               ? const Color.fromARGB(255, 106, 159, 170)
               : const Color.fromARGB(255, 169, 216, 225),
           shape: RoundedRectangleBorder(
@@ -357,8 +361,8 @@ class _ChatPageState extends State<ChatPage> {
                   child: Text(
                     chatMessages[index]['message'],
                     style: TextStyle(
-                      fontSize: 16,
-                      color: isTourist ? Colors.white : Colors.black,
+                      fontSize: 20,
+                      color: isAdmin ? Colors.white : Colors.black,
                     ),
                   ),
                 ),
@@ -366,7 +370,7 @@ class _ChatPageState extends State<ChatPage> {
                   formattedDateTime,
                   style: TextStyle(
                     fontSize: 14,
-                    color: isTourist ? Colors.white70 : Colors.black54,
+                    color: isAdmin ? Colors.white70 : Colors.black54,
                   ),
                 ),
               ],
@@ -405,8 +409,8 @@ class _ChatPageState extends State<ChatPage> {
           child: Stack(
             children: [
               SizedBox(
-                width: 1000,
-                height: 800,
+                width: 500,
+                height: 500,
                 child: Image.network(
                   imageUrl,
                   fit: BoxFit.fill,
@@ -450,6 +454,7 @@ class _ChatPageState extends State<ChatPage> {
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),

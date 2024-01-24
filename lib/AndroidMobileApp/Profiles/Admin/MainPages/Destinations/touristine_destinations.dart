@@ -78,86 +78,6 @@ class _TouristineDestinationsState extends State<TouristineDestinations> {
     }
   }
 
-  Future<void> deleteDestination(String destinationId) async {
-    bool? confirmDeletion = await showConfirmationDialog(context);
-
-    if (confirmDeletion == true) {
-      if (!mounted) return;
-      final url = Uri.parse(
-          'https://touristineapp.onrender.com/delete-added-destination/$destinationId');
-
-      try {
-        final response = await http.post(
-          url,
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': 'Bearer ${widget.token}'
-          },
-        );
-
-        if (!mounted) return;
-
-        if (response.statusCode == 200) {
-          setState(() {
-            destinationsList.removeWhere(
-                (destination) => destination['id'] == destinationId);
-          });
-          // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, 'The destination has been deleted',
-              bottomMargin: 0);
-        } else if (response.statusCode == 500) {
-          final Map<String, dynamic> responseData = json.decode(response.body);
-          // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
-        } else {
-          // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, 'Error deleting the destination',
-              bottomMargin: 0);
-        }
-      } catch (error) {
-        print('Error deleting destination: $error');
-      }
-    }
-  }
-
-  Future<void> getDestinationInfo(String destinationId) async {
-    if (!mounted) return;
-    final url =
-        Uri.parse('https://touristineapp.onrender.com/get-destination-info');
-    try {
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': 'Bearer ${widget.token}',
-        },
-        body: {
-          'destinationId': destinationId,
-        },
-      );
-      if (!mounted) return;
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        final Map<String, dynamic> destinationInfo =
-            responseData['destinationMap'];
-        print(destinationInfo);
-
-        // Handle all these stuff in the dest generator *O*.
-      } else if (response.statusCode == 500) {
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
-      } else {
-        // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, 'Error retrieving the destination',
-            bottomMargin: 0);
-      }
-    } catch (error) {
-      throw Exception('Error fetching destination details: $error');
-    }
-  }
-
   Map<String, dynamic> destinationDetails = {};
   List<Map<String, dynamic>> destinationImages = [];
   // A function to retrieve all of the destination details.
@@ -226,58 +146,6 @@ class _TouristineDestinationsState extends State<TouristineDestinations> {
     }
   }
 
-  Future<bool?> showConfirmationDialog(
-    BuildContext context, {
-    String dialogMessage = 'Are you sure you want to delete this destination?',
-  }) async {
-    return showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Confirm Deletion',
-              style: TextStyle(
-                  fontFamily: 'Zilla Slab Light',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 25)),
-          content: Text(
-            dialogMessage,
-            style: const TextStyle(fontFamily: 'Andalus', fontSize: 25),
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-              child: const Text(
-                'Cancel',
-                style: TextStyle(
-                  fontSize: 22.0,
-                  fontFamily: 'Zilla',
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 0, 0, 0),
-                ),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-              child: const Text(
-                "Delete",
-                style: TextStyle(
-                  fontSize: 22.0,
-                  fontFamily: 'Zilla',
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 200, 50, 27),
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   String getPlaceCategory(String placeCategory) {
     if (placeCategory.toLowerCase() == "coastalareas") {
       return "Coastal Area";
@@ -323,31 +191,6 @@ class _TouristineDestinationsState extends State<TouristineDestinations> {
                   height: 200,
                   width: double.infinity,
                   fit: BoxFit.fill,
-                ),
-              ),
-              Positioned(
-                top: 10,
-                right: 10,
-                child: ClipOval(
-                  child: Material(
-                    color: Colors.transparent,
-                    child: Ink(
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color.fromARGB(69, 0, 0, 0),
-                      ),
-                      child: IconButton(
-                        icon: const Icon(
-                          FontAwesomeIcons.penToSquare,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                        onPressed: () async {
-                          await getDestinationInfo(destinationId);
-                        },
-                      ),
-                    ),
-                  ),
                 ),
               ),
             ],
@@ -416,9 +259,6 @@ class _TouristineDestinationsState extends State<TouristineDestinations> {
                 ),
                 buildButton(
                   () async {
-                    await deleteDestination(destinationId);
-                  },
-                  () async {
                     Map<String, dynamic> destination = {
                       'name': destinationName,
                       'image': imagePath
@@ -471,7 +311,6 @@ class _TouristineDestinationsState extends State<TouristineDestinations> {
   }
 
   Widget buildButton(
-    VoidCallback onTrashPressed,
     VoidCallback onViewPressed,
   ) {
     return Material(
@@ -487,16 +326,8 @@ class _TouristineDestinationsState extends State<TouristineDestinations> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              IconButton(
-                icon: const FaIcon(
-                  FontAwesomeIcons.solidTrashCan,
-                  size: 24,
-                  color: Color.fromARGB(255, 0, 0, 0),
-                ),
-                onPressed: onTrashPressed,
-              ),
               IconButton(
                 icon: const Icon(
                   FontAwesomeIcons.anglesRight,
