@@ -18,19 +18,18 @@ class OnBoardingPage extends StatefulWidget {
   final int profileType;
   final String city;
 
-  const OnBoardingPage({
-    super.key,
-    required this.token,
-    this.googleAccount = false, // Set default value to false
-    required this.title,
-    required this.imageAsset,
-    required this.firstText,
-    required this.secondText,
-    required this.titleSize,
-    required this.numOfPages,
-    required this.profileType, // 100: Indicates tourist Profile, 200: Indicates admin profile.
-    this.city = "",
-  });
+  const OnBoardingPage(
+      {super.key,
+      required this.token,
+      this.googleAccount = false, // Set default value to false
+      required this.title,
+      required this.imageAsset,
+      required this.firstText,
+      required this.secondText,
+      required this.titleSize,
+      required this.numOfPages,
+      required this.profileType, // 100: Indicates tourist Profile, 200: Indicates admin profile.
+      this.city = ""});
 
   @override
   _OnBoardingPageState createState() => _OnBoardingPageState();
@@ -139,9 +138,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                                   ))
                                 : SplashScreen(
                                     profileType: CoordinatorProfile(
-                                      token: widget.token,
-                                      city: widget.city
-                                    ),
+                                        token: widget.token, city: widget.city),
                                   );
                           }));
                         },

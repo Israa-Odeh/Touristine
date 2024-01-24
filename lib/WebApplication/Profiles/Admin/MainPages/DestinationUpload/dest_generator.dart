@@ -18,13 +18,9 @@ import 'package:uuid/uuid.dart';
 class AddDestTab extends StatefulWidget {
   final String token;
   Map<String, dynamic> destinationToBeAdded;
-  final String coordinatorCity;
 
   AddDestTab(
-      {super.key,
-      required this.token,
-      this.destinationToBeAdded = const {},
-      required this.coordinatorCity});
+      {super.key, required this.token, this.destinationToBeAdded = const {}});
 
   @override
   _AddDestTabState createState() => _AddDestTabState();
@@ -66,8 +62,6 @@ class _AddDestTabState extends State<AddDestTab> {
   int selectedHours = 0;
   int selectedMinutes = 0;
 
-  String selectedCity = '';
-
   List<String> categoriesList = [
     'Coastal Areas',
     'Mountains',
@@ -86,6 +80,8 @@ class _AddDestTabState extends State<AddDestTab> {
     'Mid-Range',
     'Luxurious',
   ];
+
+  List<String> citiesList = ['Jerusalem', 'Nablus', 'Ramallah', 'Bethlehem'];
 
   List<String> compressServicesNames(List<String?> selectedServices) {
     // Map the selected services to the desired format.
@@ -344,7 +340,6 @@ class _AddDestTabState extends State<AddDestTab> {
   @override
   void initState() {
     super.initState();
-    selectedCity = widget.coordinatorCity;
     pageController = PageController();
     print("The destination to be added:");
     print(widget.destinationToBeAdded);
@@ -582,6 +577,23 @@ class _AddDestTabState extends State<AddDestTab> {
       if (value != null) {
         setState(() {
           selectedBudget = value;
+        });
+      }
+    });
+  }
+
+  String selectedCity = '';
+  void showCityBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomBottomSheet(itemsList: citiesList, height: 260);
+      },
+    ).then((value) {
+      // Handle the selected item from the bottom sheet.
+      if (value != null) {
+        setState(() {
+          selectedCity = value;
         });
       }
     });
@@ -1456,7 +1468,7 @@ class _AddDestTabState extends State<AddDestTab> {
                 ),
                 const SizedBox(height: 15),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: showCityBottomSheet,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 231, 231, 231),
                     shape: RoundedRectangleBorder(

@@ -208,7 +208,7 @@ class _LoginPageState extends State<LoginPage>
             String? imageURL = responseData['profileImage'];
             String city = responseData['city'];
 
-            print("Email extracted from token: $token");
+            print("token: $token");
             print("first name: $firstName");
             print("last name: $lastName");
             print("Password: $password");
@@ -267,7 +267,7 @@ class _LoginPageState extends State<LoginPage>
             String password = responseData['password'];
             String? imageURL = responseData['profileImage'];
 
-            print("Email extracted from token: $token");
+            print("token: $token");
             print("first name: $firstName");
             print("last name: $lastName");
             print("Password: $password");

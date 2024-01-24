@@ -1,13 +1,14 @@
-import 'package:touristine/WebApplication/Profiles/Coordinator/MainPages/UserInteractions/user_interactions.dart';
-import 'package:touristine/WebApplication/Profiles/Coordinator/MainPages/UserInteractions/suggested_places.dart';
-import 'package:touristine/WebApplication/Profiles/Coordinator/MainPages/DestinationUpload/dest_generator.dart';
-import 'package:touristine/WebApplication/Profiles/Coordinator/MainPages/DestinationUpload/my_dests_list.dart';
-import 'package:touristine/WebApplication/Profiles/Coordinator/MainPages/Chatting/chatting_list.dart';
+import 'package:touristine/WebApplication/Profiles/Admin/MainPages/UserInteractions/user_interactions.dart';
+import 'package:touristine/WebApplication/Profiles/Admin/MainPages/UserInteractions/suggested_places.dart';
+import 'package:touristine/WebApplication/Profiles/Admin/MainPages/DestinationUpload/dest_generator.dart';
+import 'package:touristine/WebApplication/Profiles/Admin/MainPages/DestinationUpload/my_dests_list.dart';
+import 'package:touristine/WebApplication/Profiles/Admin/MainPages/Chatting/chatting_list.dart';
+import 'package:touristine/WebApplication/Profiles/Admin/Profile/Sections/adding_admins.dart';
 import 'package:touristine/WebApplication/LoginAndRegistration/MainPages/landing_page.dart';
-import 'package:touristine/WebApplication/Profiles/Coordinator/MainPages/Cracks/cracks_page.dart';
-import 'package:touristine/WebApplication/Profiles/Coordinator/Profile/Sections/my_account.dart';
-import 'package:touristine/WebApplication/Profiles/Coordinator/ActiveStatus/active_status.dart';
-import 'package:touristine/WebApplication/Profiles/Coordinator/MainPages/Home/home.dart';
+import 'package:touristine/WebApplication/Profiles/Admin/MainPages/Cracks/cracks_page.dart';
+import 'package:touristine/WebApplication/Profiles/admin/Profile/Sections/my_account.dart';
+import 'package:touristine/WebApplication/Profiles/Admin/ActiveStatus/active_status.dart';
+import 'package:touristine/WebApplication/Profiles/Admin/MainPages/Home/home.dart';
 import 'package:touristine/WebApplication/Notifications/snack_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jwt_decode/jwt_decode.dart';
@@ -17,12 +18,10 @@ import 'dart:convert';
 
 class CoordinatorProfile extends StatefulWidget {
   final String token;
-  final String city;
 
   const CoordinatorProfile({
     super.key,
     required this.token,
-    required this.city,
   });
 
   @override
@@ -47,8 +46,8 @@ class _CoordinatorAppState extends State<CoordinatorProfile> {
         },
         body: {
           'StatisticType': "Visits Count",
-          'city': widget.city,
-          'category': "bycategory"
+          'city': "allcities",
+          'category': "bycity"
         },
       );
 
@@ -65,8 +64,7 @@ class _CoordinatorAppState extends State<CoordinatorProfile> {
           if (item is Map<String, dynamic> && item.length == 1) {
             final String key = item.keys.first;
             final double value = item.values.first.toDouble();
-            final String category = getPlaceCategory(key);
-            newStatisticsResult[category] = value.toInt();
+            newStatisticsResult[key] = value.toInt();
           }
         }
         setState(() {
@@ -83,32 +81,6 @@ class _CoordinatorAppState extends State<CoordinatorProfile> {
       }
     } catch (error) {
       print('Error during finding a result: $error');
-    }
-  }
-
-  String getPlaceCategory(String placeCategory) {
-    if (placeCategory.toLowerCase() == "coastalareas") {
-      return "Coastal Areas";
-    } else if (placeCategory.toLowerCase() == "mountains") {
-      return "Mountains";
-    } else if (placeCategory.toLowerCase() == "nationalparks") {
-      return "National Parks";
-    } else if (placeCategory.toLowerCase() == "majorcities") {
-      return "Major Cities";
-    } else if (placeCategory.toLowerCase() == "countryside") {
-      return "Countryside";
-    } else if (placeCategory.toLowerCase() == "historicalsites") {
-      return "Historical Sites";
-    } else if (placeCategory.toLowerCase() == "religiouslandmarks") {
-      return "Religious Landmarks";
-    } else if (placeCategory.toLowerCase() == "aquariums") {
-      return "Aquariums";
-    } else if (placeCategory.toLowerCase() == "zoos") {
-      return "Zoos";
-    } else if (placeCategory.toLowerCase() == "others") {
-      return "Others";
-    } else {
-      return placeCategory;
     }
   }
 
@@ -134,10 +106,9 @@ class _CoordinatorAppState extends State<CoordinatorProfile> {
       HomePage(
         token: widget.token,
         statisticsResult: mainStatistics,
-        selectedCity: widget.city,
-        selectedCategory: 'By Category',
+        selectedCity: 'All Cities',
+        selectedCategory: 'By City',
         selectedStatisticsType: 'Visits Count',
-        coordinatorCity: widget.city,
       ),
       Container(),
       Container(),
@@ -161,6 +132,8 @@ class _CoordinatorAppState extends State<CoordinatorProfile> {
   String getProfileBarTitle() {
     if (profileMenuOption == 'My Account') {
       return 'My Account';
+    } else if (profileMenuOption == 'New Admin') {
+      return 'New Admin';
     } else {
       return 'Log Out';
     }
@@ -277,9 +250,9 @@ class _CoordinatorAppState extends State<CoordinatorProfile> {
       // Destinations Tab.
       if (destinationMenuOption == "Add Place") {
         var addDestTab = AddDestTab(
-            token: widget.token,
-            destinationToBeAdded: selectedDestinationInfo,
-            coordinatorCity: widget.city);
+          token: widget.token,
+          destinationToBeAdded: selectedDestinationInfo,
+        );
         selectedDestinationInfo = {};
         return addDestTab;
       } else if (destinationMenuOption == "My Places") {
@@ -315,6 +288,10 @@ class _CoordinatorAppState extends State<CoordinatorProfile> {
   Widget openProfilePageOption() {
     if (profileMenuOption == 'My Account') {
       return AccountPage(
+        token: widget.token,
+      );
+    } else if (profileMenuOption == 'New Admin') {
+      return AdminAddingPage(
         token: widget.token,
       );
     }
@@ -397,6 +374,10 @@ class _CoordinatorAppState extends State<CoordinatorProfile> {
           const PopupMenuItem<String>(
             value: "My Account",
             child: Text("My Account"),
+          ),
+          const PopupMenuItem<String>(
+            value: "New Admin",
+            child: Text("New Admin"),
           ),
           const PopupMenuItem<String>(
             value: "Log Out",

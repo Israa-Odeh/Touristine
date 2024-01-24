@@ -193,19 +193,22 @@ class _LoginPageState extends State<LoginPage>
               ),
             );
           }
-          // It is an Admin user type in this case.
-          else {
+          // It is a coordinator user type in this case.
+          else if (responseData['status'] == true &&
+              responseData['type'] == 200) {
             String token = responseData['token'];
             String firstName = responseData['firstName'];
             String lastName = responseData['lastName'];
             String password = responseData['password'];
             String? imageURL = responseData['profileImage'];
+            String city = responseData['city'];
 
-            print("Email extracted from token: $token");
+            print("token: $token");
             print("first name: $firstName");
             print("last name: $lastName");
             print("Password: $password");
             print("Profile Image: $imageURL");
+            print("City: $city");
 
             // ignore: use_build_context_synchronously
             context.read<UserProvider>().updateData(
@@ -233,6 +236,7 @@ class _LoginPageState extends State<LoginPage>
                 MaterialPageRoute(
                     builder: (context) => AdminOnBoardingPage(
                           token: token,
+                          city: city,
                         )),
               );
             } else {
@@ -243,11 +247,53 @@ class _LoginPageState extends State<LoginPage>
                   builder: (context) => SplashScreen(
                     profileType: CoordinatorProfile(
                       token: token,
+                      city: city,
                     ),
                   ),
                 ),
               );
             }
+          }
+          // It is an admin user type in this case.
+          else {
+            String token = responseData['token'];
+            String firstName = responseData['firstName'];
+            String lastName = responseData['lastName'];
+            String password = responseData['password'];
+            String? imageURL = responseData['profileImage'];
+
+            print("token: $token");
+            print("first name: $firstName");
+            print("last name: $lastName");
+            print("Password: $password");
+            print("Profile Image: $imageURL");
+
+            // ignore: use_build_context_synchronously
+            context.read<UserProvider>().updateData(
+                  newFirstName: firstName,
+                  newLastName: lastName,
+                  newPassword: password,
+                );
+
+            if (imageURL != null && imageURL != "") {
+              profileImageProvider = NetworkImage(imageURL);
+              // ignore: use_build_context_synchronously
+              precacheImage(profileImageProvider, context);
+              // ignore: use_build_context_synchronously
+              context.read<UserProvider>().updateImage(newImageURL: imageURL);
+            } else {
+              // ignore: use_build_context_synchronously
+              context.read<UserProvider>().updateImage(newImageURL: null);
+            }
+            // ignore: use_build_context_synchronously
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SplashScreen(
+                  profileType: AdminProfile(token: token),
+                ),
+              ),
+            );
           }
         }
 

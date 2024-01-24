@@ -16,6 +16,7 @@ class OnBoardingPage extends StatefulWidget {
   final double titleSize;
   final int numOfPages;
   final int profileType;
+  final String city;
 
   const OnBoardingPage(
       {super.key,
@@ -27,7 +28,8 @@ class OnBoardingPage extends StatefulWidget {
       required this.secondText,
       required this.titleSize,
       required this.numOfPages,
-      required this.profileType}); // 100: Indicates tourist Profile, 200: Indicates admin profile.
+      required this.profileType, // 100: Indicates tourist Profile, 200: Indicates admin profile.
+      this.city = ""});
 
   @override
   _OnBoardingPageState createState() => _OnBoardingPageState();
@@ -94,7 +96,8 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
           Container(
             alignment: const Alignment(0, 0.9),
             child: Padding(
-              padding: EdgeInsets.only(left: currentPageIndex == 0? 300.0: 110),
+              padding:
+                  EdgeInsets.only(left: currentPageIndex == 0 ? 300.0 : 110),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -118,7 +121,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                       ),
                     ),
                   ),
-            
+
                   // The dot indicator.
                   SmoothPageIndicator(
                     controller: _controller,
@@ -128,7 +131,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                       dotColor: Color(0xFFe0e0e0),
                     ),
                   ),
-            
+
                   // Ternary conditional operator.
                   // Next-ArrowIcon in the first pages, Done Button in the last page.
                   Row(
@@ -149,8 +152,8 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                                         ))
                                       : SplashScreen(
                                           profileType: CoordinatorProfile(
-                                            token: widget.token,
-                                          ),
+                                              token: widget.token,
+                                              city: widget.city),
                                         );
                                 }));
                               },
@@ -167,7 +170,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                                 ),
                               ),
                             )
-            
+
                           // The code portion that will be executed if the condition is false.
                           // The tourist isn't in the last page of the page view.
                           : ElevatedButton(
