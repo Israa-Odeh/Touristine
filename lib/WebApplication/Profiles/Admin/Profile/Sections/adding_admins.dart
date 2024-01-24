@@ -71,7 +71,7 @@ class _AdminAddingPageState extends State<AdminAddingPage> {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return CustomBottomSheet(itemsList: citiesList, height: 300);
+        return CustomBottomSheet(itemsList: citiesList, height: 260);
       },
     ).then((value) {
       // Handle the selected item from the bottom sheet.
@@ -138,44 +138,42 @@ class _AdminAddingPageState extends State<AdminAddingPage> {
             Expanded(
               child: Column(
                 children: [
-                  const SizedBox(height: 90),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 70.0),
-                    child: ElevatedButton(
-                      onPressed: showCityBottomSheet,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            const Color.fromARGB(255, 231, 231, 231),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
+                  const SizedBox(height: 60),
+                  ElevatedButton(
+                    onPressed: showCityBottomSheet,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 231, 231, 231),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
                       ),
-                      child: SizedBox(
-                        height: 60,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 5.0),
-                              child: Text(
-                                selectedCity.isEmpty
-                                    ? 'Select City'
-                                    : selectedCity,
-                                style: const TextStyle(
-                                    color: Color.fromARGB(163, 0, 0, 0),
-                                    fontSize: 22),
-                              ),
+                    ),
+                    child: SizedBox(
+                      height: 50,
+                      width: 420,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 5.0),
+                            child: Text(
+                              selectedCity.isEmpty
+                                  ? 'Select City'
+                                  : selectedCity,
+                              style: const TextStyle(
+                                  color: Color.fromARGB(163, 0, 0, 0),
+                                  fontSize: 18),
                             ),
-                            const FaIcon(
-                              FontAwesomeIcons.city,
-                              color: Color.fromARGB(100, 0, 0, 0),
-                              size: 25,
-                            ),
-                          ],
-                        ),
+                          ),
+                          const FaIcon(
+                            FontAwesomeIcons.city,
+                            color: Color.fromARGB(100, 0, 0, 0),
+                            size: 24,
+                          ),
+                        ],
                       ),
                     ),
                   ),
+                  const SizedBox(height: 15),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 70.0),
                     child: CustomField(
