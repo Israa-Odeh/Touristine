@@ -1,4 +1,4 @@
-import 'package:touristine/AndroidMobileApp/Profiles/Tourist/MainPages/Chatting/chat_message.dart';
+import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/Chatting/chat_message.dart';
 import 'package:touristine/WebApplication/Profiles/Admin/MainPages/Chatting/chat_page.dart';
 import 'package:touristine/WebApplication/Profiles/Admin/ActiveStatus/active_status.dart';
 import 'package:touristine/WebApplication/Notifications/snack_bar.dart';
