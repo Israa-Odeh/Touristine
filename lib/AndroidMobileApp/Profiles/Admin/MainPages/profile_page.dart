@@ -1,5 +1,6 @@
 import 'package:touristine/AndroidMobileApp/Profiles/Admin/Profile/Sections/adding_admins.dart';
 import 'package:touristine/AndroidMobileApp/LoginAndRegistration/MainPages/landing_page.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Admin/Profile/Sections/admins_list.dart';
 import 'package:touristine/AndroidMobileApp/Profiles/Admin/Profile/Sections/my_account.dart';
 import 'package:touristine/AndroidMobileApp/Profiles/Admin/ActiveStatus/active_status.dart';
 import 'package:touristine/AndroidMobileApp/components/profile_picture.dart';
@@ -9,10 +10,7 @@ import 'package:flutter/material.dart';
 class ProfilePage extends StatefulWidget {
   final String token;
 
-  const ProfilePage({
-    super.key,
-    required this.token,
-  });
+  const ProfilePage({super.key, required this.token});
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -119,13 +117,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 15),
                   buildProfileTile("View Admins",
                       "assets/Images/Profiles/Admin/ProfilePage/admin.png", () {
-                    // Navigator.of(context).push(
-                    //   MaterialPageRoute(
-                    //     builder: (context) => AdminsListPage(
-                    //       token: widget.token,
-                    //     ),
-                    //   ),
-                    // );
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            AdminsListPage(token: widget.token),
+                      ),
+                    );
                   }),
                   const SizedBox(height: 15),
                   buildProfileTile("Log Out",
