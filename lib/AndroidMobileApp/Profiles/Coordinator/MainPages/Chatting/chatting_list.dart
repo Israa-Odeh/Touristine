@@ -2,13 +2,16 @@ import 'package:touristine/AndroidMobileApp/Profiles/Tourist/MainPages/Chatting/
 import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/MainPages/Chatting/chat_page.dart';
 import 'package:touristine/AndroidMobileApp/Profiles/Coordinator/ActiveStatus/active_status.dart';
 import 'package:touristine/AndroidMobileApp/Notifications/snack_bar.dart';
+import 'package:touristine/AndroidMobileApp/UserData/user_provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:async';
+
 
 class ChattingList extends StatefulWidget {
   final String token;
@@ -94,7 +97,8 @@ class _ChattingListState extends State<ChattingList> {
       isLoading = true;
     });
 
-    final url = Uri.parse('https://touristineapp.onrender.com/get-tourists-info');
+    final url =
+        Uri.parse('https://touristineapp.onrender.com/get-tourists-info');
 
     try {
       final response = await http.post(
@@ -232,22 +236,54 @@ class _ChattingListState extends State<ChattingList> {
         print(
             '${chatMessage.sender}: ${chatMessage.message} - Date: ${chatMessage.date}, Time: ${chatMessage.time}');
       }
-      // Navigate to the ChatPage.
-      // ignore: use_build_context_synchronously
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ChatPage(
-            touristName: '${tourist['firstName']} ${tourist['lastName']}',
-            touristEmail: tourist['email'],
-            touristImage: tourist['image'],
-            token: widget.token,
-          ),
-        ),
-      );
     } else {
-      // Chat doesn't exist.
-      print('Chat does not exist.');
+      // Chat doesn't exist, initiate a new chat.
+      await createChatDocument(adminEmail, tourist);
+      print('New chat created.');
+    }
+    // Navigate to the ChatPage.
+    // ignore: use_build_context_synchronously
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChatPage(
+          touristName: '${tourist['firstName']} ${tourist['lastName']}',
+          touristEmail: tourist['email'],
+          touristImage: tourist['image'],
+          token: widget.token,
+        ),
+      ),
+    );
+  }
+
+  Future<void> createChatDocument(
+      String coordinatorEmail, Map<String, dynamic> user) async {
+    String coordinatorFirstName = context.read<UserProvider>().firstName;
+    String coordinatorLastName = context.read<UserProvider>().lastName;
+
+    String userFirstName = user['firstName'];
+    String userLastName = user['lastName'];
+    String userEmail = user['email'];
+
+    String chatId = getChatId(coordinatorEmail, userEmail);
+    try {
+      await FirebaseFirestore.instance.collection('chats').doc(chatId).set({
+        'tourist': {
+          'email': userEmail,
+          'firstName': userFirstName,
+          'lastName': userLastName,
+        },
+        'admin': {
+          'email': coordinatorEmail,
+          'firstName': coordinatorFirstName,
+          'lastName': coordinatorLastName,
+        },
+        'messages': [], // Initialize with an empty list of messages.
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+      print('Chat document created successfully.');
+    } catch (e) {
+      print('Error creating chat document: $e');
     }
   }
 
