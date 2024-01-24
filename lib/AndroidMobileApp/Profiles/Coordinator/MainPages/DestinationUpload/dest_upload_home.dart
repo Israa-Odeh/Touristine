@@ -8,8 +8,13 @@ import 'dart:async';
 class DestsUploadHomePage extends StatefulWidget {
   final String token;
   Map<String, dynamic> destinationToBeAdded;
+  final String coordinatorCity;
+
   DestsUploadHomePage(
-      {super.key, required this.token, this.destinationToBeAdded = const {}});
+      {super.key,
+      required this.token,
+      this.destinationToBeAdded = const {},
+      required this.coordinatorCity});
 
   @override
   _DestsUploadHomePageState createState() => _DestsUploadHomePageState();
@@ -119,7 +124,8 @@ class _DestsUploadHomePageState extends State<DestsUploadHomePage>
                     children: [
                       AddDestTab(
                           token: widget.token,
-                          destinationToBeAdded: destinationToBeAddedInfo),
+                          destinationToBeAdded: destinationToBeAddedInfo,
+                          coordinatorCity: widget.coordinatorCity),
                       AddedDestinationsPage(
                           token: widget.token,
                           onDestinationEdit: updateDestinationInfo),

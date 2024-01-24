@@ -136,7 +136,7 @@ class _CoordinatorAppState extends State<CoordinatorProfile> {
         selectedStatisticsType: 'Visits Count',
         coordinatorCity: widget.city,
       ),
-      DestsUploadHomePage(token: widget.token),
+      DestsUploadHomePage(token: widget.token, coordinatorCity: widget.city),
       TabBarViewer(token: widget.token, changeTabIndex: changeTabIndex),
       CracksAnalysisPage(token: widget.token),
       ChattingList(token: widget.token),
@@ -150,7 +150,9 @@ class _CoordinatorAppState extends State<CoordinatorProfile> {
     });
     // Pass destinationToBeAdded to DestsUploadHomePage.
     _children[newIndex] = DestsUploadHomePage(
-        token: widget.token, destinationToBeAdded: destinationInfo);
+        token: widget.token,
+        destinationToBeAdded: destinationInfo,
+        coordinatorCity: widget.city);
   }
 
   void moveToStep(int index) {
