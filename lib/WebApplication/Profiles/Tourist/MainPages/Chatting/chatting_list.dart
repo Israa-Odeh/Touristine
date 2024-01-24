@@ -323,29 +323,29 @@ class _ChattingListState extends State<ChattingList> {
                       )
                     : filteredAdmins.isEmpty
                         ? Center(
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Positioned(
-                              top: -80,
-                              child: Image.asset(
-                                'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            const Positioned(
-                              top: 350,
-                              child: Text(
-                                'No chats found',
-                                style: TextStyle(
-                                  fontSize: 40,
-                                  fontFamily: 'Gabriola',
-                                  color: Color.fromARGB(255, 23, 99, 114),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Positioned(
+                                  top: -80,
+                                  child: Image.asset(
+                                    'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
-                              ),
+                                const Positioned(
+                                  top: 350,
+                                  child: Text(
+                                    'No chats found',
+                                    style: TextStyle(
+                                      fontSize: 40,
+                                      fontFamily: 'Gabriola',
+                                      color: Color.fromARGB(255, 23, 99, 114),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
                           )
                         : ListView.builder(
                             itemCount: filteredAdmins.length,
