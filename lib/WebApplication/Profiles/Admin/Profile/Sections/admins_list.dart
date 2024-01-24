@@ -15,7 +15,7 @@ class AdminsListPage extends StatefulWidget {
 
 class _AdminsListPageState extends State<AdminsListPage> {
   List<Map<String, dynamic>> admins = [];
-  bool isLoading = false;
+  bool isLoading = true;
 
   Future<void> getAdminsData() async {
     if (!mounted) return;
