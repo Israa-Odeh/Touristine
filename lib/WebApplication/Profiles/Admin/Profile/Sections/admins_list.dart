@@ -82,28 +82,43 @@ class _AdminsListPageState extends State<AdminsListPage> {
               image: DecorationImage(
                 image: AssetImage(
                     'assets/Images/Profiles/Admin/mainBackground.jpg'),
-                fit: BoxFit.cover,
+                fit: BoxFit.fill,
               ),
             ),
           ),
-          if (admins.isEmpty)
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                    'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
-                    fit: BoxFit.fill),
-                const Text(
-                  'No admins found',
-                  style: TextStyle(
-                      fontSize: 40,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: 'Gabriola',
-                      color: Color.fromARGB(255, 23, 99, 114)),
-                ),
-              ],
+          if (isLoading)
+            const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1E889E)),
+              ),
             ),
-          if (admins.isNotEmpty)
+          if (admins.isEmpty && !isLoading)
+            Center(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Positioned(
+                    top: -70,
+                    child: Image.asset(
+                      'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                  const Positioned(
+                    top: 350,
+                    child: Text(
+                      'No admins found',
+                      style: TextStyle(
+                        fontSize: 40,
+                        fontFamily: 'Gabriola',
+                        color: Color.fromARGB(255, 23, 99, 114),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          if (admins.isNotEmpty && !isLoading)
             Padding(
               padding: const EdgeInsets.only(top: 20.0, bottom: 10),
               child: ListView.builder(
