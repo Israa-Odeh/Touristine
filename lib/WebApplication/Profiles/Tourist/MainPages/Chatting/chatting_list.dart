@@ -204,7 +204,7 @@ class _ChattingListState extends State<ChattingList> {
       }
     } else {
       // Chat doesn't exist, initiate a new chat.
-      await createChatDocument(touristEmail, admin); //
+      await createChatDocument(touristEmail, admin);
       print('New chat created.');
     }
 
