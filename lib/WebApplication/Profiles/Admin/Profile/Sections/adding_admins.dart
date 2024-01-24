@@ -1,3 +1,4 @@
+import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/planMaker/custom_bottom_sheet.dart';
 import 'package:touristine/WebApplication/Notifications/snack_bar.dart';
 import 'package:touristine/WebApplication/components/custom_field.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -25,7 +26,8 @@ class _AdminAddingPageState extends State<AdminAddingPage> {
     return emailController.text.isEmpty ||
         firstNameController.text.isEmpty ||
         lastNameController.text.isEmpty ||
-        passwordController.text.isEmpty;
+        passwordController.text.isEmpty ||
+        selectedCity.isEmpty;
   }
 
   bool isPasswordValid(String password) {
@@ -63,6 +65,24 @@ class _AdminAddingPageState extends State<AdminAddingPage> {
     }
   }
 
+  List<String> citiesList = ['Jerusalem', 'Nablus', 'Ramallah', 'Bethlehem'];
+  String selectedCity = '';
+  void showCityBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomBottomSheet(itemsList: citiesList, height: 300);
+      },
+    ).then((value) {
+      // Handle the selected item from the bottom sheet.
+      if (value != null) {
+        setState(() {
+          selectedCity = value;
+        });
+      }
+    });
+  }
+
   Future<void> addNewAdmin() async {
     if (!mounted) return;
 
@@ -80,6 +100,7 @@ class _AdminAddingPageState extends State<AdminAddingPage> {
           'lastName': lastNameController.text,
           'email': emailController.text,
           'password': passwordController.text,
+          'city': selectedCity,
         },
       );
 
@@ -118,6 +139,43 @@ class _AdminAddingPageState extends State<AdminAddingPage> {
               child: Column(
                 children: [
                   const SizedBox(height: 90),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 70.0),
+                    child: ElevatedButton(
+                      onPressed: showCityBottomSheet,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            const Color.fromARGB(255, 231, 231, 231),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                      ),
+                      child: SizedBox(
+                        height: 60,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 5.0),
+                              child: Text(
+                                selectedCity.isEmpty
+                                    ? 'Select City'
+                                    : selectedCity,
+                                style: const TextStyle(
+                                    color: Color.fromARGB(163, 0, 0, 0),
+                                    fontSize: 22),
+                              ),
+                            ),
+                            const FaIcon(
+                              FontAwesomeIcons.city,
+                              color: Color.fromARGB(100, 0, 0, 0),
+                              size: 25,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 70.0),
                     child: CustomField(

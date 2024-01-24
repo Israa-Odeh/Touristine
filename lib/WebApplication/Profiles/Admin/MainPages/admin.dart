@@ -274,8 +274,8 @@ class _AdminAppState extends State<AdminProfile> {
       final selectedOption = await showMenu(
         context: context,
         position: _currentIndex == 4
-            ? const RelativeRect.fromLTRB(850, 65, 850, 0)
-            : const RelativeRect.fromLTRB(890, 65, 890, 0),
+            ? const RelativeRect.fromLTRB(840, 65, 840, 0)
+            : const RelativeRect.fromLTRB(880, 65, 880, 0),
         items: <PopupMenuEntry>[
           const PopupMenuItem<String>(
             value: "My Account",
