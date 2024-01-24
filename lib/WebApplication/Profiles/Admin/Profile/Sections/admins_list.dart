@@ -46,11 +46,11 @@ class _AdminsListPageState extends State<AdminsListPage> {
         } else if (response.statusCode == 500) {
           final Map<String, dynamic> responseData = json.decode(response.body);
           // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, responseData['error'], bottomMargin: 320);
+          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
         } else {
           // ignore: use_build_context_synchronously
           showCustomSnackBar(context, 'Error fetching available admins',
-              bottomMargin: 320);
+              bottomMargin: 0);
         }
       }
     } catch (error) {
@@ -98,14 +98,14 @@ class _AdminsListPageState extends State<AdminsListPage> {
                 alignment: Alignment.center,
                 children: [
                   Positioned(
-                    top: -70,
+                    top: -10,
                     child: Image.asset(
                       'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
                       fit: BoxFit.fill,
                     ),
                   ),
                   const Positioned(
-                    top: 350,
+                    top: 420,
                     child: Text(
                       'No admins found',
                       style: TextStyle(
@@ -120,8 +120,14 @@ class _AdminsListPageState extends State<AdminsListPage> {
             ),
           if (admins.isNotEmpty && !isLoading)
             Padding(
-              padding: const EdgeInsets.only(top: 20.0, bottom: 10),
-              child: ListView.builder(
+              padding: const EdgeInsets.only(
+                  top: 20.0, bottom: 10, right: 10, left: 10),
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3, // Number of cards in each row.
+                    crossAxisSpacing: 8.0,
+                    mainAxisSpacing: 8.0,
+                    mainAxisExtent: 150),
                 itemCount: admins.length,
                 itemBuilder: (context, index) {
                   Map<String, dynamic> adminData = admins[index];
@@ -132,66 +138,64 @@ class _AdminsListPageState extends State<AdminsListPage> {
                     image: adminData['image'],
                     city: adminData['city'],
                   );
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 8.0, vertical: 0.0),
-                    child: Card(
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      color: const Color.fromARGB(244, 254, 254, 254),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Stack(
-                          alignment: Alignment.bottomRight,
-                          children: [
-                            Row(
-                              children: [
-                                CircleAvatar(
-                                  backgroundColor: Colors.white,
-                                  radius: 50,
-                                  backgroundImage: (admin.image != null &&
-                                          admin.image != "")
-                                      ? NetworkImage(admin.image!)
-                                      : const AssetImage(
-                                              "assets/Images/Profiles/Tourist/DefaultProfileImage.png")
-                                          as ImageProvider<Object>?,
-                                ),
-                                const SizedBox(width: 16),
-                                Column(
+                  return Card(
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    color: const Color.fromARGB(244, 254, 254, 254),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Stack(
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          Row(
+                            children: [
+                              CircleAvatar(
+                                backgroundColor: Colors.white,
+                                radius: 50,
+                                backgroundImage: (admin.image != null &&
+                                        admin.image != "")
+                                    ? NetworkImage(admin.image!)
+                                    : const AssetImage(
+                                            "assets/Images/Profiles/Tourist/DefaultProfileImage.png")
+                                        as ImageProvider<Object>?,
+                              ),
+                              const SizedBox(width: 16),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 20.0),
+                                child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       '${admin.firstName} ${admin.lastName}',
                                       style: const TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 18,
                                       ),
                                     ),
                                     const SizedBox(height: 20),
                                     Text(
                                       admin.city,
                                       style: const TextStyle(
-                                        fontSize: 18,
+                                        fontSize: 16,
                                         color:
                                             Color.fromARGB(255, 141, 141, 141),
                                       ),
                                     ),
                                   ],
                                 ),
-                              ],
-                            ),
-                            IconButton(
-                              icon:
-                                  const FaIcon(FontAwesomeIcons.solidTrashCan),
-                              onPressed: () {
-                                setState(() {
-                                  deleteAdmin(admin.email);
-                                });
-                              },
-                            ),
-                          ],
-                        ),
+                              ),
+                            ],
+                          ),
+                          IconButton(
+                            icon: const FaIcon(FontAwesomeIcons.solidTrashCan),
+                            onPressed: () {
+                              setState(() {
+                                deleteAdmin(admin.email);
+                              });
+                            },
+                          ),
+                        ],
                       ),
                     ),
                   );
@@ -200,21 +204,6 @@ class _AdminsListPageState extends State<AdminsListPage> {
             ),
         ],
       ),
-      floatingActionButton: Padding(
-        padding: EdgeInsets.only(bottom: admins.isNotEmpty ? 0.0 : 10.0),
-        child: FloatingActionButton(
-          heroTag: 'BackToProfile',
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          backgroundColor: admins.isNotEmpty
-              ? const Color.fromARGB(129, 30, 137, 158)
-              : const Color(0xFF1E889E),
-          elevation: 0,
-          child: const Icon(FontAwesomeIcons.arrowLeft),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
     );
   }
 
@@ -242,13 +231,13 @@ class _AdminsListPageState extends State<AdminsListPage> {
             admins.removeWhere((admin) => admin['email'] == adminEmail);
           });
           showCustomSnackBar(context, 'The admin has been deleted',
-              bottomMargin: 320);
+              bottomMargin: 0);
         } else if (response.statusCode == 500) {
           final Map<String, dynamic> responseData = json.decode(response.body);
-          showCustomSnackBar(context, responseData['error'], bottomMargin: 320);
+          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
         } else {
           showCustomSnackBar(context, 'Error deleting the admin',
-              bottomMargin: 320);
+              bottomMargin: 0);
         }
       } catch (error) {
         print('Error deleting the admin: $error');
@@ -268,10 +257,10 @@ class _AdminsListPageState extends State<AdminsListPage> {
               style: TextStyle(
                   fontFamily: 'Zilla Slab Light',
                   fontWeight: FontWeight.bold,
-                  fontSize: 25)),
+                  fontSize: 20)),
           content: Text(
             dialogMessage,
-            style: const TextStyle(fontFamily: 'Andalus', fontSize: 25),
+            style: const TextStyle(fontFamily: 'Andalus', fontSize: 18),
           ),
           actions: <Widget>[
             TextButton(
@@ -281,7 +270,7 @@ class _AdminsListPageState extends State<AdminsListPage> {
               child: const Text(
                 'Cancel',
                 style: TextStyle(
-                  fontSize: 22.0,
+                  fontSize: 16.0,
                   fontFamily: 'Zilla',
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 0, 0, 0),
@@ -295,7 +284,7 @@ class _AdminsListPageState extends State<AdminsListPage> {
               child: const Text(
                 "Delete",
                 style: TextStyle(
-                  fontSize: 22.0,
+                  fontSize: 16.0,
                   fontFamily: 'Zilla',
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 200, 50, 27),
