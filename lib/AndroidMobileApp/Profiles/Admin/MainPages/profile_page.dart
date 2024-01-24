@@ -117,6 +117,17 @@ class _ProfilePageState extends State<ProfilePage> {
                     );
                   }),
                   const SizedBox(height: 15),
+                  buildProfileTile("View Admins",
+                      "assets/Images/Profiles/Admin/ProfilePage/admin.png", () {
+                    // Navigator.of(context).push(
+                    //   MaterialPageRoute(
+                    //     builder: (context) => AdminsListPage(
+                    //       token: widget.token,
+                    //     ),
+                    //   ),
+                    // );
+                  }),
+                  const SizedBox(height: 15),
                   buildProfileTile("Log Out",
                       "assets/Images/Profiles/Admin/ProfilePage/logOut.png",
                       () {
