@@ -536,7 +536,7 @@ class _TouristineDestinationsState extends State<TouristineDestinations> {
               if (!isLoading)
                 Padding(
                   padding: const EdgeInsets.only(
-                      right: 20, left: 20.0, top: 15, bottom: 10),
+                      right: 20, left: 20.0, top: 25, bottom: 15),
                   child: ElevatedButton(
                     onPressed: showFiltersBottomSheet,
                     style: ElevatedButton.styleFrom(
