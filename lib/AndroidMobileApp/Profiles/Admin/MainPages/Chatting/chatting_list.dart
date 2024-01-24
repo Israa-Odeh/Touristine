@@ -1,6 +1,6 @@
 import 'package:touristine/AndroidMobileApp/Profiles/Tourist/MainPages/Chatting/chat_message.dart';
-import 'package:touristine/AndroidMobileApp/Profiles/Admin/ActiveStatus/active_status.dart';
 import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/Chatting/chat_page.dart';
+import 'package:touristine/AndroidMobileApp/Profiles/Admin/ActiveStatus/active_status.dart';
 import 'package:touristine/AndroidMobileApp/Notifications/snack_bar.dart';
 import 'package:touristine/AndroidMobileApp/UserData/user_provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -168,7 +168,7 @@ class _ChattingListState extends State<ChattingList> {
   }
 
   void openChatWithAdmin(Map<String, dynamic> admin) async {
-    // Extract the tourist email from the token.
+    // Extract touristine email from the token.
     Map<String, dynamic> decodedToken = Jwt.parseJwt(widget.token);
     String touristineEmail = decodedToken['email'];
     String adminEmail = admin['email'];
@@ -244,7 +244,7 @@ class _ChattingListState extends State<ChattingList> {
     String chatId = getChatId(touristineEmail, adminEmail);
     try {
       await FirebaseFirestore.instance.collection('chats').doc(chatId).set({
-        'touristine': {
+        'tourist': {
           'email': touristineEmail,
           'firstName': touristineFirstName,
           'lastName': touristineLastName,
