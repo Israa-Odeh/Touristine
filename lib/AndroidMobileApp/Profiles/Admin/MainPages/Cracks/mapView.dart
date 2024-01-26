@@ -20,12 +20,7 @@ class _CracksMapViewerState extends State<CracksMapViewer> {
   List<bool> isMarkerTappedList = [false, false, false, false];
   bool isLoading = true;
 
-  Map<String, dynamic> cracksCounts = {
-    'Nablus': 20,
-    'Ramallah': 20,
-    'Jerusalem': 50,
-    'Bethlehem': 10,
-  };
+  Map<String, dynamic> cracksCounts = {};
 
   final List<Color> cityTilesColors = [
     const Color(0xFFCCCCCC),
@@ -78,7 +73,6 @@ class _CracksMapViewerState extends State<CracksMapViewer> {
           final Map<String, dynamic> cityData = Map<String, dynamic>.from(item);
           final cityName = cityData.keys.first;
           final totalCracks = cityData.values.first;
-          // Update the cracksCounts map
           cracksCounts[cityName] = totalCracks;
         }
         print(cracksCounts);
