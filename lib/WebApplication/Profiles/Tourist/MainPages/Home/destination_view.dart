@@ -486,7 +486,6 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                           .toString()
                           .isNotEmpty)
                         const Tab(text: 'Virtual Tour'),
-                      // Tab(text: 'Location'),
                       const Tab(text: 'Reviews'),
                       const Tab(text: 'Complaints'),
                       const Tab(text: 'Images'),
@@ -503,7 +502,6 @@ class _DestinationDetailsState extends State<DestinationDetails> {
                             .toString()
                             .isNotEmpty)
                           _buildVirtualTourTab(),
-                        // _buildLocationsTab(),
                         _buildReviewsTab(),
                         _buildComplaintsTab(),
                         _buildImagesUplaodTab(),
