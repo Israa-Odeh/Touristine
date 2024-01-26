@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
+import 'package:touristine/WebApplication/Profiles/Admin/MainPages/Cracks/cracks_viewer.dart';
+
 class CracksMapViewer extends StatefulWidget {
   final String token;
 
@@ -374,11 +376,12 @@ class _CracksMapViewerState extends State<CracksMapViewer> {
                   ),
                   TextButton(
                     onPressed: () {
-                      // Add functionality to navigate to the view page
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(builder: (context) => CracksViewPage(cityName: cityName)),
-                      // );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CracksViewerPage(
+                                token: widget.token, cityName: cityName)),
+                      );
                     },
                     child: const Text(
                       'View Cracks',
