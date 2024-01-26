@@ -540,8 +540,8 @@ class _TouristAppState extends State<TouristProfile> {
       final selectedOption = await showMenu(
         context: context,
         position: _currentIndex == 4
-            ? const RelativeRect.fromLTRB(880, 65, 880, 0)
-            : const RelativeRect.fromLTRB(920, 65, 920, 0),
+            ? const RelativeRect.fromLTRB(910, 65, 910, 0)
+            : const RelativeRect.fromLTRB(950, 65, 950, 0),
         items: <PopupMenuEntry>[
           const PopupMenuItem<String>(
             value: "My Account",

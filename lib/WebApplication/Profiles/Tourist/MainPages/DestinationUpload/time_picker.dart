@@ -44,32 +44,63 @@ class _TimeWheelPickerState extends State<TimeWheelPicker> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(width: 30),
+              const SizedBox(width: 20),
               _buildDigitButton(selectedHours ~/ 10),
               _buildDigitButton(selectedHours % 10),
               const Text(" : ", style: textStyle),
               _buildDigitButton(selectedMinutes ~/ 10),
               _buildDigitButton(selectedMinutes % 10),
-              const SizedBox(width: 30),
-              ElevatedButton.icon(
-                onPressed: () {
-                  setState(() {
-                    // Increment hours count cyclically.
-                    selectedHours = (selectedHours + 1) % 17;
+              const SizedBox(width: 20),
+              SizedBox(
+                width: 35,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    setState(() {
+                      // Increment hours count cyclically.
+                      selectedHours = (selectedHours + 1) % 17;
 
-                    widget.onTimeChanged(selectedHours, selectedMinutes);
-                  });
-                },
-                icon: const Padding(
-                  padding: EdgeInsets.only(left: 5.0),
-                  child: Icon(Icons.add, size: 35),
+                      widget.onTimeChanged(selectedHours, selectedMinutes);
+                    });
+                  },
+                  icon: const Padding(
+                    padding: EdgeInsets.only(left: 5.0),
+                    child: Icon(Icons.add, size: 20),
+                  ),
+                  label: const Text(''),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1E889E),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 18.0,
+                    ),
+                  ),
                 ),
-                label: const Text(''),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1E889E),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 5.0,
-                    vertical: 10.0,
+              ),
+              const SizedBox(width: 5),
+              SizedBox(
+                width: 35,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    setState(() {
+                      // Decrement hours count cyclically.
+                      selectedHours = (selectedHours - 1) % 17;
+
+                      if (selectedHours < 0) {
+                        selectedHours += 17;
+                      }
+
+                      widget.onTimeChanged(selectedHours, selectedMinutes);
+                    });
+                  },
+                  icon: const Padding(
+                    padding: EdgeInsets.only(left: 5.0),
+                    child: Icon(Icons.remove, size: 20),
+                  ),
+                  label: const Text(''),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1E889E),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 18.0,
+                    ),
                   ),
                 ),
               ),
