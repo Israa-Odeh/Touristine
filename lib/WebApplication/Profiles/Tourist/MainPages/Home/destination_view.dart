@@ -1,5 +1,4 @@
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/Home/adding_complaint.dart';
-import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/Home/location_tracking.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/Home/uploaded_images.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/Home/uploading_images.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/Home/adding_review.dart';
@@ -8,14 +7,10 @@ import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/Home/compla
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/Home/reviews.dart';
 import 'package:touristine/WebApplication/Notifications/snack_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:geocoding/geocoding.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'dart:convert';
-import 'dart:math';
-
-import 'package:url_launcher/url_launcher.dart';
 
 // ignore: must_be_immutable
 class DestinationDetails extends StatefulWidget {
@@ -39,15 +34,6 @@ class DestinationDetails extends StatefulWidget {
 
 class _DestinationDetailsState extends State<DestinationDetails> {
   late String selectedImage;
-  double destLat = 0;
-  double destLng = 0;
-  Position? _currentPosition;
-  double airDistance = 0;
-  bool isRouteFetched = false;
-  double distanceFromTo = 0;
-  int timeFromToH = 0;
-  int timeFromToMin = 0;
-
   List<Map<String, dynamic>> reviews = [];
   List<Map<String, dynamic>> complaints = [];
   List<Map<String, dynamic>> uploadedImages = [];
@@ -57,7 +43,6 @@ class _DestinationDetailsState extends State<DestinationDetails> {
     super.initState();
     selectedImage =
         widget.destination['image'] ?? widget.destination['imagePath'];
-    getDestinationLatLng();
   }
 
   @override
@@ -245,47 +230,6 @@ class _DestinationDetailsState extends State<DestinationDetails> {
       }
     } catch (error) {
       print('Failed to fetch place details: $error');
-    }
-  }
-
-  // A function to retrieve the destination latitude and longitude.
-  Future<void> getDestinationLatLng() async {
-    final url =
-        Uri.parse('https://touristineapp.onrender.com/get-destination-lat-lng');
-
-    try {
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': 'Bearer ${widget.token}',
-        },
-        body: {
-          'destinationName': widget.destination['name'],
-        },
-      );
-
-      if (response.statusCode == 200) {
-        // Success.
-        // Jenan, I want to retrieve the latitude and longitude of the destination.
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        destLat = double.parse(responseData['latitude']);
-        destLng = double.parse(responseData['longitude']);
-        print(destLat);
-        print(destLng);
-      } else if (response.statusCode == 500) {
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        if (responseData.containsKey('error')) {
-          // ignore: use_build_context_synchronously
-          showCustomSnackBar(context, responseData['error'], bottomMargin: 0);
-        }
-      } else {
-        // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, 'Error retrieving place location',
-            bottomMargin: 0);
-      }
-    } catch (error) {
-      print('Failed to fetch the destination lat and lng: $error');
     }
   }
 
@@ -484,180 +428,6 @@ class _DestinationDetailsState extends State<DestinationDetails> {
         );
       },
     );
-  }
-
-  // Section of location accquistion functions.
-  Future<bool> _handleLocationPermission() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      // ignore: use_build_context_synchronously
-      showCustomSnackBar(context, "Location services are disabled",
-          bottomMargin: 0);
-      return false;
-    }
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, "Location permissions are denied",
-            bottomMargin: 0);
-        return false;
-      }
-    }
-    if (permission == LocationPermission.deniedForever) {
-      // Location permissions are permanently denied, we cannot request permissions,
-      // ignore: use_build_context_synchronously
-      showCustomSnackBar(context, "Location permissions permanently denied",
-          bottomMargin: 0);
-
-      return false;
-    }
-    // ignore: use_build_context_synchronously
-    showCustomSnackBar(context, "Please wait for a moment", bottomMargin: 0);
-    return true;
-  }
-
-  Future<void> _getCurrentPosition() async {
-    final hasPermission = await _handleLocationPermission();
-
-    if (!hasPermission) return;
-    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
-        .then((Position position) {
-      setState(() {
-        _currentPosition = position;
-      });
-      _getAddressFromLatLng(_currentPosition!);
-    }).catchError((e) {
-      debugPrint(e);
-    });
-  }
-
-  Future<void> _getAddressFromLatLng(Position position) async {
-    await placemarkFromCoordinates(
-            _currentPosition!.latitude, _currentPosition!.longitude)
-        .then((List<Placemark> placemarks) {
-      // Placemark place = placemarks[0];
-      setState(() {
-        // print(_currentPosition!.latitude);
-        // print(_currentPosition!.longitude);
-        // airDistance = Geolocator.distanceBetween(_currentPosition!.latitude,
-        //         _currentPosition!.longitude, destLat, destLng) /
-        //     1000;
-        // print("**************************************************");
-        // print(airDistance);
-        // print("**************************************************");
-      });
-    }).catchError((e) {
-      print("An error occured $e");
-    });
-  }
-
-  Future<Map<String, dynamic>> getDirections(
-      double startLat, double startLng, double endLat, double endLng) async {
-    const apiKey = 'AIzaSyACRpyMRSxrAcO00IGbMzYI0N4zKxUPWg4';
-    final url =
-        'https://maps.googleapis.com/maps/api/directions/json?origin=$startLat,$startLng&destination=$endLat,$endLng&key=$apiKey';
-
-    final response = await http.get(Uri.parse(url));
-
-    if (response.statusCode == 200) {
-      final decoded = json.decode(response.body);
-      final routes = decoded['routes'] as List<dynamic>;
-      if (routes.isNotEmpty) {
-        final legs = routes[0]['legs'] as List<dynamic>;
-        if (legs.isNotEmpty) {
-          final distance = legs[0]['distance']['value'] as int;
-          final duration = legs[0]['duration']['value'] as int;
-          final startAddress = legs[0]['start_address'] as String;
-          final endAddress = legs[0]['end_address'] as String;
-
-          final airDistance =
-              calculateAirDistance(startLat, startLng, endLat, endLng);
-
-          isRouteFetched = true;
-          // Convert duration to hours and minutes
-          final int hours = duration ~/ 3600;
-          final int remainingSeconds = duration % 3600;
-          final int minutes = remainingSeconds ~/ 60;
-
-          return {
-            'distance': distance / 1000.0, // Convert meters to kilometers.
-            'duration': {'hours': hours, 'minutes': minutes},
-            'startAddress': startAddress,
-            'endAddress': endAddress,
-            'airDistance': airDistance,
-          };
-        }
-      }
-    }
-
-    // Handle errors or no route found scenario.
-    return {
-      'distance': -1.0,
-      'duration': -1,
-      'startAddress': '',
-      'endAddress': '',
-      'airDistance': -1.0,
-    };
-  }
-
-  double calculateAirDistance(
-      double startLat, double startLng, double endLat, double endLng) {
-    const earthRadius = 6371.0; // Radius of the Earth in kilometers.
-
-    // Conversion from degrees to radians.
-    final lat1Rad = startLat * (pi / 180.0);
-    final lng1Rad = startLng * (pi / 180.0);
-    final lat2Rad = endLat * (pi / 180.0);
-    final lng2Rad = endLng * (pi / 180.0);
-
-    // differences in latitude and longitude.
-    final dlat = lat2Rad - lat1Rad;
-    final dlng = lng2Rad - lng1Rad;
-
-    final a = pow(sin(dlat / 2), 2) +
-        cos(lat1Rad) * cos(lat2Rad) * pow(sin(dlng / 2), 2);
-
-    final c = 2 * atan2(sqrt(a), sqrt(1 - a));
-
-    final distance = earthRadius * c;
-
-    return distance;
-  }
-
-  void fetchRouteClicked() async {
-    try {
-      await _getCurrentPosition();
-      // Ensure that _getCurrentPosition has successfully obtained the position.
-      if (_currentPosition != null) {
-        final directions = await getDirections(_currentPosition!.latitude,
-            _currentPosition!.longitude, destLat, destLng);
-
-        if (directions['distance'] != -1.0) {
-          distanceFromTo = directions['distance'];
-          airDistance = directions['airDistance'];
-          timeFromToH = directions['duration']['hours'];
-          timeFromToMin = directions['duration']['minutes'];
-
-          print('Real distance: ${directions['distance']} km');
-          print('Duration: ${directions['duration']} hours');
-          print('Start Address: ${directions['startAddress']}');
-          print('End Address: ${directions['endAddress']}');
-          print('Air Distance: ${directions['airDistance']} km');
-        } else {
-          print('Error calculating distance or no route found.');
-        }
-      } else {
-        print(
-            'Error getting current position. Please check location permissions.');
-      }
-    } catch (e) {
-      print('An error occurred: $e');
-    }
   }
 
   @override
@@ -1556,209 +1326,6 @@ class _DestinationDetailsState extends State<DestinationDetails> {
     } else {
       throw 'Could not launch $url';
     }
-  }
-
-  Widget _buildLocationsTab() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 8),
-          Container(
-            height: 295,
-            width: 400,
-            decoration: BoxDecoration(
-              color: const Color.fromARGB(33, 20, 89, 121),
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.only(top: 10, left: 13.0, right: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Add distance and estimated time labels with icons.
-                  Column(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          color: const Color(0xFF1E889E),
-                        ),
-                        width: 370.0,
-                        height: 55.0,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(left: 30.0),
-                              child: FaIcon(
-                                FontAwesomeIcons.locationDot,
-                                color: Colors.white,
-                                size: 35,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 30.0),
-                              child: Text(
-                                isRouteFetched
-                                    ? '${distanceFromTo.toStringAsFixed(2)} km away'
-                                    : '_ _    km away',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontFamily: 'Time New Roman',
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          color: const Color(0xFF1E889E),
-                        ),
-                        width: 370.0,
-                        height: 55.0,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(left: 30.0),
-                              child: FaIcon(
-                                FontAwesomeIcons.clock,
-                                color: Colors.white,
-                                size: 35,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 30.0),
-                              child: Text(
-                                isRouteFetched
-                                    ? '${timeFromToH > 0 ? '$timeFromToH h' : ''}${timeFromToH > 0 && timeFromToMin > 0 ? ', ' : ''}${timeFromToMin > 0 ? '$timeFromToMin min' : ''}${timeFromToH == 0 && timeFromToMin == 0 ? 'Just moments' : ''} away'
-                                    : '_ _       h away',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontFamily: 'Time New Roman',
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          color: const Color(0xFF1E889E),
-                        ),
-                        width: 370.0,
-                        height: 55.0,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(left: 30.0),
-                              child: FaIcon(
-                                FontAwesomeIcons.leftRight,
-                                color: Colors.white,
-                                size: 35,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 30.0),
-                              child: Text(
-                                isRouteFetched
-                                    ? '${airDistance.toStringAsFixed(2)} km away'
-                                    : '_ _       h away',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontFamily: 'Time New Roman',
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 30),
-                  // Buttons for getting distance and time, and getting directions
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          fetchRouteClicked();
-                          if (isRouteFetched) {
-                            setState(() {});
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 10,
-                          ),
-                          backgroundColor: const Color(0xFF1E889E),
-                          textStyle: const TextStyle(
-                            fontSize: 30,
-                            fontFamily: 'Zilla',
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        child: const Row(
-                          children: [
-                            Icon(
-                              FontAwesomeIcons.route,
-                              size: 20,
-                            ),
-                            SizedBox(width: 10),
-                            Text('Fetch Route'),
-                          ],
-                        ),
-                      ),
-                      FloatingActionButton(
-                        heroTag: 'Get Directions',
-                        backgroundColor: const Color(0xFF1E889E),
-                        onPressed: () async {
-                          try {
-                            await _getCurrentPosition();
-                            // ignore: use_build_context_synchronously
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => LocationLiveTracking(
-                                  srcLat: _currentPosition!.latitude,
-                                  scrLng: _currentPosition!.longitude,
-                                  dstLat: destLat,
-                                  dstLng: destLng,
-                                ),
-                              ),
-                            );
-                            // ignore: use_build_context_synchronously
-                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          } catch (e) {
-                            print('An error occurred: $e');
-                          }
-                        },
-                        child: const FaIcon(FontAwesomeIcons.diamondTurnRight),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   int getStarCount(String ratingKey) {

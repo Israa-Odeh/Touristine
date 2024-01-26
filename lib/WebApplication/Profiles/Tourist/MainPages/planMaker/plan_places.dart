@@ -1,10 +1,7 @@
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/Home/destination_view.dart';
-import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/planMaker/plan_paths.dart';
 import 'package:touristine/WebApplication/Notifications/snack_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:timeline_tile/timeline_tile.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'dart:convert';
@@ -25,61 +22,6 @@ class _PlanPlacesPageState extends State<PlanPlacesPage> {
     super.initState();
   }
 
-  Position? _currentPosition;
-  bool isLocDetermined = false;
-  // Section of location accquistion functions.
-  Future<bool> _handleLocationPermission() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      // ignore: use_build_context_synchronously
-      showCustomSnackBar(context, "Location services are disabled",
-          bottomMargin: 0);
-      return false;
-    }
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        // ignore: use_build_context_synchronously
-        showCustomSnackBar(context, "Location permissions are denied",
-            bottomMargin: 0);
-        return false;
-      }
-    }
-    if (permission == LocationPermission.deniedForever) {
-      // Location permissions are permanently denied, we cannot request permissions,
-      // ignore: use_build_context_synchronously
-      showCustomSnackBar(context, "Location permissions permanently denied",
-          bottomMargin: 0);
-
-      return false;
-    }
-    // ignore: use_build_context_synchronously
-    // showCustomSnackBar(context, "Please wait for a moment",
-    //     bottomMargin: 0);
-    return true;
-  }
-
-  Future<void> getCurrentPosition() async {
-    final hasPermission = await _handleLocationPermission();
-
-    if (!hasPermission) return;
-    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
-        .then((Position position) {
-      setState(() {
-        _currentPosition = position;
-        isLocDetermined = true;
-        // print(_currentPosition);
-      });
-    }).catchError((e) {
-      debugPrint(e);
-    });
-  }
-
-  @override
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -99,49 +41,6 @@ class _PlanPlacesPageState extends State<PlanPlacesPage> {
                 child: PlanPlacesCards(
                   places: widget.planContents,
                   token: widget.token,
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: 26.0,
-              left: 870.0,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(100),
-                child: ElevatedButton(
-                  onPressed: () async {
-                    await getCurrentPosition();
-                    if (isLocDetermined) {
-                      List<LatLng> destinationsLatLng = [];
-
-                      for (var place in widget.planContents) {
-                        double latitude = double.parse(place['latitude']);
-                        double longitude = double.parse(place['longitude']);
-                        destinationsLatLng.add(LatLng(latitude, longitude));
-                      }
-                      // ignore: use_build_context_synchronously
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => PlanPaths(
-                              sourceLat: _currentPosition!.latitude,
-                              sourceLng: _currentPosition!.longitude,
-                              destinationsLatsLngs: destinationsLatLng),
-                        ),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 20,
-                    ),
-                    backgroundColor: const Color.fromARGB(203, 30, 137, 158),
-                    textStyle: const TextStyle(
-                      fontSize: 22,
-                      fontFamily: 'Zilla',
-                      fontWeight: FontWeight.w300,
-                    ),
-                  ),
-                  child: const Text('Show Paths'),
                 ),
               ),
             ),

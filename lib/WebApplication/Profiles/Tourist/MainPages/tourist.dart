@@ -1,6 +1,5 @@
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/DestinationUpload/dest_generator.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/DestinationUpload/my_dests_list.dart';
-import 'package:touristine/WebApplication/Profiles/Tourist/Profile/Sections/location_accquisition.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/Profile/Sections/interests_filling.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/planMaker/plan_generator.dart';
 import 'package:touristine/WebApplication/Profiles/Tourist/MainPages/planMaker/my_plans_list.dart';
@@ -281,8 +280,6 @@ class _TouristAppState extends State<TouristProfile> {
       );
     } else if (profileMenuOption == 'Interests Filling') {
       return InterestsFillingPage(token: widget.token);
-    } else if (profileMenuOption == 'Location Acquisiton') {
-      return LocationPage(token: widget.token);
     }
     // Log Out Option.
     else {
@@ -368,8 +365,6 @@ class _TouristAppState extends State<TouristProfile> {
       return 'My Account';
     } else if (profileMenuOption == 'Interests Filling') {
       return 'Interests Filling';
-    } else if (profileMenuOption == 'Location Acquisiton') {
-      return 'Location Acquisiton';
     } else {
       return 'Log Out';
     }
@@ -555,10 +550,6 @@ class _TouristAppState extends State<TouristProfile> {
           const PopupMenuItem<String>(
             value: "Interests Filling",
             child: Text("Interests Filling"),
-          ),
-          const PopupMenuItem<String>(
-            value: "Location Acquisiton",
-            child: Text("Location Acquisiton"),
           ),
           const PopupMenuItem<String>(
             value: "Log Out",
