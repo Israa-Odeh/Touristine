@@ -156,7 +156,7 @@ class _CracksMapViewerState extends State<CracksMapViewer> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(top: 200.0, left: 150.0),
+                        padding: const EdgeInsets.only(top: 180.0, left: 200.0),
                         child: Column(
                           children: [
                             SizedBox(
@@ -215,10 +215,11 @@ class _CracksMapViewerState extends State<CracksMapViewer> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(top: 50.0, left: 150),
+                        padding: const EdgeInsets.only(left: 280),
                         child: SingleChildScrollView(
                           child: Column(
                             children: [
+                              const SizedBox(height: 50),
                               Center(
                                 child: Stack(
                                   children: [
@@ -228,7 +229,7 @@ class _CracksMapViewerState extends State<CracksMapViewer> {
                                       },
                                       child: SvgPicture.string(
                                         '''
-                                          <svg height="850" width="670">
+                                          <svg height="850" width="490">
                                             <!-- جنين -->
                                             <polygon points="213,165,207,166,201,168,195,166,190,162,183,163,177,170,173,165,168,168,170,173,166,177,166,183,169,189,164,192,159,195,163,200,167,205,168,213,170,220,176,224,181,227,186,230,192,233,198,229,203,233,209,228,210,220,213,214,219,216,223,212,228,208,228,202,234,201,232,194,229,187,223,184,219,179,214,174" fill="${polygonsRGBStrings[0]}" />
                             
@@ -358,6 +359,7 @@ class _CracksMapViewerState extends State<CracksMapViewer> {
                 actions: <Widget>[
                   TextButton(
                     onPressed: () {
+                      resetMarkerSelection();
                       Navigator.of(context).pop();
                     },
                     child: const Text(
@@ -404,12 +406,14 @@ class _CracksMapViewerState extends State<CracksMapViewer> {
                 : const Color.fromARGB(0, 192, 175, 175),
             shape: BoxShape.circle,
           ),
-          child: FaIcon(
-            FontAwesomeIcons.locationDot,
-            color: isMarkerTappedList[index]
-                ? const Color(0xFF1E889E)
-                : const Color.fromARGB(255, 255, 255, 255),
-            size: 15,
+          child: Center(
+            child: FaIcon(
+              FontAwesomeIcons.locationDot,
+              color: isMarkerTappedList[index]
+                  ? const Color(0xFF1E889E)
+                  : const Color.fromARGB(255, 255, 255, 255),
+              size: 15,
+            ),
           ),
         ),
       ),
@@ -424,6 +428,12 @@ class _CracksMapViewerState extends State<CracksMapViewer> {
           isMarkerTappedList[i] = false;
         }
       }
+    });
+  }
+
+  void resetMarkerSelection() {
+    setState(() {
+      isMarkerTappedList = List<bool>.generate(4, (index) => false);
     });
   }
 
