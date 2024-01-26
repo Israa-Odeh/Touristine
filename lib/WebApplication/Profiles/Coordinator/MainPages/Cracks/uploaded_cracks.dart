@@ -135,8 +135,10 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
         // Jenan, in case of success the upload status must be updated to "Approved",
         // and the upload will be counted as a crack.
         setState(() {
-          uploadedImages.removeWhere(
-              (upload) => upload['id'] == uploadedImages[index]['id']);
+          // Remove the uploaded image from the list.
+          uploadedImages.removeAt(index);
+          // Remove the corresponding selected images state.
+          selectedImages.removeAt(index);
         });
 
         // ignore: use_build_context_synchronously
