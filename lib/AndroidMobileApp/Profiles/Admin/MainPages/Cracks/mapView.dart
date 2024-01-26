@@ -112,11 +112,11 @@ class _CracksMapViewerState extends State<CracksMapViewer> {
     return Padding(
       padding: const EdgeInsets.only(top: 24.0),
       child: Scaffold(
-        backgroundColor: cracksCounts.isNotEmpty? Colors.grey : Colors.white,
+        backgroundColor: cracksCounts.isNotEmpty ? Colors.grey : Colors.white,
         body: isLoading
             ? const Center(
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Color.fromARGB(255, 255, 255, 255)),
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1E889E)),
                 ),
               )
             : cracksCounts.isEmpty
@@ -239,16 +239,16 @@ class _CracksMapViewerState extends State<CracksMapViewer> {
                                           ''',
                                         ),
                                       ),
-    
+
                                       // Nablus Marker.
                                       buildMarker(250, 195, 0),
-    
+
                                       // Ramallah Marker.
                                       buildMarker(300, 178, 1),
-    
+
                                       // Jerusalem Marker.
                                       buildMarker(345, 166, 2),
-    
+
                                       // Bethlehem Marker.
                                       buildMarker(380, 182, 3),
                                     ],
