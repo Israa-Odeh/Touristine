@@ -20,7 +20,12 @@ class _CracksMapViewerState extends State<CracksMapViewer> {
   List<bool> isMarkerTappedList = [false, false, false, false];
   bool isLoading = true;
 
-  Map<String, dynamic> cracksCounts = {};
+  Map<String, dynamic> cracksCounts = {
+    'Nablus': 0,
+    'Ramallah': 0,
+    'Jerusalem': 0,
+    'Bethlehem': 0
+  };
 
   final List<Color> cityTilesColors = [
     const Color(0xFFCCCCCC),
@@ -73,6 +78,8 @@ class _CracksMapViewerState extends State<CracksMapViewer> {
           final Map<String, dynamic> cityData = Map<String, dynamic>.from(item);
           final cityName = cityData.keys.first;
           final totalCracks = cityData.values.first;
+
+          // Assign totalCracks to the corresponding city in cracksCounts.
           cracksCounts[cityName] = totalCracks;
         }
         print(cracksCounts);
@@ -346,7 +353,9 @@ class _CracksMapViewerState extends State<CracksMapViewer> {
                         fontWeight: FontWeight.bold,
                         fontSize: 25)),
                 content: Text(
-                  '$cityName has $cracksNumber cracks in various locations.',
+                  cracksNumber > 0
+                      ? '$cityName has $cracksNumber ${cracksNumber == 1 ? 'crack at one location' : 'cracks in various locations.'}'
+                      : 'There are no cracks anywhere in $cityName.',
                   style: const TextStyle(fontFamily: 'Andalus', fontSize: 20),
                 ),
                 actions: <Widget>[
@@ -365,25 +374,26 @@ class _CracksMapViewerState extends State<CracksMapViewer> {
                       ),
                     ),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => CracksViewerPage(
-                                token: widget.token, cityName: cityName)),
-                      );
-                    },
-                    child: const Text(
-                      'View Cracks',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        fontFamily: 'Zilla',
-                        fontWeight: FontWeight.bold,
-                        color: Color.fromARGB(255, 0, 0, 0),
+                  if (cracksNumber > 0)
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => CracksViewerPage(
+                                  token: widget.token, cityName: cityName)),
+                        );
+                      },
+                      child: const Text(
+                        'View Cracks',
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontFamily: 'Zilla',
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 0, 0, 0),
+                        ),
                       ),
                     ),
-                  ),
                 ],
               );
             },
