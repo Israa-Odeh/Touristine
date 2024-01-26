@@ -110,7 +110,7 @@ class _CracksMapViewerState extends State<CracksMapViewer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey,
+      backgroundColor: cracksCounts.isNotEmpty ? Colors.grey : Colors.white,
       body: isLoading
           ? const Center(
               child: CircularProgressIndicator(
