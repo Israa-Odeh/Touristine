@@ -140,13 +140,12 @@ class _CracksViewerPageState extends State<CracksViewerPage> {
                               crossAxisCount: 3,
                               crossAxisSpacing: 16.0,
                               mainAxisSpacing: 16.0,
-                              mainAxisExtent: 327),
+                              mainAxisExtent: 300),
                       itemCount: uploadedImages.length,
                       itemBuilder: (context, index) {
                         final imageInfo = uploadedImages[index];
                         final String destinationName =
                             imageInfo['destinationName'];
-                        final String uploadingDate = imageInfo['date'];
                         final List<String> imageUrls =
                             List<String>.from(imageInfo['images']);
 
@@ -238,24 +237,6 @@ class _CracksViewerPageState extends State<CracksViewerPage> {
                                           },
                                         ),
                                       )),
-                                  const Divider(
-                                    color: Color.fromARGB(126, 14, 63, 73),
-                                    thickness: 1,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        uploadingDate,
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontFamily: 'Time New Roman',
-                                          color:
-                                              Color.fromARGB(255, 14, 63, 73),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
                                 ],
                               ),
                             ),

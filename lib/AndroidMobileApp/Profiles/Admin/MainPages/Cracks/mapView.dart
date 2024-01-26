@@ -354,7 +354,7 @@ class _CracksMapViewerState extends State<CracksMapViewer> {
                         fontSize: 25)),
                 content: Text(
                   cracksNumber > 0
-                      ? '$cityName has $cracksNumber ${cracksNumber == 1 ? 'crack at one location' : 'cracks in various locations.'}'
+                      ? '$cityName has $cracksNumber ${cracksNumber == 1 ? 'crack' : 'cracks'} detected.'
                       : 'There are no cracks anywhere in $cityName.',
                   style: const TextStyle(fontFamily: 'Andalus', fontSize: 20),
                 ),
