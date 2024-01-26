@@ -70,17 +70,18 @@ class _CracksMapViewerState extends State<CracksMapViewer> {
 
       if (response.statusCode == 200) {
         // Jenan, here I need to retrieve a Map of the cracks counts for each city,
-        // (If the city doesn't have cracks return 0 count for the city), the format
-        // will be exactly as follows (with the same order of cities please:
-        // (Nablus, Ramallah, Jerusalem, then  finally Bethlehem):
-        /*
-        Map<String, dynamic> citiesList = {
-          'Nablus': 0,
-          'Ramallah': 20,
-          'Jerusalem': 50,
-          'Bethlehem': 10,
-        };
-        */
+        // (If the city doesn't have cracks return 0 count for that city).
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        final List<dynamic> cracksCountsList = responseData['cracksCounts'];
+
+        for (final item in cracksCountsList) {
+          final Map<String, dynamic> cityData = Map<String, dynamic>.from(item);
+          final cityName = cityData.keys.first;
+          final totalCracks = cityData.values.first;
+          // Update the cracksCounts map
+          cracksCounts[cityName] = totalCracks;
+        }
+        print(cracksCounts);
       } else if (response.statusCode == 500) {
         final Map<String, dynamic> responseData = json.decode(response.body);
         showCustomSnackBar(context, responseData['error'], bottomMargin: 0);

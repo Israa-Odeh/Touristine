@@ -21,7 +21,7 @@ class _CracksViewerPageState extends State<CracksViewerPage> {
   bool isLoading = false;
 
   // A Function to fetch destination uploads from the backend.
-  Future<void> getDestinationUploads() async {
+  Future<void> getCityCracks() async {
     if (!mounted) return;
 
     setState(() {
@@ -99,7 +99,7 @@ class _CracksViewerPageState extends State<CracksViewerPage> {
   @override
   void initState() {
     super.initState();
-    getDestinationUploads();
+    getCityCracks();
   }
 
   @override
