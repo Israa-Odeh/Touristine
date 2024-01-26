@@ -457,7 +457,7 @@ class _HomePageState extends State<HomePage> {
                                     const Positioned(
                                       top: 370,
                                       child: Text(
-                                        'No destinations found',
+                                        'No results found',
                                         style: TextStyle(
                                           fontSize: 40,
                                           fontFamily: 'Gabriola',
