@@ -1,3 +1,4 @@
+import 'package:touristine/AndroidMobileApp/Profiles/Admin/MainPages/Cracks/cracks_viewer.dart';
 import 'package:touristine/AndroidMobileApp/Notifications/snack_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -371,11 +372,12 @@ class _CracksMapViewerState extends State<CracksMapViewer> {
                   ),
                   TextButton(
                     onPressed: () {
-                      // Add functionality to navigate to the view page
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(builder: (context) => CracksViewPage(cityName: cityName)),
-                      // );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CracksViewerPage(
+                                token: widget.token, cityName: cityName)),
+                      );
                     },
                     child: const Text(
                       'View Cracks',

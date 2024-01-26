@@ -1,11 +1,10 @@
+import 'package:touristine/WebApplication/Profiles/Admin/MainPages/Cracks/cracks_viewer.dart';
 import 'package:touristine/WebApplication/Notifications/snack_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'dart:convert';
-
-import 'package:touristine/WebApplication/Profiles/Admin/MainPages/Cracks/cracks_viewer.dart';
 
 class CracksMapViewer extends StatefulWidget {
   final String token;

@@ -183,7 +183,7 @@ class _CracksViewerPageState extends State<CracksViewerPage> {
                                     Text(
                                       destinationName,
                                       style: const TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 23,
                                         fontWeight: FontWeight.w100,
                                         fontFamily: 'Zilla',
                                         color: Color.fromARGB(255, 14, 63, 73),
@@ -256,7 +256,7 @@ class _CracksViewerPageState extends State<CracksViewerPage> {
                                         Text(
                                           uploadingDate,
                                           style: const TextStyle(
-                                            fontSize: 19.5,
+                                            fontSize: 18,
                                             fontWeight: FontWeight.w600,
                                             fontFamily: 'Time New Roman',
                                             color:
