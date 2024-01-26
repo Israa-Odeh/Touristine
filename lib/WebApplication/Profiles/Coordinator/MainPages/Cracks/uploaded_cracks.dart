@@ -336,31 +336,30 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  if (keywords.length <= 2)
-                                    Row(
-                                      children: [
-                                        const Text(
-                                          'Category: ',
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w100,
-                                            fontFamily: 'Zilla',
-                                            color:
-                                                Color.fromARGB(255, 14, 63, 73),
-                                          ),
+                                  Row(
+                                    children: [
+                                      const Text(
+                                        'Category: ',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w100,
+                                          fontFamily: 'Zilla',
+                                          color:
+                                              Color.fromARGB(255, 14, 63, 73),
                                         ),
-                                        Text(
-                                          keywords.join(', '),
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w100,
-                                            fontFamily: 'Zilla',
-                                            color:
-                                                Color.fromARGB(255, 14, 63, 73),
-                                          ),
+                                      ),
+                                      Text(
+                                        keywords.join(', '),
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w100,
+                                          fontFamily: 'Zilla',
+                                          color:
+                                              Color.fromARGB(255, 14, 63, 73),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
+                                  ),
                                   const Divider(
                                     color: Color.fromARGB(126, 14, 63, 73),
                                     thickness: 1,

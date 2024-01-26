@@ -114,8 +114,8 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
 
     if (!mounted) return;
     try {
-      final url =
-          Uri.parse('https://touristineapp.onrender.com/approve-uploaded-crack');
+      final url = Uri.parse(
+          'https://touristineapp.onrender.com/approve-uploaded-crack');
 
       final response = await http.post(
         url,
@@ -158,8 +158,8 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
       print(uploadId);
       if (!mounted) return;
       try {
-        final url =
-            Uri.parse('https://touristineapp.onrender.com/reject-uploaded-crack');
+        final url = Uri.parse(
+            'https://touristineapp.onrender.com/reject-uploaded-crack');
 
         final response = await http.post(
           url,
@@ -328,31 +328,30 @@ class _UploadedCracksPageState extends State<UploadedCracksPage> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    if (keywords.length <= 2)
-                                      Row(
-                                        children: [
-                                          const Text(
-                                            'Category: ',
-                                            style: TextStyle(
-                                              fontSize: 24,
-                                              fontWeight: FontWeight.w100,
-                                              fontFamily: 'Zilla',
-                                              color: Color.fromARGB(
-                                                  255, 14, 63, 73),
-                                            ),
+                                    Row(
+                                      children: [
+                                        const Text(
+                                          'Category: ',
+                                          style: TextStyle(
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.w100,
+                                            fontFamily: 'Zilla',
+                                            color:
+                                                Color.fromARGB(255, 14, 63, 73),
                                           ),
-                                          Text(
-                                            keywords.join(', '),
-                                            style: const TextStyle(
-                                              fontSize: 22,
-                                              fontWeight: FontWeight.w100,
-                                              fontFamily: 'Zilla',
-                                              color: Color.fromARGB(
-                                                  255, 14, 63, 73),
-                                            ),
+                                        ),
+                                        Text(
+                                          keywords.join(', '),
+                                          style: const TextStyle(
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.w100,
+                                            fontFamily: 'Zilla',
+                                            color:
+                                                Color.fromARGB(255, 14, 63, 73),
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
+                                    ),
                                     const Divider(
                                       color: Color.fromARGB(126, 14, 63, 73),
                                       thickness: 2,
