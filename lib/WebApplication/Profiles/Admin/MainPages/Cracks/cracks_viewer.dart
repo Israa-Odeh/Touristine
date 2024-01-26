@@ -46,19 +46,6 @@ class _CracksViewerPageState extends State<CracksViewerPage> {
       if (response.statusCode == 200) {
         // Jenan, I need to retrieve a List<Map> of the uploaded
         // cracks for the given destination name.
-        // Data Format:
-        /*
-        List<Map<String, dynamic>> uploadedImages = [
-          {
-            'destinationName': 'Sufi Cafe',
-            'date': '26/01/2023',
-            'images': [
-              'https://static.pexels.com/photos/36753/flower-purple-lical-blosso.jpg',
-              'https://static.pexels.com/photos/36753/flower-purple-lical-blosso.jpg',
-            ],
-          },
-        ]; 
-        */
         final Map<String, dynamic> responseBody = json.decode(response.body);
         final List<Map<String, dynamic>> fetchedUploads =
             List<Map<String, dynamic>>.from(responseBody['uploadedImages']);
