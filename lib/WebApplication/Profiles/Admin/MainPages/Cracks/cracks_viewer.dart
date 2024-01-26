@@ -1,5 +1,4 @@
 import 'package:touristine/WebApplication/Notifications/snack_bar.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'dart:convert';
@@ -47,6 +46,19 @@ class _CracksViewerPageState extends State<CracksViewerPage> {
       if (response.statusCode == 200) {
         // Jenan, I need to retrieve a List<Map> of the uploaded
         // cracks for the given destination name.
+        // Data Format:
+        /*
+        List<Map<String, dynamic>> uploadedImages = [
+          {
+            'destinationName': 'Sufi Cafe',
+            'date': '26/01/2023',
+            'images': [
+              'https://static.pexels.com/photos/36753/flower-purple-lical-blosso.jpg',
+              'https://static.pexels.com/photos/36753/flower-purple-lical-blosso.jpg',
+            ],
+          },
+        ]; 
+        */
         final Map<String, dynamic> responseBody = json.decode(response.body);
         final List<Map<String, dynamic>> fetchedUploads =
             List<Map<String, dynamic>>.from(responseBody['uploadedImages']);
@@ -112,14 +124,14 @@ class _CracksViewerPageState extends State<CracksViewerPage> {
                       alignment: Alignment.center,
                       children: [
                         Positioned(
-                          top: -40,
+                          top: 10,
                           child: Image.asset(
                             'assets/Images/Profiles/Tourist/emptyListTransparent.gif',
                             fit: BoxFit.fill,
                           ),
                         ),
                         const Positioned(
-                          top: 420,
+                          top: 440,
                           child: Text(
                             'No cracks found',
                             style: TextStyle(
@@ -138,10 +150,10 @@ class _CracksViewerPageState extends State<CracksViewerPage> {
                     child: GridView.builder(
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: 16.0,
-                        mainAxisSpacing: 16.0,
-                      ),
+                              crossAxisCount: 3,
+                              crossAxisSpacing: 16.0,
+                              mainAxisSpacing: 16.0,
+                              mainAxisExtent: 327),
                       itemCount: uploadedImages.length,
                       itemBuilder: (context, index) {
                         final imageInfo = uploadedImages[index];
@@ -243,13 +255,19 @@ class _CracksViewerPageState extends State<CracksViewerPage> {
                                     color: Color.fromARGB(126, 14, 63, 73),
                                     thickness: 1,
                                   ),
-                                  Text(
-                                    uploadingDate,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontFamily: 'Time New Roman',
-                                      color: Color.fromARGB(255, 14, 63, 73),
-                                    ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        uploadingDate,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontFamily: 'Time New Roman',
+                                          color:
+                                              Color.fromARGB(255, 14, 63, 73),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -260,27 +278,6 @@ class _CracksViewerPageState extends State<CracksViewerPage> {
                     ),
                   ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
-      persistentFooterButtons: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: IconButton(
-                icon: const FaIcon(
-                  FontAwesomeIcons.arrowLeft,
-                  color: Color(0xFF1E889E),
-                  size: 20,
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ),
-          ],
-        ),
-      ],
     );
   }
 
