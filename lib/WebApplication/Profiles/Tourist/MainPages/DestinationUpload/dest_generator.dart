@@ -65,7 +65,8 @@ class _AddDestTabState extends State<AddDestTab> {
     String formattedHours = selectedHours.toString().padLeft(2, '0');
     String formattedMinutes = selectedMinutes.toString().padLeft(2, '0');
 
-    final url = Uri.parse('https://touristineapp.onrender.com/store-destination');
+    final url =
+        Uri.parse('https://touristineapp.onrender.com/store-destination');
 
     // Create a multi-part request.
     final request = http.MultipartRequest('POST', url);
@@ -179,7 +180,7 @@ class _AddDestTabState extends State<AddDestTab> {
       builder: (BuildContext context) {
         return CustomBottomSheet(
           itemsList: categoriesList,
-          height: 540,
+          height: 260,
         );
       },
     ).then((value) {
